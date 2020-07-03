@@ -1523,7 +1523,7 @@ hskill.leap = function(options)
                 if (leapType == "unit") then
                     hunit.setInvulnerable(arrowUnit, false)
                     cj.SetUnitPathing(arrowUnit, true)
-                    cj.SetUnitVertexColor(arrowUnit, 255, 255, 255, 1)
+                    cj.SetUnitVertexColor(arrowUnit, 255, 255, 255, 255)
                 else
                     hunit.kill(arrowUnit, 0)
                 end
@@ -1655,7 +1655,7 @@ hskill.leap = function(options)
                 if (leapType == "unit") then
                     hunit.setInvulnerable(arrowUnit, false)
                     cj.SetUnitPathing(arrowUnit, true)
-                    cj.SetUnitVertexColor(arrowUnit, 255, 255, 255, 1)
+                    cj.SetUnitVertexColor(arrowUnit, 255, 255, 255, 255)
                     hunit.portal(arrowUnit, txy.x, txy.y)
                 else
                     hunit.kill(arrowUnit, 0)
