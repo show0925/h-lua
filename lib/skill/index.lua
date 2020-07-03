@@ -1,5 +1,6 @@
 hskill = {
     SKILL_TOKEN = hslk_global.unit_token,
+    -- SKILL_LEAP的token模式，需要导入https://github.com/hunzsig-warcraft3/assets-models/blob/master/interface/interface_token.mdx
     SKILL_LEAP = hslk_global.unit_token_leap,
     SKILL_BREAK = hslk_global.skill_break, --table[0.05~0.5]
     SKILL_SWIM_UNLIMIT = hslk_global.skill_swim_unlimit,
