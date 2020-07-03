@@ -1574,7 +1574,7 @@ hskill.leap = function(options)
                     hgroup.loop(
                         g,
                         function(eu)
-                            if (damageMovementRepeat ~= true) then
+                            if (damageMovementRepeat ~= true and repeatGroup ~= nil) then
                                 hgroup.addUnit(repeatGroup, eu)
                             end
                             if (damageMovement > 0) then
