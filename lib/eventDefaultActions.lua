@@ -367,15 +367,25 @@ hevent_default_actions = {
             local sourceUnit = cj.GetEventDamageSource()
             local targetUnit = cj.GetTriggerUnit()
             local damage = cj.GetEventDamage()
-            local oldLife = hunit.getCurLife(targetUnit)
+            local curLife = hunit.getCurLife(targetUnit)
+            local isLethal = curLife <= damage
             if (damage > 0.125) then
-                hattr.set(targetUnit, 0, { life = "+" .. damage })
+                local changeLife = math.floor(damage) + 1
+                if (isLethal == true) then
+                    cj.SetUnitInvulnerable(targetUnit, true)
+                else
+                    hattr.set(targetUnit, 0, { life = "+" .. changeLife })
+                end
                 htime.setTimeout(
                     0,
                     function(t)
                         htime.delTimer(t)
-                        hattr.set(targetUnit, 0, { life = "-" .. damage })
-                        hunit.setCurLife(targetUnit, oldLife)
+                        if (isLethal == true) then
+                            cj.SetUnitInvulnerable(targetUnit, false)
+                        else
+                            hattr.set(targetUnit, 0, { life = "-" .. changeLife })
+                            hunit.setCurLife(targetUnit, curLife)
+                        end
                         hskill.damage(
                             {
                                 sourceUnit = sourceUnit,
