@@ -196,7 +196,7 @@ hevent.onAttack = function(whichUnit, callFunc)
 end
 
 --- 承受攻击
----@alias onBeAttack fun(evtData: {triggerUnit:"被攻击单位",attacker:"攻击来源",damage:"伤害",damageKind:"伤害方式",damageType:"伤害类型"}):void
+---@alias onBeAttack fun(evtData: {triggerUnit:"被攻击单位",targetUnit:"被攻击单位",attacker:"攻击来源",damage:"伤害",damageKind:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeAttack | "function(evtData) end"
 ---@return any

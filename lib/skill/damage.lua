@@ -372,7 +372,7 @@ hskill.damage = function(options)
                 targetUnit,
                 CONST_EVENT.beAttack,
                 {
-                    triggerUnit = sourceUnit,
+                    triggerUnit = targetUnit,
                     attacker = sourceUnit,
                     targetUnit = targetUnit,
                     damage = lastDamage,
