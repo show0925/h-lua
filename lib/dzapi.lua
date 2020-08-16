@@ -198,8 +198,6 @@ hdzapi.server.clear = {
     end
 }
 
-hdzapi.server.save(whichPlayer, key, "")
-
 --- 封装的服务器存档 get / set
 hdzapi.server.set = {
     int = function(whichPlayer, key, data)
