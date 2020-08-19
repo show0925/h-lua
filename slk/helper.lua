@@ -969,6 +969,7 @@ slkHelper.unit = {
         obj.pathTex = v.pathTex or "PathTextures\\8x8Round.tga"
         obj.abilList = v.abilList or "Avul,Apit,Aall"
         obj.file = v.file or "buildings\\other\\FruitStand\\FruitStand"
+        obj.Art = v.Art or "ReplaceableTextures\\CommandButtons\\BTNMerchant.blp"
         obj.modelScale = v.modelScale or 1.00
         obj.scale = v.scale or 1.00
         obj.HP = v.HP or 99999
