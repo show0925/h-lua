@@ -70,8 +70,6 @@ hRuntime = {
         unarmUnits = {},
         unarmTrigger = nil,
     },
-    attribute = {},
-    attributeDiff = {},
     attributeGroup = {
         life_back = {},
         mana_back = {},
@@ -147,12 +145,6 @@ hRuntime.clear = function(handle)
         if (table.includes(handle, hRuntime.skill.unarmUnits)) then
             table.delete(handle, hRuntime.skill.unarmUnits)
         end
-    end
-    if (hRuntime.attribute[handle] ~= nil) then
-        hRuntime.attribute[handle] = nil
-    end
-    if (hRuntime.attributeDiff[handle] ~= nil) then
-        hRuntime.attributeDiff[handle] = nil
     end
     if (hRuntime.item[handle] ~= nil) then
         hRuntime.item[handle] = nil

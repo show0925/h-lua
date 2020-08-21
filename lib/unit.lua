@@ -377,6 +377,7 @@ hunit.embed = function(u, options)
         during = options.during or nil,
         isShadow = options.isShadow or false,
         animateSpeed = options.timeScale or 1.00,
+        attribute = -1,
     }
     -- 单位受伤
     hevent.pool(u, hevent_default_actions.unit.damaged, function(tgr)

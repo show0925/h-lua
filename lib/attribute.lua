@@ -161,12 +161,12 @@ end
 --- 为单位初始化属性系统的对象数据
 --- @private
 hattribute.init = function(whichUnit)
-    if (whichUnit == nil) then
+    if (whichUnit == nil or his.deleted(whichUnit)) then
         return false
     end
     -- init
     local slkData = hunit.getSlk(whichUnit)
-    hRuntime.attribute[whichUnit] = {
+    local attribute = {
         primary = slkData.Primary or "STR",
         life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE),
         mana = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_MANA),
@@ -294,28 +294,26 @@ hattribute.init = function(whichUnit)
         ]]
     }
     -- 智力英雄的攻击默认为魔法，力量敏捷为物理
-    if (hRuntime.attribute[whichUnit].primary == "INT") then
-        hRuntime.attribute[whichUnit].attack_damage_type = { CONST_DAMAGE_TYPE.magic }
+    if (attribute.primary == "INT") then
+        attribute.attack_damage_type = { CONST_DAMAGE_TYPE.magic }
     else
-        hRuntime.attribute[whichUnit].attack_damage_type = { CONST_DAMAGE_TYPE.physical }
+        attribute.attack_damage_type = { CONST_DAMAGE_TYPE.physical }
     end
+    hunit.set(whichUnit, 'attribute', attribute)
     return true
 end
 
 --- @private
 hattribute.getAccumuDiff = function(whichUnit, attr)
-    if (hRuntime.attributeDiff[whichUnit] == nil) then
-        hRuntime.attributeDiff[whichUnit] = {}
-    end
-    return hRuntime.attributeDiff[whichUnit][attr] or 0
+    local diff = hunit.get(whichUnit, 'attributeDiff', {})
+    return diff[attr] or 0
 end
 
 --- @private
 hattribute.setAccumuDiff = function(whichUnit, attr, value)
-    if (hRuntime.attributeDiff[whichUnit] == nil) then
-        hRuntime.attributeDiff[whichUnit] = {}
-    end
-    hRuntime.attributeDiff[whichUnit][attr] = math.round(value)
+    local diff = hunit.get(whichUnit, 'attributeDiff', {})
+    diff[attr] = math.round(value)
+    hunit.set(whichUnit, 'attributeDiff', diff)
 end
 
 --- @private
@@ -350,7 +348,7 @@ end
 --- @private
 hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
     local valType = type(val)
-    local params = hRuntime.attribute[whichUnit]
+    local params = hattr.get(whichUnit)
     if (params == nil) then
         return
     end
@@ -750,17 +748,24 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
             elseif (attr == "punish" and hunit.isOpenPunish(whichUnit)) then
                 -- 硬直
                 if (currentVal > 0) then
-                    local tempPercent = futureVal / currentVal
-                    hRuntime.attribute[whichUnit].punish_current = tempPercent * hRuntime.attribute[whichUnit].punish_current
+                    local punishCurrent = hattribute.get(whichUnit, 'punish_current')
+                    if (punishCurrent > futureVal) then
+                        hattribute.set(whichUnit, 0, {
+                            punish_current = futureVal
+                        })
+                    end
                 else
-                    hRuntime.attribute[whichUnit].punish_current = futureVal
+                    hattribute.set(whichUnit, 0, {
+                        punish_current = futureVal
+                    })
                 end
             elseif (attr == "punish_current" and hunit.isOpenPunish(whichUnit)) then
                 -- 硬直(current)
-                if (futureVal > hRuntime.attribute[whichUnit].punish) then
-                    hRuntime.attribute[whichUnit].punish_current = hRuntime.attribute[whichUnit].punish
-                elseif (futureVal <= 0) then
-                    hRuntime.attribute[whichUnit].punish_current = hRuntime.attribute[whichUnit].punish
+                local punish = hattribute.get(whichUnit, 'punish')
+                if (punish > 0 and (futureVal > punish or futureVal <= 0)) then
+                    hattribute.set(whichUnit, 0, {
+                        punish_current = punish
+                    })
                 end
             end
         end
@@ -778,10 +783,9 @@ hattribute.set = function(whichUnit, during, data)
         print_stack("whichUnit is nil")
         return
     end
-    if (hRuntime.attribute[whichUnit] == nil) then
-        if (hattribute.init(whichUnit) == false) then
-            return
-        end
+    local attribute = hattribute.get(whichUnit)
+    if (attribute == nil) then
+        return
     end
     -- 处理data
     if (type(data) ~= "table") then
@@ -791,7 +795,7 @@ hattribute.set = function(whichUnit, during, data)
     for _, arr in ipairs(table.obj2arr(data, CONST_ATTR_KEYS)) do
         local attr = arr.key
         local v = arr.value
-        if (hRuntime.attribute[whichUnit] ~= nil and hRuntime.attribute[whichUnit][attr] ~= nil) then
+        if (attribute[attr] ~= nil) then
             if (type(v) == "string") then
                 local opr = string.sub(v, 1, 1)
                 v = string.sub(v, 2, string.len(v))
@@ -844,72 +848,76 @@ hattribute.get = function(whichUnit, attr)
     if (whichUnit == nil) then
         return nil
     end
-    if (hRuntime.attribute[whichUnit] == nil) then
+    local attribute = hunit.get(whichUnit, 'attribute', nil)
+    if (attribute == nil) then
+        return nil
+    elseif (attribute == -1) then
         if (hattribute.init(whichUnit) == false) then
             return nil
         end
+        attribute = hunit.get(whichUnit, 'attribute')
     end
     if (attr == nil) then
-        return hRuntime.attribute[whichUnit]
+        return attribute
     end
-    return hRuntime.attribute[whichUnit][attr]
+    return attribute[attr]
 end
 
 --- 重置注册
 ---@private
-hattribute.reRegister = function(whichUnit)
-    local life = hRuntime.attribute[whichUnit].life
-    local mana = hRuntime.attribute[whichUnit].mana
-    local move = hRuntime.attribute[whichUnit].move
-    local strGreen = hRuntime.attribute[whichUnit].str_green
-    local agiGreen = hRuntime.attribute[whichUnit].agi_green
-    local intGreen = hRuntime.attribute[whichUnit].int_green
-    local strWhite = hRuntime.attribute[whichUnit].str_white
-    local agiWhite = hRuntime.attribute[whichUnit].agi_white
-    local intWhite = hRuntime.attribute[whichUnit].int_white
-    local attackWhite = hRuntime.attribute[whichUnit].attack_white
-    local attackGreen = hRuntime.attribute[whichUnit].attack_green
-    local attackSpeed = hRuntime.attribute[whichUnit].attack_speed
-    local defend = hRuntime.attribute[whichUnit].defend
-    -- 注册技能
-    if (hattribute.init(whichUnit) == false) then
-        return
-    end
-    -- 弥补属性
-    cj.SetHeroStr(whichUnit, cj.R2I(strWhite), true)
-    cj.SetHeroAgi(whichUnit, cj.R2I(agiWhite), true)
-    cj.SetHeroInt(whichUnit, cj.R2I(intWhite), true)
-    if (move < 0) then
-        cj.SetUnitMoveSpeed(whichUnit, 0)
-    else
-        if (hcamera.model == "zoomin") then
-            cj.SetUnitMoveSpeed(whichUnit, cj.R2I(move * 0.5))
-        else
-            cj.SetUnitMoveSpeed(whichUnit, cj.R2I(move))
-        end
-    end
-    hRuntime.attribute[whichUnit].life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)
-    hRuntime.attribute[whichUnit].mana = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_MANA)
-    hRuntime.attribute[whichUnit].defend = hslk_global.id2Value.unit[hunit.getId(whichUnit)].def or 0.0
-    hRuntime.attribute[whichUnit].attack_speed = 0
-    hRuntime.attribute[whichUnit].attack_white = 0
-    hRuntime.attribute[whichUnit].attack_green = 0
-    hRuntime.attribute[whichUnit].str_green = 0
-    hRuntime.attribute[whichUnit].agi_green = 0
-    hRuntime.attribute[whichUnit].int_green = 0
-    hattribute.set(
-        whichUnit,
-        0,
-        {
-            life = "+" .. (life - cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)),
-            mana = "+" .. (mana - cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)),
-            str_green = "+" .. strGreen,
-            agi_green = "+" .. agiGreen,
-            int_green = "+" .. intGreen,
-            attack_white = "+" .. attackWhite,
-            attack_green = "+" .. attackGreen,
-            attack_speed = "+" .. attackSpeed,
-            defend = "+" .. defend
-        }
-    )
-end
+--hattribute.reRegister = function(whichUnit)
+--    local life = hRuntime.attribute[whichUnit].life
+--    local mana = hRuntime.attribute[whichUnit].mana
+--    local move = hRuntime.attribute[whichUnit].move
+--    local strGreen = hRuntime.attribute[whichUnit].str_green
+--    local agiGreen = hRuntime.attribute[whichUnit].agi_green
+--    local intGreen = hRuntime.attribute[whichUnit].int_green
+--    local strWhite = hRuntime.attribute[whichUnit].str_white
+--    local agiWhite = hRuntime.attribute[whichUnit].agi_white
+--    local intWhite = hRuntime.attribute[whichUnit].int_white
+--    local attackWhite = hRuntime.attribute[whichUnit].attack_white
+--    local attackGreen = hRuntime.attribute[whichUnit].attack_green
+--    local attackSpeed = hRuntime.attribute[whichUnit].attack_speed
+--    local defend = hRuntime.attribute[whichUnit].defend
+--    -- 注册技能
+--    if (hattribute.init(whichUnit) == false) then
+--        return
+--    end
+--    -- 弥补属性
+--    cj.SetHeroStr(whichUnit, cj.R2I(strWhite), true)
+--    cj.SetHeroAgi(whichUnit, cj.R2I(agiWhite), true)
+--    cj.SetHeroInt(whichUnit, cj.R2I(intWhite), true)
+--    if (move < 0) then
+--        cj.SetUnitMoveSpeed(whichUnit, 0)
+--    else
+--        if (hcamera.model == "zoomin") then
+--            cj.SetUnitMoveSpeed(whichUnit, cj.R2I(move * 0.5))
+--        else
+--            cj.SetUnitMoveSpeed(whichUnit, cj.R2I(move))
+--        end
+--    end
+--    hRuntime.attribute[whichUnit].life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)
+--    hRuntime.attribute[whichUnit].mana = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_MANA)
+--    hRuntime.attribute[whichUnit].defend = hslk_global.id2Value.unit[hunit.getId(whichUnit)].def or 0.0
+--    hRuntime.attribute[whichUnit].attack_speed = 0
+--    hRuntime.attribute[whichUnit].attack_white = 0
+--    hRuntime.attribute[whichUnit].attack_green = 0
+--    hRuntime.attribute[whichUnit].str_green = 0
+--    hRuntime.attribute[whichUnit].agi_green = 0
+--    hRuntime.attribute[whichUnit].int_green = 0
+--    hattribute.set(
+--        whichUnit,
+--        0,
+--        {
+--            life = "+" .. (life - cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)),
+--            mana = "+" .. (mana - cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)),
+--            str_green = "+" .. strGreen,
+--            agi_green = "+" .. agiGreen,
+--            int_green = "+" .. intGreen,
+--            attack_white = "+" .. attackWhite,
+--            attack_green = "+" .. attackGreen,
+--            attack_speed = "+" .. attackSpeed,
+--            defend = "+" .. defend
+--        }
+--    )
+--end
