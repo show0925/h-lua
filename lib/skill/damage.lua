@@ -44,7 +44,13 @@ hskill.damage = function(options)
     if (targetUnit == nil) then
         return
     end
-    if (his.alive(options.targetUnit) == false) then
+    if (his.alive(options.targetUnit) == false or his.deleted(targetUnit)) then
+        return
+    end
+    if (his.deleted(targetUnit)) then
+        return
+    end
+    if (his.deleted(sourceUnit)) then
         return
     end
     if (options.damageKind == nil) then
@@ -284,33 +290,33 @@ hskill.damage = function(options)
         end
     end
     -- 上面都是先行计算
-    if (lastDamage > 0.125) then
+    if (lastDamage > 0.125 and his.deleted(targetUnit) == false) then
         -- 设置单位正在受伤
         if (hRuntime.attributeBeDamaging[targetUnit] ~= nil) then
             htime.delTimer(hRuntime.attributeBeDamaging[targetUnit])
             hRuntime.attributeBeDamaging[targetUnit] = nil
         end
-        his.set(targetUnit, "isBeDamaging", true)
+        hunit.set(targetUnit, "isBeDamaging", true)
         hRuntime.attributeBeDamaging[targetUnit] = htime.setTimeout(
             3.5,
             function(t)
                 htime.delTimer(t)
                 hRuntime.attributeBeDamaging[targetUnit] = nil
-                his.set(targetUnit, "isBeDamaging", false)
+                hunit.set(targetUnit, "isBeDamaging", false)
             end
         )
-        if (sourceUnit ~= nil) then
+        if (sourceUnit ~= nil and his.deleted(sourceUnit) == false) then
             if (hRuntime.attributeDamaging[targetUnit] ~= nil) then
                 htime.delTimer(hRuntime.attributeDamaging[targetUnit])
                 hRuntime.attributeDamaging[targetUnit] = nil
             end
-            his.set(sourceUnit, "isDamaging", true)
+            hunit.set(sourceUnit, "isDamaging", true)
             hRuntime.attributeDamaging[sourceUnit] = htime.setTimeout(
                 3.5,
                 function(t)
                     htime.delTimer(t)
                     hRuntime.attributeDamaging[sourceUnit] = nil
-                    his.set(sourceUnit, "isDamaging", false)
+                    hunit.set(sourceUnit, "isDamaging", false)
                 end
             )
             hevent.setLastDamageUnit(targetUnit, sourceUnit)
@@ -457,13 +463,13 @@ hskill.damage = function(options)
             hattr.set(targetUnit, 0, {
                 punish_current = "-" .. lastDamage
             })
-            if (targetUnitAttr.punish_current - lastDamage <= 0) then
-                his.set(targetUnit, "isPunishing", true)
+            if (targetUnitAttr.punish_current - lastDamage <= 0 and his.deleted(targetUnit) == false) then
+                hunit.set(targetUnit, "isPunishing", true)
                 htime.setTimeout(
                     punish_during + 1.00,
                     function(t)
                         htime.delTimer(t)
-                        his.set(targetUnit, "isPunishing", false)
+                        hunit.set(targetUnit, "isPunishing", false)
                     end
                 )
                 local punishEffectAttackSpeed = (100 + targetUnitAttr.attack_speed) * punishEffectRatio

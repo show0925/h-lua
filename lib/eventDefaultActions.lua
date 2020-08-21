@@ -58,11 +58,11 @@ hevent_default_actions = {
             local p = cj.GetTriggerPlayer()
             local str = string.lower(cj.GetEventPlayerChatString())
             if (str == "-apc") then
-                if (his.autoConvertGoldToLumber(p) == true) then
-                    his.set(p, "isAutoConvertGoldToLumber", false)
+                if (hplayer.getIsAutoConvert(p) == true) then
+                    hplayer.setIsAutoConvert(p, false)
                     echo("|cffffcc00已关闭|r自动换算", p)
                 else
-                    his.set(p, "isAutoConvertGoldToLumber", true)
+                    hplayer.setIsAutoConvert(p, true)
                     echo("|cffffcc00已开启|r自动换算", p)
                 end
             elseif (str == "-apm") then
@@ -209,22 +209,20 @@ hevent_default_actions = {
         selection = cj.Condition(function()
             local triggerPlayer = cj.GetTriggerPlayer()
             local triggerUnit = cj.GetTriggerUnit()
-            if (hRuntime.player[triggerPlayer] == nil) then
-                hRuntime.player[triggerPlayer] = {}
+            local click = hplayer.get(triggerPlayer, 'click', nil)
+            if (click == nil) then
+                click = 0
             end
-            if (hRuntime.player[triggerPlayer].click == nil) then
-                hRuntime.player[triggerPlayer].click = 0
-            end
-            hRuntime.player[triggerPlayer].click = hRuntime.player[triggerPlayer].click + 1
+            hplayer.set(triggerPlayer, 'click', click + 1)
             htime.setTimeout(
                 0.3,
                 function(ct)
                     htime.delTimer(ct)
-                    hRuntime.player[triggerPlayer].click = hRuntime.player[triggerPlayer].click - 1
+                    hplayer.set(triggerPlayer, 'click', hplayer.get(triggerPlayer, 'click') - 1)
                 end
             )
             for qty = 1, 10 do
-                if (hRuntime.player[triggerPlayer].click >= qty) then
+                if (hplayer.get(triggerPlayer, 'click') >= qty) then
                     hevent.triggerEvent(
                         triggerPlayer,
                         CONST_EVENT.selection .. "#" .. qty,

@@ -1,5 +1,28 @@
 hunit = {}
 
+---@private
+hunit.set = function(whichUnit, key, value)
+    if (whichUnit == nil) then
+        print_stack()
+        return
+    end
+    if (hRuntime.unit[whichUnit] ~= nil) then
+        hRuntime.unit[whichUnit][key] = value
+    end
+end
+
+---@private
+hunit.get = function(whichUnit, key, default)
+    if (whichUnit == nil) then
+        print_stack()
+        return
+    end
+    if (hRuntime.unit[whichUnit] == nil) then
+        return default
+    end
+    return hRuntime.unit[whichUnit][key] or default
+end
+
 --- [SLK] 获取英雄在slkHelper设定的部分数据
 --- 数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
 ---@param whichUnit userdata
@@ -25,7 +48,9 @@ hunit.getSlk = function(whichUnit)
     else
         default.Name = ""
     end
-    if (whichUnit == nil or his.deleted(whichUnit)) then
+    if (whichUnit == nil) then
+        return default
+    elseif (his.deleted(whichUnit)) then
         return default
     end
     if (his.hero(whichUnit)) then

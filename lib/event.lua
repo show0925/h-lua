@@ -947,11 +947,9 @@ hevent.onChat = function(whichPlayer, chatStr, matchAll, callFunc)
     if (matchAll) then
         key = CONST_EVENT.chat .. chatStr .. '|T'
     end
-    if (hRuntime.player[whichPlayer] == nil) then
-        hRuntime.player[whichPlayer] = {}
-    end
-    if (hRuntime.player[whichPlayer][key] == nil) then
-        hRuntime.player[whichPlayer][key] = function()
+    local condition = hplayer.get(whichPlayer, key, nil)
+    if (condition == nil) then
+        condition = function()
             hevent.triggerEvent(
                 cj.GetTriggerPlayer(),
                 key,
@@ -962,8 +960,9 @@ hevent.onChat = function(whichPlayer, chatStr, matchAll, callFunc)
                 }
             )
         end
+        hplayer.set(whichPlayer, key, condition)
     end
-    hevent.pool(whichPlayer, cj.Condition(hRuntime.player[whichPlayer][key]), function(tgr)
+    hevent.pool(whichPlayer, cj.Condition(condition), function(tgr)
         cj.TriggerRegisterPlayerChatEvent(tgr, whichPlayer, chatStr, matchAll)
     end)
     return hevent.registerEvent(whichPlayer, key, callFunc)

@@ -30,6 +30,7 @@ for i = 1, bj_MAX_PLAYERS, 1 do
 
     cj.SetPlayerHandicapXP(hplayer.players[i], 0) -- 经验置0
 
+    hplayer.set(hplayer.players[i], "index", i)
     hplayer.set(hplayer.players[i], "prevGold", 0)
     hplayer.set(hplayer.players[i], "prevLumber", 0)
     hplayer.set(hplayer.players[i], "totalGold", 0)
@@ -44,14 +45,13 @@ for i = 1, bj_MAX_PLAYERS, 1 do
     hplayer.set(hplayer.players[i], "damage", 0)
     hplayer.set(hplayer.players[i], "beDamage", 0)
     hplayer.set(hplayer.players[i], "kill", 0)
-    if
-    ((cj.GetPlayerController(hplayer.players[i]) == MAP_CONTROL_USER) and
-        (cj.GetPlayerSlotState(hplayer.players[i]) == PLAYER_SLOT_STATE_PLAYING))
-    then
-        -- his
-        his.set(hplayer.players[i], "isComputer", false)
+    if ((cj.GetPlayerController(hplayer.players[i]) == MAP_CONTROL_USER)
+        and (cj.GetPlayerSlotState(hplayer.players[i]) == PLAYER_SLOT_STATE_PLAYING)) then
         --
         hplayer.qty_current = hplayer.qty_current + 1
+
+        -- 默认开启自动换木
+        hplayer.setIsAutoConvert(hplayer.players[i], true)
         hplayer.set(hplayer.players[i], "status", hplayer.player_status.gaming)
 
         hevent.onChat(
@@ -75,15 +75,10 @@ for i = 1, bj_MAX_PLAYERS, 1 do
             cj.TriggerRegisterPlayerUnitEvent(tgr, hplayer.players[i], EVENT_PLAYER_UNIT_SELECTED, nil)
         end)
 
-        hevent.onSelection(
-            hplayer.players[i],
-            1,
-            function(evtData)
-                hplayer.set(evtData.triggerPlayer, "selection", evtData.triggerUnit)
-            end
-        )
+        hevent.onSelection(hplayer.players[i], 1, function(evtData)
+            hplayer.set(evtData.triggerPlayer, "selection", evtData.triggerUnit)
+        end)
     else
-        his.set(hplayer.players[i], "isComputer", true)
         hplayer.set(hplayer.players[i], "status", hplayer.player_status.none)
     end
 end

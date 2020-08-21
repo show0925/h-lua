@@ -288,6 +288,7 @@ hplayer.victory = function(whichPlayer, tips)
         end)
     end
 end
+
 --- 玩家设置是否自动将{hAwardConvertRatio}黄金换1木头
 ---@param whichPlayer userdata
 ---@param b boolean
@@ -300,10 +301,24 @@ end
 hplayer.getIsAutoConvert = function(whichPlayer)
     return hplayer.get(whichPlayer, "isAutoConvert", false)
 end
+
+--- 设置玩家镜头是否在震动
+---@private
+---@param whichPlayer userdata
+---@param b boolean
+hplayer.setIsShocking = function(whichPlayer, b)
+    hplayer.set(whichPlayer, "isShocking", b)
+end
+--- 获取玩家镜头是否在震动
+---@param whichPlayer userdata
+---@return boolean
+hplayer.getIsShocking = function(whichPlayer)
+    return hplayer.get(whichPlayer, "isShocking", false)
+end
+
 --- 自动寄存超出的黄金数量，如果满转换数值，则返回对应的整数木头
 ---@private
 hplayer.getExceedLumber = function(whichPlayer, exceedGold)
-    local index = hplayer.index(whichPlayer)
     local current = hplayer.get(whichPlayer, "exceed_gold", 0)
     local l = 0
     if (current < 0) then

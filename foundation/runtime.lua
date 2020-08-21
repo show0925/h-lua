@@ -46,10 +46,7 @@ hRuntime = {
             end
         end,
     },
-    is = {},
-    sound = {},
     env = {},
-    camera = {},
     event = {
         -- 核心注册
         register = {},
@@ -93,17 +90,8 @@ hRuntime.clear = function(handle)
     if (handle == nil) then
         return
     end
-    if (hRuntime.is[handle] ~= nil) then
-        hRuntime.is[handle] = nil
-    end
-    if (hRuntime.sound[handle] ~= nil) then
-        hRuntime.sound[handle] = nil
-    end
     if (hRuntime.env[handle] ~= nil) then
         hRuntime.env[handle] = nil
-    end
-    if (hRuntime.camera[handle] ~= nil) then
-        hRuntime.camera[handle] = nil
     end
     if (hRuntime.event[handle] ~= nil) then
         hRuntime.event[handle] = nil
@@ -140,9 +128,6 @@ hRuntime.clear = function(handle)
     end
     if (hRuntime.rect[handle] ~= nil) then
         hRuntime.rect[handle] = nil
-    end
-    if (hRuntime.player[handle] ~= nil) then
-        hRuntime.player[handle] = nil
     end
     if (hRuntime.unit[handle] ~= nil) then
         hRuntime.unit[handle] = nil
@@ -188,19 +173,3 @@ hRuntime.clear = function(handle)
     end
 end
 
-for i = 1, bj_MAX_PLAYER_SLOTS, 1 do
-    -- is
-    hRuntime.is[i] = {}
-    hRuntime.is[i].isComputer = true
-    hRuntime.is[i].isAutoConvertGoldToLumber = true
-    -- sound
-    hRuntime.sound[i] = {}
-    hRuntime.sound[i].currentBgm = nil
-    hRuntime.sound[i].bgmDelay = 3.00
-    -- player
-    hRuntime.player[i] = {}
-    -- camera
-    hRuntime.camera[i] = {}
-    hRuntime.camera[i].model = "normal" -- 镜头模型
-    hRuntime.camera[i].isShocking = false
-end

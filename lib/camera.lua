@@ -101,18 +101,17 @@ hcamera.shock = function(whichPlayer, whichType, during, scale)
         scale = 5.00 -- 假如没有振幅，默认5.00意思意思一下
     end
     -- 镜头动作降噪
-    local index = hplayer.index(whichPlayer)
-    if (hRuntime.camera[index].isShocking == true) then
+    if (hplayer.getIsShocking(whichPlayer) == true) then
         return
     end
-    hRuntime.camera[index].isShocking = true
+    hplayer.setIsShocking(whichPlayer, true)
     if (whichType == "shake") then
         cj.CameraSetTargetNoiseForPlayer(whichPlayer, scale, 1.00)
         htime.setTimeout(
             during,
             function(t)
                 htime.delTimer(t)
-                hRuntime.camera[index].isShocking = false
+                hplayer.setIsShocking(whichPlayer, false)
                 if (cj.GetLocalPlayer() == whichPlayer) then
                     cj.CameraSetTargetNoise(0, 0)
                 end
@@ -124,7 +123,7 @@ hcamera.shock = function(whichPlayer, whichType, during, scale)
             during,
             function(t)
                 htime.delTimer(t)
-                hRuntime.camera[index].isShocking = false
+                hplayer.setIsShocking(whichPlayer, false)
                 if (cj.GetLocalPlayer() == whichPlayer) then
                     cj.CameraClearNoiseForPlayer(0, 0)
                 end
@@ -136,13 +135,7 @@ end
 --- 获取镜头模型
 ---@param whichPlayer userdata 玩家
 hcamera.getModel = function(whichPlayer)
-    local index = hplayer.index(whichPlayer)
-    if (hRuntime.camera[index] == nil) then
-        return "normal"
-    elseif (hRuntime.camera[index].model == nil) then
-        return "normal"
-    end
-    return hRuntime.camera[index].model
+    return hplayer.get(whichPlayer, 'cameraModel', 'normal')
 end
 --- 设置镜头模式
 --[[
@@ -187,11 +180,10 @@ hcamera.setModel = function(bean)
         return
     end
     if (bean.whichPlayer ~= nil) then
-        local index = hplayer.index(bean.whichPlayer)
-        hRuntime.camera[index].model = bean.model
+        hplayer.set(bean.whichPlayer, 'cameraModel', bean.model)
     else
-        for i = 1, 12, 1 do
-            hRuntime.camera[i].model = bean.model
+        for i = 1, bj_MAX_PLAYERS, 1 do
+            hplayer.set(hplayer.players[i], 'cameraModel', bean.model)
         end
     end
 end

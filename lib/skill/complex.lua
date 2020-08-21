@@ -354,6 +354,9 @@ hskill.swim = function(options)
     if (options.whichUnit == nil or options.during == nil or options.during <= 0) then
         return
     end
+    if (his.deleted(options.whichUnit)) then
+        return
+    end
     local u = options.whichUnit
     local during = options.during
     local odds = options.odds or 100
@@ -400,7 +403,7 @@ hskill.swim = function(options)
     if (during < 0.05) then
         during = 0.05
     end
-    his.set(u, "isSwim", true)
+    hunit.set(u, "isSwim", true)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
         heffect.bindUnit(options.effect, u, "origin", during)
     end
@@ -424,7 +427,7 @@ hskill.swim = function(options)
                 function(t)
                     htime.delTimer(t)
                     cj.UnitRemoveAbility(u, hskill.BUFF_SWIM)
-                    his.set(u, "isSwim", false)
+                    hunit.set(u, "isSwim", false)
                 end
             )
         )
@@ -485,6 +488,9 @@ hskill.silent = function(options)
     if (options.whichUnit == nil or options.during == nil or options.during <= 0) then
         return
     end
+    if (his.deleted(options.whichUnit)) then
+        return
+    end
     local u = options.whichUnit
     local during = options.during
     local odds = options.odds or 100
@@ -524,7 +530,7 @@ hskill.silent = function(options)
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "head", -1)
         hskill.set(u, "silentEffect", eff)
     end
-    his.set(u, "isSilent", true)
+    hunit.set(u, "isSilent", true)
     if (damage > 0) then
         hskill.damage(
             {
@@ -571,7 +577,7 @@ hskill.silent = function(options)
                 if (table.includes(u, hRuntime.skill.silentUnits)) then
                     table.delete(u, hRuntime.skill.silentUnits)
                 end
-                his.set(u, "isSilent", false)
+                hunit.set(u, "isSilent", false)
             end
         end
     )
@@ -592,6 +598,9 @@ end
 ]]
 hskill.unarm = function(options)
     if (options.whichUnit == nil or options.during == nil or options.during <= 0) then
+        return
+    end
+    if (his.deleted(options.whichUnit)) then
         return
     end
     local u = options.whichUnit
@@ -633,7 +642,7 @@ hskill.unarm = function(options)
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "weapon", -1)
         hskill.set(u, "unarmEffect", eff)
     end
-    his.set(u, "isUnArm", true)
+    hunit.set(u, "isUnArm", true)
     if (damage > 0) then
         hskill.damage(
             {
@@ -680,7 +689,7 @@ hskill.unarm = function(options)
                 if (table.includes(u, hRuntime.skill.unarmUnits)) then
                     table.delete(u, hRuntime.skill.unarmUnits)
                 end
-                his.set(u, "isUnArm", false)
+                hunit.set(u, "isUnArm", false)
             end
         end
     )
@@ -1073,10 +1082,10 @@ hskill.crackFly = function(options)
         during = 0.5
     end
     --不二次击飞
-    if (his.get(options.whichUnit, "isCrackFly") == true) then
+    if (hunit.get(options.whichUnit, "isCrackFly", false) == true) then
         return
     end
-    his.set(options.whichUnit, "isCrackFly", true)
+    hunit.set(options.whichUnit, "isCrackFly", true)
     --镜头放大模式下，距离缩小一半
     if (hcamera.getModel(hunit.getOwner(options.whichUnit)) == "zoomin") then
         distance = distance * 0.5
@@ -1159,7 +1168,7 @@ hskill.crackFly = function(options)
                 end
                 cj.SetUnitFlyHeight(options.whichUnit, originHigh, 10000)
                 cj.SetUnitPathing(options.whichUnit, true)
-                his.set(options.whichUnit, "isCrackFly", false)
+                hunit.set(options.whichUnit, "isCrackFly", false)
                 -- 默认是地面，创建沙尘
                 local tempEff = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
                 if (his.water(options.whichUnit) == true) then
@@ -1331,10 +1340,10 @@ hskill.whirlwind = function(options)
         return
     end
     --不二次
-    if (his.get(options.sourceUnit, "isWhirlwind") == true) then
+    if (hunit.get(options.sourceUnit, "isWhirlwind", false) == true) then
         return
     end
-    his.set(options.sourceUnit, "isWhirlwind", true)
+    hunit.set(options.sourceUnit, "isWhirlwind", true)
     if (options.effect ~= nil) then
         heffect.bindUnit(options.effect, options.sourceUnit, "origin", during)
     end
@@ -1351,7 +1360,7 @@ hskill.whirlwind = function(options)
                 if (options.animation) then
                     cj.AddUnitAnimationProperties(options.sourceUnit, options.animation, false)
                 end
-                his.set(options.sourceUnit, "isWhirlwind", false)
+                hunit.set(options.sourceUnit, "isWhirlwind", false)
                 return
             end
             if (options.animation) then

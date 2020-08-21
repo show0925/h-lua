@@ -65,12 +65,11 @@ end
 hsound.bgmStop = function(whichPlayer)
     if (whichPlayer == nil) then
         for i = 1, bj_MAX_PLAYER_SLOTS, 1 do
-            hRuntime.sound[i].currentBgm = nil
+            hplayer.set(hplayer.players[i], 'bgmCurrent', nil)
         end
         cj.StopMusic(true)
     else
-        local i = hplayer.index(whichPlayer)
-        hRuntime.sound[i].currentBgm = nil
+        hplayer.set(whichPlayer, 'bgmCurrent', nil)
         if (cj.GetLocalPlayer() == whichPlayer) then
             cj.StopMusic(true)
         end
@@ -87,45 +86,48 @@ end
 hsound.bgm = function(musicFileName, whichPlayer)
     if (musicFileName ~= nil and string.len(musicFileName) > 0) then
         if (whichPlayer ~= nil) then
-            local i = hplayer.index(whichPlayer)
-            if (hRuntime.sound[i].currentBgm == musicFileName) then
+            local bgmCurrent = hplayer.get(whichPlayer, 'bgmCurrent', nil)
+            local bgmDelayTimer = hplayer.get(whichPlayer, 'bgmDelayTimer', nil)
+            if (bgmCurrent == musicFileName) then
                 return
             end
-            if (hRuntime.sound[i].bgmDelayTimer ~= nil) then
-                htime.delTimer(hRuntime.sound[i].bgmDelayTimer)
-                hRuntime.sound[i].bgmDelayTimer = nil
+            if (bgmDelayTimer ~= nil) then
+                htime.delTimer(bgmDelayTimer)
+                hplayer.set(whichPlayer, 'bgmDelayTimer', nil)
             end
             hsound.bgmStop(whichPlayer)
-            hRuntime.sound[i].currentBgm = musicFileName
-            hRuntime.sound[i].bgmDelayTimer = htime.setTimeout(
+            hplayer.set(whichPlayer, 'bgmCurrent', musicFileName)
+            hplayer.set(whichPlayer, 'bgmDelayTimer', htime.setTimeout(
                 hsound.BREAK_DELAY,
                 function(t)
                     htime.delTimer(t)
-                    hRuntime.sound[i].bgmDelayTimer = nil
+                    hplayer.set(whichPlayer, 'bgmDelayTimer', nil)
                     if (cj.GetLocalPlayer() == whichPlayer) then
-                        cj.PlayMusic(hRuntime.sound[i].currentBgm)
+                        cj.PlayMusic(bgmCurrent)
                     end
                 end
-            )
+            ))
         else
             hsound.bgmStop()
-            for i = 1, bj_MAX_PLAYER_SLOTS, 1 do
-                if (hRuntime.sound[i].currentBgm ~= musicFileName) then
-                    if (hRuntime.sound[i].bgmDelayTimer ~= nil) then
-                        htime.delTimer(hRuntime.sound[i].bgmDelayTimer)
-                        hRuntime.sound[i].bgmDelayTimer = nil
+            for i = 1, bj_MAX_PLAYERS, 1 do
+                local bgmCurrent = hplayer.get(hplayer.players[i], 'bgmCurrent', nil)
+                local bgmDelayTimer = hplayer.get(hplayer.players[i], 'bgmDelayTimer', nil)
+                if (bgmCurrent ~= musicFileName) then
+                    if (bgmDelayTimer ~= nil) then
+                        htime.delTimer(bgmDelayTimer)
+                        hplayer.set(hplayer.players[i], 'bgmDelayTimer', nil)
                     end
-                    hRuntime.sound[i].currentBgm = musicFileName
-                    hRuntime.sound[i].bgmDelayTimer = htime.setTimeout(
+                    hplayer.set(hplayer.players[i], 'bgmCurrent', musicFileName)
+                    hplayer.set(whichPlayer, 'bgmDelayTimer', htime.setTimeout(
                         hsound.BREAK_DELAY,
                         function(t)
                             htime.delTimer(t)
-                            hRuntime.sound[i].bgmDelayTimer = nil
-                            if (cj.GetLocalPlayer() == whichPlayer) then
+                            hplayer.set(hplayer.players[i], 'bgmDelayTimer', nil)
+                            if (cj.GetLocalPlayer() == hplayer.players[i]) then
                                 cj.PlayMusic(musicFileName)
                             end
                         end
-                    )
+                    ))
                 end
             end
         end

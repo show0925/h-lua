@@ -1,40 +1,6 @@
 ---@class his 判断
 his = {}
 
----@private
-his.set = function(handle, key, val)
-    if (handle == nil or key == nil or val == nil) then
-        print_stack()
-        return
-    end
-    if (type(val) ~= "boolean") then
-        print_err("his.set not boolean")
-        return
-    end
-    if (hRuntime.is[handle] == nil) then
-        hRuntime.is[handle] = {}
-    end
-    hRuntime.is[handle][key] = val
-end
-
----@private
-his.get = function(handle, key)
-    if (handle == nil or key == nil) then
-        return false
-    end
-    if (hRuntime.is[handle] == nil) then
-        return false
-    end
-    if (hRuntime.is[handle][key] == nil) then
-        return false
-    end
-    if (type(hRuntime.is[handle][key]) == "boolean") then
-        return hRuntime.is[handle][key]
-    else
-        return false
-    end
-end
-
 --- 是否夜晚
 ---@return boolean
 his.night = function()
@@ -47,21 +13,17 @@ his.day = function()
     return (cj.GetFloatGameState(GAME_STATE_TIME_OF_DAY) > 6.00 and cj.GetFloatGameState(GAME_STATE_TIME_OF_DAY) < 18.00)
 end
 
---- 是否电脑
+--- 是否电脑(如果位置为电脑玩家或无玩家，则为true)
+--- 常用来判断电脑AI是否开启
 ---@param whichPlayer userdata
 ---@return boolean
 his.computer = function(whichPlayer)
-    return his.get(whichPlayer, "isComputer")
-end
-
---- 是否自动换算黄金木头
----@param whichPlayer userdata
----@return boolean
-his.autoConvertGoldToLumber = function(whichPlayer)
-    return his.get(whichPlayer, "isAutoConvertGoldToLumber")
+    return cj.GetPlayerController(whichPlayer) == MAP_CONTROL_COMPUTER
+        or cj.GetPlayerSlotState(whichPlayer) ~= PLAYER_SLOT_STATE_PLAYING
 end
 
 --- 是否玩家位置(如果位置为真实玩家或为空，则为true；而如果选择了电脑玩家补充，则为false)
+--- 常用来判断该是否玩家可填补位置
 ---@param whichPlayer userdata
 ---@return boolean
 his.playerSite = function(whichPlayer)
@@ -241,49 +203,49 @@ end
 ---@param whichUnit userdata
 ---@return boolean
 his.swim = function(whichUnit)
-    return his.get(whichUnit, "isSwim")
+    return hunit.get(whichUnit, "isSwim", false)
 end
 
 --- 是否被硬直
 ---@param whichUnit userdata
 ---@return boolean
 his.punish = function(whichUnit)
-    return his.get(whichUnit, "isPunishing")
+    return hunit.get(whichUnit, "isPunishing", false)
 end
 
 --- 是否被沉默
 ---@param whichUnit userdata
 ---@return boolean
 his.silent = function(whichUnit)
-    return his.get(whichUnit, "isSilent")
+    return hunit.get(whichUnit, "isSilent", false)
 end
 
 --- 是否被缴械
 ---@param whichUnit userdata
 ---@return boolean
 his.unarm = function(whichUnit)
-    return his.get(whichUnit, "isUnArm")
+    return hunit.get(whichUnit, "isUnArm", false)
 end
 
 --- 是否被击飞
 ---@param whichUnit userdata
 ---@return boolean
 his.crackFly = function(whichUnit)
-    return his.get(whichUnit, "isCrackFly")
+    return hunit.get(whichUnit, "isCrackFly", false)
 end
 
 --- 是否正在受伤
 ---@param whichUnit userdata
 ---@return boolean
 his.beDamaging = function(whichUnit)
-    return his.get(whichUnit, "isBeDamaging")
+    return hunit.get(whichUnit, "isBeDamaging", false)
 end
 
 --- 是否正在造成伤害
 ---@param whichUnit userdata
 ---@return boolean
 his.damaging = function(whichUnit)
-    return his.get(whichUnit, "isDamaging")
+    return hunit.get(whichUnit, "isDamaging", false)
 end
 
 --- 是否处在水面
