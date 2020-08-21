@@ -72,8 +72,6 @@ hRuntime = {
     },
     attribute = {},
     attributeDiff = {},
-    attributeBeDamaging = {},
-    attributeDamaging = {},
     attributeGroup = {
         life_back = {},
         mana_back = {},
@@ -155,9 +153,6 @@ hRuntime.clear = function(handle)
     end
     if (hRuntime.attributeDiff[handle] ~= nil) then
         hRuntime.attributeDiff[handle] = nil
-    end
-    if (hRuntime.attributeDamaging[handle] ~= nil) then
-        hRuntime.attributeDamaging[handle] = nil
     end
     if (hRuntime.item[handle] ~= nil) then
         hRuntime.item[handle] = nil

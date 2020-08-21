@@ -292,33 +292,35 @@ hskill.damage = function(options)
     -- 上面都是先行计算
     if (lastDamage > 0.125 and his.deleted(targetUnit) == false) then
         -- 设置单位正在受伤
-        if (hRuntime.attributeBeDamaging[targetUnit] ~= nil) then
-            htime.delTimer(hRuntime.attributeBeDamaging[targetUnit])
-            hRuntime.attributeBeDamaging[targetUnit] = nil
+        local isBeDamagingTimer = hunit.get(targetUnit, "isBeDamagingTimer", nil)
+        if (isBeDamagingTimer ~= nil) then
+            htime.delTimer(isBeDamagingTimer)
+            hunit.set(targetUnit, "isBeDamagingTimer", nil)
         end
         hunit.set(targetUnit, "isBeDamaging", true)
-        hRuntime.attributeBeDamaging[targetUnit] = htime.setTimeout(
+        hunit.set(targetUnit, "isBeDamagingTimer", htime.setTimeout(
             3.5,
             function(t)
                 htime.delTimer(t)
-                hRuntime.attributeBeDamaging[targetUnit] = nil
+                hunit.set(targetUnit, "isBeDamagingTimer", nil)
                 hunit.set(targetUnit, "isBeDamaging", false)
             end
-        )
+        ))
         if (sourceUnit ~= nil and his.deleted(sourceUnit) == false) then
-            if (hRuntime.attributeDamaging[targetUnit] ~= nil) then
-                htime.delTimer(hRuntime.attributeDamaging[targetUnit])
-                hRuntime.attributeDamaging[targetUnit] = nil
+            local isDamagingTimer = hunit.get(sourceUnit, "isDamagingTimer", nil)
+            if (isDamagingTimer ~= nil) then
+                htime.delTimer(isDamagingTimer)
+                hunit.set(sourceUnit, "isDamagingTimer", nil)
             end
             hunit.set(sourceUnit, "isDamaging", true)
-            hRuntime.attributeDamaging[sourceUnit] = htime.setTimeout(
+            hunit.set(targetUnit, "isBeDamagingTimer", htime.setTimeout(
                 3.5,
                 function(t)
                     htime.delTimer(t)
-                    hRuntime.attributeDamaging[sourceUnit] = nil
+                    hunit.set(sourceUnit, "isDamagingTimer", nil)
                     hunit.set(sourceUnit, "isDamaging", false)
                 end
-            )
+            ))
             hevent.setLastDamageUnit(targetUnit, sourceUnit)
             hplayer.addDamage(hunit.getOwner(sourceUnit), lastDamage)
         end
