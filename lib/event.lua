@@ -1,6 +1,6 @@
 hevent = {
     POOL = {},
-    POOL_RED_LINE = 3000,
+    POOL_RED_LINE = 1000,
 }
 
 --- set
