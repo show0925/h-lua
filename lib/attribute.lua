@@ -59,6 +59,7 @@ hattribute.setAttackWhite = function(u, itemId, qty)
             cj.UnitAddItem(u, it)
             cj.SetWidgetLife(it, 10.00)
             cj.RemoveItem(it)
+            it = nil
             i = i + 1
         end
         if (hasSlot == false) then

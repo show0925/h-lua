@@ -620,7 +620,7 @@ hitem.detector = function(whichUnit, it)
                 end
             end
         end
-        -- 如果叠加已经全部消化，这里就把物品it设置为null
+        -- 如果叠加已经全部消化，这里就把物品it设置为nil
         if (isOverlieOver == true) then
             it = nil
         end
