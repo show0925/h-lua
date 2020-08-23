@@ -72,6 +72,7 @@ hitem.clearUnitCache = function(whichUnit)
             if (it ~= nil) then
                 hRuntime.clear(it)
             end
+            it = nil
         end
     end
 end

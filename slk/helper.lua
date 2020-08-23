@@ -311,7 +311,7 @@ slkHelper.attrTableDesc = function(attr, sep)
                     elseif (vv["attr"] == "crack_fly") then
                         temp2 = temp2 .. CONST_ATTR[vv["attr"]] .. "目标高达" .. high .. "高度"
                         if (val > 0) then
-                            temp2 = temp2 .. ",并击退" .. distance .. "范围"
+                            temp2 = temp2 .. ",并击退" .. distance .. "距离"
                         end
                         if (val > 0) then
                             temp2 = temp2 .. ",同时造成" .. val .. "伤害"
