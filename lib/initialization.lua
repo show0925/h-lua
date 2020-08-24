@@ -14,7 +14,7 @@ hunit.del(preread_u)
 
 -- register APM
 hevent.pool('global', hevent_default_actions.player.apm, function(tgr)
-    for i = 1, bj_MAX_PLAYER_SLOTS, 1 do
+    for i = 1, bj_MAX_PLAYERS, 1 do
         cj.TriggerRegisterPlayerUnitEvent(tgr, cj.Player(i - 1), EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, nil)
         cj.TriggerRegisterPlayerUnitEvent(tgr, cj.Player(i - 1), EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, nil)
         cj.TriggerRegisterPlayerUnitEvent(tgr, cj.Player(i - 1), EVENT_PLAYER_UNIT_ISSUED_ORDER, nil)

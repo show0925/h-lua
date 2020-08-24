@@ -480,8 +480,8 @@ hevent_default_actions = {
         pickup = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = string.id2char(cj.GetItemTypeId(it))
-            if (hslk_global.id2Value.item[itId] == nil) then
-                -- 排除掉没有注册进hslk_global的物品
+            local itSlk = hitem.getSlk(itId)
+            if (itSlk == nil) then
                 return
             end
             if (hRuntime.item[it] ~= nil and hRuntime.item[it].positionType == hitem.POSITION_TYPE.UNIT) then
@@ -490,8 +490,20 @@ hevent_default_actions = {
             end
             local u = cj.GetTriggerUnit()
             local charges = cj.GetItemCharges(it)
-            local shadowItId = hitem.getShadowMappingId(itId)
-            if (shadowItId == nil) then
+            local isShadow = (itSlk.SHADOW == true)
+            if (isShadow == true) then
+                -- 如果是影子物品,删除并构建真实物品
+                local realId = hitem.getShadowMappingId(itId)
+                hitem.del(it, 0)
+                hitem.create(
+                    {
+                        itemId = realId,
+                        whichUnit = u,
+                        charges = charges,
+                        during = 0
+                    }
+                )
+            else
                 if (hitem.getIsPowerUp(itId) == true) then
                     --触发使用物品事件
                     hevent.triggerEvent(
@@ -524,42 +536,28 @@ hevent_default_actions = {
                         }
                     )
                 end
-            else
-                --注意，系统内此处先获得了face物品，此物品100%是PowerUp的
-                --这里删除重建是为了实现地上物品的过期重置
-                hitem.del(it, 0)
-                --这里是实现神符满格的关键
-                hitem.create(
-                    {
-                        itemId = shadowItId,
-                        whichUnit = u,
-                        charges = charges,
-                        during = 0
-                    }
-                )
             end
         end),
         drop = cj.Condition(function()
             local u = cj.GetTriggerUnit()
             local it = cj.GetManipulatedItem()
             local itId = string.id2char(cj.GetItemTypeId(it))
-            local faceId = hitem.getShadowMappingId(itId)
-            local orderId = cj.OrderId("dropitem")
+            local shadowId = hitem.getShadowMappingId(itId)
             local charges = cj.GetItemCharges(it)
-            if (cj.GetUnitCurrentOrder(u) == orderId) then
+            if (cj.GetUnitCurrentOrder(u) == cj.OrderId("dropitem")) then
                 if (hRuntime.item[it] ~= nil) then
-                    if (faceId ~= nil) then
+                    if (shadowId ~= nil) then
                         htime.setTimeout(
-                            0,
+                            0.1,
                             function(t)
                                 htime.delTimer(t)
                                 local x = cj.GetItemX(it)
-                                local y = cj.GetItemX(it)
+                                local y = cj.GetItemY(it)
                                 hitem.del(it, 0)
                                 --这里是实现表面物品的关键
                                 it = hitem.create(
                                     {
-                                        itemId = faceId,
+                                        itemId = shadowId,
                                         x = x,
                                         y = y,
                                         charges = charges,

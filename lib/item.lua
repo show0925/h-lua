@@ -286,6 +286,7 @@ hitem.getIsSellAble = function(itOrId)
         return false
     end
 end
+
 --- 获取物品的(表面/影子)ID（实现神符满格购物的关键，会自动获得相对ID）,需要注册
 ---@param itOrId userdata|string|number
 ---@return string
@@ -293,11 +294,14 @@ hitem.getShadowMappingId = function(itOrId)
     local itId
     if (type(itOrId == "string")) then
         itId = itOrId
+    elseif (type(itOrId) == "number") then
+        itId = string.id2char(itOrId)
     else
         itId = hitem.getId(itOrId)
     end
     return hslk_global.items_shadow_mapping[itId]
 end
+
 --- 获取物品的最大叠加数(默认是1个,此系统以使用次数作为数量使用),需要注册
 ---@param itOrId userdata|string|number
 ---@return number

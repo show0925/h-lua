@@ -64,7 +64,7 @@ end
 ---@param whichPlayer userdata|nil
 hsound.bgmStop = function(whichPlayer)
     if (whichPlayer == nil) then
-        for i = 1, bj_MAX_PLAYER_SLOTS, 1 do
+        for i = 1, bj_MAX_PLAYERS, 1 do
             hplayer.set(hplayer.players[i], 'bgmCurrent', nil)
         end
         cj.StopMusic(true)

@@ -481,113 +481,192 @@ slkHelper.itemCooldownID = function(v)
     return oob:get_id()
 end
 
-slkHelper.item = {
-    --- 创建一件物品
-    --- 设置的CUSTOM_DATA数据会自动传到数据中
-    ---@public
-    ---@param v table
-    normal = function(v)
-        slkHelper.count = slkHelper.count + 1
-        local cd = slkHelper.itemCooldownID(v)
-        local abilList = ""
-        local usable = 0
-        local uses = v.uses or 1
-        local OVERLIE = v.OVERLIE or 1
-        local ignoreCD = 0
-        if (cd ~= "AIat") then
-            abilList = cd
-            usable = 1
-            if (v.perishable == nil) then
-                v.perishable = 1
-            end
-            v.class = "Charged"
-            if (cd == slkHelper.itemCooldown0ID) then
-                ignoreCD = 1
-            end
-        else
-            if (v.perishable == nil) then
-                v.perishable = 0
-            end
-            v.class = "Permanent"
+slkHelper.item = {}
+
+--- 创建一件影子物品
+--- 不主动使用，由normal设置{useShadow = true}自动调用
+--- 设置的CUSTOM_DATA数据会自动传到数据中
+---@private
+---@param v table
+slkHelper.item.shadow = function(v)
+    slkHelper.count = slkHelper.count + 1
+    local Name = "# " .. v.Name
+    local obj = slk.item.rat9:new("itemShadows_" .. v.Name)
+    obj.Name = Name
+    obj.Description = slkHelper.itemDesc(v)
+    obj.Ubertip = slkHelper.itemUbertip(v)
+    obj.goldcost = v.goldcost
+    obj.lumbercost = v.lumbercost
+    obj.class = "Charged"
+    obj.Level = v.lv
+    obj.oldLevel = v.lv
+    obj.Art = v.Art
+    obj.file = v.file
+    obj.prio = v.prio or 0
+    obj.abilList = ""
+    obj.ignoreCD = 1
+    obj.drop = v.drop or 0
+    obj.perishable = 1
+    obj.usable = 1
+    obj.powerup = 1
+    obj.sellable = v.sellable or 1
+    obj.pawnable = v.pawnable or 1
+    obj.droppable = v.dropable or 1
+    obj.pickRandom = v.pickRandom or 1
+    obj.stockStart = v.stockStart or 0
+    obj.stockRegen = v.stockRegen or 0
+    obj.stockMax = v.stockMax or 1
+    obj.uses = v.uses
+    if (v.HotKey ~= nil) then
+        obj.HotKey = v.HotKey
+        v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
+        v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
+        obj.Tip = "获得" .. v.Name .. "(" .. hColor.gold(v.HotKey) .. ")"
+    else
+        obj.Buttonpos1 = v.Buttonpos1 or 0
+        obj.Buttonpos2 = v.Buttonpos2 or 0
+        obj.Tip = "获得" .. v.Name
+    end
+    local id = obj:get_id()
+    return {
+        SHADOW = true,
+        CUSTOM_DATA = v.CUSTOM_DATA or {},
+        ID_ARRAY = v.ID_ARRAY or nil,
+        ITEM_ID = id,
+        Name = Name,
+        class = v.class,
+        Art = v.Art,
+        file = v.file,
+        goldcost = v.goldcost,
+        lumbercost = v.lumbercost,
+        usable = 1,
+        powerup = 1,
+        perishable = 1,
+        sellable = v.sellable,
+        OVERLIE = 1,
+        WEIGHT = v.WEIGHT,
+        ATTR = v.ATTR,
+    }
+end
+
+--- 创建一件实体物品
+--- 设置的CUSTOM_DATA数据会自动传到数据中
+---@public
+---@param v table
+slkHelper.item.normal = function(v)
+    slkHelper.count = slkHelper.count + 1
+    local cd = slkHelper.itemCooldownID(v)
+    local abilList = ""
+    local usable = 0
+    local OVERLIE = v.OVERLIE or 1
+    local ignoreCD = 0
+    if (cd ~= "AIat") then
+        abilList = cd
+        usable = 1
+        if (v.perishable == nil) then
+            v.perishable = 1
         end
-        local lv = 1
-        v.goldcost = v.goldcost or 0
-        v.lumbercost = v.lumbercost or 0
-        lv = math.floor((v.goldcost + v.lumbercost) / 500)
-        if (lv < 1) then
-            lv = 1
+        v.class = "Charged"
+        if (cd == slkHelper.itemCooldown0ID) then
+            ignoreCD = 1
         end
-        v.Name = v.Name or "未命名" .. slkHelper.count
-        v.Art = v.Art or "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp"
-        v.file = v.file or "Objects\\InventoryItems\\TreasureChest\\treasurechest.mdl"
-        v.powerup = v.powerup or 0
-        v.perishable = v.perishable or 0
-        v.sellable = v.sellable or 1
-        v.pawnable = v.pawnable or 1
-        v.dropable = v.dropable or 1
-        local WEIGHT = v.WEIGHT or 0
-        local obj = slk.item.rat9:new("items_" .. v.Name)
-        obj.Name = v.Name
-        obj.Description = slkHelper.itemDesc(v)
-        obj.Ubertip = slkHelper.itemUbertip(v)
-        obj.goldcost = v.goldcost or 1000000
-        obj.lumbercost = v.lumbercost or 1000000
-        obj.class = v.class
-        obj.Level = lv
-        obj.oldLevel = lv
-        obj.Art = v.Art
-        obj.file = v.file
-        obj.prio = v.prio or 0
-        obj.cooldownID = cd
-        obj.abilList = abilList
-        obj.ignoreCD = ignoreCD
-        obj.drop = v.drop or 0
-        obj.perishable = v.perishable
-        obj.usable = usable
-        obj.powerup = v.powerup
-        obj.sellable = v.sellable
-        obj.pawnable = v.pawnable
-        obj.droppable = v.dropable
-        obj.pickRandom = v.pickRandom or 1
-        obj.stockStart = v.stockStart or 0 -- 库存开始
-        obj.stockRegen = v.stockRegen or 0 -- 进货周期
-        obj.stockMax = v.stockMax or 1 -- 最大库存
-        obj.uses = uses
-        if (v.HotKey ~= nil) then
-            obj.HotKey = v.HotKey
-            v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
-            v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-            obj.Tip = "获得" .. v.Name .. "(" .. hColor.gold(v.HotKey) .. ")"
-        else
-            obj.Buttonpos1 = v.Buttonpos1 or 0
-            obj.Buttonpos2 = v.Buttonpos2 or 0
-            obj.Tip = "获得" .. v.Name
+    else
+        if (v.perishable == nil) then
+            v.perishable = 0
         end
-        local id = obj:get_id()
-        table.insert(slkHelperHashData, {
-            type = "item",
-            data = {
-                CUSTOM_DATA = v.CUSTOM_DATA or {},
-                ID_ARRAY = v.ID_ARRAY or nil,
-                ITEM_ID = id,
-                Name = v.Name,
-                class = v.class,
-                Art = v.Art,
-                file = v.file,
-                goldcost = v.goldcost,
-                lumbercost = v.lumbercost,
-                usable = usable,
-                powerup = v.powerup,
-                perishable = v.perishable,
-                sellable = v.sellable,
-                OVERLIE = OVERLIE,
-                WEIGHT = WEIGHT,
-                ATTR = v.ATTR,
-            }
-        })
-        return id
-    end,
-}
+        v.class = "Permanent"
+    end
+    local lv = 1
+    v.goldcost = v.goldcost or 0
+    v.lumbercost = v.lumbercost or 0
+    v.uses = v.uses or 1
+    lv = math.floor((v.goldcost + v.lumbercost) / 500)
+    if (lv < 1) then
+        lv = 1
+    end
+    v.Name = v.Name or "未命名" .. slkHelper.count
+    v.Art = v.Art or "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp"
+    v.file = v.file or "Objects\\InventoryItems\\TreasureChest\\treasurechest.mdl"
+    v.powerup = v.powerup or 0
+    v.perishable = v.perishable or 0
+    v.sellable = v.sellable or 1
+    v.pawnable = v.pawnable or 1
+    v.dropable = v.dropable or 1
+    v.WEIGHT = v.WEIGHT or 0
+    local useShadow = false
+    if (type(v.useShadow) == 'boolean') then
+        useShadow = v.useShadow
+    end
+    local shadowData = {}
+    if (useShadow == true) then
+        shadowData = slkHelper.item.shadow(v)
+    end
+    local obj = slk.item.rat9:new("items_" .. v.Name)
+    obj.Name = v.Name
+    obj.Description = slkHelper.itemDesc(v)
+    obj.Ubertip = slkHelper.itemUbertip(v)
+    obj.goldcost = v.goldcost or 1000000
+    obj.lumbercost = v.lumbercost or 1000000
+    obj.class = v.class
+    obj.Level = lv
+    obj.oldLevel = lv
+    obj.Art = v.Art
+    obj.file = v.file
+    obj.prio = v.prio or 0
+    obj.cooldownID = cd
+    obj.abilList = abilList
+    obj.ignoreCD = ignoreCD
+    obj.drop = v.drop or 0
+    obj.perishable = v.perishable
+    obj.usable = usable
+    obj.powerup = v.powerup
+    obj.sellable = v.sellable
+    obj.pawnable = v.pawnable
+    obj.droppable = v.dropable
+    obj.pickRandom = v.pickRandom or 1
+    obj.stockStart = v.stockStart or 0 -- 库存开始
+    obj.stockRegen = v.stockRegen or 0 -- 进货周期
+    obj.stockMax = v.stockMax or 1 -- 最大库存
+    obj.uses = v.uses --使用次数
+    if (v.HotKey ~= nil) then
+        obj.HotKey = v.HotKey
+        v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
+        v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
+        obj.Tip = "获得" .. v.Name .. "(" .. hColor.gold(v.HotKey) .. ")"
+    else
+        obj.Buttonpos1 = v.Buttonpos1 or 0
+        obj.Buttonpos2 = v.Buttonpos2 or 0
+        obj.Tip = "获得" .. v.Name
+    end
+    local id = obj:get_id()
+    if (shadowData.ITEM_ID ~= nil) then
+        shadowData.SHADOW_ID = id
+        table.insert(slkHelperHashData, { type = "item", data = shadowData })
+    end
+    table.insert(slkHelperHashData, {
+        type = "item",
+        data = {
+            CUSTOM_DATA = v.CUSTOM_DATA or {},
+            ID_ARRAY = v.ID_ARRAY or nil,
+            ITEM_ID = id,
+            Name = v.Name,
+            class = v.class,
+            Art = v.Art,
+            file = v.file,
+            goldcost = v.goldcost,
+            lumbercost = v.lumbercost,
+            usable = usable,
+            powerup = v.powerup,
+            perishable = v.perishable,
+            sellable = v.sellable,
+            OVERLIE = OVERLIE,
+            WEIGHT = v.WEIGHT,
+            ATTR = v.ATTR,
+            SHADOW_ID = shadowData.ITEM_ID or nil,
+        }
+    })
+    return shadowData.ITEM_ID or id
+end
 
 slkHelper.unit = {
     --- 创建一个单位

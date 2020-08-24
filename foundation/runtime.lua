@@ -16,7 +16,6 @@ hRuntime = {
             hslk_global.name2Value.item[json.Name] = json
             if (type(json.SHADOW_ID) == "string") then
                 hslk_global.items_shadow_mapping[json.ITEM_ID] = json.SHADOW_ID
-                hslk_global.items_shadow_mapping[json.SHADOW_ID] = json.ITEM_ID
             end
             if (json.ID_ARRAY ~= nil) then
                 if (hslk_global.id_array.item[json.ID_ARRAY] == nil) then

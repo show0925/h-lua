@@ -264,7 +264,7 @@ cj.TriggerAddAction(
         end
     end
 )
-for i = 1, bj_MAX_PLAYER_SLOTS, 1 do
+for i = 1, bj_MAX_PLAYERS, 1 do
     cj.TriggerRegisterPlayerUnitEvent(hRuntime.skill.silentTrigger, cj.Player(i - 1), EVENT_PLAYER_UNIT_SPELL_CHANNEL, nil)
     cj.TriggerRegisterPlayerUnitEvent(hRuntime.skill.unarmTrigger, cj.Player(i - 1), EVENT_PLAYER_UNIT_ATTACKED, nil)
 end
