@@ -118,7 +118,7 @@ hsound.bgm = function(musicFileName, whichPlayer)
                         hplayer.set(hplayer.players[i], 'bgmDelayTimer', nil)
                     end
                     hplayer.set(hplayer.players[i], 'bgmCurrent', musicFileName)
-                    hplayer.set(whichPlayer, 'bgmDelayTimer', htime.setTimeout(
+                    hplayer.set(hplayer.players[i], 'bgmDelayTimer', htime.setTimeout(
                         hsound.BREAK_DELAY,
                         function(t)
                             htime.delTimer(t)
