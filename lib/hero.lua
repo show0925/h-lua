@@ -165,6 +165,9 @@ hhero.rebornAtXY = function(whichHero, delay, invulnerable, x, y, showDialog)
                 function(t)
                     htime.delTimer(t)
                     if (his.deleted(whichHero) == false) then
+                        if (his.alive(whichHero)) then
+                            return
+                        end
                         cj.ReviveHero(whichHero, x, y, true)
                         if (invulnerable > 0) then
                             hskill.invulnerable(whichHero, invulnerable)
