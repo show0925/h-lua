@@ -147,8 +147,8 @@ end
 hunit.setCurLifePercent = function(u, val)
     local max = hunit.getMaxLife(u)
     local life = math.floor(max * val * 0.01)
-    if (max > 0 and life < 1) then
-        life = 1
+    if (life < 0) then
+        life = 0
     end
     hunit.setCurLife(u, life)
 end
@@ -164,10 +164,10 @@ end
 hunit.setCurManaPercent = function(u, val)
     local max = hunit.getMaxMana(u)
     local mana = math.floor(max * val * 0.01)
-    if (max > 0 and mana < 1) then
-        mana = 1
+    if (mana < 0) then
+        mana = 0
     end
-    hunit.setCurLife(u, mana)
+    hunit.setCurMana(u, mana)
 end
 
 --- 增加单位的经验值
