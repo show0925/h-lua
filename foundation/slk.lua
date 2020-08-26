@@ -56,7 +56,6 @@ hslk_global = {
     unit_hero_tavern = 0, -- 酒馆id
     unit_hero_tavern_token = 0, -- 酒馆选择马甲id（视野）
     unit_hero_death_token = 0,
-    items_shadow_mapping = {},
     id2Value = {
         unit = {},
         item = {},
@@ -98,7 +97,8 @@ hslk_global = {
         },
         item_attack_white = {
             add = {},
-            sub = {}
+            sub = {},
+            items = {},
         },
         attack_speed = {
             add = {},
@@ -188,6 +188,8 @@ for i = 1, 9 do
     hslk_global.attr.attack_white.sub[val] = cj.LoadInteger(cg.hash_hslk, HSK.ATTR_ATTACK_WHITE_SUB, val)
     hslk_global.attr.item_attack_white.add[val] = cj.LoadInteger(cg.hash_hslk, HSK.ATTR_ITEM_ATTACK_WHITE_ADD, val)
     hslk_global.attr.item_attack_white.sub[val] = cj.LoadInteger(cg.hash_hslk, HSK.ATTR_ITEM_ATTACK_WHITE_SUB, val)
+    table.insert(hslk_global.attr.item_attack_white.items, hslk_global.attr.item_attack_white.add[val])
+    table.insert(hslk_global.attr.item_attack_white.items, hslk_global.attr.item_attack_white.sub[val])
     hslk_global.attr.attack_speed.add[val] = cj.LoadInteger(cg.hash_hslk, HSK.ATTR_ATTACK_SPEED_ADD, val)
     hslk_global.attr.attack_speed.sub[val] = cj.LoadInteger(cg.hash_hslk, HSK.ATTR_ATTACK_SPEED_SUB, val)
     hslk_global.attr.defend.add[val] = cj.LoadInteger(cg.hash_hslk, HSK.ATTR_DEFEND_ADD, val)

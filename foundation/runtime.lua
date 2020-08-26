@@ -14,9 +14,6 @@ hRuntime = {
         item = function(json)
             hslk_global.id2Value.item[json.ITEM_ID] = json
             hslk_global.name2Value.item[json.Name] = json
-            if (type(json.SHADOW_ID) == "string") then
-                hslk_global.items_shadow_mapping[json.ITEM_ID] = json.SHADOW_ID
-            end
             if (json.ID_ARRAY ~= nil) then
                 if (hslk_global.id_array.item[json.ID_ARRAY] == nil) then
                     hslk_global.id_array.item[json.ID_ARRAY] = {}

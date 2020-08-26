@@ -588,7 +588,6 @@ slkHelper.item.normal = function(v)
     v.Art = v.Art or "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp"
     v.file = v.file or "Objects\\InventoryItems\\TreasureChest\\treasurechest.mdl"
     v.powerup = v.powerup or 0
-    v.perishable = v.perishable or 0
     v.sellable = v.sellable or 1
     v.pawnable = v.pawnable or 1
     v.dropable = v.dropable or 1
