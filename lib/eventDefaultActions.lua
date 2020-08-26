@@ -422,6 +422,27 @@ hevent_default_actions = {
                 }
             )
         end),
+        order = cj.Condition(function()
+            local triggerUnit = cj.GetTriggerUnit()
+            local orderId = cj.GetIssuedOrderId()
+            local orderTargetUnit = cj.GetOrderTargetUnit()
+            local orderPointLoc = cj.GetOrderPointLoc()
+            --[[
+                851983:ATTACK 攻击
+                851971:SMART
+                851986:MOVE 移动
+                851971:HOLD 保持原位
+                851972:STOP 停止
+            ]]
+            if (orderId == 851983 or orderId == 851971 or orderId == 851986) then
+            elseif (orderId == 851971 or orderId == 851972) then
+
+            end
+            --print_mb(orderId)
+            --print_mb(hunit.getName(triggerUnit))
+            --print_mb(hunit.getName(orderTargetUnit))
+            --print_mb(cj.GetLocationX(orderPointLoc), cj.GetLocationY(orderPointLoc))
+        end),
         sell = cj.Condition(function()
             local u = cj.GetSoldUnit()
             hunit.embed(u)
@@ -479,7 +500,12 @@ hevent_default_actions = {
     item = {
         pickup = cj.Condition(function()
             local it = cj.GetManipulatedItem()
-            local itId = string.id2char(cj.GetItemTypeId(it))
+            local itId = cj.GetItemTypeId(it)
+            if (table.includes(itId, hslk_global.attr.item_attack_white.items)) then
+                --过滤hlua白字攻击物品
+                return
+            end
+            itId = string.id2char(itId)
             local itSlk = hitem.getSlk(itId)
             if (itSlk == nil) then
                 return
@@ -490,88 +516,29 @@ hevent_default_actions = {
             end
             local u = cj.GetTriggerUnit()
             local charges = cj.GetItemCharges(it)
-            local isShadow = (itSlk.SHADOW == true)
-            if (isShadow == true) then
-                -- 如果是影子物品,删除并构建真实物品
-                local realId = hitem.getShadowMappingId(itId)
-                hitem.del(it, 0)
-                hitem.create(
-                    {
-                        itemId = realId,
-                        whichUnit = u,
-                        charges = charges,
-                        during = 0
-                    }
-                )
-            else
-                if (hitem.getIsPowerUp(itId) == true) then
-                    --触发使用物品事件
-                    hevent.triggerEvent(
-                        u,
-                        CONST_EVENT.itemUsed,
-                        {
-                            triggerUnit = u,
-                            triggerItem = it
-                        }
-                    )
-                    --检测是否有匹配使用
-                    if (#hitem.MATCH_ITEM_USED > 0) then
-                        local itemName = cj.GetItemName(it)
-                        for _, m in ipairs(hitem.MATCH_ITEM_USED) do
-                            local s, e = string.find(itemName, m[1])
-                            if (s ~= nil and e ~= nil) then
-                                m[2]({ triggerUnit = u, triggerItem = it })
-                            end
-                        end
-                    end
-                else
-                    --这里删除重建是为了实现地上物品的过期重置
-                    hitem.del(it, 0)
-                    hitem.create(
-                        {
-                            itemId = itId,
-                            whichUnit = u,
-                            charges = charges,
-                            during = 0
-                        }
-                    )
-                end
-            end
+            hitem.del(it, 0)
+            it = hitem.create(
+                {
+                    itemId = itId,
+                    whichUnit = u,
+                    charges = charges,
+                    during = 0
+                }
+            )
         end),
         drop = cj.Condition(function()
-            local u = cj.GetTriggerUnit()
             local it = cj.GetManipulatedItem()
-            local itId = string.id2char(cj.GetItemTypeId(it))
-            local shadowId = hitem.getShadowMappingId(itId)
+            local itId = cj.GetItemTypeId(it)
+            if (table.includes(itId, hslk_global.attr.item_attack_white.items)) then
+                --过滤hlua白字攻击物品
+                return
+            end
+            itId = string.id2char(itId)
+            local u = cj.GetTriggerUnit()
             local charges = cj.GetItemCharges(it)
-            if (cj.GetUnitCurrentOrder(u) == cj.OrderId("dropitem")) then
-                if (hRuntime.item[it] ~= nil) then
-                    if (shadowId ~= nil) then
-                        htime.setTimeout(
-                            0.1,
-                            function(t)
-                                htime.delTimer(t)
-                                local x = cj.GetItemX(it)
-                                local y = cj.GetItemY(it)
-                                hitem.del(it, 0)
-                                --这里是实现表面物品的关键
-                                it = hitem.create(
-                                    {
-                                        itemId = shadowId,
-                                        x = x,
-                                        y = y,
-                                        charges = charges,
-                                        during = 0
-                                    }
-                                )
-                            end
-                        )
-                    else
-                        hitem.setPositionType(it, hitem.POSITION_TYPE.COORDINATE)
-                    end
-                end
-                hitem.subAttribute(u, itId, charges)
-                --触发丢弃物品事件
+            if (cj.GetUnitCurrentOrder(u) == 852001) then
+                -- dropitem:852001
+                --触发丢弃物品事件，因为物品过后会被删除，所以先执行触发
                 hevent.triggerEvent(
                     u,
                     CONST_EVENT.itemDrop,
@@ -581,6 +548,29 @@ hevent_default_actions = {
                         targetUnit = cj.GetOrderTargetUnit(),
                     }
                 )
+                hitem.subAttribute(u, itId, charges)
+                hitem.setPositionType(it, hitem.POSITION_TYPE.COORDINATE)
+                htime.setTimeout(0.05, function(t)
+                    htime.delTimer(t)
+                    local n = cj.GetItemName(it)
+                    if (n ~= nil) then
+                        local slk = hitem.getSlk(it)
+                        if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
+                            local x = cj.GetItemX(it)
+                            local y = cj.GetItemY(it)
+                            hitem.del(it, 0)
+                            hitem.create(
+                                {
+                                    itemId = slk.SHADOW_ID,
+                                    x = x,
+                                    y = y,
+                                    charges = charges,
+                                    during = 0
+                                }
+                            )
+                        end
+                    end
+                end)
             end
         end),
         pawn = cj.Condition(function()

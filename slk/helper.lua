@@ -511,7 +511,7 @@ slkHelper.item.shadow = function(v)
     obj.powerup = 1
     obj.sellable = v.sellable or 1
     obj.pawnable = v.pawnable or 1
-    obj.droppable = v.dropable or 1
+    obj.droppable = v.droppable or 1
     obj.pickRandom = v.pickRandom or 1
     obj.stockStart = v.stockStart or 0
     obj.stockRegen = v.stockRegen or 0
@@ -551,6 +551,7 @@ end
 
 --- 创建一件实体物品
 --- 设置的CUSTOM_DATA数据会自动传到数据中
+--- 默认自动协助开启shadow模式（满格拾取/合成）
 ---@public
 ---@param v table
 slkHelper.item.normal = function(v)
@@ -592,7 +593,8 @@ slkHelper.item.normal = function(v)
     v.pawnable = v.pawnable or 1
     v.dropable = v.dropable or 1
     v.WEIGHT = v.WEIGHT or 0
-    local useShadow = false
+    -- 不是自动使用的默认启用useShadow
+    local useShadow = (v.powerup == 0)
     if (type(v.useShadow) == 'boolean') then
         useShadow = v.useShadow
     end
@@ -621,7 +623,7 @@ slkHelper.item.normal = function(v)
     obj.powerup = v.powerup
     obj.sellable = v.sellable
     obj.pawnable = v.pawnable
-    obj.droppable = v.dropable
+    obj.droppable = v.droppable or 1
     obj.pickRandom = v.pickRandom or 1
     obj.stockStart = v.stockStart or 0 -- 库存开始
     obj.stockRegen = v.stockRegen or 0 -- 进货周期
@@ -1054,11 +1056,11 @@ slkHelper.unit = {
         obj.sight = v.sight or 800
         obj.nsight = v.nsight or 800
         obj.unitSound = v.unitSound or ""
-        obj.unitShadow = v.unitShadow or ""
+        obj.unitShadow = ""
         obj.buildingShadow = v.buildingShadow or ""
         obj.Makeitems = v.Makeitems
         obj.Sellitems = v.Sellitems
-        obj.UberSplat = ""
+        obj.UberSplat = v.UberSplat or ""
         obj.race = v.race or "other"
         local id = obj:get_id()
         table.insert(slkHelperHashData, {

@@ -140,7 +140,7 @@ end
 
 -- 获取物品位置类型
 ---@param it userdata
----@return string
+---@return string|nil
 hitem.getPositionType = function(it)
     if (hRuntime.item[it] == nil) then
         return
@@ -152,17 +152,19 @@ end
 ---@param it userdata
 ---@param type string
 hitem.setPositionType = function(it, type)
+    if (it == nil or cj.GetItemName(it) == nil) then
+        return
+    end
     if (type == nil) then
         table.delete(it, hRuntime.itemPickPool)
         return
     end
-    if (hRuntime.item[it] == nil) then
-        hRuntime.item[it] = {}
-    end
-    hRuntime.item[it].positionType = type
-    --如果位置是在坐标轴上，将物品加入拾取池
-    if (type == hitem.POSITION_TYPE.COORDINATE) then
-        table.insert(hRuntime.itemPickPool, it)
+    if (hRuntime.item[it] ~= nil) then
+        hRuntime.item[it].positionType = type
+        --如果位置是在坐标轴上，将物品加入拾取池
+        if (type == hitem.POSITION_TYPE.COORDINATE) then
+            table.insert(hRuntime.itemPickPool, it)
+        end
     end
 end
 
@@ -552,11 +554,11 @@ end
  4 根据情况执行原物品叠加、合成等操作
 ]]
 ---@private
-hitem.detector = function(whichUnit, it)
-    if (whichUnit == nil or it == nil) then
+hitem.detector = function(whichUnit, originItem)
+    if (whichUnit == nil or originItem == nil) then
         print_err("detector params nil")
     end
-    local newWeight = hattr.get(whichUnit, "weight_current") + hitem.getWeight(it)
+    local newWeight = hattr.get(whichUnit, "weight_current") + hitem.getWeight(originItem)
     if (newWeight > hattr.get(whichUnit, "weight")) then
         local exWeight = newWeight - hattr.get(whichUnit, "weight")
         htextTag.style(
@@ -571,21 +573,43 @@ hitem.detector = function(whichUnit, it)
             CONST_EVENT.itemOverWeight,
             {
                 triggerUnit = whichUnit,
-                triggerItem = it,
+                triggerItem = originItem,
                 value = exWeight
             }
         )
-        hitem.setPositionType(it, hitem.POSITION_TYPE.COORDINATE)
+        hitem.setPositionType(originItem, hitem.POSITION_TYPE.COORDINATE)
         return false
     end
-    local overlie = hitem.getOverlie(it)
+
+    local getItem
+
+    -- 判断如果是影子物品，转为真实物品来判断
+    local originSlk = hitem.getSlk(originItem)
+    if (originSlk.SHADOW == true and originSlk.SHADOW_ID) then
+        local realX = cj.GetItemX(originItem)
+        local realY = cj.GetItemY(originItem)
+        local realCharges = cj.GetItemCharges(originItem)
+        hitem.del(originItem, nil)
+        getItem = hitem.create({
+            autoShadow = false,
+            itemId = originSlk.SHADOW_ID,
+            x = realX,
+            y = realY,
+            charges = realCharges,
+            during = 0
+        })
+        originItem = nil
+    else
+        getItem = originItem
+    end
+    local overlie = hitem.getOverlie(getItem)
     local isFullSlot = false
-    if (overlie > 1) then
+    if (overlie > 1 and hitem.getIsPowerUp(getItem) ~= true) then
         local isOverlieOver = false
         -- 可能可叠加的情况，先检查单位的各个物品是否还有叠加空位
         local tempIt
-        local currentItId = cj.GetItemTypeId(it)
-        local currentCharges = hitem.getCharges(it)
+        local currentItId = cj.GetItemTypeId(getItem)
+        local currentCharges = hitem.getCharges(getItem)
         for si = 0, 5, 1 do
             tempIt = cj.UnitItemInSlot(whichUnit, si)
             if (tempIt ~= nil and currentItId == cj.GetItemTypeId(tempIt)) then
@@ -597,14 +621,14 @@ hitem.detector = function(whichUnit, it)
                         -- 条件：如果旧物品足以容纳所有的新物品个数
                         -- 使旧物品使用次数增加，新物品删掉
                         cj.SetItemCharges(tempIt, currentCharges + tempCharges)
-                        hitem.del(it, 0)
+                        hitem.del(getItem, 0)
                         isOverlieOver = true
                         hitem.addAttribute(whichUnit, currentItId, currentCharges)
                         break
                     else
                         -- 否则，如果使用次数大于极限值,旧物品次数满载，新物品数量减少
                         cj.SetItemCharges(tempIt, overlie)
-                        cj.SetItemCharges(it, currentCharges - (overlie - tempCharges))
+                        cj.SetItemCharges(getItem, currentCharges - (overlie - tempCharges))
                         hitem.addAttribute(whichUnit, currentItId, overlie - tempCharges)
                     end
                 end
@@ -612,37 +636,83 @@ hitem.detector = function(whichUnit, it)
         end
         -- 如果叠加已经全部消化，这里就把物品it设置为nil
         if (isOverlieOver == true) then
-            it = nil
+            getItem = nil
         end
     end
     -- 如果物品还在~~
-    if (it ~= nil) then
-        -- 检查物品是否自动使用，不做处理（这种情况不应该存在，一般不会为自动物品构建shadow）
-        if (hitem.getIsPowerUp(it) == true) then
+    if (getItem ~= nil) then
+        local isPowerUp = hitem.getIsPowerUp(getItem)
+        local isPerishable = hitem.getIsPerishable(getItem)
+        local useCharged = hitem.getCharges(getItem)
+        -- 检查物品是否[自动使用]且[使用后消失]
+        if (isPowerUp == true and isPerishable == true) then
+            if (#hitem.MATCH_ITEM_USED > 0) then
+                local itemName = cj.GetItemName(getItem)
+                for _, m in ipairs(hitem.MATCH_ITEM_USED) do
+                    local s, e = string.find(itemName, m[1])
+                    if (s ~= nil and e ~= nil) then
+                        --用完消失的物品当然是所有次数都要使用
+                        for _ = 1, useCharged, 1 do
+                            --触发使用物品事件
+                            m[2]({ triggerUnit = whichUnit, triggerItem = getItem })
+                            hevent.triggerEvent(
+                                whichUnit,
+                                CONST_EVENT.itemUsed,
+                                {
+                                    triggerUnit = whichUnit,
+                                    triggerItem = getItem
+                                }
+                            )
+                        end
+                        break
+                    end
+                end
+            end
+            hitem.del(getItem, 0)
             return true
-        end
-        -- 检查身上是否还有格子
-        if (hitem.getEmptySlot(whichUnit) > 0) then
-            -- 都满足了，把物品给单位
-            hitem.setPositionType(it, hitem.POSITION_TYPE.UNIT)
-            cj.UnitAddItem(whichUnit, it)
+        elseif (hitem.getEmptySlot(whichUnit) > 0) then
+            -- 检查身上是否还有空格子，有就给单位
+            hitem.setPositionType(getItem, hitem.POSITION_TYPE.UNIT)
+            cj.UnitAddItem(whichUnit, getItem)
             -- 触发获得物品
             hevent.triggerEvent(
                 whichUnit,
                 CONST_EVENT.itemGet,
                 {
                     triggerUnit = whichUnit,
-                    triggerItem = it
+                    triggerItem = getItem
                 }
             )
-            local currentItId = cj.GetItemTypeId(it)
-            local currentCharges = hitem.getCharges(it)
-            hitem.addAttribute(whichUnit, currentItId, currentCharges)
-            it = nil
+            hitem.addAttribute(whichUnit, cj.GetItemTypeId(getItem), useCharged)
+            -- 如果是自动使用的物品
+            if (isPowerUp == true) then
+                if (#hitem.MATCH_ITEM_USED > 0) then
+                    local itemName = cj.GetItemName(getItem)
+                    for _, m in ipairs(hitem.MATCH_ITEM_USED) do
+                        local s, e = string.find(itemName, m[1])
+                        if (s ~= nil and e ~= nil) then
+                            --触发使用物品事件
+                            m[2]({ triggerUnit = whichUnit, triggerItem = getItem })
+                            hevent.triggerEvent(
+                                whichUnit,
+                                CONST_EVENT.itemUsed,
+                                {
+                                    triggerUnit = whichUnit,
+                                    triggerItem = getItem
+                                }
+                            )
+                            break
+                        end
+                    end
+                end
+            end
+            getItem = nil
         else
+            --满格判定
             isFullSlot = true
         end
     end
+    -- 第一次满格，检查是否可以合成（因为合成有可能减少物品总数）
     if (isFullSlot == true) then
         -- todo 满格了，检查是否可以合成（合成就相当于跳过了满格，所以之前的满格是个标志位，等待合成无效才会触发满格事件）
         if (false) then
@@ -655,17 +725,34 @@ hitem.detector = function(whichUnit, it)
             -- 6物品合成检测
         end
     end
+    -- 依然满格，触发满格事件
     if (isFullSlot) then
-        --触发满格事件
+        local slk = hitem.getSlk(getItem)
+        if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
+            local x = cj.GetItemX(getItem)
+            local y = cj.GetItemY(getItem)
+            local charges = cj.GetItemCharges(getItem)
+            hitem.del(getItem, 0)
+            getItem = hitem.create(
+                {
+                    itemId = slk.SHADOW_ID,
+                    x = x,
+                    y = y,
+                    charges = charges,
+                    during = 0
+                }
+            )
+        else
+            hitem.setPositionType(getItem, hitem.POSITION_TYPE.COORDINATE)
+        end
         hevent.triggerEvent(
             whichUnit,
             CONST_EVENT.itemOverWeight,
             {
                 triggerUnit = whichUnit,
-                triggerItem = it
+                triggerItem = getItem
             }
         )
-        hitem.setPositionType(it, hitem.POSITION_TYPE.COORDINATE)
         return false
     end
     return true
@@ -699,41 +786,60 @@ hitem.create = function(bean)
     end
     local charges = bean.charges
     local during = bean.during or 0
-    if (type(bean.itemId) == "string") then
-        bean.itemId = string.char2id(bean.itemId)
-    end
     -- 优先级 坐标 > 单位 > 点
-    local it
-    local type
+    local x, y
+    local itemId = bean.itemId
+    local posType
     if (bean.x ~= nil and bean.y ~= nil) then
-        it = cj.CreateItem(bean.itemId, bean.x, bean.y)
-        type = hitem.POSITION_TYPE.COORDINATE
+        x = bean.x
+        y = bean.y
+        posType = hitem.POSITION_TYPE.COORDINATE
     elseif (bean.whichUnitPosition ~= nil) then
-        it = cj.CreateItem(bean.itemId, hunit.x(bean.whichUnit), hunit.y(bean.whichUnit))
-        type = hitem.POSITION_TYPE.COORDINATE
+        x = hunit.x(bean.whichUnit)
+        y = hunit.y(bean.whichUnit)
+        posType = hitem.POSITION_TYPE.COORDINATE
     elseif (bean.whichUnit ~= nil) then
-        it = cj.CreateItem(bean.itemId, hunit.x(bean.whichUnit), hunit.y(bean.whichUnit))
-        type = hitem.POSITION_TYPE.UNIT
+        x = hunit.x(bean.whichUnit)
+        y = hunit.y(bean.whichUnit)
+        posType = hitem.POSITION_TYPE.UNIT
     elseif (bean.whichLoc ~= nil) then
-        it = cj.CreateItem(bean.itemId, cj.GetLocationX(bean.whichLoc), cj.GetLocationY(bean.whichLoc))
-        type = hitem.POSITION_TYPE.COORDINATE
+        x = cj.GetLocationX(bean.whichLoc)
+        y = cj.GetLocationY(bean.whichLoc)
+        posType = hitem.POSITION_TYPE.COORDINATE
     else
         print_err("hitem create -site")
         return
     end
+    local it
+    if (type(itemId) == "string") then
+        it = cj.CreateItem(string.char2id(itemId), x, y)
+    else
+        it = cj.CreateItem(itemId, x, y)
+    end
     cj.SetItemCharges(it, charges)
-    hRuntime.item[it] = {
-        name = hitem.getName(it),
-        itemId = bean.itemId,
-        during = bean.during
-    }
-    hitem.setPositionType(it, type)
-    if (type == hitem.POSITION_TYPE.UNIT) then
+    if (posType == hitem.POSITION_TYPE.UNIT) then
+        hRuntime.item[it] = {}
+        hitem.setPositionType(it, posType)
         hitem.detector(bean.whichUnit, it)
         if (bean.slotIndex ~= nil and bean.slotIndex >= 0 and bean.slotIndex <= 5) then
             cj.UnitDropItemSlot(bean.whichUnit, it, bean.slotIndex)
         end
     else
+        if (type(bean.autoShadow) ~= 'boolean') then
+            bean.autoShadow = true
+        end
+        if (bean.autoShadow == true) then
+            -- 默认如果可能的话，自动协助将真实物品转为影子物品(*小心死循环)
+            local slk = hitem.getSlk(it)
+            if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
+                x = cj.GetItemX(it)
+                y = cj.GetItemY(it)
+                hitem.del(it, 0)
+                it = cj.CreateItem(string.char2id(slk.SHADOW_ID), x, y)
+            end
+        end
+        hRuntime.item[it] = {}
+        hitem.setPositionType(it, posType)
         if (during > 0) then
             htime.setTimeout(
                 during,
@@ -744,6 +850,9 @@ hitem.create = function(bean)
             )
         end
     end
+    itemId = nil
+    x = nil
+    y = nil
     return it
 end
 

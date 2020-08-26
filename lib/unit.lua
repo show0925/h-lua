@@ -387,6 +387,12 @@ hunit.embed = function(u, options)
     hevent.pool(u, hevent_default_actions.unit.death, function(tgr)
         cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DEATH)
     end)
+    -- 单位指令
+    hevent.pool(u, hevent_default_actions.unit.order, function(tgr)
+        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_ORDER)
+        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_POINT_ORDER)
+        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_TARGET_ORDER)
+    end)
     -- 物品系统
     if (his.hasSlot(u)) then
         hitem.register(u)
