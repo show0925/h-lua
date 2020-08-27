@@ -20,6 +20,23 @@ slkHelper = {
     courierBlink = nil,
     ---@private
     courierPickUp = nil,
+    ---@public slkHelper配置项
+    conf = {
+        --是否自动启用影子物品
+        itemAutoShadow = false,
+        --一般单位白天视野默认值
+        unitSight = 1400,
+        --一般单位黑夜视野默认值
+        unitNSight = 800,
+        --英雄单位白天视野默认值
+        heroSight = 1800,
+        --英雄单位黑夜视野默认值
+        heroNSight = 800,
+        --商店单位白天视野默认值
+        shopSight = 1200,
+        --商店单位黑夜视野默认值
+        shopNSight = 1200,
+    }
 }
 
 --[[
@@ -551,7 +568,7 @@ end
 
 --- 创建一件实体物品
 --- 设置的CUSTOM_DATA数据会自动传到数据中
---- 默认自动协助开启shadow模式（满格拾取/合成）
+--- 默认不会自动协助开启shadow模式（满格拾取/合成）可以设置slkHelper的conf来配置
 ---@public
 ---@param v table
 slkHelper.item.normal = function(v)
@@ -593,8 +610,8 @@ slkHelper.item.normal = function(v)
     v.pawnable = v.pawnable or 1
     v.dropable = v.dropable or 1
     v.WEIGHT = v.WEIGHT or 0
-    -- 不是自动使用的默认启用useShadow
-    local useShadow = (v.powerup == 0)
+    -- 处理useShadow
+    local useShadow = (slkHelper.conf.itemAutoShadow == true and v.powerup == 0)
     if (type(v.useShadow) == 'boolean') then
         useShadow = v.useShadow
     end
@@ -692,8 +709,8 @@ slkHelper.unit = {
         v.lumbercost = v.lumbercost or 0
         v.def = v.def or 0
         v.rangeN1 = v.rangeN1 or 100
-        v.sight = v.sight or 1400
-        v.nsight = v.nsight or 800
+        v.sight = v.sight or slkHelper.conf.unitSight
+        v.nsight = v.nsight or slkHelper.conf.unitNSight
         local acquire = v.acquire or (v.rangeN1 + 100) -- 警戒范围
         if (acquire < (v.rangeN1 + 100)) then
             acquire = v.rangeN1 + 100
@@ -735,8 +752,8 @@ slkHelper.unit = {
         obj.stockMax = v.stockMax or 1 -- 最大库存
         obj.collision = 32 --接触体积
         obj.def = v.def or 0.00 -- 护甲
-        obj.sight = v.sight or 1000 -- 白天视野
-        obj.nsight = v.nsight or 1000 -- 夜晚视野
+        obj.sight = v.sight -- 白天视野
+        obj.nsight = v.nsight -- 夜晚视野
         obj.targs1 = targs1
         obj.EditorSuffix = v.EditorSuffix or ""
         obj.abilList = string.implode(",", abl)
@@ -880,8 +897,8 @@ slkHelper.unit = {
         v.cool1 = v.cool1 or 1.50
         v.def = v.def or 0
         v.rangeN1 = v.rangeN1 or 100
-        v.sight = v.sight or 1800
-        v.nsight = v.nsight or 800
+        v.sight = v.sight or slkHelper.conf.heroSight
+        v.nsight = v.nsight or slkHelper.conf.heroNSight
         local acquire = v.acquire or v.rangeN1 -- 警戒范围
         if (acquire < 1000) then
             acquire = 1000
@@ -1053,8 +1070,8 @@ slkHelper.unit = {
         obj.modelScale = v.modelScale or 1.00
         obj.scale = v.scale or 1.00
         obj.HP = v.HP or 99999
-        obj.sight = v.sight or 800
-        obj.nsight = v.nsight or 800
+        obj.sight = v.sight or slkHelper.conf.shopSight
+        obj.nsight = v.nsight or slkHelper.conf.shopNSight
         obj.unitSound = v.unitSound or ""
         obj.unitShadow = ""
         obj.buildingShadow = v.buildingShadow or ""
@@ -1147,8 +1164,8 @@ slkHelper.unit = {
         v.cool1 = v.cool1 or 1.50
         v.def = v.def or 0
         v.rangeN1 = v.rangeN1 or 100
-        v.sight = v.sight or 1800
-        v.nsight = v.nsight or 800
+        v.sight = v.sight or slkHelper.conf.unitSight
+        v.nsight = v.nsight or slkHelper.conf.unitNSight
         v.dmgplus1 = v.dmgplus1 or 0
         v.movetp = v.movetp or "foot"
         v.moveHeight = v.moveHeight or 0
@@ -1379,8 +1396,8 @@ slkHelper.unit = {
         obj.modelScale = v.modelScale or 1.00
         obj.scale = v.scale or 1.00
         obj.HP = v.HP or 99999
-        obj.sight = v.sight or 800
-        obj.nsight = v.nsight or 800
+        obj.sight = v.sight or slkHelper.conf.shopSight
+        obj.nsight = v.nsight or slkHelper.conf.shopNSight
         obj.unitSound = v.unitSound or ""
         obj.uberSplat = ""
         obj.teamColor = 12
