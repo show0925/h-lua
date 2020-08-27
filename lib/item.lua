@@ -560,7 +560,7 @@ hitem.detector = function(whichUnit, originItem)
     end
     local newWeight = hattr.get(whichUnit, "weight_current") + hitem.getWeight(originItem)
     if (newWeight > hattr.get(whichUnit, "weight")) then
-        local exWeight = newWeight - hattr.get(whichUnit, "weight")
+        local exWeight = math.round(newWeight - hattr.get(whichUnit, "weight"))
         htextTag.style(
             htextTag.create2Unit(whichUnit, "负重超出" .. exWeight .. "kg", 8.00, "ffffff", 1, 1.1, 50.00),
             "scale",
