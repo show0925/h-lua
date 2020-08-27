@@ -22,20 +22,92 @@ slkHelper = {
     courierPickUp = nil,
     ---@public slkHelper配置项
     conf = {
-        --是否自动启用影子物品
+        -- 是否自动启用影子物品
         itemAutoShadow = false,
-        --一般单位白天视野默认值
+        -- 是否自动启用信使技能
+        courierAutoSkill = false,
+        -- 信使技能-名称、热键、图标位置、冷却
+        courierSkill = {
+            blink = {
+                name = "闪烁",
+                desc = "可以闪烁到任何地方",
+                Art = "ReplaceableTextures\\CommandButtons\\BTNBlink.blp",
+                hotKey = 'Q',
+                x = 0,
+                y = 2,
+                coolDown = 10
+            },
+            pickUp = {
+                name = "拾取",
+                desc = "将附近地上的物品拾取到身上",
+                Art = "ReplaceableTextures\\CommandButtons\\BTNPickUpItem.blp",
+                hotKey = 'W',
+                x = 1,
+                y = 2,
+                coolDown = 1
+            },
+        },
+        -- 一般单位白天视野默认值
         unitSight = 1400,
-        --一般单位黑夜视野默认值
+        -- 一般单位黑夜视野默认值
         unitNSight = 800,
-        --英雄单位白天视野默认值
+        -- 英雄单位白天视野默认值
         heroSight = 1800,
-        --英雄单位黑夜视野默认值
+        -- 英雄单位黑夜视野默认值
         heroNSight = 800,
-        --商店单位白天视野默认值
+        -- 商店单位白天视野默认值
         shopSight = 1200,
-        --商店单位黑夜视野默认值
+        -- 商店单位黑夜视野默认值
         shopNSight = 1200,
+        -- 描述文本颜色,需要配置 hColor 里拥有的颜色函数名
+        color = {
+            -- 热键
+            hotKey = "gold",
+            -- 物品主动
+            itemActive = "yellow",
+            -- 物品被动
+            itemPassive = "seaLight",
+            -- 物品冷却时间
+            itemCoolDown = "skyLight",
+            -- 物品属性
+            itemAttr = "green",
+            -- 物品叠加
+            itemOverlie = "purple",
+            -- 物品重量
+            itemWeight = "purpleLight",
+            -- 物品描述
+            itemDesc = "grey",
+            -- 技能主动
+            abilityActive = "yellow",
+            -- 技能被动
+            abilityPassive = "seaLight",
+            -- 技能冷却时间
+            abilityCoolDown = "skyLight",
+            -- 技能属性
+            abilityAttr = "green",
+            -- 技能描述
+            abilityDesc = "grey",
+            -- 光环范围
+            abilityRingArea = "seaLight",
+            -- 光环作用目标
+            abilityRingTarget = "seaLight",
+            -- 光环描述
+            abilityRingDesc = "white",
+            -- 光环单一作用提示
+            abilityRingAlertTips = "grey",
+            -- 英雄攻击武器类型
+            heroWeapon = "red",
+            -- 英雄基础攻击
+            heroAttack = "redLight",
+            -- 英雄攻击范围
+            heroRange = "seaLight",
+            -- 英雄主属性
+            heroPrimary = "yellow",
+            -- 英雄主属性
+            heroSecondary = "yellowLight",
+            -- 英雄移动
+            heroMove = "greenLight",
+        }
     }
 }
 
@@ -165,7 +237,7 @@ slkHelper.attrDesc = function(attr, sep)
                     elseif (vv["attr"] == "crack_fly") then
                         temp2 = temp2 .. CONST_ATTR[vv["attr"]] .. "目标高达" .. high .. "高度"
                         if (val > 0) then
-                            temp2 = temp2 .. ",并击退" .. distance .. "范围"
+                            temp2 = temp2 .. ",并击退" .. distance .. "距离"
                         end
                         if (val > 0) then
                             temp2 = temp2 .. ",同时造成" .. val .. "伤害"
@@ -309,29 +381,30 @@ end
 slkHelper.itemUbertip = function(v)
     local d = {}
     if (v.ACTIVE ~= nil) then
-        table.insert(d, hColor.yellow("主动：" .. v.ACTIVE))
+        table.insert(d, hColor[slkHelper.conf.color.itemActive]("主动：" .. v.ACTIVE))
         if (v.cooldown ~= nil and v.cooldown > 0) then
-            table.insert(d, hColor.skyLight("冷却：" .. v.cooldown .. "秒"))
+            table.insert(d, hColor[slkHelper.conf.color.itemCoolDown]("冷却：" .. v.cooldown .. "秒"))
         end
     end
     if (v.PASSIVE ~= nil) then
-        table.insert(d, hColor.seaLight("被动：" .. v.PASSIVE))
+        table.insert(d, hColor[slkHelper.conf.color.itemPassive]("被动：" .. v.PASSIVE))
     end
     if (v.ATTR ~= nil) then
         table.sort(v.ATTR)
-        table.insert(d, hColor.green(slkHelper.attrDesc(v.ATTR, "|n")))
+        table.insert(d, hColor[slkHelper.conf.color.itemAttr](slkHelper.attrDesc(v.ATTR, "|n")))
     end
     -- 仅文本无效果，适用于例如技能书这类的物品
     if (v.ATTR_TXT ~= nil) then
         table.sort(v.ATTR_TXT)
-        table.insert(d, hColor.green(slkHelper.attrDesc(v.ATTR_TXT, "|n")))
+        table.insert(d, hColor[slkHelper.conf.color.itemAttr](slkHelper.attrDesc(v.ATTR_TXT, "|n")))
     end
     local overlie = v.OVERLIE or 1
+    table.insert(d, hColor[slkHelper.conf.color.itemOverlie]("叠加：" .. overlie))
     local weight = v.WEIGHT or 0
     weight = tostring(math.round(weight))
-    table.insert(d, hColor.purpleLight("叠加：" .. overlie .. "|n重量：" .. weight .. "Kg"))
+    table.insert(d, hColor[slkHelper.conf.color.itemWeight]("重量：" .. weight .. "Kg"))
     if (v.Desc ~= nil and v.Desc ~= "") then
-        table.insert(d, hColor.grey(v.Desc))
+        table.insert(d, hColor[slkHelper.conf.color.itemDesc]("|n" .. v.Desc))
     end
     return string.implode("|n", d)
 end
@@ -341,14 +414,14 @@ end
 slkHelper.abilityEmptyUbertip = function(v)
     local d = {}
     if (v.PASSIVE ~= nil) then
-        table.insert(d, hColor.seaLight("被动：" .. v.PASSIVE))
+        table.insert(d, hColor[slkHelper.conf.color.abilityPassive]("被动：" .. v.PASSIVE))
     end
     if (v.ATTR ~= nil) then
         table.sort(v.ATTR)
-        table.insert(d, hColor.green(slkHelper.attrDesc(v.ATTR, "|n")))
+        table.insert(d, hColor[slkHelper.conf.color.abilityAttr](slkHelper.attrDesc(v.ATTR, "|n")))
     end
     if (v.Desc ~= nil and v.Desc ~= "") then
-        table.insert(d, hColor.grey(v.Desc))
+        table.insert(d, hColor[slkHelper.conf.color.abilityDesc](v.Desc))
     end
     return string.implode("|n", d)
 end
@@ -358,7 +431,7 @@ end
 slkHelper.abilityRingUbertip = function(v)
     local d = {}
     if (v.Area1 ~= nil) then
-        table.insert(d, hColor.seaLight("光环范围：" .. v.Area1))
+        table.insert(d, hColor[slkHelper.conf.color.abilityRingArea]("光环范围：" .. v.Area1))
     end
     if (v.targs1 ~= nil) then
         local targs1 = string.explode(',', v.targs1)
@@ -366,15 +439,15 @@ slkHelper.abilityRingUbertip = function(v)
         for _, t in ipairs(targs1) do
             table.insert(labels, CONST_TARGET_LABEL[t])
         end
-        table.insert(d, hColor.seaLight("作用目标：" .. string.implode(',', labels)))
+        table.insert(d, hColor[slkHelper.conf.color.abilityRingTarget]("作用目标：" .. string.implode(',', labels)))
         labels = nil
     end
     if (v.RING ~= nil) then
         table.sort(v.RING)
-        table.insert(d, hColor.green(slkHelper.attrDesc(v.RING, "|n")))
+        table.insert(d, hColor[slkHelper.conf.color.abilityAttr](slkHelper.attrDesc(v.RING, "|n")))
     end
     if (v.Desc ~= nil and v.Desc ~= "") then
-        table.insert(d, v.Desc)
+        table.insert(d, hColor[slkHelper.conf.color.abilityRingDesc](v.Desc))
     end
     return string.implode("|n", d)
 end
@@ -470,7 +543,7 @@ slkHelper.item.shadow = function(v)
         obj.HotKey = v.HotKey
         v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
         v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-        obj.Tip = "获得" .. v.Name .. "(" .. hColor.gold(v.HotKey) .. ")"
+        obj.Tip = "获得" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. ")"
     else
         obj.Buttonpos1 = v.Buttonpos1 or 0
         obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -582,7 +655,7 @@ slkHelper.item.normal = function(v)
         obj.HotKey = v.HotKey
         v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
         v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-        obj.Tip = "获得" .. v.Name .. "(" .. hColor.gold(v.HotKey) .. ")"
+        obj.Tip = "获得" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. ")"
     else
         obj.Buttonpos1 = v.Buttonpos1 or 0
         obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -653,7 +726,7 @@ slkHelper.unit = {
             obj.HotKey = v.HotKey
             v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-            obj.Tip = "选择：" .. v.Name .. "(" .. hColor.gold(v.HotKey) .. ")"
+            obj.Tip = "选择：" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. ")"
         else
             obj.Buttonpos1 = v.Buttonpos1 or 0
             obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -789,25 +862,25 @@ slkHelper.unit = {
         v.Name = v.Name or "英雄-" .. slkHelper.count
         local Primary = v.Primary or "STR"
         local Ubertip = ""
-        Ubertip = Ubertip .. hColor.red("攻击类型：" .. CONST_WEAPON_TYPE[v.weapTp1].label .. "(" .. v.cool1 .. "秒/击)")
-        Ubertip = Ubertip .. "|n" .. hColor.redLight("基础攻击：" .. v.dmgplus1)
-        Ubertip = Ubertip .. "|n" .. hColor.seaLight("攻击范围：" .. v.rangeN1)
+        Ubertip = Ubertip .. hColor[slkHelper.conf.color.heroWeapon]("攻击类型：" .. CONST_WEAPON_TYPE[v.weapTp1].label .. "(" .. v.cool1 .. "秒/击)")
+        Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroAttack]("基础攻击：" .. v.dmgplus1)
+        Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroRange]("攻击范围：" .. v.rangeN1)
         if (Primary == "STR") then
-            Ubertip = Ubertip .. "|n" .. hColor.yellow("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
         else
-            Ubertip = Ubertip .. "|n" .. hColor.yellowLight("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
         end
         if (Primary == "AGI") then
-            Ubertip = Ubertip .. "|n" .. hColor.yellow("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
         else
-            Ubertip = Ubertip .. "|n" .. hColor.yellowLight("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
         end
         if (Primary == "INT") then
-            Ubertip = Ubertip .. "|n" .. hColor.yellow("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
         else
-            Ubertip = Ubertip .. "|n" .. hColor.yellowLight("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
         end
-        Ubertip = Ubertip .. "|n" .. hColor.greenLight("移动：" .. v.spd .. " " .. CONST_MOVE_TYPE[v.movetp].label)
+        Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroMove]("移动：" .. v.spd .. " " .. CONST_MOVE_TYPE[v.movetp].label)
         if (v.Ubertip ~= nil) then
             Ubertip = Ubertip .. "|n|n" .. v.Ubertip -- 自定义说明会在最后
         end
@@ -841,7 +914,7 @@ slkHelper.unit = {
             obj.HotKey = v.HotKey
             v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-            obj.Tip = "选择：" .. v.Name .. "(" .. hColor.gold(v.HotKey) .. ")"
+            obj.Tip = "选择：" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. ")"
         else
             obj.Buttonpos1 = v.Buttonpos1 or 0
             obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -1037,21 +1110,21 @@ slkHelper.unit = {
     courier = function(v)
         if (slkHelper.courierBlink == nil) then
             local obj = slk.ability.AEbl:new("slk_courier_blink")
-            local Name = "闪烁"
-            local Tip = "闪烁(" .. hColor.gold("Q") .. ")"
-            obj.Name = Name
+            local Tip = slkHelper.conf.courierSkill.blink.name ..
+                "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.blink.hotKey) .. ")"
+            obj.Name = slkHelper.conf.courierSkill.blink.name
             obj.Tip = Tip
-            obj.Hotkey = "Q"
-            obj.Ubertip = "可以闪烁到任何地方"
-            obj.Buttonpos1 = 0
-            obj.Buttonpos2 = 2
+            obj.Hotkey = slkHelper.conf.courierSkill.blink.hotKey
+            obj.Ubertip = slkHelper.conf.courierSkill.blink.desc
+            obj.Buttonpos1 = slkHelper.conf.courierSkill.blink.x
+            obj.Buttonpos2 = slkHelper.conf.courierSkill.blink.y
             obj.hero = 0
             obj.levels = 1
             obj.DataA1 = 99999
             obj.DataB1 = 0
-            obj.Cool1 = 10
+            obj.Cool1 = slkHelper.conf.courierSkill.blink.coolDown
             obj.Cost1 = 0
-            obj.Art = "ReplaceableTextures\\CommandButtons\\BTNBlink.blp"
+            obj.Art = slkHelper.conf.courierSkill.blink.Art
             obj.SpecialArt = "Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl"
             obj.Areaeffectart = "Abilities\\Spells\\NightElf\\Blink\\BlinkTarget.mdl"
             obj.race = v.race or "other"
@@ -1059,25 +1132,25 @@ slkHelper.unit = {
         end
         if (slkHelper.courierPickUp == nil) then
             local obj = slk.ability.ANcl:new("slk_courier_pickup")
-            local Name = "拾取"
-            local Tip = "拾取(" .. hColor.gold("W") .. ")"
+            local Tip = slkHelper.conf.courierSkill.pickUp.name ..
+                "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.pickUp.desc) .. ")"
             obj.Order = "manaburn"
             obj.DataF1 = "manaburn"
-            obj.Name = Name
+            obj.Name = slkHelper.conf.courierSkill.pickUp.name
             obj.Tip = Tip
-            obj.Hotkey = "W"
-            obj.Ubertip = "将附近地上的物品拾取到身上"
-            obj.Buttonpos1 = 1
-            obj.Buttonpos2 = 2
+            obj.Hotkey = slkHelper.conf.courierSkill.pickUp.hotKey
+            obj.Ubertip = slkHelper.conf.courierSkill.pickUp.desc
+            obj.Buttonpos1 = slkHelper.conf.courierSkill.pickUp.x
+            obj.Buttonpos2 = slkHelper.conf.courierSkill.pickUp.y
             obj.hero = 0
             obj.levels = 1
             obj.DataA1 = 0
             obj.DataB1 = 0
             obj.DataC1 = 1
             obj.DataD1 = 0.01
-            obj.Cool1 = 1
+            obj.Cool1 = slkHelper.conf.courierSkill.pickUp.coolDown
             obj.Cost1 = 0
-            obj.Art = "ReplaceableTextures\\CommandButtons\\BTNPickUpItem.blp"
+            obj.Art = slkHelper.conf.courierSkill.pickUp.Art
             obj.CasterArt = ""
             obj.EffectArt = ""
             obj.TargetArt = ""
@@ -1116,7 +1189,7 @@ slkHelper.unit = {
         if (v.HotKey ~= nil) then
             v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-            Tip = "选择：" .. Name .. "(" .. hColor.gold(v.HotKey) .. ")"
+            Tip = "选择：" .. Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. ")"
         else
             v.Buttonpos1 = v.Buttonpos1 or 0
             v.Buttonpos2 = v.Buttonpos2 or 0
@@ -1127,26 +1200,26 @@ slkHelper.unit = {
             UNIT_TYPE = "courier_hero"
             --- 如果是英雄型信使
             Primary = v.Primary or "STR"
-            Ubertip = hColor.greenLight("移动：" .. v.spd .. " " .. CONST_MOVE_TYPE[v.movetp].label)
+            Ubertip = hColor[slkHelper.conf.color.heroMove]("移动：" .. v.spd .. " " .. CONST_MOVE_TYPE[v.movetp].label)
             if (v.weapsOn == 1) then
-                Ubertip = Ubertip .. "|n" .. hColor.red("攻击类型：" .. CONST_WEAPON_TYPE[v.weapTp1].label .. "(" .. v.cool1 .. "秒/击)")
-                Ubertip = Ubertip .. "|n" .. hColor.redLight("基础攻击：" .. v.dmgplus1)
-                Ubertip = Ubertip .. "|n" .. hColor.seaLight("攻击范围：" .. v.rangeN1)
+                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroWeapon]("攻击类型：" .. CONST_WEAPON_TYPE[v.weapTp1].label .. "(" .. v.cool1 .. "秒/击)")
+                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroAttack]("基础攻击：" .. v.dmgplus1)
+                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroRange]("攻击范围：" .. v.rangeN1)
             end
             if (Primary == "STR") then
-                Ubertip = Ubertip .. "|n" .. hColor.yellow("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
+                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
             else
-                Ubertip = Ubertip .. "|n" .. hColor.yellowLight("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
+                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
             end
             if (Primary == "AGI") then
-                Ubertip = Ubertip .. "|n" .. hColor.yellow("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
+                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
             else
-                Ubertip = Ubertip .. "|n" .. hColor.yellowLight("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
+                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
             end
             if (Primary == "INT") then
-                Ubertip = Ubertip .. "|n" .. hColor.yellow("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
+                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
             else
-                Ubertip = Ubertip .. "|n" .. hColor.yellowLight("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
+                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
             end
             if (v.Ubertip ~= nil) then
                 Ubertip = Ubertip .. "|n|n" .. v.Ubertip -- 自定义说明会在最后
@@ -1368,7 +1441,7 @@ slkHelper.ability = {
         if (v.HotKey ~= nil) then
             v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.HotKey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.HotKey].Buttonpos2 or 0
-            v.Tip = Name .. "[" .. hColor.gold(v.HotKey) .. "]"
+            v.Tip = Name .. "[" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. "]"
             Name = Name .. v.HotKey
         else
             v.Tip = Name
@@ -1426,7 +1499,7 @@ slkHelper.ability = {
         if (v.HotKey ~= nil) then
             v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.HotKey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.HotKey].Buttonpos2 or 0
-            v.Tip = Name .. "[" .. hColor.gold(v.HotKey) .. "] "
+            v.Tip = Name .. "[" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. "] "
             Name = Name .. v.HotKey
         else
             v.Tip = Name
@@ -1436,7 +1509,7 @@ slkHelper.ability = {
         obj.HotKey = v.HotKey or " "
         obj.Name = Name
         obj.Tip = v.Tip
-        obj.Ubertip = slkHelper.abilityRingUbertip(v) .. "|n|n" .. hColor.grey(" * 同一种光环仅有一个有效")
+        obj.Ubertip = slkHelper.abilityRingUbertip(v) .. "|n|n" .. hColor[slkHelper.conf.color.abilityRingAlertTips](" * 同一种光环仅有一个有效")
         obj.Buttonpos1 = v.Buttonpos1
         obj.Buttonpos2 = v.Buttonpos2
         obj.TargetArt = v.TargetArt or ""
