@@ -39,7 +39,6 @@ local HSK = {
     ATTR_SIGHT_SUB = 137,
     ENV_MODEL_NAME = 138,
     ENV_MODEL = 139,
-    EX_SHAPESHIFT = 200
 }
 
 hslk_global = {
@@ -49,7 +48,6 @@ hslk_global = {
     skill_break = {},
     skill_swim_unlimit = 0,
     skill_hero_tavern_selection = 0,
-    skill_shapeshift = {},
     unit_token = 0,
     unit_token_leap = 0,
     unit_token_alert_circle = 0,
@@ -220,14 +218,6 @@ table.sort(
         return a > b
     end
 )
--- 变身(仅作演示)
-local toUnitId = cj.LoadInteger(cg.hash_hslk, HSK.EX_SHAPESHIFT, 1)
-local toAbilityId = cj.LoadInteger(cg.hash_hslk, HSK.EX_SHAPESHIFT, 2)
-local backAbilityId = cj.LoadInteger(cg.hash_hslk, HSK.EX_SHAPESHIFT, 3)
-hslk_global.skill_shapeshift[toUnitId] = {
-    toAbilityId = toAbilityId,
-    backAbilityId = backAbilityId
-}
 
 for i = 1, 4 do
     local qty = cj.LoadInteger(cg.hash_hslk_helper, 0, i)

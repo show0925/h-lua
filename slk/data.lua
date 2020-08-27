@@ -43,7 +43,6 @@ HLUA_SLK_KEYS = {
     ATTR_SIGHT_SUB = 137,
     ENV_MODEL_NAME = 138,
     ENV_MODEL = 139,
-    EX_SHAPESHIFT = 200
 }
 
 --单位
@@ -1174,43 +1173,6 @@ table.insert(
         HLUA_SLK_KEYS.COMMON,
         HLUA_SLK_KEYS.ENV_MODEL,
         envsLen,
-        "int"
-    }
-)
-
--- #变身演示
-local re = slkHelper.shapeshift(
-    {
-        fromUnitId = "Obla", --来自
-        toName = "变身演示To",
-        toArt = "ReplaceableTextures\\CommandButtons\\BTNChaosBlademaster.blp",
-        toFile = "units\\demon\\HeroChaosBladeMaster\\HeroChaosBladeMaster.mdl"
-    }
-)
-table.insert(
-    slkHashData,
-    {
-        HLUA_SLK_KEYS.EX_SHAPESHIFT,
-        1,
-        re.toUnitId,
-        "int"
-    }
-)
-table.insert(
-    slkHashData,
-    {
-        HLUA_SLK_KEYS.EX_SHAPESHIFT,
-        2,
-        re.toAbilityId,
-        "int"
-    }
-)
-table.insert(
-    slkHashData,
-    {
-        HLUA_SLK_KEYS.EX_SHAPESHIFT,
-        3,
-        re.backAbilityId,
         "int"
     }
 )
