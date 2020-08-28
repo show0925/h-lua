@@ -108,11 +108,6 @@ slkHelper = {
             -- 英雄移动
             heroMove = "greenLight",
         },
-        --- 物品合成公式数组，只支持slkHelper创建的注册物品
-        ---例子1 "小刀割大树=小刀+大树" 2个不一样的合1个
-        ---例子2 "三头地狱犬的神识=地狱狗头*3" 3个一样的合1个
-        ---例子3 "精灵神水*2=精灵的眼泪*50" 50个一样的合一种,但得到2个(在执行合成时为了效率不判断叠加上限，自己管理好最大使用次数)
-        synthesis = {},
     }
 }
 
@@ -509,6 +504,44 @@ slkHelper.itemCooldownID = function(v)
 end
 
 slkHelper.item = {}
+
+--- 物品合成公式数组，只支持slkHelper创建的注册物品
+---例子1 "小刀割大树=小刀+大树" 2个不一样的合1个
+---例子2 "三头地狱犬的神识=地狱狗头x3" 3个一样的合1个
+---例子3 "精灵神水x2=精灵的眼泪x50" 50个一样的合一种,但得到2个(在执行合成时为了效率不判断叠加上限，自己管理好最大使用次数)
+---例子4 {{"小刀割大树",1},{"小刀",1},{"大树",1}} 对象型配置，第一项为结果物品(适合物品名称包含特殊字符的物品，如+/=影响公式的符号)
+slkHelper.item.synthesis = function(formula)
+    for _, v in ipairs(formula) do
+        local profit = ''
+        local fragment = {}
+        if (type(v) == 'string') then
+            local f1 = string.explode('=', v)
+            if (string.strpos(f1[1], 'x') == false) then
+                profit = { f1[1], 1 }
+            else
+                profit = string.explode('x', f1[1])
+            end
+            local f2 = string.explode('+', f1[2])
+            for _, vv in ipairs(f2) do
+                if (string.strpos(vv, 'x') == false) then
+                    table.insert(fragment, { vv, 1 })
+                else
+                    table.insert(fragment, string.explode('x', vv))
+                end
+            end
+        elseif (type(v) == 'table') then
+            profit = v[1]
+            fragment = table.remove(v, 1)
+        end
+        table.insert(slkHelperHashData, {
+            type = "synthesis",
+            data = {
+                profit = profit,
+                fragment = fragment,
+            }
+        })
+    end
+end
 
 --- 创建一件影子物品
 --- 不主动使用，由normal设置{useShadow = true}自动调用

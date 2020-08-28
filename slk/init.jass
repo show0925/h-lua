@@ -43,7 +43,7 @@ library zzzSlk initializer Init
                 <?
             end
         end
-        local hi = { 0, 0, 0, 0 }
+        local hi = { 0, 0, 0, 0, 0 }
         for _,v in ipairs(slkHelperHashData)do
             if(v.type == "item")then
                 hi[1] = hi[1] + 1
@@ -64,6 +64,11 @@ library zzzSlk initializer Init
                 hi[4] = hi[4] + 1
                 ?>
                 call SaveStr(hash_hslk_helper, 4, <?=hi[4]?>, "<?=string.addslashes(json.stringify(v.data))?>")
+                <?
+            elseif(v.type == "synthesis")then
+                hi[5] = hi[5] + 1
+                ?>
+                call SaveStr(hash_hslk_helper, 5, <?=hi[5]?>, "<?=string.addslashes(json.stringify(v.data))?>")
                 <?
             end
         end
