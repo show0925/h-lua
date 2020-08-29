@@ -127,7 +127,12 @@ hitem.used = function(whichUnit, whichItem, triggerData)
         for _, m in ipairs(hitem.MATCH_ITEM_USED) do
             local s, e = string.find(itemName, m[1])
             if (s ~= nil and e ~= nil) then
-                local useCharged = hitem.getCharges(whichItem)
+                local isPowerUp = hitem.getIsPowerUp(whichItem)
+                local isPerishable = hitem.getIsPerishable(whichItem)
+                local useCharged = 1
+                if (isPowerUp == true and isPerishable == true) then
+                    useCharged = hitem.getCharges(whichItem)
+                end
                 for _ = 1, useCharged, 1 do
                     m[2](triggerData)
                     hevent.triggerEvent(
@@ -596,6 +601,89 @@ hitem.subAttribute = function(whichUnit, itId, charges)
     hitem.caleAttribute(false, whichUnit, itId, charges)
 end
 
+--- 单位合成物品
+---@public
+---@param whichUnit userdata 目标单位
+---@param items nil|userdata|table<userdata> 空|物品|物品数组
+hitem.synthesis = function(whichUnit, items)
+    if (whichUnit == nil) then
+        return
+    end
+    items = items or {}
+    if (type(items) == 'userdata') then
+        items = { items }
+    end
+    local itemKinds = {}
+    local itemQuantity = {}
+    hitem.slotLoop(whichUnit, function(slotItem)
+        if (slotItem ~= nil) then
+            local itName = hitem.getName(slotItem)
+            if (table.includes(itName, itemKinds) == false) then
+                table.insert(itemKinds, itName)
+            end
+            if (itemQuantity[itName] == nil) then
+                itemQuantity[itName] = 0
+            end
+            itemQuantity[itName] = itemQuantity[itName] + (hitem.getCharges(slotItem) or 1)
+        end
+    end)
+    if (#items > 0) then
+        for _, it in ipairs(items) do
+            local itName = hitem.getName(it)
+            if (table.includes(itName, itemKinds) == false) then
+                table.insert(itemKinds, itName)
+            end
+            if (itemQuantity[itName] == nil) then
+                itemQuantity[itName] = 0
+            end
+            itemQuantity[itName] = itemQuantity[itName] + (hitem.getCharges(it) or 1)
+        end
+    end
+    local matchCount = 1
+    while (matchCount > 0) do
+        matchCount = 0
+        for _, itName in ipairs(itemKinds) do
+            if (hslk_global.synthesis.fragment[itName] ~= nil) then
+                for need = #hslk_global.synthesis.fragment[itName], 1, -1 do
+                    if ((itemQuantity[itName] or 0) >= need) then
+                        local maybeProfits = hslk_global.synthesis.fragment[itName][need]
+                        for _, profitName in ipairs(maybeProfits) do
+                            local needFragments = hslk_global.synthesis.profit[profitName].fragment
+                            local match = true
+                            for _, frag in ipairs(needFragments) do
+                                if ((itemQuantity[frag[1]] or 0) < frag[2]) then
+                                    match = false
+                                    break
+                                end
+                            end
+                            if (match == true) then
+                                matchCount = matchCount + 1
+                                for _, frag in ipairs(needFragments) do
+                                    itemQuantity[frag[1]] = itemQuantity[frag[1]] - frag[2]
+                                    if (itemQuantity[frag[1]] == 0) then
+                                        itemQuantity[frag[1]] = nil
+                                        table.delete(frag[1], itemKinds)
+                                    end
+                                end
+                                if (table.includes(profitName, itemKinds) == false) then
+                                    table.insert(itemKinds, profitName)
+                                end
+                                if (itemQuantity[profitName] == nil) then
+                                    itemQuantity[profitName] = hslk_global.synthesis.profit[profitName].qty
+                                else
+                                    itemQuantity[profitName] = itemQuantity[profitName] + hslk_global.synthesis.profit[profitName].qty
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    print_mbr(itemKinds)
+    print_mbr(itemQuantity)
+end
+
 --[[
  1 检查单位的负重是否可以承受新的物品
  2 可以承受的话，物品是否有叠加，不能叠加检查是否还有多余的格子
@@ -652,7 +740,6 @@ hitem.detector = function(whichUnit, originItem)
         getItem = originItem
     end
     local overlie = hitem.getOverlie(getItem)
-    local isFullSlot = false
     if (overlie > 1 and hitem.getIsPowerUp(getItem) ~= true) then
         local isOverlieOver = false
         -- 可能可叠加的情况，先检查单位的各个物品是否还有叠加空位
@@ -717,55 +804,50 @@ hitem.detector = function(whichUnit, originItem)
                 hitem.used(whichUnit, getItem)
             end
             getItem = nil
-        else
-            --满格判定
-            isFullSlot = true
         end
     end
-    -- 第一次满格，检查是否可以合成（因为合成有可能减少物品总数）
-    if (isFullSlot == true) then
-        -- todo 满格了，检查是否可以合成（合成就相当于跳过了满格，所以之前的满格是个标志位，等待合成无效才会触发满格事件）
-        if (false) then
-            -- 7物品合成检测，如果真的有合成，把满格的标志位设置为false
-            isFullSlot = false
-        end
+    -- 检查合成
+    if (getItem ~= nil) then
+        hitem.synthesis(whichUnit, getItem)
     else
-        -- todo 没有满格，也检查身上的物品是否可以合成
-        if (false) then
-            -- 6物品合成检测
-        end
-    end
-    -- 依然满格，触发满格事件
-    if (isFullSlot) then
-        local slk = hitem.getSlk(getItem)
-        if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
-            local x = cj.GetItemX(getItem)
-            local y = cj.GetItemY(getItem)
-            local charges = cj.GetItemCharges(getItem)
-            hitem.del(getItem, 0)
-            getItem = hitem.create(
-                {
-                    itemId = slk.SHADOW_ID,
-                    x = x,
-                    y = y,
-                    charges = charges,
-                    during = 0
-                }
-            )
-        else
-            hitem.setPositionType(getItem, hitem.POSITION_TYPE.COORDINATE)
-        end
-        hevent.triggerEvent(
-            whichUnit,
-            CONST_EVENT.itemOverWeight,
-            {
-                triggerUnit = whichUnit,
-                triggerItem = getItem
-            }
-        )
-        return false
+        hitem.synthesis(whichUnit)
     end
     return true
+    -- 检查物品是否还存在
+    --if (hitem.getName(getItem) == nil) then
+    --    return true
+    --end
+    ---- 依然满格，触发满格事件
+    --if (isFullSlot) then
+    --    local slk = hitem.getSlk(getItem)
+    --    if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
+    --        local x = cj.GetItemX(getItem)
+    --        local y = cj.GetItemY(getItem)
+    --        local charges = cj.GetItemCharges(getItem)
+    --        hitem.del(getItem, 0)
+    --        getItem = hitem.create(
+    --            {
+    --                itemId = slk.SHADOW_ID,
+    --                x = x,
+    --                y = y,
+    --                charges = charges,
+    --                during = 0
+    --            }
+    --        )
+    --    else
+    --        hitem.setPositionType(getItem, hitem.POSITION_TYPE.COORDINATE)
+    --    end
+    --    hevent.triggerEvent(
+    --        whichUnit,
+    --        CONST_EVENT.itemOverWeight,
+    --        {
+    --            triggerUnit = whichUnit,
+    --            triggerItem = getItem
+    --        }
+    --    )
+    --    return false
+    --end
+    --return true
 end
 
 --[[

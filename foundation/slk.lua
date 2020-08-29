@@ -42,7 +42,6 @@ local HSK = {
 }
 
 hslk_global = {
-    item_fleeting = {},
     env_model = {},
     skill_item_separate = 0,
     skill_break = {},
@@ -124,7 +123,16 @@ hslk_global = {
         },
         ablis_gradient = {},
         sight_gradient = {}
-    }
+    },
+    -- 瞬逝物
+    item_fleeting = {},
+    -- 冷却技能ID集
+    item_cooldown_ids = {},
+    -- 合成
+    synthesis = {
+        profit = {},
+        fragment = {},
+    },
 }
 
 -- skill_item_separate
@@ -219,7 +227,7 @@ table.sort(
     end
 )
 
-for i = 1, 4 do
+for i = 1, 5 do
     local qty = cj.LoadInteger(cg.hash_hslk_helper, 0, i)
     if (qty > 0) then
         for j = 1, qty do
@@ -238,6 +246,8 @@ for i = 1, 4 do
                     hRuntime.register.ability(data)
                 elseif (i == 4) then
                     hRuntime.register.technology(data)
+                elseif (i == 5) then
+                    hRuntime.register.synthesis(data)
                 end
             end
         end

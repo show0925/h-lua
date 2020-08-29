@@ -476,6 +476,7 @@ slkHelper.itemCooldownID0 = function()
 end
 
 --- 创建一件物品的冷却技能
+--- 使用的模版仅仅是模版，并不会有默认的特效和效果
 ---@private
 slkHelper.itemCooldownID = function(v)
     if (v.cooldown == nil) then
@@ -488,18 +489,46 @@ slkHelper.itemCooldownID = function(v)
         return slkHelper.itemCooldownID0()
     end
     local oobTips = "ITEMS_DEFCD_ID_" .. v.Name
-    local oob = slk.ability.AIgo:new("items_default_cooldown_" .. v.Name)
+    local oob
+    if (v.cooldownTarget == 'location') then
+        -- 对点（模版：照明弹）
+        oob = slk.ability.Afla:new("items_default_cooldown_" .. v.Name)
+        oob.DataA1 = 0
+        oob.EfctID1 = ""
+        oob.Dur1 = 0.01
+        oob.HeroDur1 = 0.01
+        oob.Rng1 = v.range
+        oob.Area1 = 0
+        oob.DataA1 = 0
+        oob.DataB1 = 0
+    elseif (v.cooldownTarget == 'unit') then
+        -- 对点范围（模版：暴风雪）
+        oob = slk.ability.ACbz:new("items_default_cooldown_" .. v.Name)
+    elseif (v.cooldownTarget == 'unit') then
+        -- 对单位（模版：霹雳闪电）
+        oob = slk.ability.ACfb:new("items_default_cooldown_" .. v.Name)
+    else
+        -- 立刻（模版：金箱子）
+        oob = slk.ability.AIgo:new("items_default_cooldown_" .. v.Name)
+        oob.DataA1 = 0
+    end
     oob.Effectsound = ""
     oob.Name = oobTips
     oob.Tip = oobTips
     oob.Ubertip = oobTips
-    oob.Art = ""
-    oob.TargetArt = ""
-    oob.Targetattach = ""
-    oob.DataA1 = 0
-    oob.Art = ""
+    oob.TargetArt = v.TargetArt or ""
+    oob.Targetattach = v.Targetattach or ""
     oob.CasterArt = v.CasterArt or ""
-    oob.Cool = v.cooldown
+    oob.Art = ""
+    oob.item = 1
+    oob.Cast1 = v.cast or 0
+    oob.Cost1 = v.cost or 0
+    oob.Cool1 = v.cooldown
+    oob.Requires = ""
+    oob.Hotkey = ""
+    oob.Buttonpos1 = "0"
+    oob.Buttonpos2 = "0"
+    oob.race = "other"
     return oob:get_id()
 end
 
@@ -724,6 +753,7 @@ slkHelper.item.normal = function(v)
             WEIGHT = v.WEIGHT,
             ATTR = v.ATTR,
             SHADOW_ID = shadowData.ITEM_ID or nil,
+            cooldownID = cd
         }
     })
     return shadowData.ITEM_ID or id

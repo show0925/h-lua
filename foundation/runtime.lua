@@ -20,6 +20,9 @@ hRuntime = {
                 end
                 table.insert(hslk_global.id_array.item[json.ID_ARRAY], json.ITEM_ID)
             end
+            if (json.cooldownID ~= nil) then
+                hslk_global.item_cooldown_ids[json.cooldownID] = json.ITEM_ID
+            end
         end,
         ability = function(json)
             hslk_global.id2Value.ability[json.ABILITY_ID] = json
@@ -39,6 +42,25 @@ hRuntime = {
                     hslk_global.id_array.technology[json.ID_ARRAY] = {}
                 end
                 table.insert(hslk_global.id_array.technology[json.ID_ARRAY], json.TECHNOLOGY_ID)
+            end
+        end,
+        synthesis = function(json)
+            -- 数据格式化
+            for k, v in ipairs(json.fragment) do
+                json.fragment[k][2] = math.floor(v[2])
+            end
+            hslk_global.synthesis.profit[json.profit[1]] = {
+                qty = json.profit[2],
+                fragment = json.fragment,
+            }
+            for _, f in ipairs(json.fragment) do
+                if (hslk_global.synthesis.fragment[f[1]] == nil) then
+                    hslk_global.synthesis.fragment[f[1]] = {}
+                end
+                if (hslk_global.synthesis.fragment[f[1]][f[2]] == nil) then
+                    hslk_global.synthesis.fragment[f[1]][f[2]] = {}
+                end
+                table.insert(hslk_global.synthesis.fragment[f[1]][f[2]], json.profit[1])
             end
         end,
     },

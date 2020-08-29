@@ -1404,14 +1404,14 @@ end
         speed = 10, --冲击的速度（可选的，默认10，0.02秒的移动距离,大概1秒500px)
         acceleration = 0, --冲击加速度（可选的，每个周期都会增加0.02秒一次)
         filter = [function], --必须有
-        tokenArrow = nil, --前冲的特效（x,y时认为必须！自身冲击就是bind，否则为马甲本身，如冲击波的波）
+        tokenArrow = nil, --前冲的特效（arrowUnit=nil时认为必须！自身冲击就是bind，否则为马甲本身，如冲击波的波）
         tokenArrowScale = 1.00, --前冲的特效作为马甲冲击时的模型缩放
         tokenArrowOpacity = 1.00, --前冲的特效作为马甲冲击时的模型透明度[0-1]
         tokenArrowHeight = 0.00, --前冲的特效作为马甲冲击时的离地高度
         effectMovement = nil, --移动过程，每个间距的特效（可选的，采用的0秒删除法，请使用explode类型的特效）
         effectEnd = nil, --到达最后位置时的特效（可选的，采用的0秒删除法，请使用explode类型的特效）
         damageMovement = 0, --移动过程中的伤害（可选的，默认为0）
-        damageMovementRange = 0, --移动过程中的伤害（可选的，默认为0，易知0范围是无效的所以有伤害也无法体现）
+        damageMovementRange = 0, --移动过程中的伤害范围（可选的，默认为0，易知0范围是无效的所以有伤害也无法体现）
         damageMovementRepeat = false, --移动过程中伤害是否可以重复造成（可选的，默认为不能）
         damageMovementDrag = false, --移动过程是否拖拽敌人（可选的，默认为不能）
         damageEnd = 0, --移动结束时对目标的伤害（可选的，默认为0）
@@ -1503,7 +1503,7 @@ hskill.leap = function(options)
             hunit.setFlyHeight(arrowUnit, tokenArrowHeight, 9999)
         end
     end
-    cj.SetUnitFacing(arrowUnit, firstFacing)
+    cj.SetUnitFacing(arrowUnit, initFacing)
     --绑定一个无限的effect
     local tempEffectArrow
     if (tokenArrow ~= nil) then
