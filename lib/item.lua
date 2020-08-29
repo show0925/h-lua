@@ -45,22 +45,28 @@ hitem.register = function(u)
         -- 未注册unit直接跳过
         return
     end
-    -- 拾取
-    hevent.pool(u, hevent_default_actions.item.pickup, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PICKUP_ITEM)
-    end)
-    -- 丢弃
-    hevent.pool(u, hevent_default_actions.item.drop, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DROP_ITEM)
-    end)
-    -- 抵押
-    hevent.pool(u, hevent_default_actions.item.pawn, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PAWN_ITEM)
-    end)
-    -- 使用
-    hevent.pool(u, hevent_default_actions.item.use, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_USE_ITEM)
-    end)
+    -- 如果单位的玩家是真人
+    if (his.computer(hunit.getOwner(u)) == false) then
+        -- 拾取
+        hevent.pool(u, hevent_default_actions.item.pickup, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PICKUP_ITEM)
+        end)
+        -- 丢弃
+        hevent.pool(u, hevent_default_actions.item.drop, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DROP_ITEM)
+        end)
+        -- 抵押
+        hevent.pool(u, hevent_default_actions.item.pawn, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PAWN_ITEM)
+        end)
+        -- 使用
+        hevent.pool(u, hevent_default_actions.item.use, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_USE_ITEM)
+        end)
+        hevent.pool(u, hevent_default_actions.item.use_s, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_SPELL_EFFECT)
+        end)
+    end
 end
 
 --- 令单位的物品在runtime内存中释放
@@ -97,6 +103,49 @@ hitem.matchUsed = function(options)
         if (type(v[1]) == "string" and type(v[2]) == "function") then
             table.insert(hitem.MATCH_ITEM_USED, v)
         end
+    end
+end
+
+--- match done
+---@param whichUnit userdata
+---@param whichItem userdata
+---@param triggerData table
+hitem.used = function(whichUnit, whichItem, triggerData)
+    local isTrigger = false
+    triggerData = triggerData or {}
+    triggerData.triggerUnit = whichUnit
+    triggerData.triggerItem = whichItem
+    if (triggerData.targetLoc ~= nil) then
+        triggerData.targetX = cj.GetLocationX(triggerData.targetLoc)
+        triggerData.targetY = cj.GetLocationY(triggerData.targetLoc)
+        triggerData.targetZ = cj.GetLocationZ(triggerData.targetLoc)
+        cj.RemoveLocation(triggerData.targetLoc)
+        triggerData.targetLoc = nil
+    end
+    if (#hitem.MATCH_ITEM_USED > 0) then
+        local itemName = cj.GetItemName(whichItem)
+        for _, m in ipairs(hitem.MATCH_ITEM_USED) do
+            local s, e = string.find(itemName, m[1])
+            if (s ~= nil and e ~= nil) then
+                local useCharged = hitem.getCharges(whichItem)
+                for _ = 1, useCharged, 1 do
+                    m[2](triggerData)
+                    hevent.triggerEvent(
+                        whichUnit,
+                        CONST_EVENT.itemUsed,
+                        triggerData
+                    )
+                    isTrigger = true
+                end
+            end
+        end
+    end
+    if (isTrigger == false) then
+        hevent.triggerEvent(
+            whichUnit,
+            CONST_EVENT.itemUsed,
+            triggerData
+        )
     end
 end
 
@@ -646,28 +695,7 @@ hitem.detector = function(whichUnit, originItem)
         local useCharged = hitem.getCharges(getItem)
         -- 检查物品是否[自动使用]且[使用后消失]
         if (isPowerUp == true and isPerishable == true) then
-            if (#hitem.MATCH_ITEM_USED > 0) then
-                local itemName = cj.GetItemName(getItem)
-                for _, m in ipairs(hitem.MATCH_ITEM_USED) do
-                    local s, e = string.find(itemName, m[1])
-                    if (s ~= nil and e ~= nil) then
-                        --用完消失的物品当然是所有次数都要使用
-                        for _ = 1, useCharged, 1 do
-                            --触发使用物品事件
-                            m[2]({ triggerUnit = whichUnit, triggerItem = getItem })
-                            hevent.triggerEvent(
-                                whichUnit,
-                                CONST_EVENT.itemUsed,
-                                {
-                                    triggerUnit = whichUnit,
-                                    triggerItem = getItem
-                                }
-                            )
-                        end
-                        break
-                    end
-                end
-            end
+            hitem.used(whichUnit, getItem)
             hitem.del(getItem, 0)
             return true
         elseif (hitem.getEmptySlot(whichUnit) > 0) then
@@ -686,25 +714,7 @@ hitem.detector = function(whichUnit, originItem)
             hitem.addAttribute(whichUnit, cj.GetItemTypeId(getItem), useCharged)
             -- 如果是自动使用的物品
             if (isPowerUp == true) then
-                if (#hitem.MATCH_ITEM_USED > 0) then
-                    local itemName = cj.GetItemName(getItem)
-                    for _, m in ipairs(hitem.MATCH_ITEM_USED) do
-                        local s, e = string.find(itemName, m[1])
-                        if (s ~= nil and e ~= nil) then
-                            --触发使用物品事件
-                            m[2]({ triggerUnit = whichUnit, triggerItem = getItem })
-                            hevent.triggerEvent(
-                                whichUnit,
-                                CONST_EVENT.itemUsed,
-                                {
-                                    triggerUnit = whichUnit,
-                                    triggerItem = getItem
-                                }
-                            )
-                            break
-                        end
-                    end
-                end
+                hitem.used(whichUnit, getItem)
             end
             getItem = nil
         else

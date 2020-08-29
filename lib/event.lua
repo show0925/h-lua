@@ -277,7 +277,7 @@ hevent.onSkillFinish = function(whichUnit, callFunc)
 end
 
 --- 单位使用物品
----@alias onItemUsed fun(evtData: {triggerUnit:"触发单位",triggerItem:"触发物品"}):void
+---@alias onItemUsed fun(evtData: {triggerUnit:"触发单位",triggerItem:"触发物品",triggerSkill:"施放技能ID字符串",targetUnit:"获取目标单位",targetX:"获取施放目标点X",targetY:"获取施放目标点Y",targetZ:"获取施放目标点Z"}):void
 ---@param whichUnit userdata
 ---@param callFunc onItemUsed | "function(evtData) end"
 ---@return any

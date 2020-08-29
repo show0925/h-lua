@@ -623,7 +623,7 @@ hevent_default_actions = {
         use = cj.Condition(function()
             local u = cj.GetTriggerUnit()
             local it = cj.GetManipulatedItem()
-            local itId = cj.GetItemTypeId(it)
+            local itId = hitem.getId(it)
             local perishable = hitem.getIsPerishable(itId)
             --检测是否使用后自动消失，如果不是，次数补回1
             if (perishable == false) then
@@ -631,29 +631,26 @@ hevent_default_actions = {
             else
                 hitem.subAttribute(u, itId, 1)
             end
-            --触发使用物品事件
-            hevent.triggerEvent(
-                u,
-                CONST_EVENT.itemUsed,
-                {
-                    triggerUnit = u,
-                    triggerItem = it
-                }
-            )
             --检测是否有匹配使用
-            if (#hitem.MATCH_ITEM_USED > 0) then
-                local itemName = cj.GetItemName(it)
-                for _, m in ipairs(hitem.MATCH_ITEM_USED) do
-                    local s, e = string.find(itemName, m[1])
-                    if (s ~= nil and e ~= nil) then
-                        m[2]({ triggerUnit = u, triggerItem = it })
-                    end
-                end
-            end
+            local triggerData = hunit.get(u, "item-use-" .. itId, {})
+            hunit.set(u, "item-use-" .. itId, nil)
+            hitem.used(u, it, triggerData)
             --消失的清理cache
             if (perishable == true and hitem.getCharges(it) <= 0) then
                 hitem.del(it)
             end
+        end),
+        use_s = cj.Condition(function()
+            local skillId = string.id2char(cj.GetSpellAbilityId())
+            local itId = hslk_global.item_cooldown_ids[skillId] or nil
+            if (itId == nil) then
+                return
+            end
+            hunit.set(cj.GetTriggerUnit(), "item-use-" .. itId, {
+                triggerSkill = skillId,
+                targetUnit = cj.GetSpellTargetUnit(),
+                targetLoc = cj.GetSpellTargetLoc()
+            })
         end),
         sell = cj.Condition(function()
             hevent.triggerEvent(
