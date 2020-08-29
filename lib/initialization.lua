@@ -91,8 +91,11 @@ htime.setInterval(
             if (his.deleted(agu) == true) then
                 table.remove(hRuntime.attributeGroup.life_back, agk)
             else
-                if (his.alive(agu) and hattr.get(agu, "life_back") ~= 0) then
-                    hunit.addCurLife(agu, hattr.get(agu, "life_back") * 0.5)
+                if (his.alive(agu) and 100 > hunit.getCurLifePercent(agu)) then
+                    local val = hattr.get(agu, "life_back") or 0
+                    if (val ~= 0) then
+                        hunit.addCurLife(agu, val * 0.5)
+                    end
                 end
             end
         end
@@ -100,8 +103,11 @@ htime.setInterval(
             if (his.deleted(agu) == true) then
                 table.remove(hRuntime.attributeGroup.mana_back, agk)
             else
-                if (his.alive(agu) and hattr.get(agu, "mana_back") ~= 0) then
-                    hunit.addCurMana(agu, hattr.get(agu, "mana_back") * 0.5)
+                if (his.alive(agu) and 100 > hunit.getCurManaPercent(agu)) then
+                    local val = hattr.get(agu, "mana_back") or 0
+                    if (val ~= 0) then
+                        hunit.addCurMana(agu, val * 0.5)
+                    end
                 end
             end
         end
