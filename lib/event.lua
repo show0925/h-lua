@@ -975,7 +975,7 @@ end
 ---@return any
 hevent.onEsc = function(whichPlayer, callFunc)
     hevent.pool(whichPlayer, hevent_default_actions.player.esc, function(tgr)
-        cj.TriggerRegisterPlayerEventEndCinematic(tgr, whichPlayer)
+        cj.TriggerRegisterPlayerEvent(tgr, whichPlayer, EVENT_PLAYER_END_CINEMATIC)
     end)
     return hevent.registerEvent(whichPlayer, CONST_EVENT.esc, callFunc)
 end
