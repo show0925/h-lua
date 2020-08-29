@@ -108,14 +108,14 @@ print_r = function(t, printMethod, showDetail)
                         pos = "userdata"
                     end
                     if (type(val) == "table") then
-                        print(indent .. "[" .. pos .. "](" .. table.len(val) .. ") => " .. tostring(tt) .. " {")
+                        printMethod(indent .. "[" .. pos .. "](" .. table.len(val) .. ") => " .. tostring(tt) .. " {")
                         sub_print_r(val, indent .. string.rep(" ", string.len(pos) + 8))
-                        print(indent .. string.rep(" ", string.len(pos) + 6) .. "}")
+                        printMethod(indent .. string.rep(" ", string.len(pos) + 6) .. "}")
                     elseif (showDetail == true) then
                         if (type(val) == "string") then
                             printMethod(indent .. "[" .. pos .. '] => "' .. val .. '"')
                         else
-                            print(indent .. "[" .. pos .. "] => " .. tostring(val))
+                            printMethod(indent .. "[" .. pos .. "] => " .. tostring(val))
                         end
                     end
                 end
@@ -125,7 +125,7 @@ print_r = function(t, printMethod, showDetail)
         end
     end
     if (type(t) == "table") then
-        print(tostring(t) .. "(" .. table.len(t) .. ") {")
+        printMethod(tostring(t) .. "(" .. table.len(t) .. ") {")
         sub_print_r(t, "  ")
         print("}")
     else
