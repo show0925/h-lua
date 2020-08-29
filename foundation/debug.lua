@@ -113,14 +113,14 @@ print_r = function(t, printMethod, showDetail)
                         printMethod(indent .. string.rep(" ", string.len(pos) + 6) .. "}")
                     elseif (showDetail == true) then
                         if (type(val) == "string") then
-                            printMethod(indent .. "[" .. pos .. '] => "' .. val .. '"')
+                            printMethod(indent .. "[" .. pos .. '] => <string>"' .. val .. '"')
                         else
-                            printMethod(indent .. "[" .. pos .. "] => " .. tostring(val))
+                            printMethod(indent .. "[" .. pos .. "] => " .. "<" .. type(val) .. ">" .. tostring(val))
                         end
                     end
                 end
             else
-                printMethod(indent .. tostring(tt))
+                printMethod(indent .. "<" .. type(tt) .. ">" .. tostring(tt))
             end
         end
     end
