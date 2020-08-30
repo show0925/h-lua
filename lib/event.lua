@@ -347,17 +347,17 @@ hevent.onItemDestroy = function(whichItem, callFunc)
     return hevent.registerEvent(whichItem, CONST_EVENT.itemDestroy, callFunc)
 end
 
---- 合成物品
----@alias onItemMixed fun(evtData: {triggerUnit:"触发单位",triggerItem:"合成物品"}):void
+--- 物品被合成
+---@alias onItemSynthesis fun(evtData: {triggerUnit:"触发单位",triggerItem:"合成物品"}):void
 ---@param whichUnit userdata
----@param callFunc onItemMixed | "function(evtData) end"
+---@param callFunc onItemSynthesis | "function(evtData) end"
 ---@return any
-hevent.onItemMixed = function(whichUnit, callFunc)
-    return hevent.registerEvent(whichUnit, CONST_EVENT.itemMixed, callFunc)
+hevent.onItemSynthesis = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.itemSynthesis, callFunc)
 end
 
---- 拆分物品
----@alias onItemSeparate fun(evtData: {triggerUnit:"触发单位",triggerItemId:"被拆分物品ID字符串",type:"拆分的类型:simple(多次数)|mixed(合成物)"}):void
+--- 物品被拆分
+---@alias onItemSeparate fun(evtData: {triggerUnit:"触发单位",triggerItemId:"被拆分物品ID字符串",type:"拆分类型:simple(多次数)|mixed(合成物)"}):void
 ---@param whichUnit userdata
 ---@param callFunc onItemSeparate | "function(evtData) end"
 ---@return any

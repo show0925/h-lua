@@ -710,12 +710,21 @@ hitem.synthesis = function(whichUnit, items)
             elseif (it == nil) then
                 -- 当前无物品
                 local id = hslk_global.name2Value.item[itemKinds[i]].ITEM_ID
-                hitem.create({
+                local synthesisItem = hitem.create({
                     itemId = id,
                     whichUnit = whichUnit,
                     charges = itemQuantity[itemKinds[i]],
                     slotIndex = slot,
                 })
+                -- 触发合成事件
+                hevent.triggerEvent(
+                    whichUnit,
+                    CONST_EVENT.itemSynthesis,
+                    {
+                        triggerUnit = whichUnit,
+                        triggerItem = synthesisItem
+                    }
+                )
             else
                 -- 仅仅物品次数差异
                 local c = hitem.getCharges(it) or 1
