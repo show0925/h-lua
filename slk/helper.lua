@@ -606,11 +606,11 @@ slkHelper.item.shadow = function(v)
     obj.stockRegen = v.stockRegen or 0
     obj.stockMax = v.stockMax or 1
     obj.uses = v.uses
-    if (v.HotKey ~= nil) then
-        obj.HotKey = v.HotKey
-        v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
-        v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-        obj.Tip = "获得" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. ")"
+    if (v.Hotkey ~= nil) then
+        obj.Hotkey = v.Hotkey
+        v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
+        v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
+        obj.Tip = "获得" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. ")"
     else
         obj.Buttonpos1 = v.Buttonpos1 or 0
         obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -718,11 +718,11 @@ slkHelper.item.normal = function(v)
     obj.stockRegen = v.stockRegen or 0 -- 进货周期
     obj.stockMax = v.stockMax or 1 -- 最大库存
     obj.uses = v.uses --使用次数
-    if (v.HotKey ~= nil) then
-        obj.HotKey = v.HotKey
-        v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
-        v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-        obj.Tip = "获得" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. ")"
+    if (v.Hotkey ~= nil) then
+        obj.Hotkey = v.Hotkey
+        v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
+        v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
+        obj.Tip = "获得" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. ")"
     else
         obj.Buttonpos1 = v.Buttonpos1 or 0
         obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -790,11 +790,11 @@ slkHelper.unit = {
         end
         --
         local obj = slk.unit.ogru:new("slk_units_" .. v.Name)
-        if (v.HotKey ~= nil) then
-            obj.HotKey = v.HotKey
-            v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
-            v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-            obj.Tip = "选择：" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. ")"
+        if (v.Hotkey ~= nil) then
+            obj.Hotkey = v.Hotkey
+            v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
+            v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
+            obj.Tip = "选择：" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. ")"
         else
             obj.Buttonpos1 = v.Buttonpos1 or 0
             obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -978,11 +978,11 @@ slkHelper.unit = {
         end
         --
         local obj = slk.unit.Hpal:new("slk_hero_" .. v.Name)
-        if (v.HotKey ~= nil) then
-            obj.HotKey = v.HotKey
-            v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
-            v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-            obj.Tip = "选择：" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. ")"
+        if (v.Hotkey ~= nil) then
+            obj.Hotkey = v.Hotkey
+            v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
+            v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
+            obj.Tip = "选择：" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. ")"
         else
             obj.Buttonpos1 = v.Buttonpos1 or 0
             obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -1254,10 +1254,10 @@ slkHelper.unit = {
                 table.insert(abl, t)
             end
         end
-        if (v.HotKey ~= nil) then
-            v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos1 or 0
-            v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.HotKey].Buttonpos2 or 0
-            Tip = "选择：" .. Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. ")"
+        if (v.Hotkey ~= nil) then
+            v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
+            v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
+            Tip = "选择：" .. Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. ")"
         else
             v.Buttonpos1 = v.Buttonpos1 or 0
             v.Buttonpos2 = v.Buttonpos2 or 0
@@ -1506,16 +1506,16 @@ slkHelper.ability = {
         local Art = v.Art or "ReplaceableTextures\\PassiveButtons\\PASBTNStatUp.blp"
         v.Buttonpos1 = v.Buttonpos1 or 0
         v.Buttonpos2 = v.Buttonpos2 or 0
-        if (v.HotKey ~= nil) then
-            v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.HotKey].Buttonpos1 or 0
-            v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.HotKey].Buttonpos2 or 0
-            v.Tip = Name .. "[" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. "]"
-            Name = Name .. v.HotKey
+        if (v.Hotkey ~= nil) then
+            v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos1 or 0
+            v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos2 or 0
+            v.Tip = Name .. "[" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. "]"
+            Name = Name .. v.Hotkey
         else
             v.Tip = Name
         end
         local obj = slk.ability.Aamk:new("slk_ability_empty_" .. Name)
-        obj.HotKey = v.HotKey or ""
+        obj.Hotkey = v.Hotkey or ""
         obj.Name = Name
         obj.Tip = v.Tip
         obj.Ubertip = slkHelper.abilityEmptyUbertip(v)
@@ -1564,17 +1564,17 @@ slkHelper.ability = {
         --
         v.Buttonpos1 = v.Buttonpos1 or 0
         v.Buttonpos2 = v.Buttonpos2 or 0
-        if (v.HotKey ~= nil) then
-            v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.HotKey].Buttonpos1 or 0
-            v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.HotKey].Buttonpos2 or 0
-            v.Tip = Name .. "[" .. hColor[slkHelper.conf.color.hotKey](v.HotKey) .. "] "
-            Name = Name .. v.HotKey
+        if (v.Hotkey ~= nil) then
+            v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos1 or 0
+            v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos2 or 0
+            v.Tip = Name .. "[" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. "] "
+            Name = Name .. v.Hotkey
         else
             v.Tip = Name
         end
         local obj = slk.ability.AHad:new("slk_ability_ring_ " .. Name)
         obj.BuffID1 = buffObj:get_id()
-        obj.HotKey = v.HotKey or " "
+        obj.Hotkey = v.Hotkey or " "
         obj.Name = Name
         obj.Tip = v.Tip
         obj.Ubertip = slkHelper.abilityRingUbertip(v) .. "|n|n" .. hColor[slkHelper.conf.color.abilityRingAlertTips](" * 同一种光环仅有一个有效")

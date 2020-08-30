@@ -605,9 +605,10 @@ end
 ---@public
 ---@param whichUnit userdata 目标单位
 ---@param items nil|userdata|table<userdata> 空|物品|物品数组
+---@return nil|table
 hitem.synthesis = function(whichUnit, items)
     if (whichUnit == nil) then
-        return
+        return nil
     end
     items = items or {}
     if (type(items) == 'userdata') then
@@ -680,8 +681,61 @@ hitem.synthesis = function(whichUnit, items)
             end
         end
     end
-    print_mbr(itemKinds)
-    print_mbr(itemQuantity)
+    -- 先看看现有的物品是否与未来不符，先删掉释放负重
+    for i = 1, 6, 1 do
+        local slot = i - 1
+        local it = cj.UnitItemInSlot(whichUnit, slot)
+        if (it ~= nil) then
+            local n = hitem.getName(it)
+            if (n ~= itemKinds[i]) then
+                local id = hitem.getId(it)
+                local charges = hitem.getCharges(it) or 1
+                hitem.subAttribute(whichUnit, id, charges)
+                hitem.del(it, 0)
+            end
+        end
+    end
+    local extra = {}
+    for i = 1, math.max(6, #itemKinds), 1 do
+        if (i <= 6) then
+            local slot = i - 1
+            local it = cj.UnitItemInSlot(whichUnit, slot)
+            if (itemKinds[i] == nil) then
+                if (it ~= nil) then
+                    local id = hitem.getId(it)
+                    local charges = hitem.getCharges(it) or 1
+                    hitem.subAttribute(whichUnit, id, charges)
+                    hitem.del(it, 0)
+                end
+            elseif (it == nil) then
+                -- 当前无物品
+                local id = hslk_global.name2Value.item[itemKinds[i]].ITEM_ID
+                hitem.create({
+                    itemId = id,
+                    whichUnit = whichUnit,
+                    charges = itemQuantity[itemKinds[i]],
+                    slotIndex = slot,
+                })
+            else
+                -- 仅仅物品次数差异
+                local c = hitem.getCharges(it) or 1
+                if (itemQuantity[itemKinds[i]] ~= c) then
+                    if (itemQuantity[itemKinds[i]] > c) then
+                        cj.SetItemCharges(it, itemQuantity[itemKinds[i]])
+                        local id = hslk_global.name2Value.item[itemKinds[i]].ITEM_ID
+                        hitem.addAttribute(whichUnit, id, itemQuantity[itemKinds[i]] - c)
+                    else
+                        cj.SetItemCharges(it, itemQuantity[itemKinds[i]])
+                        local id = hslk_global.name2Value.item[itemKinds[i]].ITEM_ID
+                        hitem.subAttribute(whichUnit, id, c - itemQuantity[itemKinds[i]])
+                    end
+                end
+            end
+        else
+            table.insert(extra, { name = itemKinds[i], charges = itemQuantity[itemKinds[i]] });
+        end
+    end
+    return extra
 end
 
 --[[
@@ -704,6 +758,23 @@ hitem.detector = function(whichUnit, originItem)
             0,
             0.05
         )
+        -- 判断如果是真实物品并且有影子，转为影子物品掉落
+        local originSlk = hitem.getSlk(originItem)
+        if (originSlk.SHADOW == nil and originSlk.SHADOW_ID) then
+            local x = cj.GetItemX(originItem)
+            local y = cj.GetItemY(originItem)
+            local c = cj.GetItemCharges(originItem)
+            hitem.del(originItem, 0)
+            originItem = hitem.create({
+                itemId = originSlk.SHADOW_ID,
+                x = x,
+                y = y,
+                charges = c,
+                during = 0
+            })
+        else
+            hitem.setPositionType(originItem, hitem.POSITION_TYPE.COORDINATE)
+        end
         -- 触发超重事件
         hevent.triggerEvent(
             whichUnit,
@@ -714,8 +785,7 @@ hitem.detector = function(whichUnit, originItem)
                 value = exWeight
             }
         )
-        hitem.setPositionType(originItem, hitem.POSITION_TYPE.COORDINATE)
-        return false
+        return
     end
 
     local getItem
@@ -726,7 +796,7 @@ hitem.detector = function(whichUnit, originItem)
         local realX = cj.GetItemX(originItem)
         local realY = cj.GetItemY(originItem)
         local realCharges = cj.GetItemCharges(originItem)
-        hitem.del(originItem, nil)
+        hitem.del(originItem, 0)
         getItem = hitem.create({
             autoShadow = false,
             itemId = originSlk.SHADOW_ID,
@@ -784,7 +854,7 @@ hitem.detector = function(whichUnit, originItem)
         if (isPowerUp == true and isPerishable == true) then
             hitem.used(whichUnit, getItem)
             hitem.del(getItem, 0)
-            return true
+            return
         elseif (hitem.getEmptySlot(whichUnit) > 0) then
             -- 检查身上是否还有空格子，有就给单位
             hitem.setPositionType(getItem, hitem.POSITION_TYPE.UNIT)
@@ -807,47 +877,43 @@ hitem.detector = function(whichUnit, originItem)
         end
     end
     -- 检查合成
+    local extra = {}
     if (getItem ~= nil) then
-        hitem.synthesis(whichUnit, getItem)
+        extra = hitem.synthesis(whichUnit, getItem)
     else
-        hitem.synthesis(whichUnit)
+        extra = hitem.synthesis(whichUnit)
     end
-    return true
-    -- 检查物品是否还存在
-    --if (hitem.getName(getItem) == nil) then
-    --    return true
-    --end
-    ---- 依然满格，触发满格事件
-    --if (isFullSlot) then
-    --    local slk = hitem.getSlk(getItem)
-    --    if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
-    --        local x = cj.GetItemX(getItem)
-    --        local y = cj.GetItemY(getItem)
-    --        local charges = cj.GetItemCharges(getItem)
-    --        hitem.del(getItem, 0)
-    --        getItem = hitem.create(
-    --            {
-    --                itemId = slk.SHADOW_ID,
-    --                x = x,
-    --                y = y,
-    --                charges = charges,
-    --                during = 0
-    --            }
-    --        )
-    --    else
-    --        hitem.setPositionType(getItem, hitem.POSITION_TYPE.COORDINATE)
-    --    end
-    --    hevent.triggerEvent(
-    --        whichUnit,
-    --        CONST_EVENT.itemOverWeight,
-    --        {
-    --            triggerUnit = whichUnit,
-    --            triggerItem = getItem
-    --        }
-    --    )
-    --    return false
-    --end
-    --return true
+    if (#extra > 0) then
+        for _, e in ipairs(extra) do
+            local slk = hslk_global.name2Value.item[e.name]
+            local id = slk.ITEM_ID
+            if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
+                id = slk.SHADOW_ID
+            end
+            local x = hunit.x(whichUnit)
+            local y = hunit.y(whichUnit)
+            local charges = e.charges
+            local extraIt = hitem.create(
+                {
+                    itemId = slk.SHADOW_ID,
+                    x = x,
+                    y = y,
+                    charges = charges,
+                    during = 0
+                }
+            )
+            hitem.setPositionType(extraIt, hitem.POSITION_TYPE.COORDINATE)
+            -- 触发满格事件
+            hevent.triggerEvent(
+                whichUnit,
+                CONST_EVENT.itemOverWeight,
+                {
+                    triggerUnit = whichUnit,
+                    triggerItem = extraIt
+                }
+            )
+        end
+    end
 end
 
 --[[
@@ -1038,14 +1104,30 @@ hitem.copy = function(origin, target)
     end
 end
 
---- 令一个单位把物品全部仍在地上
+--- 令一个单位把物品仍在地上
 ---@param origin userdata
-hitem.drop = function(origin)
+---@param slot nil|number 物品位置
+hitem.drop = function(origin, slot)
     if (origin == nil) then
         return
     end
-    for i = 0, 5, 1 do
-        local it = cj.nitItemInSlot(origin, i)
+    if (slot == nil) then
+        for i = 0, 5, 1 do
+            local it = cj.nitItemInSlot(origin, i)
+            if (it ~= nil) then
+                hitem.create(
+                    {
+                        itemId = hitem.getId(it),
+                        charges = hitem.getCharges(it),
+                        x = hunit.x(origin),
+                        x = hunit.y(origin)
+                    }
+                )
+                htime.del(it, 0)
+            end
+        end
+    else
+        local it = cj.nitItemInSlot(origin, slot)
         if (it ~= nil) then
             hitem.create(
                 {
