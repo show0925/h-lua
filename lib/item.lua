@@ -681,14 +681,36 @@ hitem.synthesis = function(whichUnit, items)
             end
         end
     end
+    -- 处理结果物品
+    local final = {}
+    for _, itName in ipairs(itemKinds) do
+        local slk = hslk_global.name2Value.item[itName]
+        if (slk ~= nil) then
+            local overlie = slk.OVERLIE or 1
+            while (itemQuantity[itName] > 0) do
+                local charges = 0
+                if (overlie >= itemQuantity[itName]) then
+                    charges = itemQuantity[itName]
+                    itemQuantity[itName] = 0
+                else
+                    charges = overlie
+                    itemQuantity[itName] = itemQuantity[itName] - overlie
+                end
+                table.insert(final, { id = slk.ITEM_ID, charges = charges, name = itName })
+            end
+        end
+    end
     -- 先看看现有的物品是否与未来不符，先删掉释放负重
     for i = 1, 6, 1 do
         local slot = i - 1
         local it = cj.UnitItemInSlot(whichUnit, slot)
         if (it ~= nil) then
-            local n = hitem.getName(it)
-            if (n ~= itemKinds[i]) then
-                local id = hitem.getId(it)
+            local id = hitem.getId(it)
+            local fid
+            if (final[i] ~= nil) then
+                fid = final[i].id
+            end
+            if (id ~= fid) then
                 local charges = hitem.getCharges(it) or 1
                 hitem.subAttribute(whichUnit, id, charges)
                 hitem.del(it, 0)
@@ -696,11 +718,11 @@ hitem.synthesis = function(whichUnit, items)
         end
     end
     local extra = {}
-    for i = 1, math.max(6, #itemKinds), 1 do
+    for i = 1, math.max(6, #final), 1 do
         if (i <= 6) then
             local slot = i - 1
             local it = cj.UnitItemInSlot(whichUnit, slot)
-            if (itemKinds[i] == nil) then
+            if (final[i] == nil) then
                 if (it ~= nil) then
                     local id = hitem.getId(it)
                     local charges = hitem.getCharges(it) or 1
@@ -709,11 +731,10 @@ hitem.synthesis = function(whichUnit, items)
                 end
             elseif (it == nil) then
                 -- 当前无物品
-                local id = hslk_global.name2Value.item[itemKinds[i]].ITEM_ID
                 local synthesisItem = hitem.create({
-                    itemId = id,
+                    itemId = final[i].id,
                     whichUnit = whichUnit,
-                    charges = itemQuantity[itemKinds[i]],
+                    charges = final[i].charges,
                     slotIndex = slot,
                 })
                 -- 触发合成事件
@@ -728,20 +749,18 @@ hitem.synthesis = function(whichUnit, items)
             else
                 -- 仅仅物品次数差异
                 local c = hitem.getCharges(it) or 1
-                if (itemQuantity[itemKinds[i]] ~= c) then
-                    if (itemQuantity[itemKinds[i]] > c) then
-                        cj.SetItemCharges(it, itemQuantity[itemKinds[i]])
-                        local id = hslk_global.name2Value.item[itemKinds[i]].ITEM_ID
-                        hitem.addAttribute(whichUnit, id, itemQuantity[itemKinds[i]] - c)
+                if (final[i].charges ~= c) then
+                    if (final[i].charges > c) then
+                        cj.SetItemCharges(it, final[i].charges)
+                        hitem.addAttribute(whichUnit, final[i].id, final[i].charges - c)
                     else
-                        cj.SetItemCharges(it, itemQuantity[itemKinds[i]])
-                        local id = hslk_global.name2Value.item[itemKinds[i]].ITEM_ID
-                        hitem.subAttribute(whichUnit, id, c - itemQuantity[itemKinds[i]])
+                        cj.SetItemCharges(it, final[i].charges)
+                        hitem.subAttribute(whichUnit, final[i].id, c - final[i].charges)
                     end
                 end
             end
         else
-            table.insert(extra, { name = itemKinds[i], charges = itemQuantity[itemKinds[i]] });
+            table.insert(extra, final[i]);
         end
     end
     return extra
