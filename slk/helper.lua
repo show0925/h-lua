@@ -76,7 +76,11 @@ slkHelper = {
             -- 物品重量
             itemWeight = "purpleLight",
             -- 物品描述
-            itemDesc = "grey",
+            itemDesc = "greyDeep",
+            -- 物品合成品
+            itemProfit = "orangeLight",
+            -- 物品零部件
+            itemFragment = "orange",
             -- 技能主动
             abilityActive = "yellow",
             -- 技能被动
@@ -398,13 +402,25 @@ slkHelper.itemUbertip = function(v)
         table.sort(v.ATTR_TXT)
         table.insert(d, hColor[slkHelper.conf.color.itemAttr](slkHelper.attrDesc(v.ATTR_TXT, "|n")))
     end
+    -- 作为零件
+    if (slkHelper.item.synthesisMapping.fragment[v.Name] ~= nil
+        and #slkHelper.item.synthesisMapping.fragment[v.Name] > 0) then
+        table.insert(d, hColor[slkHelper.conf.color.itemFragment]("可以合成：" .. string.implode(
+            '、',
+            slkHelper.item.synthesisMapping.fragment[v.Name]))
+        )
+    end
+    -- 合成公式
+    if (slkHelper.item.synthesisMapping.profit[v.Name] ~= nil) then
+        table.insert(d, hColor[slkHelper.conf.color.itemProfit]("需要零件：" .. slkHelper.item.synthesisMapping.profit[v.Name]))
+    end
     local overlie = v.OVERLIE or 1
     table.insert(d, hColor[slkHelper.conf.color.itemOverlie]("叠加：" .. overlie))
     local weight = v.WEIGHT or 0
     weight = tostring(math.round(weight))
     table.insert(d, hColor[slkHelper.conf.color.itemWeight]("重量：" .. weight .. "Kg"))
     if (v.Desc ~= nil and v.Desc ~= "") then
-        table.insert(d, hColor[slkHelper.conf.color.itemDesc]("|n" .. v.Desc))
+        table.insert(d, hColor[slkHelper.conf.color.itemDesc](v.Desc))
     end
     return string.implode("|n", d)
 end
@@ -534,6 +550,12 @@ end
 
 slkHelper.item = {}
 
+---@private
+slkHelper.item.synthesisMapping = {
+    profit = {},
+    fragment = {},
+}
+
 --- 物品合成公式数组，只支持slkHelper创建的注册物品
 ---例子1 "小刀割大树=小刀+大树" 2个不一样的合1个
 ---例子2 "三头地狱犬的神识=地狱狗头x3" 3个一样的合1个
@@ -548,20 +570,41 @@ slkHelper.item.synthesis = function(formula)
             if (string.strpos(f1[1], 'x') == false) then
                 profit = { f1[1], 1 }
             else
-                profit = string.explode('x', f1[1])
+                local temp = string.explode('x', f1[1])
+                temp[2] = math.floor(temp[2])
+                profit = temp
             end
             local f2 = string.explode('+', f1[2])
             for _, vv in ipairs(f2) do
                 if (string.strpos(vv, 'x') == false) then
                     table.insert(fragment, { vv, 1 })
                 else
-                    table.insert(fragment, string.explode('x', vv))
+                    local temp = string.explode('x', vv)
+                    temp[2] = math.floor(temp[2])
+                    table.insert(fragment, temp)
                 end
             end
         elseif (type(v) == 'table') then
             profit = v[1]
             fragment = table.remove(v, 1)
         end
+        --
+        local fmStr = {}
+        for _, fm in ipairs(fragment) do
+            if (fm[2] <= 1) then
+                table.insert(fmStr, fm[1])
+            else
+                table.insert(fmStr, fm[1] .. 'x' .. fm[2])
+            end
+            if (slkHelper.item.synthesisMapping.fragment[fm[1]] == nil) then
+                slkHelper.item.synthesisMapping.fragment[fm[1]] = {}
+            end
+            if (table.includes(profit[1], slkHelper.item.synthesisMapping.fragment[fm[1]]) == false) then
+                table.insert(slkHelper.item.synthesisMapping.fragment[fm[1]], profit[1])
+            end
+        end
+        slkHelper.item.synthesisMapping.profit[profit[1]] = string.implode('+', fmStr)
+        --
         table.insert(slkHelperHashData, {
             type = "synthesis",
             data = {

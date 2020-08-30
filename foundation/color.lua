@@ -45,6 +45,14 @@ hColor.grey = function(str)
     return hColor.mixed(str, "c0c0c0")
 end
 
+--- 深灰
+---@public
+---@param str string
+---@return string
+hColor.greyDeep = function(str)
+    return hColor.mixed(str, "969696")
+end
+
 --- 亮红
 ---@public
 ---@param str string
@@ -93,12 +101,20 @@ hColor.yellow = function(str)
     return hColor.mixed(str, "ffff00")
 end
 
+--- 浅橙
+---@public
+---@param str string
+---@return string
+hColor.orangeLight = function(str)
+    return hColor.mixed(str, "ffd88c")
+end
+
 --- 橙色
 ---@public
 ---@param str string
 ---@return string
 hColor.orange = function(str)
-    return hColor.mixed(str, "ffc657")
+    return hColor.mixed(str, "ffc24b")
 end
 
 --- 天空蓝
