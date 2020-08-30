@@ -121,7 +121,16 @@ htime.setInterval(
             if (his.deleted(agu) == true) then
                 table.remove(hRuntime.attributeGroup.punish, agk)
             elseif (his.alive(agu) == true and his.beDamaging(agu) == false) then
-                hattr.set(agu, 0, { punish_current = "+" .. (hattr.get(agu, "punish") * 0.015) })
+                local punish_current = hattr.get(agu, "punish_current")
+                local punish = hattr.get(agu, "punish")
+                if (punish_current < punish) then
+                    local val = math.floor(0.015 * punish)
+                    if (punish_current + val > punish) then
+                        hattr.set(agu, 0, { punish_current = "=" .. punish })
+                    else
+                        hattr.set(agu, 0, { punish_current = "+" .. val })
+                    end
+                end
             end
         end
     end
