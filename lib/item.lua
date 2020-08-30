@@ -906,7 +906,7 @@ hitem.detector = function(whichUnit, originItem)
             -- 触发满格事件
             hevent.triggerEvent(
                 whichUnit,
-                CONST_EVENT.itemOverWeight,
+                CONST_EVENT.itemOverSlot,
                 {
                     triggerUnit = whichUnit,
                     triggerItem = extraIt
