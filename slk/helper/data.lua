@@ -1,4 +1,4 @@
-slk = require "slk"
+]]
 
 local slkHashData = {}
 
@@ -1176,3 +1176,5 @@ table.insert(
         "int"
     }
 )
+
+--[[

@@ -38,9 +38,9 @@ hitem = {
     MATCH_ITEM_USED = {},
 }
 
--- 单位注册物品
+-- 单位嵌入到物品到框架系统
 ---@protected
-hitem.register = function(u)
+hitem.embed = function(u)
     if (hRuntime.unit[u] == nil) then
         -- 未注册unit直接跳过
         return

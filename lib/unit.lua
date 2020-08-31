@@ -368,6 +368,9 @@ end
 ---@param options table
 hunit.embed = function(u, options)
     options = options or {}
+    if (type(options.registerOrderEvent ~= 'boolean')) then
+        options.registerOrderEvent = false
+    end
     -- 记入group选择器（不在框架系统内的单位，也不会被group选择到）
     table.insert(hRuntime.group, u)
     -- 记入realtime
@@ -387,18 +390,27 @@ hunit.embed = function(u, options)
     hevent.pool(u, hevent_default_actions.unit.death, function(tgr)
         cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DEATH)
     end)
-    -- 单位指令
-    hevent.pool(u, hevent_default_actions.unit.order, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_ORDER)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_POINT_ORDER)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_TARGET_ORDER)
-    end)
+    --[[
+        单位指令，如果单位的玩家是真人或者开发者要求嵌入，才会使指令捕捉生效
+        因为大部分单位不需要捕捉指令，故做此判断
+        开启指令的单位可以开启以下事件：移动相关、停止、驻扎
+        开启指令的单位可以开启以下判断：是否正在移动
+        * 移动的具体指标请查看event说明
+    ]]
+    if (his.computer(hunit.getOwner(u)) == false
+        or options.registerOrderEvent == true) then
+        hevent.pool(u, hevent_default_actions.unit.order, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_ORDER)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_POINT_ORDER)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_TARGET_ORDER)
+        end)
+    end
     -- 物品系统
     if (his.hasSlot(u)) then
-        hitem.register(u)
+        hitem.embed(u)
     elseif (options.isOpenSlot == true) then
         hskill.add(u, hitem.DEFAULT_SKILL_ITEM_SLOT, 0)
-        hitem.register(u)
+        hitem.embed(u)
     end
     -- 如果是英雄，注册事件和计算初次属性
     if (his.hero(u) == true) then
@@ -421,6 +433,7 @@ hunit.create = function(options)
     --[[
         options = {
             register = true, --是否注册进系统
+            registerOrderEvent = false, --是否注册系统指令事件，可选
             whichPlayer = nil, --归属玩家
             unitId = nil, --类型id,如'H001'
             x = nil, --创建坐标X，可选

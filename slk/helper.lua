@@ -1,12 +1,8 @@
---- 四舍五入
----@param decimal number
----@return number
-math.round = function(decimal)
-    if (decimal == nil) then
-        return 0.00
-    end
-    return math.floor((decimal * 100) + 0.5) * 0.01
-end
+--[[
+
+#include "./helper/cargo.lua"
+
+]]
 
 --- slk hash data
 slkHelperHashData = {}
@@ -802,6 +798,64 @@ slkHelper.item.normal = function(v)
     return shadowData.ITEM_ID or id
 end
 
+--- 获取自动配置的信使技能
+slkHelper.getCourierAutoSkill = function()
+    if (slkHelper.conf.courierAutoSkill == true) then
+        if (slkHelper.courierBlink == nil) then
+            local obj = slk.ability.AEbl:new("slk_courier_blink")
+            local Tip = slkHelper.conf.courierSkill.blink.name ..
+                "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.blink.hotKey) .. ")"
+            obj.Name = slkHelper.conf.courierSkill.blink.name
+            obj.Tip = Tip
+            obj.Hotkey = slkHelper.conf.courierSkill.blink.hotKey
+            obj.Ubertip = slkHelper.conf.courierSkill.blink.desc
+            obj.Buttonpos1 = slkHelper.conf.courierSkill.blink.x
+            obj.Buttonpos2 = slkHelper.conf.courierSkill.blink.y
+            obj.hero = 0
+            obj.levels = 1
+            obj.DataA1 = 99999
+            obj.DataB1 = 0
+            obj.Cool1 = slkHelper.conf.courierSkill.blink.coolDown
+            obj.Cost1 = 0
+            obj.Art = slkHelper.conf.courierSkill.blink.Art
+            obj.SpecialArt = "Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl"
+            obj.Areaeffectart = "Abilities\\Spells\\NightElf\\Blink\\BlinkTarget.mdl"
+            obj.race = "other"
+            slkHelper.courierBlink = obj:get_id()
+        end
+        if (slkHelper.courierPickUp == nil) then
+            local obj = slk.ability.ANcl:new("slk_courier_pickup")
+            local Tip = slkHelper.conf.courierSkill.pickUp.name ..
+                "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.pickUp.desc) .. ")"
+            obj.Order = "manaburn"
+            obj.DataF1 = "manaburn"
+            obj.Name = slkHelper.conf.courierSkill.pickUp.name
+            obj.Tip = Tip
+            obj.Hotkey = slkHelper.conf.courierSkill.pickUp.hotKey
+            obj.Ubertip = slkHelper.conf.courierSkill.pickUp.desc
+            obj.Buttonpos1 = slkHelper.conf.courierSkill.pickUp.x
+            obj.Buttonpos2 = slkHelper.conf.courierSkill.pickUp.y
+            obj.hero = 0
+            obj.levels = 1
+            obj.DataA1 = 0
+            obj.DataB1 = 0
+            obj.DataC1 = 1
+            obj.DataD1 = 0.01
+            obj.Cool1 = slkHelper.conf.courierSkill.pickUp.coolDown
+            obj.Cost1 = 0
+            obj.Art = slkHelper.conf.courierSkill.pickUp.Art
+            obj.CasterArt = ""
+            obj.EffectArt = ""
+            obj.TargetArt = ""
+            obj.race = "other"
+            slkHelper.courierPickUp = obj:get_id()
+        end
+    end
+    return {
+        slkHelper.courierBlink, slkHelper.courierPickUp,
+    }
+end
+
 slkHelper.unit = {
     --- 创建一个单位
     --- 设置的CUSTOM_DATA数据会自动传到数据中
@@ -1219,55 +1273,6 @@ slkHelper.unit = {
     ---@public
     ---@param v table
     courier = function(v)
-        if (slkHelper.courierBlink == nil) then
-            local obj = slk.ability.AEbl:new("slk_courier_blink")
-            local Tip = slkHelper.conf.courierSkill.blink.name ..
-                "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.blink.hotKey) .. ")"
-            obj.Name = slkHelper.conf.courierSkill.blink.name
-            obj.Tip = Tip
-            obj.Hotkey = slkHelper.conf.courierSkill.blink.hotKey
-            obj.Ubertip = slkHelper.conf.courierSkill.blink.desc
-            obj.Buttonpos1 = slkHelper.conf.courierSkill.blink.x
-            obj.Buttonpos2 = slkHelper.conf.courierSkill.blink.y
-            obj.hero = 0
-            obj.levels = 1
-            obj.DataA1 = 99999
-            obj.DataB1 = 0
-            obj.Cool1 = slkHelper.conf.courierSkill.blink.coolDown
-            obj.Cost1 = 0
-            obj.Art = slkHelper.conf.courierSkill.blink.Art
-            obj.SpecialArt = "Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl"
-            obj.Areaeffectart = "Abilities\\Spells\\NightElf\\Blink\\BlinkTarget.mdl"
-            obj.race = v.race or "other"
-            slkHelper.courierBlink = obj:get_id()
-        end
-        if (slkHelper.courierPickUp == nil) then
-            local obj = slk.ability.ANcl:new("slk_courier_pickup")
-            local Tip = slkHelper.conf.courierSkill.pickUp.name ..
-                "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.pickUp.desc) .. ")"
-            obj.Order = "manaburn"
-            obj.DataF1 = "manaburn"
-            obj.Name = slkHelper.conf.courierSkill.pickUp.name
-            obj.Tip = Tip
-            obj.Hotkey = slkHelper.conf.courierSkill.pickUp.hotKey
-            obj.Ubertip = slkHelper.conf.courierSkill.pickUp.desc
-            obj.Buttonpos1 = slkHelper.conf.courierSkill.pickUp.x
-            obj.Buttonpos2 = slkHelper.conf.courierSkill.pickUp.y
-            obj.hero = 0
-            obj.levels = 1
-            obj.DataA1 = 0
-            obj.DataB1 = 0
-            obj.DataC1 = 1
-            obj.DataD1 = 0.01
-            obj.Cool1 = slkHelper.conf.courierSkill.pickUp.coolDown
-            obj.Cost1 = 0
-            obj.Art = slkHelper.conf.courierSkill.pickUp.Art
-            obj.CasterArt = ""
-            obj.EffectArt = ""
-            obj.TargetArt = ""
-            obj.race = v.race or "other"
-            slkHelper.courierPickUp = obj:get_id()
-        end
         slkHelper.count = slkHelper.count + 1
         local Primary
         local Ubertip
@@ -1286,7 +1291,8 @@ slkHelper.unit = {
         v.movetp = v.movetp or "foot"
         v.moveHeight = v.moveHeight or 0
         v.spd = v.spd or 100
-        local abl = { "AInv", slkHelper.courierBlink, slkHelper.courierPickUp }
+        local abl = { "AInv" }
+        table.merge(abl, slkHelper.getCourierAutoSkill())
         if (type(v.abilList) == "string") then
             local tmpAbl = string.explode(',', v.abilList)
             for _, t in pairs(tmpAbl) do
@@ -1652,3 +1658,8 @@ slkHelper.ability = {
     end,
 }
 
+--[[
+
+#include "./helper/data.lua"
+
+]]
