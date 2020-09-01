@@ -7,7 +7,6 @@
 ]]
 hitem = {
     DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认全部认定这个技能为物品栏，如有需要自行更改
-    DEFAULT_SKILL_ITEM_SEPARATE = hslk_global.skill_item_separate, -- 默认拆分物品技能
     POSITION_TYPE = {
         --物品位置类型
         COORDINATE = "coordinate", --坐标
@@ -467,19 +466,6 @@ hitem.slotLoop = function(whichUnit, action)
         it = cj.UnitItemInSlot(whichUnit, i)
         action(it, i)
     end
-end
-
---- 使得单位拥有拆分物品的技能
----@param whichUnit userdata
-hitem.setAllowSeparate = function(whichUnit)
-    -- 物品拆分
-    cj.UnitAddAbility(whichUnit, hitem.DEFAULT_SKILL_ITEM_SEPARATE)
-    cj.UnitMakeAbilityPermanent(whichUnit, true, hitem.DEFAULT_SKILL_ITEM_SEPARATE)
-    cj.SetUnitAbilityLevel(whichUnit, hitem.DEFAULT_SKILL_ITEM_SEPARATE, 1)
-    -- 事件池注册
-    hevent.pool(whichUnit, hevent_default_actions.item.separate, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, whichUnit, EVENT_UNIT_SPELL_EFFECT)
-    end)
 end
 
 --- 计算单位得失物品的属性影响

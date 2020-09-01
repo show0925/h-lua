@@ -4,7 +4,6 @@ local HSK = {
     UNIT_TOKEN_LEAP = 102,
     UNIT_TOKEN_ALERT_CIRCLE = 103,
     UNIT_TREE = 104,
-    SKILL_ITEM_SEPARATE = 105,
     SKILL_BREAK = 106,
     SKILL_SWIM_UNLIMIT = 107,
     SKILL_INVISIBLE = 108,
@@ -43,7 +42,6 @@ local HSK = {
 
 hslk_global = {
     env_model = {},
-    skill_item_separate = 0,
     skill_break = {},
     skill_swim_unlimit = 0,
     skill_hero_tavern_selection = 0,
@@ -135,8 +133,6 @@ hslk_global = {
     },
 }
 
--- skill_item_separate
-hslk_global.skill_item_separate = cj.LoadInteger(cg.hash_hslk, HSK.COMMON, HSK.SKILL_ITEM_SEPARATE)
 -- skill_break
 for dur = 1, 10, 1 do
     local swDur = dur * 0.05

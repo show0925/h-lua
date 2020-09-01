@@ -481,6 +481,15 @@ hevent_default_actions = {
             )
         end)
     },
+    courier = {
+        autoSkills = cj.Condition(function()
+            local u = cj.GetTriggerUnit()
+            local it = cj.GetManipulatedItem()
+            if (it ~= nil and cj.GetSpellAbilityId() == hitem.DEFAULT_SKILL_ITEM_SEPARATE) then
+                print_err("拆分物品尚未完成")
+            end
+        end),
+    },
     dialog = {
         click = cj.Condition(function()
             local clickedDialog = cj.GetClickedDialog()
@@ -672,13 +681,6 @@ hevent_default_actions = {
                     triggerUnit = cj.GetKillingUnit()
                 }
             )
-        end),
-        separate = cj.Condition(function()
-            local u = cj.GetTriggerUnit()
-            local it = cj.GetManipulatedItem()
-            if (it ~= nil and cj.GetSpellAbilityId() == hitem.DEFAULT_SKILL_ITEM_SEPARATE) then
-                print_err("拆分物品尚未完成")
-            end
         end),
     },
     destructable = {

@@ -12,10 +12,11 @@ slkHelper = {
     count = 0,
     ---@private
     shapeshiftIndex = 1,
-    ---@private
+    ---@private 信使技能缓存
     courierBlink = nil,
-    ---@private
     courierPickUp = nil,
+    courierSeparate = nil,
+    courierDeliver = nil,
     ---@public slkHelper配置项
     conf = {
         -- 是否自动启用影子物品
@@ -25,22 +26,36 @@ slkHelper = {
         -- 信使技能-名称、热键、图标位置、冷却
         courierSkill = {
             blink = {
-                name = "闪烁",
-                desc = "可以闪烁到任何地方",
+                Ubertip = "可以闪烁到任何地方",
                 Art = "ReplaceableTextures\\CommandButtons\\BTNBlink.blp",
-                hotKey = 'Q',
+                Hotkey = 'Q',
                 x = 0,
                 y = 2,
                 coolDown = 10
             },
             pickUp = {
-                name = "拾取",
-                desc = "将附近地上的物品拾取到身上",
+                Ubertip = "将附近地上的物品拾取到身上",
                 Art = "ReplaceableTextures\\CommandButtons\\BTNPickUpItem.blp",
-                hotKey = 'W',
+                Hotkey = 'W',
                 x = 1,
                 y = 2,
-                coolDown = 1
+                coolDown = 3
+            },
+            separate = {
+                Ubertip = "将合成或重叠的物品拆分成零件",
+                Art = "ReplaceableTextures\\CommandButtons\\BTNRepair.blp",
+                Hotkey = 'E',
+                x = 2,
+                y = 2,
+                coolDown = 3
+            },
+            deliver = {
+                Ubertip = "将所有物品依照顺序传送给英雄，当你的英雄没有空余物品位置，物品会返回给信使",
+                Art = "ReplaceableTextures\\CommandButtons\\BTNLoadPeon.blp",
+                Hotkey = 'R',
+                x = 3,
+                y = 2,
+                coolDown = 3
             },
         },
         -- 一般单位白天视野默认值
@@ -802,13 +817,13 @@ end
 slkHelper.getCourierAutoSkill = function()
     if (slkHelper.conf.courierAutoSkill == true) then
         if (slkHelper.courierBlink == nil) then
+            local Name = "信使-闪烁"
             local obj = slk.ability.AEbl:new("slk_courier_blink")
-            local Tip = slkHelper.conf.courierSkill.blink.name ..
-                "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.blink.hotKey) .. ")"
-            obj.Name = slkHelper.conf.courierSkill.blink.name
+            local Tip = Name .. "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.blink.Hotkey) .. ")"
+            obj.Name = Name
             obj.Tip = Tip
-            obj.Hotkey = slkHelper.conf.courierSkill.blink.hotKey
-            obj.Ubertip = slkHelper.conf.courierSkill.blink.desc
+            obj.Hotkey = slkHelper.conf.courierSkill.blink.Hotkey
+            obj.Ubertip = slkHelper.conf.courierSkill.blink.Ubertip
             obj.Buttonpos1 = slkHelper.conf.courierSkill.blink.x
             obj.Buttonpos2 = slkHelper.conf.courierSkill.blink.y
             obj.hero = 0
@@ -822,17 +837,28 @@ slkHelper.getCourierAutoSkill = function()
             obj.Areaeffectart = "Abilities\\Spells\\NightElf\\Blink\\BlinkTarget.mdl"
             obj.race = "other"
             slkHelper.courierBlink = obj:get_id()
+            table.insert(slkHelperHashData, {
+                type = "ability",
+                data = {
+                    CUSTOM_DATA = {},
+                    ID_ARRAY = nil,
+                    ABILITY_ID = slkHelper.courierBlink,
+                    ABILITY_TYPE = "courier",
+                    Name = Name,
+                    Art = slkHelper.conf.courierSkill.blink.Art,
+                }
+            })
         end
         if (slkHelper.courierPickUp == nil) then
+            local Name = "信使-拾取"
             local obj = slk.ability.ANcl:new("slk_courier_pickup")
-            local Tip = slkHelper.conf.courierSkill.pickUp.name ..
-                "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.pickUp.desc) .. ")"
+            local Tip = Name .. "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.pickUp.Hotkey) .. ")"
             obj.Order = "manaburn"
             obj.DataF1 = "manaburn"
-            obj.Name = slkHelper.conf.courierSkill.pickUp.name
+            obj.Name = Name
             obj.Tip = Tip
-            obj.Hotkey = slkHelper.conf.courierSkill.pickUp.hotKey
-            obj.Ubertip = slkHelper.conf.courierSkill.pickUp.desc
+            obj.Hotkey = slkHelper.conf.courierSkill.pickUp.Hotkey
+            obj.Ubertip = slkHelper.conf.courierSkill.pickUp.Ubertip
             obj.Buttonpos1 = slkHelper.conf.courierSkill.pickUp.x
             obj.Buttonpos2 = slkHelper.conf.courierSkill.pickUp.y
             obj.hero = 0
@@ -849,10 +875,97 @@ slkHelper.getCourierAutoSkill = function()
             obj.TargetArt = ""
             obj.race = "other"
             slkHelper.courierPickUp = obj:get_id()
+            table.insert(slkHelperHashData, {
+                type = "ability",
+                data = {
+                    CUSTOM_DATA = {},
+                    ID_ARRAY = nil,
+                    ABILITY_ID = slkHelper.courierPickUp,
+                    ABILITY_TYPE = "courier",
+                    Name = Name,
+                    Art = slkHelper.conf.courierSkill.pickUp.Art,
+                }
+            })
+        end
+        if (slkHelper.courierSeparate == nil) then
+            local Name = "信使-拆分物品"
+            local Tip = Name .. "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.separate.Hotkey) .. ")"
+            local obj = slk.ability.ANtm:new("slk_courier_separate")
+            obj.Name = Name
+            obj.DataD1 = 0
+            obj.DataA1 = 0
+            obj.Tip = Tip
+            obj.Ubertip = slkHelper.conf.courierSkill.separate.Ubertip
+            obj.Art = slkHelper.conf.courierSkill.separate.Art
+            obj.Hotkey = slkHelper.conf.courierSkill.separate.Hotkey
+            obj.Buttonpos1 = slkHelper.conf.courierSkill.separate.x
+            obj.Buttonpos2 = slkHelper.conf.courierSkill.separate.y
+            obj.Missileart = ""
+            obj.Missilespeed = 99999
+            obj.Missilearc = 0.00
+            obj.Animnames = ""
+            obj.hero = 0
+            obj.race = "other"
+            obj.BuffID = ""
+            obj.Cool1 = slkHelper.conf.courierSkill.separate.coolDown
+            obj.targs1 = "item,nonhero"
+            obj.Cost1 = 0
+            obj.Rng1 = 50.00
+            slkHelper.courierSeparate = obj:get_id()
+            table.insert(slkHelperHashData, {
+                type = "ability",
+                data = {
+                    CUSTOM_DATA = {},
+                    ID_ARRAY = nil,
+                    ABILITY_ID = slkHelper.courierSeparate,
+                    ABILITY_TYPE = "courier",
+                    Name = Name,
+                    Art = slkHelper.conf.courierSkill.separate.Art,
+                }
+            })
+        end
+        if (slkHelper.courierDeliver == nil) then
+            local Name = "信使-传递"
+            local obj = slk.ability.ANcl:new("slk_courier_deliver")
+            local Tip = Name .. "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.deliver.Hotkey) .. ")"
+            obj.Order = "polymorph"
+            obj.DataF1 = "polymorph"
+            obj.Name = Name
+            obj.Tip = Tip
+            obj.Hotkey = slkHelper.conf.courierSkill.deliver.Hotkey
+            obj.Ubertip = slkHelper.conf.courierSkill.deliver.Ubertip
+            obj.Buttonpos1 = slkHelper.conf.courierSkill.deliver.x
+            obj.Buttonpos2 = slkHelper.conf.courierSkill.deliver.y
+            obj.hero = 0
+            obj.levels = 1
+            obj.DataA1 = 0
+            obj.DataB1 = 0
+            obj.DataC1 = 1
+            obj.DataD1 = 0.01
+            obj.Cool1 = slkHelper.conf.courierSkill.deliver.coolDown
+            obj.Cost1 = 0
+            obj.Art = slkHelper.conf.courierSkill.deliver.Art
+            obj.CasterArt = ""
+            obj.EffectArt = ""
+            obj.TargetArt = ""
+            obj.race = "other"
+            slkHelper.courierDeliver = obj:get_id()
+            table.insert(slkHelperHashData, {
+                type = "ability",
+                data = {
+                    CUSTOM_DATA = {},
+                    ID_ARRAY = nil,
+                    ABILITY_ID = slkHelper.courierDeliver,
+                    ABILITY_TYPE = "courier",
+                    Name = Name,
+                    Art = slkHelper.conf.courierSkill.deliver.Art,
+                }
+            })
         end
     end
     return {
         slkHelper.courierBlink, slkHelper.courierPickUp,
+        slkHelper.courierSeparate, slkHelper.courierDeliver
     }
 end
 
@@ -1292,7 +1405,7 @@ slkHelper.unit = {
         v.moveHeight = v.moveHeight or 0
         v.spd = v.spd or 100
         local abl = { "AInv" }
-        table.merge(abl, slkHelper.getCourierAutoSkill())
+        abl = table.merge(abl, slkHelper.getCourierAutoSkill())
         if (type(v.abilList) == "string") then
             local tmpAbl = string.explode(',', v.abilList)
             for _, t in pairs(tmpAbl) do

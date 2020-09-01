@@ -8,7 +8,6 @@ HLUA_SLK_KEYS = {
     UNIT_TOKEN_LEAP = 102,
     UNIT_TOKEN_ALERT_CIRCLE = 103,
     UNIT_TREE = 104,
-    SKILL_ITEM_SEPARATE = 105,
     SKILL_BREAK = 106,
     SKILL_SWIM_UNLIMIT = 107,
     SKILL_INVISIBLE = 108,
@@ -180,40 +179,6 @@ table.insert(
     {
         HLUA_SLK_KEYS.COMMON,
         HLUA_SLK_KEYS.UNIT_TREE,
-        obj:get_id(),
-        "int"
-    }
-)
-
---技能
--- #拆分物品
-obj = slk.ability.ANtm:new("skill_item_separate")
-obj.EditorSuffix = "#h-lua"
-obj.Name = "拆分物品"
-obj.DataD1 = 0
-obj.DataA1 = 0
-obj.Tip = "拆分物品(|cffffcc00N|r)"
-obj.Ubertip = "如果物品|cffffff80多个叠加|r，会先被拆分成多个|cffffff80单品|r|n当单品是一个|cffffff80合成物|r时，将被拆分成|cffffff80相应的零件|r|n|cffff8080 * 注意拆分后的物品如果持有会掉落在地上，做好心理准备|r"
-obj.Art = "ReplaceableTextures\\CommandButtons\\BTNAdvStruct.blp"
-obj.Hotkey = "N"
-obj.Buttonpos1 = 3
-obj.Buttonpos2 = 0
-obj.Missileart = ""
-obj.Missilespeed = 99999
-obj.Missilearc = 0.00
-obj.Animnames = ""
-obj.hero = 0
-obj.race = "other"
-obj.BuffID = ""
-obj.Cool1 = 0.00
-obj.targs1 = "item,nonhero"
-obj.Cost1 = 0
-obj.Rng1 = 30.00
-table.insert(
-    slkHashData,
-    {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.SKILL_ITEM_SEPARATE,
         obj:get_id(),
         "int"
     }
