@@ -910,7 +910,7 @@ slkHelper.getCourierAutoSkill = function()
             obj.Cool1 = slkHelper.conf.courierSkill.separate.Cool1
             obj.targs1 = "item,nonhero"
             obj.Cost1 = 0
-            obj.Rng1 = 50.00
+            obj.Rng1 = 200.00
             slkHelper.courierSeparate = obj:get_id()
             table.insert(slkHelperHashData, {
                 type = "ability",
@@ -1589,6 +1589,7 @@ slkHelper.unit = {
                 ID_ARRAY = v.ID_ARRAY or nil,
                 UNIT_ID = id,
                 UNIT_TYPE = UNIT_TYPE,
+                COURIER_AUTO_SKILL = slkHelper.conf.courierAutoSkill,
                 Name = Name,
                 Art = v.Art,
                 file = v.file,

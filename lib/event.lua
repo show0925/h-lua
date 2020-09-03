@@ -347,6 +347,15 @@ hevent.onItemDestroy = function(whichItem, callFunc)
     return hevent.registerEvent(whichItem, CONST_EVENT.itemDestroy, callFunc)
 end
 
+--- 物品被拆分
+---@alias onItemSeparate fun(evtData: {whichItem:"被拆分的物品",type:"拆分类型:single(单类多个)|formula(公式)",targetUnit:"绑定单位"}):void
+---@param whichItem userdata
+---@param callFunc onItemSeparate | "function(evtData) end"
+---@return any
+hevent.onItemSeparate = function(whichItem, callFunc)
+    return hevent.registerEvent(whichItem, CONST_EVENT.itemSeparate, callFunc)
+end
+
 --- 物品被合成
 ---@alias onItemSynthesis fun(evtData: {triggerUnit:"触发单位",triggerItem:"合成物品"}):void
 ---@param whichUnit userdata
@@ -354,15 +363,6 @@ end
 ---@return any
 hevent.onItemSynthesis = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.itemSynthesis, callFunc)
-end
-
---- 物品被拆分
----@alias onItemSeparate fun(evtData: {triggerUnit:"触发单位",triggerItemId:"被拆分物品ID字符串",type:"拆分类型:simple(多次数)|mixed(合成物)"}):void
----@param whichUnit userdata
----@param callFunc onItemSeparate | "function(evtData) end"
----@return any
-hevent.onItemSeparate = function(whichUnit, callFunc)
-    return hevent.registerEvent(whichUnit, CONST_EVENT.itemSeparate, callFunc)
 end
 
 --- 物品超重
@@ -1053,8 +1053,6 @@ hevent.onCourierBlink = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.courierBlink, callFunc)
 end
 
----,triggerSkill:"施放技能ID字符串",targetUnit:"获取目标单位",targetX:"获取施放目标点X",targetY:"获取施放目标点Y",targetZ:"获取施放目标点Z"
-
 --- 信使范围拾取时
 ---@alias onCourierRangePickUp fun(evtData: {triggerUnit:"触发单位",triggerSkill:"施放技能ID字符串",radius:"拾取范围半径"}):void
 ---@param whichUnit userdata
@@ -1062,4 +1060,22 @@ end
 ---@return any
 hevent.onCourierRangePickUp = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.courierRangePickUp, callFunc)
+end
+
+--- 信使拆分时
+---@alias onCourierSeparate fun(evtData: {triggerUnit:"触发单位",triggerSkill:"施放技能ID字符串",triggerItemId:"触发物品ID字符串"}):void
+---@param whichUnit userdata
+---@param callFunc onCourierSeparate | "function(evtData) end"
+---@return any
+hevent.onCourierSeparate = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.courierSeparate, callFunc)
+end
+
+--- 信使批量传递时
+---@alias onCourierDeliver fun(evtData: {triggerUnit:"触发单位",triggerSkill:"施放技能ID字符串",targetUnit:"目标单位"}):void
+---@param whichUnit userdata
+---@param callFunc onCourierDeliver | "function(evtData) end"
+---@return any
+hevent.onCourierDeliver = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.courierDeliver, callFunc)
 end

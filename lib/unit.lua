@@ -374,8 +374,12 @@ hunit.embed = function(u, options)
     -- 记入group选择器（不在框架系统内的单位，也不会被group选择到）
     table.insert(hRuntime.group, u)
     -- 记入realtime
+    local id = options.unitId
+    if (type(id) == 'number') then
+        id = string.id2char(id)
+    end
     hRuntime.unit[u] = {
-        id = options.unitId or hunit.getId(u),
+        id = id,
         life = options.life or nil,
         during = options.during or nil,
         isShadow = options.isShadow or false,
@@ -404,6 +408,15 @@ hunit.embed = function(u, options)
             cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_POINT_ORDER)
             cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_TARGET_ORDER)
         end)
+    end
+    -- 信使事件
+    local slk = hslk_global.id2Value.unit[id]
+    if (slk ~= nil) then
+        if (slk.UNIT_TYPE == "courier_hero" or slk.UNIT_TYPE == "courier") then
+            if (slk.COURIER_AUTO_SKILL == true) then
+                hcourier.embed(u)
+            end
+        end
     end
     -- 物品系统
     if (his.hasSlot(u)) then

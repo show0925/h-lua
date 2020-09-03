@@ -591,10 +591,10 @@ end
 ---@public
 ---@param whichUnit userdata 目标单位
 ---@param items nil|userdata|table<userdata> 空|物品|物品数组
----@return nil|table
+---@return table 物品数据数组 {...{id=<string>,charges=<number>,name=<string>}}
 hitem.synthesis = function(whichUnit, items)
     if (whichUnit == nil) then
-        return nil
+        return {}
     end
     items = items or {}
     if (type(items) == 'userdata') then
@@ -624,6 +624,7 @@ hitem.synthesis = function(whichUnit, items)
                 itemQuantity[itName] = 0
             end
             itemQuantity[itName] = itemQuantity[itName] + (hitem.getCharges(it) or 1)
+            hitem.del(it, 0)
         end
     end
     local matchCount = 1
@@ -634,8 +635,11 @@ hitem.synthesis = function(whichUnit, items)
                 for need = #hslk_global.synthesis.fragment[itName], 1, -1 do
                     if ((itemQuantity[itName] or 0) >= need) then
                         local maybeProfits = hslk_global.synthesis.fragment[itName][need]
-                        for _, profitName in ipairs(maybeProfits) do
-                            local needFragments = hslk_global.synthesis.profit[profitName].fragment
+                        for _, mp in ipairs(maybeProfits) do
+                            local profitName = mp.profit
+                            local profitIndex = mp.index
+                            local whichProfit = hslk_global.synthesis.profit[profitName][profitIndex]
+                            local needFragments = whichProfit.fragment
                             local match = true
                             for _, frag in ipairs(needFragments) do
                                 if ((itemQuantity[frag[1]] or 0) < frag[2]) then
@@ -656,9 +660,9 @@ hitem.synthesis = function(whichUnit, items)
                                     table.insert(itemKinds, profitName)
                                 end
                                 if (itemQuantity[profitName] == nil) then
-                                    itemQuantity[profitName] = hslk_global.synthesis.profit[profitName].qty
+                                    itemQuantity[profitName] = whichProfit.qty
                                 else
-                                    itemQuantity[profitName] = itemQuantity[profitName] + hslk_global.synthesis.profit[profitName].qty
+                                    itemQuantity[profitName] = itemQuantity[profitName] + whichProfit.qty
                                 end
                             end
                         end
@@ -750,6 +754,72 @@ hitem.synthesis = function(whichUnit, items)
         end
     end
     return extra
+end
+
+--- 拆分物品
+--- 物品的xy指的是物品创建时的坐标
+--- 当物品在单位身上时，物品的位置并不跟随单位移动，而是创建时候的位置，需要注意
+---@public
+---@param whichItem userdata 目标物品
+---@param separateType string | "'single'" | "'formula'"
+---@param whichUnit userdata 触发单位（可选）当拥有触发单位时，拆分的物品会在单位位置处
+---@return nil|string 错误时会返回一个字符串，反馈错误
+hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
+    if (whichItem == nil) then
+        return "物品不存在"
+    end
+    whichUnit = whichUnit or nil
+    local x = 0
+    local y = 0
+    if (whichUnit ~= nil) then
+        x = cj.GetUnitX(whichUnit)
+        y = cj.GetUnitY(whichUnit)
+    else
+        x = cj.GetItemX(whichItem)
+        y = cj.GetItemY(whichItem)
+    end
+    local id = hitem.getId(whichItem)
+    local name = hitem.getName(whichItem)
+    local charges = hitem.getCharges(whichItem)
+    separateType = separateType or "single"
+    formulaIndex = formulaIndex or 1 -- 默认获取第一条公式拆分
+    if (charges <= 1) then
+        -- 如果数目小于2，自动切换成公式模式
+        separateType = "formula"
+    end
+    if (separateType == "single") then
+        for _ = 1, charges, 1 do
+            hitem.create({ itemId = id, charges = 1, x = x, y = y, during = 0 })
+        end
+    elseif (separateType == "formula") then
+        if (hslk_global.synthesis.profit[name] == nil) then
+            return "物品不存在公式，无法拆分"
+        end
+        local profit = hslk_global.synthesis.profit[name][formulaIndex] or nil
+        if (profit == nil) then
+            return "物品找不到公式，无法拆分"
+        end
+        for _, frag in ipairs(profit.fragment) do
+            local itId = hslk_global.name2Value.item[frag[1]].ITEM_ID
+            if (#profit.fragment == 1) then
+                for _ = 1, frag[2], 1 do
+                    hitem.create({ itemId = itId, charges = 1, x = x, y = y, during = 0 })
+                end
+            else
+                hitem.create({ itemId = itId, charges = frag[2], x = x, y = y, during = 0 })
+            end
+        end
+    end
+    hevent.triggerEvent(
+        whichItem,
+        CONST_EVENT.itemSeparate,
+        {
+            triggerItem = whichItem,
+            type = separateType,
+            targetUnit = whichUnit,
+        }
+    )
+    hitem.del(whichItem, 0)
 end
 
 --[[
@@ -899,7 +969,7 @@ hitem.detector = function(whichUnit, originItem)
     end
     if (#extra > 0) then
         for _, e in ipairs(extra) do
-            local slk = hslk_global.name2Value.item[e.name]
+            local slk = hslk_global.id2Value.item[e.id]
             local id = slk.ITEM_ID
             if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
                 id = slk.SHADOW_ID
@@ -1008,6 +1078,7 @@ hitem.create = function(bean)
                 y = cj.GetItemY(it)
                 hitem.del(it, 0)
                 it = cj.CreateItem(string.char2id(slk.SHADOW_ID), x, y)
+                cj.SetItemCharges(it, charges)
             end
         end
         hRuntime.item[it] = {}

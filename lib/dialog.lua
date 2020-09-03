@@ -26,9 +26,10 @@ hdialog.del = function(whichDialog)
 end
 
 --- 创建一个新的对话框
+------@alias dialogCreateAction fun(action: string):void
 ---@param whichPlayer userdata
 ---@param options table
----@param action function
+---@param action dialogCreateAction | "function(btnValue) end"
 ---@return userdata
 hdialog.create = function(whichPlayer, options, action)
     --[[

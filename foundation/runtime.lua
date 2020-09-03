@@ -49,10 +49,14 @@ hRuntime = {
             for k, v in ipairs(json.fragment) do
                 json.fragment[k][2] = math.floor(v[2])
             end
-            hslk_global.synthesis.profit[json.profit[1]] = {
+            if (hslk_global.synthesis.profit[json.profit[1]] == nil) then
+                hslk_global.synthesis.profit[json.profit[1]] = {}
+            end
+            table.insert(hslk_global.synthesis.profit[json.profit[1]], {
                 qty = json.profit[2],
                 fragment = json.fragment,
-            }
+            })
+            local profitIndex = #hslk_global.synthesis.profit[json.profit[1]]
             for _, f in ipairs(json.fragment) do
                 if (hslk_global.synthesis.fragment[f[1]] == nil) then
                     hslk_global.synthesis.fragment[f[1]] = {}
@@ -60,7 +64,10 @@ hRuntime = {
                 if (hslk_global.synthesis.fragment[f[1]][f[2]] == nil) then
                     hslk_global.synthesis.fragment[f[1]][f[2]] = {}
                 end
-                table.insert(hslk_global.synthesis.fragment[f[1]][f[2]], json.profit[1])
+                table.insert(hslk_global.synthesis.fragment[f[1]][f[2]], {
+                    profit = json.profit[1],
+                    index = profitIndex,
+                })
             end
         end,
     },
