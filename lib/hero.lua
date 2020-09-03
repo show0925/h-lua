@@ -106,13 +106,15 @@ hhero.setPlayerAllowQty = function(whichPlayer, max)
     if (max > 7) then
         max = 7
     end
-    heros.player_allow_qty[whichPlayer] = max
+    local index = hplayer.index(whichPlayer)
+    hhero.player_allow_qty[index] = max
 end
 --- 获取玩家最大英雄数量
 ---@param whichPlayer userdata
 ---@return number
 hhero.getPlayerAllowQty = function(whichPlayer)
-    return hhero.player_allow_qty[hplayer.index(whichPlayer)] or 0
+    local index = hplayer.index(whichPlayer)
+    return hhero.player_allow_qty[index] or 0
 end
 
 -- 设定选择英雄的出生地
