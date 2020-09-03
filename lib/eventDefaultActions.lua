@@ -482,11 +482,41 @@ hevent_default_actions = {
         end)
     },
     courier = {
-        autoSkills = cj.Condition(function()
-            local u = cj.GetTriggerUnit()
-            local it = cj.GetManipulatedItem()
-            if (it ~= nil and cj.GetSpellAbilityId() == hitem.DEFAULT_SKILL_ITEM_SEPARATE) then
-                print_err("拆分物品尚未完成")
+        defaultSkills = cj.Condition(function()
+            local abilityId = cj.GetSpellAbilityId()
+            if (abilityId == nil) then
+                return
+            end
+            abilityId = string.id2char(abilityId)
+            local slk = hslk_global.id2Value.ability[abilityId]
+            if (slk == nil) then
+                return
+            end
+            local triggerUnit = cj.GetTriggerUnit()
+            if (slk.Name == "信使-闪烁") then
+                hevent.triggerEvent(
+                    triggerUnit,
+                    CONST_EVENT.courierBlink,
+                    {
+                        triggerUnit = triggerUnit,
+                        triggerSkill = abilityId,
+                        targetLoc = cj.GetSpellTargetLoc()
+                    }
+                )
+            elseif (slk.Name == "信使-拾取") then
+                hevent.triggerEvent(
+                    triggerUnit,
+                    CONST_EVENT.courierRangePickUp,
+                    {
+                        triggerUnit = triggerUnit,
+                        triggerSkill = abilityId,
+                        targetLoc = cj.GetSpellTargetLoc()
+                    }
+                )
+            elseif (slk.Name == "信使-拆分物品") then
+                local it = cj.GetManipulatedItem()
+            elseif (slk.Name == "信使-传递") then
+
             end
         end),
     },

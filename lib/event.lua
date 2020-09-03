@@ -1044,3 +1044,21 @@ hevent.onMapDestructableDestroy = function(callFunc)
         cj.TriggerRegisterDeathEvent(tgr, cj.GetEnumDestructable())
     end)
 end
+
+--- 信使闪烁时
+---@alias onCourierBlink fun(evtData: {triggerUnit:"触发单位"}):void
+---@param whichUnit userdata
+---@param callFunc onCourierBlink | "function(evtData) end"
+---@return any
+hevent.onCourierBlink = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.courierBlink, callFunc)
+end
+
+--- 信使范围拾取时
+---@alias onCourierRangePickUp fun(evtData: {triggerUnit:"触发单位"}):void
+---@param whichUnit userdata
+---@param callFunc onCourierRangePickUp | "function(evtData) end"
+---@return any
+hevent.onCourierRangePickUp = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.courierRangePickUp, callFunc)
+end

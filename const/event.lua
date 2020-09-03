@@ -81,4 +81,8 @@ CONST_EVENT = {
     pickHero = "pickHero",
     playerLeave = "playerLeave",
     destructableDestroy = "destructableDestroy",
+    courierBlink = "courierBlink",
+    courierRangePickUp = "courierRangePickUp",
+    courierSeparate = "courierSeparate",
+    courierDeliver = "courierDeliver",
 }

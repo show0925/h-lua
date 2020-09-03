@@ -14,7 +14,7 @@ slkHelper = {
     shapeshiftIndex = 1,
     ---@private 信使技能缓存
     courierBlink = nil,
-    courierPickUp = nil,
+    courierRangePickUp = nil,
     courierSeparate = nil,
     courierDeliver = nil,
     ---@public slkHelper配置项
@@ -29,33 +29,33 @@ slkHelper = {
                 Ubertip = "可以闪烁到任何地方",
                 Art = "ReplaceableTextures\\CommandButtons\\BTNBlink.blp",
                 Hotkey = 'Q',
-                x = 0,
-                y = 2,
-                coolDown = 10
+                Buttonpos1 = 0,
+                Buttonpos2 = 2,
+                Cool1 = 10
             },
-            pickUp = {
+            rangePickUp = {
                 Ubertip = "将附近地上的物品拾取到身上",
                 Art = "ReplaceableTextures\\CommandButtons\\BTNPickUpItem.blp",
                 Hotkey = 'W',
-                x = 1,
-                y = 2,
-                coolDown = 3
+                Buttonpos1 = 1,
+                Buttonpos2 = 2,
+                Cool1 = 3
             },
             separate = {
                 Ubertip = "将合成或重叠的物品拆分成零件",
                 Art = "ReplaceableTextures\\CommandButtons\\BTNRepair.blp",
                 Hotkey = 'E',
-                x = 2,
-                y = 2,
-                coolDown = 3
+                Buttonpos1 = 2,
+                Buttonpos2 = 2,
+                Cool1 = 3
             },
             deliver = {
                 Ubertip = "将所有物品依照顺序传送给英雄，当你的英雄没有空余物品位置，物品会返回给信使",
                 Art = "ReplaceableTextures\\CommandButtons\\BTNLoadPeon.blp",
                 Hotkey = 'R',
-                x = 3,
-                y = 2,
-                coolDown = 3
+                Buttonpos1 = 3,
+                Buttonpos2 = 2,
+                Cool1 = 3
             },
         },
         -- 一般单位白天视野默认值
@@ -824,13 +824,13 @@ slkHelper.getCourierAutoSkill = function()
             obj.Tip = Tip
             obj.Hotkey = slkHelper.conf.courierSkill.blink.Hotkey
             obj.Ubertip = slkHelper.conf.courierSkill.blink.Ubertip
-            obj.Buttonpos1 = slkHelper.conf.courierSkill.blink.x
-            obj.Buttonpos2 = slkHelper.conf.courierSkill.blink.y
+            obj.Buttonpos1 = slkHelper.conf.courierSkill.blink.Buttonpos1
+            obj.Buttonpos2 = slkHelper.conf.courierSkill.blink.Buttonpos2
             obj.hero = 0
             obj.levels = 1
             obj.DataA1 = 99999
             obj.DataB1 = 0
-            obj.Cool1 = slkHelper.conf.courierSkill.blink.coolDown
+            obj.Cool1 = slkHelper.conf.courierSkill.blink.Cool1
             obj.Cost1 = 0
             obj.Art = slkHelper.conf.courierSkill.blink.Art
             obj.SpecialArt = "Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl"
@@ -849,41 +849,41 @@ slkHelper.getCourierAutoSkill = function()
                 }
             })
         end
-        if (slkHelper.courierPickUp == nil) then
+        if (slkHelper.courierRangePickUp == nil) then
             local Name = "信使-拾取"
-            local obj = slk.ability.ANcl:new("slk_courier_pickup")
-            local Tip = Name .. "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.pickUp.Hotkey) .. ")"
+            local obj = slk.ability.ANcl:new("slk_courier_range_pickup")
+            local Tip = Name .. "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.rangePickUp.Hotkey) .. ")"
             obj.Order = "manaburn"
             obj.DataF1 = "manaburn"
             obj.Name = Name
             obj.Tip = Tip
-            obj.Hotkey = slkHelper.conf.courierSkill.pickUp.Hotkey
-            obj.Ubertip = slkHelper.conf.courierSkill.pickUp.Ubertip
-            obj.Buttonpos1 = slkHelper.conf.courierSkill.pickUp.x
-            obj.Buttonpos2 = slkHelper.conf.courierSkill.pickUp.y
+            obj.Hotkey = slkHelper.conf.courierSkill.rangePickUp.Hotkey
+            obj.Ubertip = slkHelper.conf.courierSkill.rangePickUp.Ubertip
+            obj.Buttonpos1 = slkHelper.conf.courierSkill.rangePickUp.Buttonpos1
+            obj.Buttonpos2 = slkHelper.conf.courierSkill.rangePickUp.Buttonpos2
             obj.hero = 0
             obj.levels = 1
             obj.DataA1 = 0
             obj.DataB1 = 0
             obj.DataC1 = 1
             obj.DataD1 = 0.01
-            obj.Cool1 = slkHelper.conf.courierSkill.pickUp.coolDown
+            obj.Cool1 = slkHelper.conf.courierSkill.rangePickUp.Cool1
             obj.Cost1 = 0
-            obj.Art = slkHelper.conf.courierSkill.pickUp.Art
+            obj.Art = slkHelper.conf.courierSkill.rangePickUp.Art
             obj.CasterArt = ""
             obj.EffectArt = ""
             obj.TargetArt = ""
             obj.race = "other"
-            slkHelper.courierPickUp = obj:get_id()
+            slkHelper.courierRangePickUp = obj:get_id()
             table.insert(slkHelperHashData, {
                 type = "ability",
                 data = {
                     CUSTOM_DATA = {},
                     ID_ARRAY = nil,
-                    ABILITY_ID = slkHelper.courierPickUp,
+                    ABILITY_ID = slkHelper.courierRangePickUp,
                     ABILITY_TYPE = "courier",
                     Name = Name,
-                    Art = slkHelper.conf.courierSkill.pickUp.Art,
+                    Art = slkHelper.conf.courierSkill.rangePickUp.Art,
                 }
             })
         end
@@ -898,8 +898,8 @@ slkHelper.getCourierAutoSkill = function()
             obj.Ubertip = slkHelper.conf.courierSkill.separate.Ubertip
             obj.Art = slkHelper.conf.courierSkill.separate.Art
             obj.Hotkey = slkHelper.conf.courierSkill.separate.Hotkey
-            obj.Buttonpos1 = slkHelper.conf.courierSkill.separate.x
-            obj.Buttonpos2 = slkHelper.conf.courierSkill.separate.y
+            obj.Buttonpos1 = slkHelper.conf.courierSkill.separate.Buttonpos1
+            obj.Buttonpos2 = slkHelper.conf.courierSkill.separate.Buttonpos2
             obj.Missileart = ""
             obj.Missilespeed = 99999
             obj.Missilearc = 0.00
@@ -907,7 +907,7 @@ slkHelper.getCourierAutoSkill = function()
             obj.hero = 0
             obj.race = "other"
             obj.BuffID = ""
-            obj.Cool1 = slkHelper.conf.courierSkill.separate.coolDown
+            obj.Cool1 = slkHelper.conf.courierSkill.separate.Cool1
             obj.targs1 = "item,nonhero"
             obj.Cost1 = 0
             obj.Rng1 = 50.00
@@ -934,15 +934,15 @@ slkHelper.getCourierAutoSkill = function()
             obj.Tip = Tip
             obj.Hotkey = slkHelper.conf.courierSkill.deliver.Hotkey
             obj.Ubertip = slkHelper.conf.courierSkill.deliver.Ubertip
-            obj.Buttonpos1 = slkHelper.conf.courierSkill.deliver.x
-            obj.Buttonpos2 = slkHelper.conf.courierSkill.deliver.y
+            obj.Buttonpos1 = slkHelper.conf.courierSkill.deliver.Buttonpos1
+            obj.Buttonpos2 = slkHelper.conf.courierSkill.deliver.Buttonpos2
             obj.hero = 0
             obj.levels = 1
             obj.DataA1 = 0
             obj.DataB1 = 0
             obj.DataC1 = 1
             obj.DataD1 = 0.01
-            obj.Cool1 = slkHelper.conf.courierSkill.deliver.coolDown
+            obj.Cool1 = slkHelper.conf.courierSkill.deliver.Cool1
             obj.Cost1 = 0
             obj.Art = slkHelper.conf.courierSkill.deliver.Art
             obj.CasterArt = ""
@@ -964,7 +964,7 @@ slkHelper.getCourierAutoSkill = function()
         end
     end
     return {
-        slkHelper.courierBlink, slkHelper.courierPickUp,
+        slkHelper.courierBlink, slkHelper.courierRangePickUp,
         slkHelper.courierSeparate, slkHelper.courierDeliver
     }
 end
