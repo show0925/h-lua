@@ -762,7 +762,7 @@ end
 ---@public
 ---@param whichItem userdata 目标物品
 ---@param separateType string | "'single'" | "'formula'"
----@param whichUnit userdata 触发单位（可选）当拥有触发单位时，拆分的物品会在单位位置处
+---@param whichUnit userdata 触发单位（可选）当拥有持有单位时，拆分的物品会在单位坐标处
 ---@return nil|string 错误时会返回一个字符串，反馈错误
 hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
     if (whichItem == nil) then
@@ -771,7 +771,7 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
     whichUnit = whichUnit or nil
     local x = 0
     local y = 0
-    if (whichUnit ~= nil) then
+    if (whichUnit ~= nil and cj.IsItemOwned(whichItem)) then
         x = cj.GetUnitX(whichUnit)
         y = cj.GetUnitY(whichUnit)
     else
@@ -792,6 +792,10 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
             hitem.create({ itemId = id, charges = 1, x = x, y = y, during = 0 })
         end
     elseif (separateType == "formula") then
+        local originSlk = hslk_global.name2Value.item[name]
+        if (originSlk ~= nil and originSlk.SHADOW == true) then
+            name = hslk_global.id2Value.item[originSlk.SHADOW_ID].Name
+        end
         if (hslk_global.synthesis.profit[name] == nil) then
             return "物品不存在公式，无法拆分"
         end
@@ -799,14 +803,31 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
         if (profit == nil) then
             return "物品找不到公式，无法拆分"
         end
-        for _, frag in ipairs(profit.fragment) do
-            local itId = hslk_global.name2Value.item[frag[1]].ITEM_ID
-            if (#profit.fragment == 1) then
-                for _ = 1, frag[2], 1 do
-                    hitem.create({ itemId = itId, charges = 1, x = x, y = y, during = 0 })
+        for _ = 1, charges, 1 do
+            for _, frag in ipairs(profit.fragment) do
+                local itId = hslk_global.name2Value.item[frag[1]].ITEM_ID
+                if (#profit.fragment == 1) then
+                    for _ = 1, frag[2], 1 do
+                        hitem.create({ itemId = itId, charges = 1, x = x, y = y, during = 0 })
+                    end
+                else
+                    local qty = frag[2]
+                    local slk = hslk_global.id2Value.item[itId]
+                    if (slk ~= nil) then
+                        local overlie = slk.OVERLIE or 1
+                        while (qty > 0) do
+                            if (overlie >= qty) then
+                                hitem.create({ itemId = itId, charges = qty, x = x, y = y, during = 0 })
+                                qty = 0
+                            else
+                                qty = qty - overlie
+                                hitem.create({ itemId = itId, charges = overlie, x = x, y = y, during = 0 })
+                            end
+                        end
+                    else
+                        hitem.create({ itemId = itId, charges = qty, x = x, y = y, during = 0 })
+                    end
                 end
-            else
-                hitem.create({ itemId = itId, charges = frag[2], x = x, y = y, during = 0 })
             end
         end
     end

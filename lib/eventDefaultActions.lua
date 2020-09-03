@@ -524,6 +524,10 @@ hevent_default_actions = {
                 end
                 local id = hitem.getId(it)
                 local name = hitem.getName(it)
+                local originSlk = hslk_global.name2Value.item[name]
+                if (originSlk ~= nil and originSlk.SHADOW == true) then
+                    name = hslk_global.id2Value.item[originSlk.SHADOW_ID].Name
+                end
                 local charges = hitem.getCharges(it)
                 local formulas = hslk_global.synthesis.profit[name]
                 local allowFormulaIndex = {}
@@ -536,13 +540,13 @@ hevent_default_actions = {
                 end
                 local buttons = {}
                 if (charges > 1) then
-                    table.insert(buttons, { value = 0, label = charges .. "份" .. name })
+                    table.insert(buttons, { value = 0, label = name .. "x" .. charges })
                 end
                 if (#allowFormulaIndex > 0) then
                     for ai, a in ipairs(allowFormulaIndex) do
                         local txt = {}
                         for _, frag in ipairs(formulas[a].fragment) do
-                            table.insert(txt, frag[1] .. 'x' .. frag[2])
+                            table.insert(txt, frag[1] .. 'x' .. frag[2] * charges)
                         end
                         table.insert(buttons, { value = ai, label = string.implode('+', txt) })
                     end
