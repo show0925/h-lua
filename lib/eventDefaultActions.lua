@@ -504,13 +504,15 @@ hevent_default_actions = {
                     }
                 )
             elseif (slk.Name == "信使-拾取") then
+                local radius = 400 --半径
+                hitem.pickRound(triggerUnit, hunit.x(triggerUnit), hunit.y(triggerUnit), radius)
                 hevent.triggerEvent(
                     triggerUnit,
                     CONST_EVENT.courierRangePickUp,
                     {
                         triggerUnit = triggerUnit,
                         triggerSkill = abilityId,
-                        targetLoc = cj.GetSpellTargetLoc()
+                        radius = radius
                     }
                 )
             elseif (slk.Name == "信使-拆分物品") then

@@ -528,7 +528,7 @@ hevent.onBeFetter = function(whichUnit, callFunc)
 end
 
 --- 爆破成功
----@alias onBomb fun(evtData: {triggerUnit:"触发单位",targetUnit:"被爆破单位",odds:"几率百分比",range:"爆破范围",damage:"伤害"}):void
+---@alias onBomb fun(evtData: {triggerUnit:"触发单位",targetUnit:"被爆破单位",odds:"几率百分比",radius:"爆破半径范围",damage:"伤害"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBomb | "function(evtData) end"
 ---@return any
@@ -537,7 +537,7 @@ hevent.onBomb = function(whichUnit, callFunc)
 end
 
 --- 被爆破
----@alias onBeBomb fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",odds:"几率百分比",range:"爆破范围",damage:"伤害"}):void
+---@alias onBeBomb fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",odds:"几率百分比",radius:"爆破半径范围",damage:"伤害"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeBomb | "function(evtData) end"
 ---@return any
@@ -546,7 +546,7 @@ hevent.onBeBomb = function(whichUnit, callFunc)
 end
 
 --- 闪电链成功
----@alias onLightningChain fun(evtData: {triggerUnit:"触发单位",targetUnit:"被闪电链单位",odds:"几率百分比",range:"闪电链范围",damage:"伤害",index:"是第几个被电到的"}):void
+---@alias onLightningChain fun(evtData: {triggerUnit:"触发单位",targetUnit:"被闪电链单位",odds:"几率百分比",radius:"闪电链半径范围",damage:"伤害",index:"是第几个被电到的"}):void
 ---@param whichUnit userdata
 ---@param callFunc onLightningChain | "function(evtData) end"
 ---@return any
@@ -555,7 +555,7 @@ hevent.onLightningChain = function(whichUnit, callFunc)
 end
 
 --- 被闪电链
----@alias onBeLightningChain fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",odds:"几率百分比",range:"闪电链范围",damage:"伤害",index:"是第几个被电到的"}):void
+---@alias onBeLightningChain fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",odds:"几率百分比",radius:"闪电链半径范围",damage:"伤害",index:"是第几个被电到的"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeLightningChain | "function(evtData) end"
 ---@return any
@@ -654,7 +654,7 @@ hevent.onBeViolence = function(whichUnit, callFunc)
 end
 
 --- 分裂时
----@alias onSpilt fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位",damage:"伤害",range:"分裂范围",percent:"增幅百分比"}):void
+---@alias onSpilt fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位",damage:"伤害",radius:"分裂半径范围",percent:"增幅百分比"}):void
 ---@param whichUnit userdata
 ---@param callFunc onSpilt | "function(evtData) end"
 ---@return any
@@ -663,7 +663,7 @@ hevent.onSpilt = function(whichUnit, callFunc)
 end
 
 --- 承受分裂时
----@alias onBeSpilt fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",damage:"伤害",range:"分裂范围",percent:"增幅百分比"}):void
+---@alias onBeSpilt fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",damage:"伤害",radius:"分裂半径范围",percent:"增幅百分比"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeSpilt | "function(evtData) end"
 ---@return any
@@ -797,35 +797,35 @@ hevent.onUpgradeFinish = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.upgradeFinish, callFunc)
 end
 
---- 进入某单位（whichUnit）范围内
----@alias onEnterUnitRange fun(evtData: {centerUnit:"被进入范围的中心单位",enterUnit:"进入范围的单位",range:"设定范围"}):void
+--- 进入某单位（whichUnit）半径范围内
+---@alias onEnterUnitRange fun(evtData: {centerUnit:"被进入范围的中心单位",enterUnit:"进入范围的单位",radius:"设定的半径范围"}):void
 ---@param whichUnit userdata
----@param range number
+---@param radius number
 ---@param callFunc onEnterUnitRange | "function(evtData) end"
 ---@return any
-hevent.onEnterUnitRange = function(whichUnit, range, callFunc)
+hevent.onEnterUnitRange = function(whichUnit, radius, callFunc)
     local key = CONST_EVENT.enterUnitRange
     if (hRuntime.unit[whichUnit] == nil) then
         hRuntime.unit[whichUnit] = {}
     end
-    if (hRuntime.unit[whichUnit]["onEnterUnitRangeAction" .. range] == nil) then
-        hRuntime.unit[whichUnit]["onEnterUnitRangeAction" .. range] = function()
+    if (hRuntime.unit[whichUnit]["onEnterUnitRangeAction" .. radius] == nil) then
+        hRuntime.unit[whichUnit]["onEnterUnitRangeAction" .. radius] = function()
             hevent.triggerEvent(
                 whichUnit,
                 key,
                 {
                     centerUnit = whichUnit,
                     enterUnit = cj.GetTriggerUnit(),
-                    range = range
+                    radius = radius
                 }
             )
         end
     end
     hevent.pool(
         whichUnit,
-        cj.Condition(hRuntime.unit[whichUnit]["onEnterUnitRangeAction" .. range]),
+        cj.Condition(hRuntime.unit[whichUnit]["onEnterUnitRangeAction" .. radius]),
         function(tgr)
-            cj.TriggerRegisterUnitInRange(tgr, whichUnit, range, nil)
+            cj.TriggerRegisterUnitInRange(tgr, whichUnit, radius, nil)
         end
     )
     return hevent.registerEvent(whichUnit, key, callFunc)
@@ -1032,7 +1032,6 @@ end
 
 --- 全图当前可破坏物死亡
 ---@alias onMapDestructableDestroy fun(evtData: {triggerDestructable:"被破坏的可破坏物"}):void
----@param whichDestructable userdata
 ---@param callFunc onMapDestructableDestroy | "function(evtData) end"
 ---@return any
 hevent.onMapDestructableDestroy = function(callFunc)
@@ -1046,7 +1045,7 @@ hevent.onMapDestructableDestroy = function(callFunc)
 end
 
 --- 信使闪烁时
----@alias onCourierBlink fun(evtData: {triggerUnit:"触发单位"}):void
+---@alias onCourierBlink fun(evtData: {triggerUnit:"触发单位",triggerSkill:"施放技能ID字符串",targetX:"获取施放目标点X",targetY:"获取施放目标点Y",targetZ:"获取施放目标点Z"}):void
 ---@param whichUnit userdata
 ---@param callFunc onCourierBlink | "function(evtData) end"
 ---@return any
@@ -1054,8 +1053,10 @@ hevent.onCourierBlink = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.courierBlink, callFunc)
 end
 
+---,triggerSkill:"施放技能ID字符串",targetUnit:"获取目标单位",targetX:"获取施放目标点X",targetY:"获取施放目标点Y",targetZ:"获取施放目标点Z"
+
 --- 信使范围拾取时
----@alias onCourierRangePickUp fun(evtData: {triggerUnit:"触发单位"}):void
+---@alias onCourierRangePickUp fun(evtData: {triggerUnit:"触发单位",triggerSkill:"施放技能ID字符串",radius:"拾取范围半径"}):void
 ---@param whichUnit userdata
 ---@param callFunc onCourierRangePickUp | "function(evtData) end"
 ---@return any
