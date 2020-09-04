@@ -4,21 +4,21 @@ hRuntime = {
         unit = function(json)
             hslk_global.id2Value.unit[json.UNIT_ID] = json
             hslk_global.name2Value.unit[json.Name] = json
-            if (json.ID_ARRAY ~= nil) then
-                if (hslk_global.id_array.unit[json.ID_ARRAY] == nil) then
-                    hslk_global.id_array.unit[json.ID_ARRAY] = {}
+            if (json.CLASS_GROUP ~= nil) then
+                if (hslk_global.class_group.unit[json.CLASS_GROUP] == nil) then
+                    hslk_global.class_group.unit[json.CLASS_GROUP] = {}
                 end
-                table.insert(hslk_global.id_array.unit[json.ID_ARRAY], json.UNIT_ID)
+                table.insert(hslk_global.class_group.unit[json.CLASS_GROUP], json.UNIT_ID)
             end
         end,
         item = function(json)
             hslk_global.id2Value.item[json.ITEM_ID] = json
             hslk_global.name2Value.item[json.Name] = json
-            if (json.ID_ARRAY ~= nil) then
-                if (hslk_global.id_array.item[json.ID_ARRAY] == nil) then
-                    hslk_global.id_array.item[json.ID_ARRAY] = {}
+            if (json.CLASS_GROUP ~= nil) then
+                if (hslk_global.class_group.item[json.CLASS_GROUP] == nil) then
+                    hslk_global.class_group.item[json.CLASS_GROUP] = {}
                 end
-                table.insert(hslk_global.id_array.item[json.ID_ARRAY], json.ITEM_ID)
+                table.insert(hslk_global.class_group.item[json.CLASS_GROUP], json.ITEM_ID)
             end
             if (json.cooldownID ~= nil) then
                 hslk_global.item_cooldown_ids[json.cooldownID] = json.ITEM_ID
@@ -27,21 +27,21 @@ hRuntime = {
         ability = function(json)
             hslk_global.id2Value.ability[json.ABILITY_ID] = json
             hslk_global.name2Value.ability[json.Name] = json
-            if (json.ID_ARRAY ~= nil) then
-                if (hslk_global.id_array.ability[json.ID_ARRAY] == nil) then
-                    hslk_global.id_array.ability[json.ID_ARRAY] = {}
+            if (json.CLASS_GROUP ~= nil) then
+                if (hslk_global.class_group.ability[json.CLASS_GROUP] == nil) then
+                    hslk_global.class_group.ability[json.CLASS_GROUP] = {}
                 end
-                table.insert(hslk_global.id_array.ability[json.ID_ARRAY], json.ABILITY_ID)
+                table.insert(hslk_global.class_group.ability[json.CLASS_GROUP], json.ABILITY_ID)
             end
         end,
         technology = function(json)
             hslk_global.id2Value.technology[json.TECHNOLOGY_ID] = json
             hslk_global.name2Value.technology[json.Name] = json
-            if (json.ID_ARRAY ~= nil) then
-                if (hslk_global.id_array.technology[json.ID_ARRAY] == nil) then
-                    hslk_global.id_array.technology[json.ID_ARRAY] = {}
+            if (json.CLASS_GROUP ~= nil) then
+                if (hslk_global.class_group.technology[json.CLASS_GROUP] == nil) then
+                    hslk_global.class_group.technology[json.CLASS_GROUP] = {}
                 end
-                table.insert(hslk_global.id_array.technology[json.ID_ARRAY], json.TECHNOLOGY_ID)
+                table.insert(hslk_global.class_group.technology[json.CLASS_GROUP], json.TECHNOLOGY_ID)
             end
         end,
         synthesis = function(json)

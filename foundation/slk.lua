@@ -63,7 +63,7 @@ hslk_global = {
         ability = {},
         technology = {},
     },
-    id_array = {
+    class_group = {
         unit = {},
         item = {},
         ability = {},
