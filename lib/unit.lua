@@ -401,8 +401,7 @@ hunit.embed = function(u, options)
         开启指令的单位可以开启以下判断：是否正在移动
         * 移动的具体指标请查看event说明
     ]]
-    if (his.computer(hunit.getOwner(u)) == false
-        or options.registerOrderEvent == true) then
+    if (his.computer(hunit.getOwner(u)) == false or options.registerOrderEvent == true) then
         hevent.pool(u, hevent_default_actions.unit.order, function(tgr)
             cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_ORDER)
             cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_POINT_ORDER)

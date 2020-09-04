@@ -85,4 +85,9 @@ CONST_EVENT = {
     courierRangePickUp = "courierRangePickUp",
     courierSeparate = "courierSeparate",
     courierDeliver = "courierDeliver",
+    moveStart = "moveStart",
+    moving = "moving",
+    moveStop = "moveStop",
+    holdOn = "holdOn",
+    stop = "stop",
 }

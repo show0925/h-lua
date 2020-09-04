@@ -423,25 +423,120 @@ hevent_default_actions = {
             )
         end),
         order = cj.Condition(function()
-            local triggerUnit = cj.GetTriggerUnit()
-            local orderId = cj.GetIssuedOrderId()
-            local orderTargetUnit = cj.GetOrderTargetUnit()
-            local orderPointLoc = cj.GetOrderPointLoc()
             --[[
                 851983:ATTACK 攻击
                 851971:SMART
                 851986:MOVE 移动
-                851971:HOLD 保持原位
+                851993:HOLD 保持原位
                 851972:STOP 停止
+                852003:移动物品栏
             ]]
-            if (orderId == 851983 or orderId == 851971 or orderId == 851986) then
-            elseif (orderId == 851971 or orderId == 851972) then
-
+            local triggerUnit = cj.GetTriggerUnit()
+            local orderId = cj.GetIssuedOrderId()
+            local orderTargetUnit = cj.GetOrderTargetUnit()
+            local orderTargetItem = cj.GetOrderTargetItem()
+            local loc = cj.GetOrderPointLoc()
+            local lx = 1.11
+            local ly = 2.22
+            local lz = 3.33
+            if (loc ~= nil) then
+                lx = cj.GetLocationX(loc)
+                ly = cj.GetLocationY(loc)
+                lz = cj.GetLocationZ(loc)
+                cj.RemoveLocation(loc)
+                loc = nil
+            elseif (orderTargetUnit ~= nil) then
+                loc = cj.GetUnitLoc(orderTargetUnit)
+                lx = cj.GetLocationX(loc)
+                ly = cj.GetLocationY(loc)
+                lz = cj.GetLocationZ(loc)
+                cj.RemoveLocation(loc)
+                loc = nil
+            elseif (orderTargetItem ~= nil and orderId ~= 852003) then
+                loc = cj.Location(cj.GetItemX(orderTargetItem), cj.GetItemY(orderTargetItem))
+                lx = cj.GetLocationX(loc)
+                ly = cj.GetLocationY(loc)
+                lz = cj.GetLocationZ(loc)
+                cj.RemoveLocation(loc)
+                loc = nil
             end
-            --print_mb(orderId)
-            --print_mb(hunit.getName(triggerUnit))
-            --print_mb(hunit.getName(orderTargetUnit))
-            --print_mb(cj.GetLocationX(orderPointLoc), cj.GetLocationY(orderPointLoc))
+            if (orderId == 851983 or orderId == 851971 or orderId == 851986
+                or (lx ~= 1.11 and ly ~= 2.22 and lz ~= 3.33)) then
+                local mov1 = hunit.get(triggerUnit, 'moving', 0)
+                if (mov1 == 0) then
+                    hunit.set(triggerUnit, 'moving', 1)
+                    local x = math.floor(cj.GetUnitX(triggerUnit))
+                    local y = math.floor(cj.GetUnitY(triggerUnit))
+                    local step = 0
+                    htime.setInterval(0.25, function(curTimer)
+                        local mov2 = hunit.get(triggerUnit, 'moving', 0)
+                        if (mov2 == 0) then
+                            htime.delTimer(curTimer)
+                            return
+                        end
+                        local tx = math.floor(cj.GetUnitX(triggerUnit))
+                        local ty = math.floor(cj.GetUnitY(triggerUnit))
+                        if (mov2 == 1) then
+                            -- 移动开始
+                            if (tx ~= x or ty ~= y) then
+                                hunit.set(triggerUnit, 'moving', 2)
+                                hevent.triggerEvent(
+                                    triggerUnit,
+                                    CONST_EVENT.moveStart,
+                                    {
+                                        triggerUnit = triggerUnit,
+                                        targetLoc = cj.GetOrderPointLoc(),
+                                    }
+                                )
+                            else
+                                hunit.set(triggerUnit, 'moving', 0)
+                            end
+                        elseif (mov2 == 2) then
+                            -- 移动ing
+                            step = step + 1
+                            hevent.triggerEvent(
+                                triggerUnit,
+                                CONST_EVENT.moving,
+                                {
+                                    triggerUnit = triggerUnit,
+                                    step = step,
+                                }
+                            )
+                            if (tx == x and ty == y) then
+                                -- 没位移，移动停止
+                                hunit.set(triggerUnit, 'moving', 0)
+                                hevent.triggerEvent(
+                                    triggerUnit,
+                                    CONST_EVENT.moveStop,
+                                    {
+                                        triggerUnit = triggerUnit,
+                                    }
+                                )
+                            end
+                        end
+                        x = tx
+                        y = ty
+                    end)
+                end
+            elseif (orderId == 851993) then
+                hunit.set(triggerUnit, 'moving', 0)
+                hevent.triggerEvent(
+                    triggerUnit,
+                    CONST_EVENT.holdOn,
+                    {
+                        triggerUnit = triggerUnit,
+                    }
+                )
+            elseif (orderId == 851972) then
+                hunit.set(triggerUnit, 'moving', 0)
+                hevent.triggerEvent(
+                    triggerUnit,
+                    CONST_EVENT.stop,
+                    {
+                        triggerUnit = triggerUnit,
+                    }
+                )
+            end
         end),
         sell = cj.Condition(function()
             local u = cj.GetSoldUnit()

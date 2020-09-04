@@ -1079,3 +1079,53 @@ end
 hevent.onCourierDeliver = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.courierDeliver, callFunc)
 end
+
+--- 当单位移动开始捕获瞬间
+---@alias onMoveStart fun(evtData: {triggerUnit:"触发单位",targetX:"移动目标X",targetY:"移动目标Y",targetZ:"移动目标Z"}):void
+---@param whichUnit userdata
+---@param callFunc onMoveStart | "function(evtData) end"
+---@return any
+hevent.onMoveStart = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.moveStart, callFunc)
+end
+
+--- 当单位移动中
+--- 注意此事件在移动时每0.25秒都会触发1次，直到移动状态消失
+---@alias onMoving fun(evtData: {triggerUnit:"触发单位",step:"移动步伐数"}):void
+---@param whichUnit userdata
+---@param callFunc onMoving | "function(evtData) end"
+---@return any
+hevent.onMoving = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.moving, callFunc)
+end
+
+--- 当单位移动停止捕获瞬间
+--- 通过对命令的捕获和单位的坐标计算进行的推理型事件
+--- 注意此事件有可能非实时，可能存有一定延迟
+---@alias onMoveStop fun(evtData: {triggerUnit:"触发单位"}):void
+---@param whichUnit userdata
+---@param callFunc onMoveStop | "function(evtData) end"
+---@return any
+hevent.onMoveStop = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.moveStop, callFunc)
+end
+
+--- 当单位发布驻扎(H)命令
+--- 只有真人玩家的单位有此事件
+---@alias onHoldOn fun(evtData: {triggerUnit:"触发单位"}):void
+---@param whichUnit userdata
+---@param callFunc onHoldOn | "function(evtData) end"
+---@return any
+hevent.onHoldOn = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.holdOn, callFunc)
+end
+
+--- 当单位发布停止(S)命令
+--- 只有真人玩家的单位有此事件
+---@alias onStop fun(evtData: {triggerUnit:"触发单位"}):void
+---@param whichUnit userdata
+---@param callFunc onStop | "function(evtData) end"
+---@return any
+hevent.onStop = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.stop, callFunc)
+end
