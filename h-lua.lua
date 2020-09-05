@@ -79,6 +79,7 @@ require "lib.dialog"
 require "lib.leaderBoard"
 require "lib.multiBoard"
 require "lib.quest"
+require "lib.matcher"
 -- 别称
 httg = htextTag
 hattr = hattribute

@@ -4,7 +4,15 @@
 --- DateTime: 2020/9/5 10:16
 --- slk匹配器，方便处理slk的数据
 ---
+--- 通用配置格式：
+--- conf = {
+---     {"匹配的物品名1", function(evtData) end},
+---     {"匹配的物品名2", function(evtData) end},
+---     ...
+--- }
 ---
+
+
 hmatcher = {
     ITEM_MATCHER = {}
 }
@@ -14,19 +22,12 @@ hmatcher = {
 --- 可以简化onItemUsed的使用，协助管理物品
 --- 适用于大众物品调用,支持正则匹配
 --- evtData 同 hevent.onItemUsed
----@param options table
-hmatcher.item = function(options)
-    --[[
-        options = {
-            {"匹配的物品名1", function(evtData) end},
-            {"匹配的物品名2", function(evtData) end},
-            ...
-        }
-    ]]
-    if (#options <= 0) then
+---@param conf table
+hmatcher.item = function(conf)
+    if (#conf <= 0) then
         return
     end
-    for _, v in ipairs(options) do
+    for _, v in ipairs(conf) do
         if (type(v[1]) == "string" and type(v[2]) == "function") then
             table.insert(hmatcher.ITEM_MATCHER, v)
         end
