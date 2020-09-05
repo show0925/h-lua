@@ -864,6 +864,109 @@ hattribute.get = function(whichUnit, attr)
     return attribute[attr]
 end
 
+--- 计算单位的属性浮动影响
+---@private
+hattribute.caleAttribute = function(isAdd, whichUnit, attr, times)
+    if (isAdd == nil) then
+        isAdd = true
+    end
+    if (attr == nil) then
+        return
+    end
+    times = times or 1
+    local diff = {}
+    local diffPlayer = {}
+    for _, arr in ipairs(table.obj2arr(attr, CONST_ATTR_KEYS)) do
+        local k = arr.key
+        local v = arr.value
+        local typev = type(v)
+        local tempDiff
+        if (k == "attack_damage_type") then
+            local opt = "+"
+            if (isAdd == false) then
+                opt = "-"
+            end
+            local nv
+            if (typev == "string") then
+                opt = string.sub(v, 1, 1) or "+"
+                nv = string.sub(v, 2)
+            elseif (typev == "table") then
+                nv = string.implode(",", v)
+            end
+            local nvs = {}
+            for _ = 1, times do
+                table.insert(nvs, nv)
+            end
+            tempDiff = opt .. string.implode(",", nvs)
+        elseif (typev == "string") then
+            local opt = string.sub(v, 1, 1)
+            local nv = times * tonumber(string.sub(v, 2))
+            if (isAdd == false) then
+                if (opt == "+") then
+                    opt = "-"
+                else
+                    opt = "+"
+                end
+            end
+            tempDiff = opt .. nv
+        elseif (typev == "number") then
+            if ((v > 0 and isAdd == true) or (v < 0 and isAdd == false)) then
+                tempDiff = "+" .. (v * times)
+            elseif (v < 0) then
+                tempDiff = "-" .. (v * times)
+            end
+        elseif (typev == "table") then
+            local tempTable = {}
+            for _ = 1, times do
+                for _, vv in ipairs(v) do
+                    table.insert(tempTable, vv)
+                end
+            end
+            local opt = "add"
+            if (isAdd == false) then
+                opt = "sub"
+            end
+            tempDiff = {
+                [opt] = tempTable
+            }
+        end
+        if
+        (table.includes(
+            k,
+            {
+                "gold_ratio",
+                "lumber_ratio",
+                "exp_ratio",
+                "sell_ratio"
+            }
+        ))
+        then
+            table.insert(diffPlayer, { k, tonumber(tempDiff) })
+        else
+            diff[k] = tempDiff
+        end
+    end
+    hattr.set(whichUnit, 0, diff)
+    if (#diffPlayer > 0) then
+        local p = hunit.getOwner(whichUnit)
+        for _, dp in ipairs(diffPlayer) do
+            local pk = dp[1]
+            local pv = dp[2]
+            if (pv ~= 0) then
+                if (pk == "gold_ratio") then
+                    hplayer.addGoldRatio(p, pv, 0)
+                elseif (pk == "lumber_ratio") then
+                    hplayer.addLumberRatio(p, pv, 0)
+                elseif (pk == "exp_ratio") then
+                    hplayer.addExpRatio(p, pv, 0)
+                elseif (pk == "sell_ratio") then
+                    hplayer.addSellRatio(p, pv, 0)
+                end
+            end
+        end
+    end
+end
+
 --- 重置注册
 ---@private
 --hattribute.reRegister = function(whichUnit)

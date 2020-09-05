@@ -335,8 +335,10 @@ hitem.getWeight = function(itOrId, charges)
     local slk = hitem.getSlk(itOrId)
     if (slk ~= nil) then
         if (charges == nil and type(itOrId) == "userdata") then
-            -- 如果没有传次数，这里会直接获取物品的次数，请注意
+            -- 如果没有传次数，并且传入的是物品对象，会直接获取物品的次数，请注意
             charges = hitem.getCharges(itOrId)
+        else
+            charges = 1
         end
         return (slk.WEIGHT or 0) * charges
     else
@@ -443,123 +445,19 @@ hitem.slotLoop = function(whichUnit, action)
     end
 end
 
---- 计算单位得失物品的属性影响
----@private
-hitem.caleAttribute = function(isAdd, whichUnit, itId, charges)
-    if (isAdd == nil) then
-        isAdd = true
-    end
-    charges = charges or 1
-    local weight = hitem.getWeight(itId, charges)
-    local attr = hitem.getAttribute(itId)
-    local diff = {}
-    local diffPlayer = {}
-    for _, arr in ipairs(table.obj2arr(attr, CONST_ATTR_KEYS)) do
-        local k = arr.key
-        local v = arr.value
-        local typev = type(v)
-        local tempDiff
-        if (k == "attack_damage_type") then
-            local opt = "+"
-            if (isAdd == false) then
-                opt = "-"
-            end
-            local nv
-            if (typev == "string") then
-                opt = string.sub(v, 1, 1) or "+"
-                nv = string.sub(v, 2)
-            elseif (typev == "table") then
-                nv = string.implode(",", v)
-            end
-            local nvs = {}
-            for _ = 1, charges do
-                table.insert(nvs, nv)
-            end
-            tempDiff = opt .. string.implode(",", nvs)
-        elseif (typev == "string") then
-            local opt = string.sub(v, 1, 1)
-            local nv = charges * tonumber(string.sub(v, 2))
-            if (isAdd == false) then
-                if (opt == "+") then
-                    opt = "-"
-                else
-                    opt = "+"
-                end
-            end
-            tempDiff = opt .. nv
-        elseif (typev == "number") then
-            if ((v > 0 and isAdd == true) or (v < 0 and isAdd == false)) then
-                tempDiff = "+" .. (v * charges)
-            elseif (v < 0) then
-                tempDiff = "-" .. (v * charges)
-            end
-        elseif (typev == "table") then
-            local tempTable = {}
-            for _ = 1, charges do
-                for _, vv in ipairs(v) do
-                    table.insert(tempTable, vv)
-                end
-            end
-            local opt = "add"
-            if (isAdd == false) then
-                opt = "sub"
-            end
-            tempDiff = {
-                [opt] = tempTable
-            }
-        end
-        if
-        (table.includes(
-            k,
-            {
-                "gold_ratio",
-                "lumber_ratio",
-                "exp_ratio",
-                "sell_ratio"
-            }
-        ))
-        then
-            table.insert(diffPlayer, { k, tonumber(tempDiff) })
-        else
-            diff[k] = tempDiff
-        end
-    end
-    if (weight ~= 0) then
-        local opt = "+"
-        if (isAdd == false) then
-            opt = "-"
-        end
-        diff.weight_current = opt .. weight
-    end
-    hattr.set(whichUnit, 0, diff)
-    if (#diffPlayer > 0) then
-        local p = hunit.getOwner(whichUnit)
-        for _, dp in ipairs(diffPlayer) do
-            local pk = dp[1]
-            local pv = dp[2]
-            if (pv ~= 0) then
-                if (pk == "gold_ratio") then
-                    hplayer.addGoldRatio(p, pv, 0)
-                elseif (pk == "lumber_ratio") then
-                    hplayer.addLumberRatio(p, pv, 0)
-                elseif (pk == "exp_ratio") then
-                    hplayer.addExpRatio(p, pv, 0)
-                elseif (pk == "sell_ratio") then
-                    hplayer.addSellRatio(p, pv, 0)
-                end
-            end
-        end
-    end
-end
 --- 附加单位获得物品后的属性
 ---@protected
-hitem.addAttribute = function(whichUnit, itId, charges)
-    hitem.caleAttribute(true, whichUnit, itId, charges)
+hitem.addProperty = function(whichUnit, itId, charges)
+    local attr = hitem.getAttribute(itId)
+    attr.weight_current = "+" .. hitem.getWeight(itId, 1)
+    hattribute.caleAttribute(true, whichUnit, attr, charges)
 end
 --- 削减单位获得物品后的属性
 ---@protected
-hitem.subAttribute = function(whichUnit, itId, charges)
-    hitem.caleAttribute(false, whichUnit, itId, charges)
+hitem.subProperty = function(whichUnit, itId, charges)
+    local attr = hitem.getAttribute(itId)
+    attr.weight_current = "+" .. hitem.getWeight(itId, 1)
+    hattribute.caleAttribute(false, whichUnit, attr, charges)
 end
 
 --- 单位合成物品
@@ -677,7 +575,7 @@ hitem.synthesis = function(whichUnit, items)
             end
             if (id ~= fid) then
                 local charges = hitem.getCharges(it) or 1
-                hitem.subAttribute(whichUnit, id, charges)
+                hitem.subProperty(whichUnit, id, charges)
                 hitem.del(it, 0)
             end
         end
@@ -691,7 +589,7 @@ hitem.synthesis = function(whichUnit, items)
                 if (it ~= nil) then
                     local id = hitem.getId(it)
                     local charges = hitem.getCharges(it) or 1
-                    hitem.subAttribute(whichUnit, id, charges)
+                    hitem.subProperty(whichUnit, id, charges)
                     hitem.del(it, 0)
                 end
             elseif (it == nil) then
@@ -717,10 +615,10 @@ hitem.synthesis = function(whichUnit, items)
                 if (final[i].charges ~= c) then
                     if (final[i].charges > c) then
                         cj.SetItemCharges(it, final[i].charges)
-                        hitem.addAttribute(whichUnit, final[i].id, final[i].charges - c)
+                        hitem.addProperty(whichUnit, final[i].id, final[i].charges - c)
                     else
                         cj.SetItemCharges(it, final[i].charges)
-                        hitem.subAttribute(whichUnit, final[i].id, c - final[i].charges)
+                        hitem.subProperty(whichUnit, final[i].id, c - final[i].charges)
                     end
                 end
             end
@@ -909,13 +807,13 @@ hitem.detector = function(whichUnit, originItem)
                         cj.SetItemCharges(tempIt, currentCharges + tempCharges)
                         hitem.del(getItem, 0)
                         isOverlieOver = true
-                        hitem.addAttribute(whichUnit, currentItId, currentCharges)
+                        hitem.addProperty(whichUnit, currentItId, currentCharges)
                         break
                     else
                         -- 否则，如果使用次数大于极限值,旧物品次数满载，新物品数量减少
                         cj.SetItemCharges(tempIt, overlie)
                         cj.SetItemCharges(getItem, currentCharges - (overlie - tempCharges))
-                        hitem.addAttribute(whichUnit, currentItId, overlie - tempCharges)
+                        hitem.addProperty(whichUnit, currentItId, overlie - tempCharges)
                     end
                 end
             end
@@ -948,7 +846,7 @@ hitem.detector = function(whichUnit, originItem)
                     triggerItem = getItem
                 }
             )
-            hitem.addAttribute(whichUnit, cj.GetItemTypeId(getItem), useCharged)
+            hitem.addProperty(whichUnit, cj.GetItemTypeId(getItem), useCharged)
             -- 如果是自动使用的物品
             if (isPowerUp == true) then
                 hitem.used(whichUnit, getItem)

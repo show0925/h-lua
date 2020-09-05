@@ -63,101 +63,15 @@ hskill.getAttribute = function(abilId)
     end
 end
 
---- 计算单位加减技能的属性影响
----@private
-hskill.caleAttribute = function(isAdd, whichUnit, abilId)
-    if (isAdd == nil) then
-        isAdd = true
-    end
-    local attr = hskill.getAttribute(abilId)
-    if (attr == nil) then
-        return
-    end
-    local diff = {}
-    local diffPlayer = {}
-    for _, arr in ipairs(table.obj2arr(attr, CONST_ATTR_KEYS)) do
-        local k = arr.key
-        local v = arr.value
-        local typev = type(v)
-        local tempDiff
-        if (k == "attack_damage_type") then
-            local opt = "+"
-            if (isAdd == false) then
-                opt = "-"
-            end
-            local nv
-            if (typev == "string") then
-                opt = string.sub(v, 1, 1) or "+"
-                nv = string.sub(v, 2)
-            elseif (typev == "table") then
-                nv = string.implode(",", v)
-            end
-            tempDiff = opt .. nv
-        elseif (typev == "string") then
-            local opt = string.sub(v, 1, 1)
-            local nv = tonumber(string.sub(v, 2))
-            if (isAdd == false) then
-                if (opt == "+") then
-                    opt = "-"
-                else
-                    opt = "+"
-                end
-            end
-            tempDiff = opt .. nv
-        elseif (typev == "number") then
-            if ((v > 0 and isAdd == true) or (v < 0 and isAdd == false)) then
-                tempDiff = "+" .. v
-            elseif (v < 0) then
-                tempDiff = "-" .. v
-            end
-        elseif (typev == "table") then
-            local tempTable = {}
-            for _, vv in ipairs(v) do
-                table.insert(tempTable, vv)
-            end
-            local opt = "add"
-            if (isAdd == false) then
-                opt = "sub"
-            end
-            tempDiff = {
-                [opt] = tempTable
-            }
-        end
-        if (table.includes(k, { "gold_ratio", "lumber_ratio", "exp_ratio", "sell_ratio" })) then
-            table.insert(diffPlayer, { k, tonumber(tempDiff) })
-        else
-            diff[k] = tempDiff
-        end
-    end
-    hattr.set(whichUnit, 0, diff)
-    if (#diffPlayer > 0) then
-        local p = hunit.getOwner(whichUnit)
-        for _, dp in ipairs(diffPlayer) do
-            local pk = dp[1]
-            local pv = dp[2]
-            if (pv ~= 0) then
-                if (pk == "gold_ratio") then
-                    hplayer.addGoldRatio(p, pv, 0)
-                elseif (pk == "lumber_ratio") then
-                    hplayer.addLumberRatio(p, pv, 0)
-                elseif (pk == "exp_ratio") then
-                    hplayer.addExpRatio(p, pv, 0)
-                elseif (pk == "sell_ratio") then
-                    hplayer.addSellRatio(p, pv, 0)
-                end
-            end
-        end
-    end
-end
---- 附加单位获得物品后的属性
+--- 附加单位获得技能后的属性
 ---@protected
-hskill.addAttribute = function(whichUnit, abilId)
-    hskill.caleAttribute(true, whichUnit, abilId)
+hskill.addProperty = function(whichUnit, abilId)
+    hattribute.caleAttribute(true, whichUnit, hskill.getAttribute(abilId), 1)
 end
---- 削减单位获得物品后的属性
+--- 削减单位获得技能后的属性
 ---@protected
-hskill.subAttribute = function(whichUnit, abilId)
-    hskill.caleAttribute(false, whichUnit, abilId)
+hskill.subProperty = function(whichUnit, abilId)
+    hattribute.caleAttribute(false, whichUnit, hskill.getAttribute(abilId), 1)
 end
 
 --- 添加技能
@@ -172,15 +86,15 @@ hskill.add = function(whichUnit, abilityId, during)
     if (during == nil or during <= 0) then
         cj.UnitAddAbility(whichUnit, id)
         cj.UnitMakeAbilityPermanent(whichUnit, true, id)
-        hskill.addAttribute(whichUnit, id)
+        hskill.addProperty(whichUnit, id)
     else
         cj.UnitAddAbility(whichUnit, id)
-        hskill.addAttribute(whichUnit, id)
+        hskill.addProperty(whichUnit, id)
         htime.setTimeout(
             during,
             function(t)
                 cj.UnitRemoveAbility(whichUnit, id)
-                hskill.subAttribute(whichUnit, id)
+                hskill.subProperty(whichUnit, id)
             end
         )
     end
@@ -197,15 +111,15 @@ hskill.del = function(whichUnit, abilityId, delay)
     end
     if (delay == nil or delay <= 0) then
         cj.UnitRemoveAbility(whichUnit, id)
-        hskill.subAttribute(whichUnit, id)
+        hskill.subProperty(whichUnit, id)
     else
         cj.UnitRemoveAbility(whichUnit, id)
-        hskill.subAttribute(whichUnit, id)
+        hskill.subProperty(whichUnit, id)
         htime.setTimeout(
             delay,
             function(t)
                 cj.UnitAddAbility(whichUnit, id)
-                hskill.addAttribute(whichUnit, id)
+                hskill.addProperty(whichUnit, id)
             end
         )
     end

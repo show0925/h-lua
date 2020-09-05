@@ -837,7 +837,7 @@ hevent_default_actions = {
                         targetUnit = cj.GetOrderTargetUnit(),
                     }
                 )
-                hitem.subAttribute(u, itId, charges)
+                hitem.subProperty(u, itId, charges)
                 hitem.setPositionType(it, hitem.POSITION_TYPE.COORDINATE)
                 htime.setTimeout(0.05, function(t)
                     htime.delTimer(t)
@@ -918,7 +918,7 @@ hevent_default_actions = {
             if (perishable == false) then
                 hitem.setCharges(it, hitem.getCharges(it) + 1)
             else
-                hitem.subAttribute(u, itId, 1)
+                hitem.subProperty(u, itId, 1)
             end
             --检测是否有匹配使用
             local triggerData = hunit.get(u, "item-use-" .. itId, {})
