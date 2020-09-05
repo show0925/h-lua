@@ -33,8 +33,6 @@ hitem = {
         DOTA2_VISION = hslk_global.item_fleeting[18], -- Dota2幻象符
         DOTA2_INVISIBLE = hslk_global.item_fleeting[19], -- Dota2隐身符
     },
-    -- 全局使用注册
-    MATCH_ITEM_USED = {},
 }
 
 -- 单位嵌入到物品到框架系统
@@ -82,29 +80,6 @@ hitem.clearUnitCache = function(whichUnit)
     end
 end
 
---- 注册一些物品的方法，在物品被使用时自动回调
---- 可以简化onItemUsed的使用，协助管理物品
---- 适用于大众物品调用,支持正则匹配
---- evtData 同 hevent.onItemUsed
----@param options table
-hitem.matchUsed = function(options)
-    --[[
-        options = {
-            {"匹配的物品名1", function(evtData) end},
-            {"匹配的物品名2", function(evtData) end},
-            ...
-        }
-    ]]
-    if (#options <= 0) then
-        return
-    end
-    for _, v in ipairs(options) do
-        if (type(v[1]) == "string" and type(v[2]) == "function") then
-            table.insert(hitem.MATCH_ITEM_USED, v)
-        end
-    end
-end
-
 --- match done
 ---@param whichUnit userdata
 ---@param whichItem userdata
@@ -121,9 +96,9 @@ hitem.used = function(whichUnit, whichItem, triggerData)
         cj.RemoveLocation(triggerData.targetLoc)
         triggerData.targetLoc = nil
     end
-    if (#hitem.MATCH_ITEM_USED > 0) then
+    if (#hmatcher.ITEM_MATCHER > 0) then
         local itemName = cj.GetItemName(whichItem)
-        for _, m in ipairs(hitem.MATCH_ITEM_USED) do
+        for _, m in ipairs(hmatcher.ITEM_MATCHER) do
             local s, e = string.find(itemName, m[1])
             if (s ~= nil and e ~= nil) then
                 local isPowerUp = hitem.getIsPowerUp(whichItem)
