@@ -14,13 +14,12 @@
 
 
 hmatcher = {
-    ITEM_MATCHER = {}
+    ITEM_MATCHER = {},
+    RING_MATCHER = {},
 }
 
 --- 匹配物品名
 --- 触发主动使用的物品技能，在物品被使用时自动回调
---- 可以简化onItemUsed的使用，协助管理物品
---- 适用于大众物品调用,支持正则匹配
 --- evtData 同 hevent.onItemUsed
 ---@param conf table
 hmatcher.item = function(conf)
@@ -30,6 +29,21 @@ hmatcher.item = function(conf)
     for _, v in ipairs(conf) do
         if (type(v[1]) == "string" and type(v[2]) == "function") then
             table.insert(hmatcher.ITEM_MATCHER, v)
+        end
+    end
+end
+
+--- 匹配光环名
+--- 在单位添加光环技能时自动生效
+--- evtData.centerUnit
+---@param conf table
+hmatcher.ring = function(conf)
+    if (#conf <= 0) then
+        return
+    end
+    for _, v in ipairs(conf) do
+        if (type(v[1]) == "string" and type(v[2]) == "function") then
+            table.insert(hmatcher.RING_MATCHER, v)
         end
     end
 end
