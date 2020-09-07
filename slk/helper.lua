@@ -1764,6 +1764,7 @@ slkHelper.ability = {
                 ABILITY_ID = id,
                 ABILITY_TYPE = "ring",
                 ATTR = v.ATTR,
+                RING = v.RING,
                 Name = v.Name,
                 Art = Art,
                 Area1 = Area1,
