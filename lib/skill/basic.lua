@@ -139,7 +139,7 @@ hskill.invisible = function(whichUnit, during, transition, effect)
     if (whichUnit == nil or during == nil or during <= 0) then
         return
     end
-    if (his.death(whichUnit)) then
+    if (his.dead(whichUnit)) then
         return
     end
     transition = transition or 0
@@ -168,7 +168,7 @@ hskill.visible = function(whichUnit, during, transition, effect)
     if (whichUnit == nil or during == nil or during <= 0) then
         return
     end
-    if (his.death(whichUnit)) then
+    if (his.dead(whichUnit)) then
         return
     end
     transition = transition or 0

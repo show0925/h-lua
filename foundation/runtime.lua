@@ -84,7 +84,6 @@ hRuntime = {
     unit = {},
     group = {}, -- 单位选择器
     hero = {},
-    ring = {},
     unit_type_ids = { --单位类型ID集
         hero = {},
         courier_hero = {},

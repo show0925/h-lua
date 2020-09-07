@@ -85,7 +85,7 @@ end
 --- 是否死亡
 ---@param whichUnit userdata
 ---@return boolean
-his.death = function(whichUnit)
+his.dead = function(whichUnit)
     return cj.GetUnitState(whichUnit, UNIT_STATE_LIFE) <= 0
 end
 
@@ -132,7 +132,7 @@ end
 --- 是否建筑
 ---@param whichUnit userdata
 ---@return boolean
-his.building = function(whichUnit)
+his.structure = function(whichUnit)
     return cj.IsUnitType(whichUnit, UNIT_TYPE_STRUCTURE)
 end
 
@@ -153,7 +153,7 @@ end
 --- 是否空中单位
 ---@param whichUnit userdata
 ---@return boolean
-his.flying = function(whichUnit)
+his.air = function(whichUnit)
     return cj.IsUnitType(whichUnit, UNIT_TYPE_FLYING)
 end
 
@@ -190,6 +190,13 @@ end
 ---@return boolean
 his.ancient = function(whichUnit)
     return cj.IsUnitType(whichUnit, UNIT_TYPE_ANCIENT)
+end
+
+--- 是否自爆工兵
+---@param whichUnit userdata
+---@return boolean
+his.sapper = function(whichUnit)
+    return cj.IsUnitType(whichUnit, UNIT_TYPE_SAPPER)
 end
 
 --- 是否蝗虫
@@ -267,7 +274,7 @@ end
 ---@param otherUnit userdata
 ---@return boolean
 his.unit = function(whichUnit, otherUnit)
-    return whichUnit == otherUnit
+    return cj.IsUnit(whichUnit, otherUnit)
 end
 
 --- 是否敌人单位

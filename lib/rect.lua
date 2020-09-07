@@ -204,7 +204,7 @@ hrect.lock = function(bean)
             end
             --单位优先
             if (bean.whichUnit) then
-                if (his.death(bean.whichUnit)) then
+                if (his.dead(bean.whichUnit)) then
                     htime.delTimer(t)
                     return
                 end

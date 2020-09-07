@@ -84,7 +84,7 @@ haward.forGroup = function(whichUnit, exp, gold, lumber)
             if (his.alive(filterUnit) == false) then
                 flag = false
             end
-            if (his.building(filterUnit) == true) then
+            if (his.structure(filterUnit) == true) then
                 flag = false
             end
             return flag

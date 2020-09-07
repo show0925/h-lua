@@ -210,7 +210,7 @@ hgroup.animate = function(whichGroup, animate)
         return
     end
     hgroup.loop(whichGroup, function(eu)
-        if (his.death(eu) == false) then
+        if (his.dead(eu) == false) then
             hunit.animate(eu, animate)
         end
     end)

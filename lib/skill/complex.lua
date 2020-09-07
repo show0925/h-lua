@@ -189,13 +189,13 @@ hskill.split = function(options)
             radius,
             function(filterUnit)
                 local flag = true
-                if (his.death(filterUnit)) then
+                if (his.dead(filterUnit)) then
                     flag = false
                 end
                 if (his.enemy(filterUnit, whichUnit)) then
                     flag = false
                 end
-                if (his.building(filterUnit)) then
+                if (his.structure(filterUnit)) then
                     flag = false
                 end
                 return flag
@@ -815,10 +815,10 @@ hskill.bomb = function(options)
                 if (his.enemy(options.whichUnit, filterUnit)) then
                     flag = false
                 end
-                if (his.death(filterUnit)) then
+                if (his.dead(filterUnit)) then
                     flag = false
                 end
-                if (his.building(filterUnit)) then
+                if (his.structure(filterUnit)) then
                     flag = false
                 end
                 return flag
@@ -996,13 +996,13 @@ hskill.lightningChain = function(options)
             radius,
             function(filterUnit)
                 local flag = true
-                if (his.death(filterUnit)) then
+                if (his.dead(filterUnit)) then
                     flag = false
                 end
                 if (his.enemy(filterUnit, whichUnit)) then
                     flag = false
                 end
-                if (his.building(filterUnit)) then
+                if (his.structure(filterUnit)) then
                     flag = false
                 end
                 if (his.unit(whichUnit, filterUnit)) then
@@ -1521,7 +1521,7 @@ hskill.leap = function(options)
         function(t)
             local ax = hunit.x(arrowUnit)
             local ay = hunit.y(arrowUnit)
-            if (his.death(sourceUnit)) then
+            if (his.dead(sourceUnit)) then
                 htime.delTimer(t)
                 if (tempEffectArrow ~= nil) then
                     heffect.del(tempEffectArrow)
@@ -1610,7 +1610,7 @@ hskill.leap = function(options)
                 end
             end
             local distance = math.getDistanceBetweenXY(hunit.x(arrowUnit), hunit.y(arrowUnit), tx, ty)
-            if (distance <= speed or speed <= 0 or his.death(arrowUnit) == true) then
+            if (distance <= speed or speed <= 0 or his.dead(arrowUnit) == true) then
                 htime.delTimer(t)
                 if (tempEffectArrow ~= nil) then
                     heffect.del(tempEffectArrow)
