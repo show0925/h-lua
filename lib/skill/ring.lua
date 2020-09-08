@@ -44,6 +44,20 @@ hring.insert = function(whichUnit, id)
     end
     if (his.deleted(whichUnit) == false) then
         table.insert(hring.ACTIVE_RING, { status = 2, unit = whichUnit, id = id, group = {} })
+        local slk = hring.getSlk(id)
+        if (slk.effect) then
+            if (hring.ACTIVE_EFFECT[id] == nil) then
+                hring.ACTIVE_EFFECT[id] = {}
+            end
+            if (hring.ACTIVE_EFFECT[id][whichUnit] == nil) then
+                hring.ACTIVE_EFFECT[id][whichUnit] = {
+                    effect = heffect.bindUnit(slk.effect, whichUnit, slk.attach or 'origin', -1),
+                    count = 1,
+                }
+            else
+                hring.ACTIVE_EFFECT[id][whichUnit].count = hring.ACTIVE_EFFECT[id][whichUnit].count + 1
+            end
+        end
     end
     if (hring.ACTIVE_TIMER == nil and #hring.ACTIVE_RING > 0) then
         hring.ACTIVE_TIMER = htime.setInterval(0.3, function(curTimer)
@@ -52,6 +66,8 @@ hring.insert = function(whichUnit, id)
                 curTimer = nil
                 hring.ACTIVE_TIMER = nil
                 hring.ACTIVE_RING = {}
+                hring.ACTIVE_EFFECT = {}
+                hring.ACTIVE_EFFECT_TARGET = {}
                 return
             end
             for k, ring in ipairs(hring.ACTIVE_RING) do
@@ -68,14 +84,6 @@ hring.insert = function(whichUnit, id)
                 local ringId = ring.id
                 local slk = hring.getSlk(ringId)
                 if (status == 2 and slk ~= nil) then
-                    if (slk.effect) then
-                        if (hring.ACTIVE_EFFECT[ringId] == nil) then
-                            hring.ACTIVE_EFFECT[ringId] = {}
-                        end
-                        if (hring.ACTIVE_EFFECT[ringId][u] == nil) then
-                            hring.ACTIVE_EFFECT[ringId][u] = heffect.bindUnit(slk.effect, u, slk.attach or 'origin', -1)
-                        end
-                    end
                     if (slk.effectTarget and hring.ACTIVE_EFFECT_TARGET[ringId] == nil) then
                         hring.ACTIVE_EFFECT_TARGET[ringId] = {}
                     end
@@ -213,8 +221,11 @@ hring.insert = function(whichUnit, id)
                         if (hgroup.includes(g, enumUnit) == false) then
                             hattribute.caleAttribute(false, enumUnit, slk.attr, 1)
                             if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] ~= nil) then
-                                heffect.del(hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit])
-                                hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] = nil
+                                hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count = hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count - 1
+                                if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count == 0) then
+                                    heffect.del(hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].effect)
+                                    hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] = nil
+                                end
                             end
                         end
                     end)
@@ -234,13 +245,15 @@ hring.insert = function(whichUnit, id)
                         -- slk配置的RING属性
                         if (type(slk.attr) == 'table' and false == hgroup.includes(ring.group, enumUnit)) then
                             hattribute.caleAttribute(true, enumUnit, slk.attr, 1)
-                            if (slk.effectTarget and hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] == nil) then
-                                hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] = heffect.bindUnit(
-                                    slk.effectTarget,
-                                    enumUnit,
-                                    slk.attachTarget or 'origin',
-                                    -1
-                                )
+                            if (slk.effectTarget) then
+                                if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] == nil) then
+                                    hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] = {
+                                        count = 1,
+                                        effect = heffect.bindUnit(slk.effectTarget, enumUnit, slk.attachTarget or 'origin', -1)
+                                    }
+                                else
+                                    hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count = hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count + 1
+                                end
                             end
                         end
                         -- 检测是否有自定义的matcher，用于给玩家自定义额外的操作
@@ -253,8 +266,11 @@ hring.insert = function(whichUnit, id)
                     ring.group = g
                 else
                     if (hring.ACTIVE_EFFECT[ringId][u] ~= nil) then
-                        heffect.del(hring.ACTIVE_EFFECT[ringId][u])
-                        hring.ACTIVE_EFFECT[ringId][u] = nil
+                        hring.ACTIVE_EFFECT[ringId][u].count = hring.ACTIVE_EFFECT[ringId][u].count - 1
+                        if (hring.ACTIVE_EFFECT[ringId][u].count == 0) then
+                            heffect.del(hring.ACTIVE_EFFECT[ringId][u].effect)
+                            hring.ACTIVE_EFFECT[ringId][u] = nil
+                        end
                     end
                     table.remove(hring.ACTIVE_RING, k)
                     k = k - 1
