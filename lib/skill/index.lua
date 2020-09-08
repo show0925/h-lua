@@ -155,7 +155,6 @@ hskill.has = function(whichUnit, abilityId)
     return false
 end
 
-
 -- 初始化一些方法
 
 -- 沉默

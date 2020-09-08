@@ -451,6 +451,9 @@ hitem.addProperty = function(whichUnit, itId, charges)
     local attr = hitem.getAttribute(itId)
     attr.weight_current = "+" .. hitem.getWeight(itId, 1)
     hattribute.caleAttribute(true, whichUnit, attr, charges)
+    for _ = 1, charges, 1 do
+        hring.insert(whichUnit, itId)
+    end
 end
 --- 削减单位获得物品后的属性
 ---@protected
@@ -458,6 +461,9 @@ hitem.subProperty = function(whichUnit, itId, charges)
     local attr = hitem.getAttribute(itId)
     attr.weight_current = "+" .. hitem.getWeight(itId, 1)
     hattribute.caleAttribute(false, whichUnit, attr, charges)
+    for _ = 1, charges, 1 do
+        hring.remove(whichUnit, itId)
+    end
 end
 
 --- 单位合成物品

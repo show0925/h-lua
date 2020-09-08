@@ -103,13 +103,11 @@ slkHelper = {
             -- 技能描述
             abilityDesc = "grey",
             -- 光环范围
-            abilityRingArea = "seaLight",
+            ringArea = "seaLight",
             -- 光环作用目标
-            abilityRingTarget = "seaLight",
+            ringTarget = "seaLight",
             -- 光环描述
             abilityRingDesc = "white",
-            -- 光环单一作用提示
-            abilityRingAlertTips = "grey",
             -- 英雄攻击武器类型
             heroWeapon = "red",
             -- 英雄基础攻击
@@ -128,7 +126,8 @@ slkHelper = {
 
 --- 属性系统说明构成
 ---@private
-slkHelper.attrDesc = function(attr, sep)
+slkHelper.attrDesc = function(attr, sep, indent)
+    indent = indent or ""
     local str = {}
     local strTable = {}
     sep = sep or "|n"
@@ -201,7 +200,7 @@ slkHelper.attrDesc = function(attr, sep)
                 local range = vv["range"] or 0
                 local distance = vv["distance"] or 0
                 local high = vv["high"] or 0
-                local temp2 = "　-"
+                local temp2 = "　- "
                 if (k == "attack_buff" or k == "skill_buff") then
                     temp2 = temp2 .. "有"
                     temp2 = temp2 .. odds .. "%几率"
@@ -259,11 +258,11 @@ slkHelper.attrDesc = function(attr, sep)
                         end
                     end
                 end
-                table.insert(tempStr, temp2)
+                table.insert(tempStr, indent .. temp2)
             end
             table.insert(strTable, string.implode(sep, tempStr))
         else
-            table.insert(str, (CONST_ATTR[k] or "") .. "：" .. v)
+            table.insert(str, indent .. (CONST_ATTR[k] or "") .. "：" .. v)
         end
     end
     return string.implode(sep, table.merge(str, strTable))
@@ -384,7 +383,7 @@ slkHelper.itemDesc = function(v)
     local overlie = v.OVERLIE or 1
     local weight = v.WEIGHT or 0
     weight = tostring(math.round(weight))
-    table.insert(d, "叠加：" .. overlie .. "|n重量：" .. weight .. "Kg")
+    table.insert(d, "叠加：" .. overlie .. ";重量：" .. weight .. "Kg")
     if (v.Desc ~= nil and v.Desc ~= "") then
         table.insert(d, v.Desc)
     end
@@ -403,6 +402,26 @@ slkHelper.itemUbertip = function(v)
     end
     if (v.PASSIVE ~= nil) then
         table.insert(d, hColor[slkHelper.conf.color.itemPassive]("被动：" .. v.PASSIVE))
+    end
+    if (v.RING ~= nil) then
+        if (v.RING.radius ~= nil or (type(v.RING.target) == 'table' and #v.RING.target > 0)) then
+            local txt = "光环目标："
+            if (v.RING.radius ~= nil) then
+                txt = txt .. v.RING.radius .. '范围内'
+            end
+            if (type(v.RING.target) == 'table' and #v.RING.target > 0) then
+                local labels = {}
+                for _, t in ipairs(v.RING.target) do
+                    table.insert(labels, CONST_TARGET_LABEL[t])
+                end
+                txt = txt .. string.implode(',', labels)
+            end
+            table.insert(d, hColor[slkHelper.conf.color.ringArea](txt))
+        end
+        if (v.RING.attr ~= nil) then
+            table.insert(d, hColor[slkHelper.conf.color.ringTarget]("光环效果：|n" .. slkHelper.attrDesc(v.RING.attr, "|n", ' - ')))
+        end
+        table.sort(v.RING.attr)
     end
     if (v.ATTR ~= nil) then
         table.sort(v.ATTR)
@@ -457,21 +476,26 @@ end
 ---@private
 slkHelper.abilityRingUbertip = function(v)
     local d = {}
-    if (v.Area1 ~= nil) then
-        table.insert(d, hColor[slkHelper.conf.color.abilityRingArea]("光环范围：" .. v.Area1))
+    if (v.RING.radius ~= nil) then
+        table.insert(d, hColor[slkHelper.conf.color.ringArea]("光环范围：" .. v.RING.radius))
     end
-    if (v.targs1 ~= nil) then
-        local targs1 = string.explode(',', v.targs1)
+    if (type(v.RING.target) == 'table' and #v.RING.target > 0) then
         local labels = {}
-        for _, t in ipairs(targs1) do
+        for _, t in ipairs(v.RING.target) do
             table.insert(labels, CONST_TARGET_LABEL[t])
         end
-        table.insert(d, hColor[slkHelper.conf.color.abilityRingTarget]("作用目标：" .. string.implode(',', labels)))
+        table.insert(d, hColor[slkHelper.conf.color.ringTarget]("光环目标：" .. string.implode(',', labels)))
         labels = nil
     end
-    if (v.RING ~= nil) then
-        table.sort(v.RING)
-        table.insert(d, hColor[slkHelper.conf.color.abilityAttr](slkHelper.attrDesc(v.RING, "|n")))
+    if (v.RING.attr ~= nil) then
+        table.insert(d, hColor[slkHelper.conf.color.ringTarget]("光环效果：|n" .. slkHelper.attrDesc(v.RING.attr, "|n", ' - ')))
+        table.sort(v.RING.attr)
+    end
+    if (v.ATTR ~= nil) then
+        table.insert(d, hColor[slkHelper.conf.color.abilityAttr]("独占效果："))
+        table.sort(v.ATTR)
+        table.insert(d, hColor[slkHelper.conf.color.abilityAttr](slkHelper.attrDesc(v.ATTR, "|n", ' - ')))
+        table.insert(d, "|n")
     end
     if (v.Desc ~= nil and v.Desc ~= "") then
         table.insert(d, hColor[slkHelper.conf.color.abilityRingDesc](v.Desc))
@@ -689,6 +713,7 @@ slkHelper.item.shadow = function(v)
         OVERLIE = 1,
         WEIGHT = v.WEIGHT,
         ATTR = v.ATTR,
+        RING = v.RING,
     }
 end
 
@@ -744,6 +769,22 @@ slkHelper.item.normal = function(v)
     local shadowData = {}
     if (useShadow == true) then
         shadowData = slkHelper.item.shadow(v)
+    end
+    if (v.RING ~= nil) then
+        v.RING.effectTarget = v.RING.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
+        v.RING.attach = v.RING.attach or "origin"
+        v.RING.attachTarget = v.RING.attachTarget or "origin"
+        v.RING.radius = v.RING.radius or 600
+        -- target请参考物编的目标允许
+        local target
+        if (type(v.RING.target) == 'table' and #v.RING.target > 0) then
+            target = v.RING.target
+        elseif (type(v.RING.target) == 'string' and string.len(v.RING.target) > 0) then
+            target = string.explode(',', v.RING.target)
+        else
+            target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
+        end
+        v.RING.target = target
     end
     local obj = slk.item.rat9:new("items_" .. v.Name)
     obj.Name = v.Name
@@ -806,6 +847,7 @@ slkHelper.item.normal = function(v)
             OVERLIE = OVERLIE,
             WEIGHT = v.WEIGHT,
             ATTR = v.ATTR,
+            RING = v.RING,
             SHADOW_ID = shadowData.ITEM_ID or nil,
             cooldownID = cd
         }
@@ -1713,40 +1755,42 @@ slkHelper.ability = {
     ring = function(v)
         slkHelper.count = slkHelper.count + 1
         local Name = v.Name or "空白光环-" .. slkHelper.count
-        local BuffName = "[BUFF]" .. (v.Name or "空白光环-" .. slkHelper.count)
         local Art = v.Art or "ReplaceableTextures\\PassiveButtons\\PASBTNStatUp.blp"
-        local Area1 = v.Area1 or 900
-        v.targs1 = v.targs1 or "air,ground,friend,self,vuln,invu"
-        -- buff
-        local buffObj = slk.buff.BHad:new("slk_ringbuff_" .. BuffName)
-        buffObj.BuffTip = Name
-        buffObj.BuffuberTip = "此单位正处于" .. Name .. "的作用之下"
-        buffObj.Buffart = Art
-        buffObj.TargetArt = v.BuffTargetArt or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
-        buffObj.Targetattach = v.Targetattach or "origin"
-        --
         v.Buttonpos1 = v.Buttonpos1 or 0
         v.Buttonpos2 = v.Buttonpos2 or 0
         if (v.Hotkey ~= nil) then
             v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos2 or 0
-            v.Tip = Name .. "[" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. "] "
+            v.Tip = Name .. "[" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. "]"
             Name = Name .. v.Hotkey
         else
             v.Tip = Name
         end
-        local obj = slk.ability.AHad:new("slk_ability_ring_ " .. Name)
-        obj.BuffID1 = buffObj:get_id()
-        obj.Hotkey = v.Hotkey or " "
+        if (v.RING == nil) then
+            return
+        else
+            v.RING.effectTarget = v.RING.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
+            v.RING.attach = v.RING.attach or "origin"
+            v.RING.attachTarget = v.RING.attachTarget or "origin"
+            v.RING.radius = v.RING.radius or 600
+            -- target请参考物编的目标允许
+            local target
+            if (type(v.RING.target) == 'table' and #v.RING.target > 0) then
+                target = v.RING.target
+            elseif (type(v.RING.target) == 'string' and string.len(v.RING.target) > 0) then
+                target = string.explode(',', v.RING.target)
+            else
+                target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
+            end
+            v.RING.target = target
+        end
+        local obj = slk.ability.Aamk:new("slk_ability_ring_" .. Name)
+        obj.Hotkey = v.Hotkey or ""
         obj.Name = Name
         obj.Tip = v.Tip
         obj.Ubertip = slkHelper.abilityRingUbertip(v)
-            .. "|n|n"
-            .. hColor[slkHelper.conf.color.abilityRingAlertTips](" * 同一种光环仅有一个有效")
         obj.Buttonpos1 = v.Buttonpos1
         obj.Buttonpos2 = v.Buttonpos2
-        obj.TargetArt = v.TargetArt or ""
-        obj.Area1 = Area1
         obj.hero = 0
         obj.levels = 1
         obj.DataA1 = 0
@@ -1754,7 +1798,6 @@ slkHelper.ability = {
         obj.DataC1 = 0
         obj.race = v.race or "other"
         obj.Art = Art
-        obj.targs1 = v.targs1
         local id = obj:get_id()
         table.insert(slkHelperHashData, {
             type = "ability",
@@ -1767,8 +1810,6 @@ slkHelper.ability = {
                 RING = v.RING,
                 Name = v.Name,
                 Art = Art,
-                Area1 = Area1,
-                targs1 = string.explode(",", v.targs1),
             }
         })
         return id

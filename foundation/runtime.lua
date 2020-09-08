@@ -23,6 +23,12 @@ hRuntime = {
             if (json.cooldownID ~= nil) then
                 hslk_global.item_cooldown_ids[json.cooldownID] = json.ITEM_ID
             end
+            if (json.RING ~= nil) then
+                json.RING.RING_ID = json.ITEM_ID
+                json.RING.Name = json.Name
+                hslk_global.id2Value.ring[json.ITEM_ID] = json.RING
+                hslk_global.name2Value.ring[json.Name] = json.RING
+            end
         end,
         ability = function(json)
             hslk_global.id2Value.ability[json.ABILITY_ID] = json
@@ -32,6 +38,12 @@ hRuntime = {
                     hslk_global.class_group.ability[json.CLASS_GROUP] = {}
                 end
                 table.insert(hslk_global.class_group.ability[json.CLASS_GROUP], json.ABILITY_ID)
+            end
+            if (json.RING ~= nil) then
+                json.RING.RING_ID = json.ABILITY_ID
+                json.RING.Name = json.Name
+                hslk_global.id2Value.ring[json.ABILITY_ID] = json.RING
+                hslk_global.name2Value.ring[json.Name] = json.RING
             end
         end,
         technology = function(json)

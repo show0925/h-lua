@@ -56,12 +56,14 @@ hslk_global = {
         item = {},
         ability = {},
         technology = {},
+        ring = {},
     },
     name2Value = {
         unit = {},
         item = {},
         ability = {},
         technology = {},
+        ring = {},
     },
     class_group = {
         unit = {},

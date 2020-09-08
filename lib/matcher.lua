@@ -33,9 +33,9 @@ hmatcher.item = function(conf)
     end
 end
 
---- 匹配光环名
---- 在单位添加光环技能时自动生效
---- evtData.centerUnit
+--- 匹配光环名，支持物品和光环技能的SLK
+--- 光环名也就是：光环技能名或物品名
+--- 在单位添加光环技能时，或获得物品时自动生效
 ---@param conf table
 hmatcher.ring = function(conf)
     if (#conf <= 0) then
