@@ -100,7 +100,8 @@ hring.insert = function(whichUnit, id)
                             vuln = false, --可攻击
                             invu = false, --无敌
                             friend = false, --友军
-                            enemies = false, --敌人
+                            enemies = false, --敌人1
+                            enemy = false, --敌人2
                             allies = false, --联盟
                             player = false, --玩家单位
                             neutral = false, --中立
@@ -142,7 +143,8 @@ hring.insert = function(whichUnit, id)
                             selector.vuln = true
                         end
                         --- 联盟/友军[不包括玩家单位]/敌人/玩家单位/中立/自己/别人 (默认别人)
-                        if (selector.allies == false and selector.friend == false and selector.enemies == false
+                        if (selector.allies == false and selector.friend == false
+                            and selector.enemies == false and selector.enemy == false
                             and selector.neutral == false and selector.player == false
                             and selector.self == false and selector.nonself == false) then
                             selector.nonself = true
@@ -201,7 +203,7 @@ hring.insert = function(whichUnit, id)
                             --
                             local filterOwner = hunit.getOwner(filterUnit)
                             local friend = selector.friend and (his.ally(filterUnit) or uOwner == filterOwner)
-                            local enemies = selector.enemies and his.enemy(u, filterUnit)
+                            local enemies = (selector.enemies or selector.enemy) and his.enemy(u, filterUnit)
                             local allies = selector.allies and his.ally(u, filterUnit)
                             local player = selector.player and uOwner == filterOwner
                             local neutral = selector.neutral and filterOwner == cj.Player(PLAYER_NEUTRAL_PASSIVE)
