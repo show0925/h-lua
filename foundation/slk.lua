@@ -244,7 +244,14 @@ for i = 1, 5 do
                     hRuntime.register.ability(data)
                 elseif (i == 4) then
                     hRuntime.register.technology(data)
-                elseif (i == 5) then
+                end
+            end
+        end
+        for j = 1, qty do
+            local js = cj.LoadStr(cg.hash_hslk_helper, i, j)
+            local data = json.parse(js)
+            if (data) then
+                if (i == 5) then
                     hRuntime.register.synthesis(data)
                 end
             end

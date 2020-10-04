@@ -58,18 +58,28 @@ hRuntime = {
         end,
         synthesis = function(json)
             -- 数据格式化
+            -- 碎片名称转ID
+            local jsonFragment = {}
             for k, v in ipairs(json.fragment) do
                 json.fragment[k][2] = math.floor(v[2])
+                local fragmentId = hslk_global.name2Value.item[v[1]].ITEM_ID or nil
+                if (fragmentId ~= nil) then
+                    table.insert(jsonFragment, { fragmentId, v[2] })
+                end
             end
-            if (hslk_global.synthesis.profit[json.profit[1]] == nil) then
-                hslk_global.synthesis.profit[json.profit[1]] = {}
+            local profitId = hslk_global.name2Value.item[json.profit[1]].ITEM_ID or nil
+            if (profitId == nil) then
+                return
             end
-            table.insert(hslk_global.synthesis.profit[json.profit[1]], {
+            if (hslk_global.synthesis.profit[profitId] == nil) then
+                hslk_global.synthesis.profit[profitId] = {}
+            end
+            table.insert(hslk_global.synthesis.profit[profitId], {
                 qty = json.profit[2],
-                fragment = json.fragment,
+                fragment = jsonFragment,
             })
-            local profitIndex = #hslk_global.synthesis.profit[json.profit[1]]
-            for _, f in ipairs(json.fragment) do
+            local profitIndex = #hslk_global.synthesis.profit[profitId]
+            for _, f in ipairs(jsonFragment) do
                 if (hslk_global.synthesis.fragment[f[1]] == nil) then
                     hslk_global.synthesis.fragment[f[1]] = {}
                 end
@@ -77,7 +87,7 @@ hRuntime = {
                     hslk_global.synthesis.fragment[f[1]][f[2]] = {}
                 end
                 table.insert(hslk_global.synthesis.fragment[f[1]][f[2]], {
-                    profit = json.profit[1],
+                    profit = profitId,
                     index = profitIndex,
                 })
             end

@@ -160,10 +160,18 @@ hitem.getId = function(it)
 end
 
 --- 获取物品名称
----@param it userdata
+---@param itOrId userdata|string|number
 ---@return string
-hitem.getName = function(it)
-    return cj.GetItemName(it)
+hitem.getName = function(itOrId)
+    if (type(itOrId) == 'userdata') then
+        return cj.GetItemName(itOrId)
+    elseif (type(itOrId) == 'string' or type(itOrId) == 'number') then
+        local slk = hitem.getSlk(itOrId)
+        if (slk ~= nil) then
+            return slk.Name;
+        end
+    end
+    return ''
 end
 
 -- 获取物品位置类型
@@ -483,41 +491,41 @@ hitem.synthesis = function(whichUnit, items)
     local itemQuantity = {}
     hitem.slotLoop(whichUnit, function(slotItem)
         if (slotItem ~= nil) then
-            local itName = hitem.getName(slotItem)
-            if (table.includes(itName, itemKinds) == false) then
-                table.insert(itemKinds, itName)
+            local itId = hitem.getId(slotItem)
+            if (table.includes(itId, itemKinds) == false) then
+                table.insert(itemKinds, itId)
             end
-            if (itemQuantity[itName] == nil) then
-                itemQuantity[itName] = 0
+            if (itemQuantity[itId] == nil) then
+                itemQuantity[itId] = 0
             end
-            itemQuantity[itName] = itemQuantity[itName] + (hitem.getCharges(slotItem) or 1)
+            itemQuantity[itId] = itemQuantity[itId] + (hitem.getCharges(slotItem) or 1)
         end
     end)
     if (#items > 0) then
         for _, it in ipairs(items) do
-            local itName = hitem.getName(it)
-            if (table.includes(itName, itemKinds) == false) then
-                table.insert(itemKinds, itName)
+            local itId = hitem.getId(it)
+            if (table.includes(itId, itemKinds) == false) then
+                table.insert(itemKinds, itId)
             end
-            if (itemQuantity[itName] == nil) then
-                itemQuantity[itName] = 0
+            if (itemQuantity[itId] == nil) then
+                itemQuantity[itId] = 0
             end
-            itemQuantity[itName] = itemQuantity[itName] + (hitem.getCharges(it) or 1)
+            itemQuantity[itId] = itemQuantity[itId] + (hitem.getCharges(it) or 1)
             hitem.del(it, 0)
         end
     end
     local matchCount = 1
     while (matchCount > 0) do
         matchCount = 0
-        for _, itName in ipairs(itemKinds) do
-            if (hslk_global.synthesis.fragment[itName] ~= nil) then
-                for need = #hslk_global.synthesis.fragment[itName], 1, -1 do
-                    if ((itemQuantity[itName] or 0) >= need) then
-                        local maybeProfits = hslk_global.synthesis.fragment[itName][need]
+        for _, itId in ipairs(itemKinds) do
+            if (hslk_global.synthesis.fragment[itId] ~= nil) then
+                for need = #hslk_global.synthesis.fragment[itId], 1, -1 do
+                    if ((itemQuantity[itId] or 0) >= need) then
+                        local maybeProfits = hslk_global.synthesis.fragment[itId][need]
                         for _, mp in ipairs(maybeProfits) do
-                            local profitName = mp.profit
+                            local profitId = mp.profit
                             local profitIndex = mp.index
-                            local whichProfit = hslk_global.synthesis.profit[profitName][profitIndex]
+                            local whichProfit = hslk_global.synthesis.profit[profitId][profitIndex]
                             local needFragments = whichProfit.fragment
                             local match = true
                             for _, frag in ipairs(needFragments) do
@@ -535,13 +543,13 @@ hitem.synthesis = function(whichUnit, items)
                                         table.delete(frag[1], itemKinds)
                                     end
                                 end
-                                if (table.includes(profitName, itemKinds) == false) then
-                                    table.insert(itemKinds, profitName)
+                                if (table.includes(profitId, itemKinds) == false) then
+                                    table.insert(itemKinds, profitId)
                                 end
-                                if (itemQuantity[profitName] == nil) then
-                                    itemQuantity[profitName] = whichProfit.qty
+                                if (itemQuantity[profitId] == nil) then
+                                    itemQuantity[profitId] = whichProfit.qty
                                 else
-                                    itemQuantity[profitName] = itemQuantity[profitName] + whichProfit.qty
+                                    itemQuantity[profitId] = itemQuantity[profitId] + whichProfit.qty
                                 end
                             end
                         end
@@ -552,21 +560,23 @@ hitem.synthesis = function(whichUnit, items)
     end
     -- 处理结果物品
     local final = {}
-    for _, itName in ipairs(itemKinds) do
-        local slk = hslk_global.name2Value.item[itName]
+    for _, itId in ipairs(itemKinds) do
+        local slk = hslk_global.id2Value.item[itId]
         if (slk ~= nil) then
             local overlie = slk.OVERLIE or 1
-            while (itemQuantity[itName] > 0) do
+            while (itemQuantity[itId] > 0) do
                 local charges = 0
-                if (overlie >= itemQuantity[itName]) then
-                    charges = itemQuantity[itName]
-                    itemQuantity[itName] = 0
+                if (overlie >= itemQuantity[itId]) then
+                    charges = itemQuantity[itId]
+                    itemQuantity[itId] = 0
                 else
                     charges = overlie
-                    itemQuantity[itName] = itemQuantity[itName] - overlie
+                    itemQuantity[itId] = itemQuantity[itId] - overlie
                 end
-                table.insert(final, { id = slk.ITEM_ID, charges = charges, name = itName })
+                table.insert(final, { id = itId, charges = charges })
             end
+        else
+            table.insert(final, { id = itId, charges = itemQuantity[itId] })
         end
     end
     -- 先看看现有的物品是否与未来不符，先删掉释放负重
@@ -604,7 +614,6 @@ hitem.synthesis = function(whichUnit, items)
                     itemId = final[i].id,
                     whichUnit = whichUnit,
                     charges = final[i].charges,
-                    slotIndex = slot,
                 })
                 -- 触发合成事件
                 hevent.triggerEvent(
@@ -658,7 +667,6 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
         y = cj.GetItemY(whichItem)
     end
     local id = hitem.getId(whichItem)
-    local name = hitem.getName(whichItem)
     local charges = hitem.getCharges(whichItem)
     separateType = separateType or "single"
     formulaIndex = formulaIndex or 1 -- 默认获取第一条公式拆分
@@ -671,40 +679,41 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
             hitem.create({ itemId = id, charges = 1, x = x, y = y, during = 0 })
         end
     elseif (separateType == "formula") then
-        local originSlk = hslk_global.name2Value.item[name]
+        local originSlk = hslk_global.id2Value.item[id]
         if (originSlk ~= nil and originSlk.SHADOW == true) then
-            name = hslk_global.id2Value.item[originSlk.SHADOW_ID].Name
+            id = hslk_global.id2Value.item[originSlk.SHADOW_ID].ITEM_ID
         end
-        if (hslk_global.synthesis.profit[name] == nil) then
+        if (hslk_global.synthesis.profit[id] == nil) then
             return "物品不存在公式，无法拆分"
         end
-        local profit = hslk_global.synthesis.profit[name][formulaIndex] or nil
+        local profit = hslk_global.synthesis.profit[id][formulaIndex] or nil
         if (profit == nil) then
             return "物品找不到公式，无法拆分"
         end
+        print_mbr(profit)
         for _ = 1, charges, 1 do
             for _, frag in ipairs(profit.fragment) do
-                local itId = hslk_global.name2Value.item[frag[1]].ITEM_ID
+                local flagId = frag[1]
                 if (#profit.fragment == 1) then
                     for _ = 1, frag[2], 1 do
-                        hitem.create({ itemId = itId, charges = 1, x = x, y = y, during = 0 })
+                        hitem.create({ itemId = flagId, charges = 1, x = x, y = y, during = 0 })
                     end
                 else
                     local qty = frag[2]
-                    local slk = hslk_global.id2Value.item[itId]
+                    local slk = hslk_global.id2Value.item[flagId]
                     if (slk ~= nil) then
                         local overlie = slk.OVERLIE or 1
                         while (qty > 0) do
                             if (overlie >= qty) then
-                                hitem.create({ itemId = itId, charges = qty, x = x, y = y, during = 0 })
+                                hitem.create({ itemId = flagId, charges = qty, x = x, y = y, during = 0 })
                                 qty = 0
                             else
                                 qty = qty - overlie
-                                hitem.create({ itemId = itId, charges = overlie, x = x, y = y, during = 0 })
+                                hitem.create({ itemId = flagId, charges = overlie, x = x, y = y, during = 0 })
                             end
                         end
                     else
-                        hitem.create({ itemId = itId, charges = qty, x = x, y = y, during = 0 })
+                        hitem.create({ itemId = flagId, charges = qty, x = x, y = y, during = 0 })
                     end
                 end
             end
@@ -776,7 +785,7 @@ hitem.detector = function(whichUnit, originItem)
 
     -- 判断如果是影子物品，转为真实物品来判断
     local originSlk = hitem.getSlk(originItem)
-    if (originSlk.SHADOW == true and originSlk.SHADOW_ID) then
+    if (originSlk ~= nil and originSlk.SHADOW == true and originSlk.SHADOW_ID) then
         local realX = cj.GetItemX(originItem)
         local realY = cj.GetItemY(originItem)
         local realCharges = cj.GetItemCharges(originItem)
@@ -911,7 +920,6 @@ end
         y = nil, --哪个坐标Y（可选）
         whichLoc = nil, --哪个点（可选，不推荐）
         during = 0, --持续时间（可选，创建给单位要注意powerUp物品的问题）
-        slotIndex = 0-5, -- 如果创建给单位，可以同时设置物品栏的位置（可选）
     }
     !单位模式下，during持续时间是无效的
 ]]
@@ -963,9 +971,6 @@ hitem.create = function(bean)
         hRuntime.item[it] = {}
         hitem.setPositionType(it, posType)
         hitem.detector(bean.whichUnit, it)
-        if (bean.slotIndex ~= nil and bean.slotIndex >= 0 and bean.slotIndex <= 5) then
-            cj.UnitDropItemSlot(bean.whichUnit, it, bean.slotIndex)
-        end
     else
         if (type(bean.autoShadow) ~= 'boolean') then
             bean.autoShadow = true
@@ -973,7 +978,7 @@ hitem.create = function(bean)
         if (bean.autoShadow == true) then
             -- 默认如果可能的话，自动协助将真实物品转为影子物品(*小心死循环)
             local slk = hitem.getSlk(it)
-            if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
+            if (slk ~= nil and slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
                 x = cj.GetItemX(it)
                 y = cj.GetItemY(it)
                 hitem.del(it, 0)
@@ -1082,7 +1087,6 @@ hitem.copy = function(origin, target)
                     itemId = hitem.getId(it),
                     charges = hitem.getCharges(it),
                     whichUnit = target,
-                    slotIndex = i
                 }
             )
         end

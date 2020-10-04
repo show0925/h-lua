@@ -619,12 +619,12 @@ hevent_default_actions = {
                 end
                 local id = hitem.getId(it)
                 local name = hitem.getName(it)
-                local originSlk = hslk_global.name2Value.item[name]
+                local originSlk = hslk_global.id2Value.item[id]
                 if (originSlk ~= nil and originSlk.SHADOW == true) then
-                    name = hslk_global.id2Value.item[originSlk.SHADOW_ID].Name
+                    id = hslk_global.id2Value.item[originSlk.SHADOW_ID].ITEM_ID
                 end
                 local charges = hitem.getCharges(it)
-                local formulas = hslk_global.synthesis.profit[name]
+                local formulas = hslk_global.synthesis.profit[id]
                 local allowFormulaIndex = {}
                 if (formulas ~= nil) then
                     for fi, f in ipairs(formulas) do
@@ -641,7 +641,8 @@ hevent_default_actions = {
                     for ai, a in ipairs(allowFormulaIndex) do
                         local txt = {}
                         for _, frag in ipairs(formulas[a].fragment) do
-                            table.insert(txt, frag[1] .. 'x' .. frag[2] * charges)
+                            local fragName = hitem.getName(it)
+                            table.insert(txt, fragName .. 'x' .. frag[2] * charges)
                         end
                         table.insert(buttons, { value = ai, label = string.implode('+', txt) })
                     end
@@ -844,7 +845,7 @@ hevent_default_actions = {
                     local n = cj.GetItemName(it)
                     if (n ~= nil) then
                         local slk = hitem.getSlk(it)
-                        if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
+                        if (slk ~= nil and slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
                             local x = cj.GetItemX(it)
                             local y = cj.GetItemY(it)
                             hitem.del(it, 0)
