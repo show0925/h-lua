@@ -619,7 +619,7 @@ hskill.damage = function(options)
                                     odds = b.odds,
                                     damage = damage,
                                     percent = b.percent,
-                                    range = b.range,
+                                    radius = b.radius,
                                     sourceUnit = sourceUnit,
                                     effect = b.effect,
                                     damageKind = CONST_DAMAGE_KIND.special,
@@ -702,7 +702,7 @@ hskill.damage = function(options)
                             {
                                 odds = b.odds,
                                 damage = b.val or 0,
-                                range = b.range,
+                                radius = b.radius,
                                 whichUnit = targetUnit,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
@@ -720,7 +720,7 @@ hskill.damage = function(options)
                                 lightningType = b.lightning_type,
                                 qty = b.qty,
                                 change = b.change,
-                                range = b.range or 500,
+                                radius = b.radius or 500,
                                 effect = b.effect,
                                 isRepeat = false,
                                 whichUnit = targetUnit,
@@ -773,15 +773,15 @@ hskill.damageStep = function(options)
     local frequency = options.frequency or 0
     local damage = options.damage or 0
     if (options.whichUnit == nil) then
-        print_err("hskill.damageRange:-whichUnit")
+        print_err("hskill.damageStep:-whichUnit")
         return
     end
     if (times <= 0 or damage <= 0) then
-        print_err("hskill.damageRange:-times -damage")
+        print_err("hskill.damageStep:-times -damage")
         return
     end
     if (times > 1 and frequency <= 0) then
-        print_err("hskill.damageRange:-frequency")
+        print_err("hskill.damageStep:-frequency")
         return
     end
     if (times <= 1) then
@@ -829,7 +829,7 @@ end
 --- 范围持续伤害
 --[[
     options = {
-        range = 0, --范围（必须有）
+        radius = 0, --半径范围（必须有）
         frequency = 0, --伤害频率（必须有）
         times = 0, --伤害次数（必须有）
         effect = "", --特效（可选）
@@ -847,12 +847,12 @@ end
     }
 ]]
 hskill.damageRange = function(options)
-    local range = options.range or 0
+    local radius = options.radius or 0
     local times = options.times or 0
     local frequency = options.frequency or 0
     local damage = options.damage or 0
-    if (range <= 0 or times <= 0) then
-        print_err("hskill.damageRange:-range -times")
+    if (radius <= 0 or times <= 0) then
+        print_err("hskill.damageRange:-radius -times")
         return
     end
     if (times > 1 and frequency <= 0) then
@@ -883,7 +883,7 @@ hskill.damageRange = function(options)
         heffect.toXY(options.effect, x, y, 0.25 + (times * frequency))
     end
     if (times <= 1) then
-        local g = hgroup.createByXY(x, y, range, filter)
+        local g = hgroup.createByXY(x, y, radius, filter)
         if (g == nil) then
             return
         end
@@ -919,7 +919,7 @@ hskill.damageRange = function(options)
                     htime.delTimer(t)
                     return
                 end
-                local g = hgroup.createByXY(x, y, range, filter)
+                local g = hgroup.createByXY(x, y, radius, filter)
                 if (g == nil) then
                     return
                 end

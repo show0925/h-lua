@@ -157,7 +157,7 @@ end
         odds = 100, --几率，必须
         damage = 0, --原始伤害，必须
         percent = 0, --几率比例，必须
-        range = 0, --分裂范围，必须
+        radius = 0, --分裂范围，必须
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
         damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
@@ -172,9 +172,9 @@ hskill.split = function(options)
     local odds = options.odds or 0
     local damage = options.damage or 0
     local percent = options.percent or 0
-    local range = options.range or 0
-    if (odds <= 0 or damage <= 0 or percent <= 0 or range <= 0) then
-        print_err("split: -odds -damage -percent -range")
+    local radius = options.radius or 0
+    if (odds <= 0 or damage <= 0 or percent <= 0 or radius <= 0) then
+        print_err("split: -odds -damage -percent -radius")
         return
     end
     local targetUnit = options.whichUnit
@@ -186,13 +186,13 @@ hskill.split = function(options)
     if (math.random(1, 100) <= odds) then
         local g = hgroup.createByUnit(
             targetUnit,
-            range,
+            radius,
             function(filterUnit)
                 local flag = true
                 if (his.death(filterUnit)) then
                     flag = false
                 end
-                if (his.enemy(filterUnit, whichUnit)) then
+                if (his.enemy(filterUnit, targetUnit)) then
                     flag = false
                 end
                 if (his.building(filterUnit)) then
@@ -232,7 +232,7 @@ hskill.split = function(options)
                 triggerUnit = options.sourceUnit,
                 targetUnit = targetUnit,
                 damage = splitDamage,
-                range = range,
+                radius = radius,
                 percent = percent
             }
         )
@@ -244,7 +244,7 @@ hskill.split = function(options)
                 triggerUnit = targetUnit,
                 sourceUnit = options.sourceUnit,
                 damage = splitDamage,
-                range = range,
+                radius = radius,
                 percent = percent
             }
         )
@@ -775,7 +775,7 @@ end
     爆破
     options = {
         damage = 0, --伤害（必须有，小于等于0直接无效）
-        range = 1, --范围（可选）
+        radius = 1, --范围（可选）
         whichUnit = nil, --目标单位（挑选，单位时会自动选择与此单位同盟的单位）
         whichGroup = nil, --目标单位组（挑选，优先级更高）
         sourceUnit = nil, --伤害来源单位（可选）
@@ -791,7 +791,7 @@ hskill.bomb = function(options)
         return
     end
     local odds = options.odds or 100
-    local range = options.range or 1
+    local radius = options.radius or 1
     local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
     local damageType = options.damageType or {}
     local whichGroup
@@ -800,7 +800,7 @@ hskill.bomb = function(options)
     elseif (options.whichUnit ~= nil) then
         whichGroup = hgroup.createByUnit(
             options.whichUnit,
-            range,
+            radius,
             function(filterUnit)
                 local flag = true
                 if (his.enemy(options.whichUnit, filterUnit)) then
@@ -854,7 +854,7 @@ hskill.bomb = function(options)
                     targetUnit = eu,
                     odds = odds,
                     damage = options.damage,
-                    range = range
+                    radius = radius
                 }
             )
             -- @触发被爆破事件
@@ -866,7 +866,7 @@ hskill.bomb = function(options)
                     sourceUnit = options.sourceUnit,
                     odds = odds,
                     damage = options.damage,
-                    range = range
+                    radius = radius
                 }
             )
         end,
@@ -885,7 +885,7 @@ end
         odds = 100, --几率（可选）
         qty = 1, --传递的最大单位数（可选，默认1）
         change = 0, --增减率（可选，默认不增不减为0，范围建议[-1.00，1.00]）
-        range = 300, --寻找下一目标的作用范围（可选，默认300）
+        radius = 300, --寻找下一目标的作用范围（可选，默认300）
         isRepeat = false, --是否允许同一个单位重复打击（临近2次不会同一个）
         effect = nil, --目标位置特效（可选）
         damageKind = CONST_DAMAGE_KIND.skill, --伤害的种类（可选）
@@ -920,7 +920,7 @@ hskill.lightningChain = function(options)
     local prevUnit = options.prevUnit
     local lightningType = options.lightningType or hlightning.type.shan_dian_lian_ci
     local change = options.change or 0
-    local range = options.range or 500
+    local radius = options.radius or 500
     local isRepeat = options.isRepeat or false
     local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
     local damageType = options.damageType or { "thunder" }
@@ -958,7 +958,7 @@ hskill.lightningChain = function(options)
             targetUnit = whichUnit,
             odds = odds,
             damage = damage,
-            range = range,
+            radius = radius,
             index = options.index
         }
     )
@@ -971,7 +971,7 @@ hskill.lightningChain = function(options)
             sourceUnit = options.sourceUnit,
             odds = odds,
             damage = damage,
-            range = range,
+            radius = radius,
             index = options.index
         }
     )
@@ -984,7 +984,7 @@ hskill.lightningChain = function(options)
         end
         local g = hgroup.createByUnit(
             whichUnit,
-            range,
+            radius,
             function(filterUnit)
                 local flag = true
                 if (his.death(filterUnit)) then
@@ -1215,7 +1215,7 @@ end
 --[[
     范围眩晕
     options = {
-        range = 0, --眩晕范围（必须有）
+        radius = 0, --眩晕半径范围（必须有）
         during = 0, --眩晕持续时间（必须有）
         odds = 100, --对每个单位的独立几率（可选,默认100）
         effect = "", --特效（可选）
@@ -1231,11 +1231,11 @@ end
     }
 ]]
 hskill.rangeSwim = function(options)
-    local range = options.range or 0
+    local radius = options.radius or 0
     local during = options.during or 0
     local damage = options.damage or 0
-    if (range <= 0 or during <= 0) then
-        print_err("hskill.rangeSwim:-range -during")
+    if (radius <= 0 or during <= 0) then
+        print_err("hskill.rangeSwim:-radius -during")
         return
     end
     local odds = options.odds or 100
@@ -1261,7 +1261,7 @@ hskill.rangeSwim = function(options)
         return
     end
     heffect.toXY(effect, x, y, 0)
-    local g = hgroup.createByXY(x, y, range, filter)
+    local g = hgroup.createByXY(x, y, radius, filter)
     if (g == nil) then
         print_err("rangeSwim has not target")
         return
@@ -1291,7 +1291,7 @@ end
 --[[
     剑刃风暴
     options = {
-        range = 0, --范围（必须有）
+        radius = 0, --范围（必须有）
         frequency = 0, --伤害频率（必须有）
         during = 0, --持续时间（必须有）
         filter = [function], --必须有
@@ -1305,12 +1305,12 @@ end
     }
 ]]
 hskill.whirlwind = function(options)
-    local range = options.range or 0
+    local radius = options.radius or 0
     local frequency = options.frequency or 0
     local during = options.during or 0
     local damage = options.damage or 0
-    if (range <= 0 or during <= 0 or frequency <= 0) then
-        print_err("hskill.whirlwind:-range -during -frequency")
+    if (radius <= 0 or during <= 0 or frequency <= 0) then
+        print_err("hskill.whirlwind:-radius -during -frequency")
         return
     end
     if (during < frequency) then
@@ -1357,7 +1357,7 @@ hskill.whirlwind = function(options)
             if (options.animation) then
                 hunit.animate(options.sourceUnit, options.animation)
             end
-            local g = hgroup.createByUnit(options.sourceUnit, range, filter)
+            local g = hgroup.createByUnit(options.sourceUnit, radius, filter)
             if (g == nil) then
                 return
             end
@@ -1402,11 +1402,11 @@ end
         effectMovement = nil, --移动过程，每个间距的特效（可选的，采用的0秒删除法，请使用explode类型的特效）
         effectEnd = nil, --到达最后位置时的特效（可选的，采用的0秒删除法，请使用explode类型的特效）
         damageMovement = 0, --移动过程中的伤害（可选的，默认为0）
-        damageMovementRange = 0, --移动过程中的伤害（可选的，默认为0，易知0范围是无效的所以有伤害也无法体现）
+        damageMovementRadius = 0, --移动过程中的伤害（可选的，默认为0，易知0范围是无效的所以有伤害也无法体现）
         damageMovementRepeat = false, --移动过程中伤害是否可以重复造成（可选的，默认为不能）
         damageMovementDrag = false, --移动过程是否拖拽敌人（可选的，默认为不能）
         damageEnd = 0, --移动结束时对目标的伤害（可选的，默认为0）
-        damageEndRange = 0, --移动结束时对目标的伤害范围（可选的，默认为0，此处0范围是有效的，会只对targetUnit生效，除非unit不存在）
+        damageEndRadius = 0, --移动结束时对目标的伤害范围（可选的，默认为0，此处0范围是有效的，会只对targetUnit生效，除非unit不存在）
         damageKind = CONST_DAMAGE_KIND.skill, --伤害的种类（可选）
         damageType = {} --伤害的类型,注意是table（可选）
         damageEffect = nil, --伤害特效（可选）
@@ -1443,11 +1443,11 @@ hskill.leap = function(options)
     local sourceUnit = options.sourceUnit
     local prevUnit = options.prevUnit or sourceUnit
     local damageMovement = options.damageMovement or 0
-    local damageMovementRange = options.damageMovementRange or 0
+    local damageMovementRadius = options.damageMovementRadius or 0
     local damageMovementRepeat = options.damageMovementRepeat or false
     local damageMovementDrag = options.damageMovementDrag or false
     local damageEnd = options.damageEnd or 0
-    local damageEndRange = options.damageEndRange or 0
+    local damageEndRadius = options.damageEndRadius or 0
     local extraInfluence = options.extraInfluence
     local arrowUnit = options.arrowUnit
     local tokenArrow = options.tokenArrow
@@ -1555,10 +1555,10 @@ hskill.leap = function(options)
             if (options.effectMovement ~= nil) then
                 heffect.toXY(options.effectMovement, txy.x, txy.y, 0)
             end
-            if (damageMovementRange > 0) then
+            if (damageMovementRadius > 0) then
                 local g = hgroup.createByUnit(
                     arrowUnit,
-                    damageMovementRange,
+                    damageMovementRadius,
                     function(filterUnit)
                         local flag = filter(filterUnit)
                         if (damageMovementRepeat ~= true and hgroup.includes(repeatGroup, filterUnit)) then
@@ -1612,7 +1612,7 @@ hskill.leap = function(options)
                 if (options.effectEnd ~= nil) then
                     heffect.toXY(options.effectEnd, txy.x, txy.y, 0)
                 end
-                if (damageEndRange == 0 and options.targetUnit ~= nil) then
+                if (damageEndRadius == 0 and options.targetUnit ~= nil) then
                     if (damageEnd > 0) then
                         hskill.damage(
                             {
@@ -1628,8 +1628,8 @@ hskill.leap = function(options)
                     if (type(extraInfluence) == "function") then
                         extraInfluence(options.targetUnit)
                     end
-                elseif (damageEndRange > 0) then
-                    local g = hgroup.createByUnit(arrowUnit, damageEndRange, filter)
+                elseif (damageEndRadius > 0) then
+                    local g = hgroup.createByUnit(arrowUnit, damageEndRadius, filter)
                     hgroup.loop(
                         g,
                         function(eu)
@@ -1732,11 +1732,11 @@ hskill.leapPow = function(options)
                 effectMovement = options.effectMovement,
                 effectEnd = options.effectEnd,
                 damageMovement = options.damageMovement,
-                damageMovementRange = options.damageMovementRange,
+                damageMovementRadius = options.damageMovementRadius,
                 damageMovementRepeat = options.damageMovementRepeat,
                 damageMovementDrag = options.damageMovementDrag,
                 damageEnd = options.damageEnd,
-                damageEndRange = options.damageEndRange,
+                damageEndRadius = options.damageEndRadius,
                 damageKind = options.damageKind,
                 damageType = options.damageType,
                 damageEffect = options.damageEffect,
@@ -1752,14 +1752,14 @@ end
     剃[选区型]，参数与leap一致，额外有两个参数，设置范围
     * 需要注意一点的是，pow会自动将对单位跟踪的效果转为对坐标系(不建议使用unit)
     options = {
-        targetRange = 0, --以目标点为中心的选区范围
+        targetRadius = 0, --以目标点为中心的选区半径范围
         hskill.leap.options
     }
 ]]
 hskill.leapRange = function(options)
-    local targetRange = options.targetRange or 0
-    if (targetRange <= 0) then
-        print_err("leapRange: -targetRange")
+    local targetRadius = options.targetRadius or 0
+    if (targetRadius <= 0) then
+        print_err("leapRange: -targetRadius")
         return
     end
     if (options.sourceUnit == nil) then
@@ -1785,7 +1785,7 @@ hskill.leapRange = function(options)
         x = options.x
         y = options.y
     end
-    local g = hgroup.createByXY(x, y, targetRange, filter)
+    local g = hgroup.createByXY(x, y, targetRadius, filter)
     hgroup.loop(
         g,
         function(eu)
@@ -1802,11 +1802,11 @@ hskill.leapRange = function(options)
                 effectMovement = options.effectMovement,
                 effectEnd = options.effectEnd,
                 damageMovement = options.damageMovement,
-                damageMovementRange = options.damageMovementRange,
+                damageMovementRadius = options.damageMovementRadius,
                 damageMovementRepeat = options.damageMovementRepeat,
                 damageMovementDrag = options.damageMovementDrag,
                 damageEnd = options.damageEnd,
-                damageEndRange = options.damageEndRange,
+                damageEndRadius = options.damageEndRadius,
                 damageKind = options.damageKind,
                 damageType = options.damageType,
                 damageEffect = options.damageEffect,
@@ -1830,15 +1830,15 @@ end
     反射弹跳
     options = {
         qty = 1, --（跳跃次数，默认1）
-        range = 0, --（选目标范围，默认0无效）
+        radius, --（选目标范围半径，默认0无效）
         hskill.leap.options
     }
 ]]
 hskill.leapReflex = function(options)
     local qty = options.qty or 1
-    local range = options.range or 0
-    if (range <= 0) then
-        print_err("reflex: -range")
+    local radius = options.radius or 0
+    if (radius <= 0) then
+        print_err("reflex: -radius")
         return
     end
     if (options.sourceUnit == nil) then
@@ -1861,7 +1861,7 @@ hskill.leapReflex = function(options)
     options.onEnding = function(x, y)
         qty = qty - 1
         if (qty >= 1) then
-            local g = hgroup.createByXY(x, y, range, options.filter)
+            local g = hgroup.createByXY(x, y, radius, options.filter)
             local closer = hgroup.getClosest(g, x, y)
             if (closer ~= nil) then
                 options.prevUnit = options.targetUnit
@@ -1881,7 +1881,7 @@ end
         x, --初始的x坐标（必须有，对点冲击，从该处开始打击）
         y, --初始的y坐标（必须有，对点冲击，从该处开始打击）
         deg, --方向（必须有）
-        range = 0, --打击范围（必须有，默认为0无效）
+        radius = 0, --打击半径范围（必须有，默认为0无效）
         distance = 0, --打击距离（必须有，默认为0无效）
         frequency = 0, --打击频率（必须有，默认0瞬间打击全部形状）
         filter = [function], --必须有
@@ -1913,9 +1913,9 @@ hskill.rectangleStrike = function(options)
         return
     end
     local damage = options.damage or 0
-    local range = options.range or 0
+    local radius = options.radius or 0
     local distance = options.distance or 0
-    if (damage <= 0 or range <= 0 or distance <= 0) then
+    if (damage <= 0 or radius <= 0 or distance <= 0) then
         print_err("rectangleStrike: -data")
         return
     end
@@ -1933,7 +1933,7 @@ hskill.rectangleStrike = function(options)
         local tg = {}
         while (true) do
             i = i + 1
-            local d = i * range * 0.33
+            local d = i * radius * 0.33
             if (d >= distance) then
                 break
             end
@@ -1957,7 +1957,7 @@ hskill.rectangleStrike = function(options)
                 heffect.bindUnit(options.effect, effUnit, "origin", effUnitDur)
             end
             hgroup.loop(
-                hgroup.createByXY(txy.x, txy.y, range, options.filter),
+                hgroup.createByXY(txy.x, txy.y, radius, options.filter),
                 function(eu)
                     if (hgroup.includes(tg, eu) == false) then
                         hgroup.addUnit(tg, eu)
@@ -1988,7 +1988,7 @@ hskill.rectangleStrike = function(options)
             frequency,
             function(t)
                 i = i + 1
-                local d = i * range * 0.5
+                local d = i * radius * 0.5
                 if (d >= distance) then
                     htime.delTimer(t)
                     return
@@ -2012,7 +2012,7 @@ hskill.rectangleStrike = function(options)
                     )
                     heffect.bindUnit(options.effect, effUnit, "origin", effUnitDur)
                 end
-                local g = hgroup.createByXY(txy.x, txy.y, range, options.filter)
+                local g = hgroup.createByXY(txy.x, txy.y, radius, options.filter)
                 if (hgroup.count(g) > 0) then
                     hskill.damageGroup(
                         {
@@ -2032,68 +2032,4 @@ hskill.rectangleStrike = function(options)
             end
         )
     end
-end
-
---[[
-    变身
-    options = {
-        whichUnit, --哪个单位
-        during, --持续时间
-        toUnitId, --目标单位ID(可选)
-        toAbilityId, --目标替换技能ID(可选,与toUnitId互斥)
-        backAbilityId, --返回时的替换技能ID(可选,与toUnitId互斥)
-        effectStart = nil, --开始中心特效
-        effectEnd = nil, --结束中心特效
-        attr = {} --属性变动
-    }
-]]
-hskill.shapeshift = function(options)
-    if (options.whichUnit == nil) then
-        print_err("shapeshift: -whichUnit")
-        return
-    end
-    if (options.toUnitId == nil and options.toAbilityId == nil and options.backAbilityId == nil) then
-        print_err("shapeshift: -target")
-        return
-    end
-    local during = options.during or 0
-    if (during <= 0) then
-        print_err("shapeshift: -during too small")
-        return
-    end
-    local deDur = 0.2
-    local attr = options.attr or {}
-    if (options.effectStart ~= nil) then
-        heffect.bindUnit(options.effectStart, options.whichUnit, "origin", 2.5)
-    end
-    local toAbilityId = options.toAbilityId
-    local backAbilityId = options.backAbilityId
-    if (toAbilityId == nil or backAbilityId == nil) then
-        toAbilityId = hslk_global.skill_shapeshift[options.toUnitId].toAbilityId
-        backAbilityId = hslk_global.skill_shapeshift[options.toUnitId].backAbilityId
-    end
-    cj.UnitAddAbility(options.whichUnit, toAbilityId)
-    cj.UnitRemoveAbility(options.whichUnit, toAbilityId)
-    hattr.reRegister(options.whichUnit)
-    htime.setTimeout(
-        deDur,
-        function(t)
-            htime.delTimer(t)
-            if (options.attr ~= nil) then
-                hattr.set(options.whichUnit, during, options.attr)
-            end
-            htime.setTimeout(
-                during + deDur,
-                function(t)
-                    htime.delTimer(t)
-                    if (options.effectEnd ~= nil) then
-                        heffect.bindUnit(options.effectEnd, options.whichUnit, "origin", 2.5)
-                    end
-                    cj.UnitAddAbility(options.whichUnit, backAbilityId)
-                    cj.UnitRemoveAbility(options.whichUnit, backAbilityId)
-                    hattr.reRegister(options.whichUnit)
-                end
-            )
-        end
-    )
 end
