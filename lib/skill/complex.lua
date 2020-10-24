@@ -192,7 +192,7 @@ hskill.split = function(options)
                 if (his.dead(filterUnit)) then
                     flag = false
                 end
-                if (his.enemy(filterUnit, whichUnit)) then
+                if (his.enemy(filterUnit, targetUnit)) then
                     flag = false
                 end
                 if (his.structure(filterUnit)) then
@@ -1224,7 +1224,7 @@ end
 --[[
     范围眩晕
     options = {
-        radius = 0, --眩晕范围（必须有）
+        radius = 0, --眩晕半径范围（必须有）
         during = 0, --眩晕持续时间（必须有）
         odds = 100, --对每个单位的独立几率（可选,默认100）
         effect = "", --特效（可选）
@@ -1411,11 +1411,11 @@ end
         effectMovement = nil, --移动过程，每个间距的特效（可选的，采用的0秒删除法，请使用explode类型的特效）
         effectEnd = nil, --到达最后位置时的特效（可选的，采用的0秒删除法，请使用explode类型的特效）
         damageMovement = 0, --移动过程中的伤害（可选的，默认为0）
-        damageMovementRange = 0, --移动过程中的伤害范围（可选的，默认为0，易知0范围是无效的所以有伤害也无法体现）
+        damageMovementRadius = 0, --移动过程中的伤害（可选的，默认为0，易知0范围是无效的所以有伤害也无法体现）
         damageMovementRepeat = false, --移动过程中伤害是否可以重复造成（可选的，默认为不能）
         damageMovementDrag = false, --移动过程是否拖拽敌人（可选的，默认为不能）
         damageEnd = 0, --移动结束时对目标的伤害（可选的，默认为0）
-        damageEndRange = 0, --移动结束时对目标的伤害范围（可选的，默认为0，此处0范围是有效的，会只对targetUnit生效，除非unit不存在）
+        damageEndRadius = 0, --移动结束时对目标的伤害范围（可选的，默认为0，此处0范围是有效的，会只对targetUnit生效，除非unit不存在）
         damageKind = CONST_DAMAGE_KIND.skill, --伤害的种类（可选）
         damageType = {} --伤害的类型,注意是table（可选）
         damageEffect = nil, --伤害特效（可选）
@@ -1452,11 +1452,11 @@ hskill.leap = function(options)
     local sourceUnit = options.sourceUnit
     local prevUnit = options.prevUnit or sourceUnit
     local damageMovement = options.damageMovement or 0
-    local damageMovementRange = options.damageMovementRange or 0
+    local damageMovementRadius = options.damageMovementRadius or 0
     local damageMovementRepeat = options.damageMovementRepeat or false
     local damageMovementDrag = options.damageMovementDrag or false
     local damageEnd = options.damageEnd or 0
-    local damageEndRange = options.damageEndRange or 0
+    local damageEndRadius = options.damageEndRadius or 0
     local extraInfluence = options.extraInfluence
     local arrowUnit = options.arrowUnit
     local tokenArrow = options.tokenArrow
@@ -1564,10 +1564,10 @@ hskill.leap = function(options)
             if (options.effectMovement ~= nil) then
                 heffect.toXY(options.effectMovement, txy.x, txy.y, 0)
             end
-            if (damageMovementRange > 0) then
+            if (damageMovementRadius > 0) then
                 local g = hgroup.createByUnit(
                     arrowUnit,
-                    damageMovementRange,
+                    damageMovementRadius,
                     function(filterUnit)
                         local flag = filter(filterUnit)
                         if (damageMovementRepeat ~= true and hgroup.includes(repeatGroup, filterUnit)) then
@@ -1621,7 +1621,7 @@ hskill.leap = function(options)
                 if (options.effectEnd ~= nil) then
                     heffect.toXY(options.effectEnd, txy.x, txy.y, 0)
                 end
-                if (damageEndRange == 0 and options.targetUnit ~= nil) then
+                if (damageEndRadius == 0 and options.targetUnit ~= nil) then
                     if (damageEnd > 0) then
                         hskill.damage(
                             {
@@ -1637,8 +1637,8 @@ hskill.leap = function(options)
                     if (type(extraInfluence) == "function") then
                         extraInfluence(options.targetUnit)
                     end
-                elseif (damageEndRange > 0) then
-                    local g = hgroup.createByUnit(arrowUnit, damageEndRange, filter)
+                elseif (damageEndRadius > 0) then
+                    local g = hgroup.createByUnit(arrowUnit, damageEndRadius, filter)
                     hgroup.loop(
                         g,
                         function(eu)
@@ -1741,11 +1741,11 @@ hskill.leapPow = function(options)
                 effectMovement = options.effectMovement,
                 effectEnd = options.effectEnd,
                 damageMovement = options.damageMovement,
-                damageMovementRange = options.damageMovementRange,
+                damageMovementRadius = options.damageMovementRadius,
                 damageMovementRepeat = options.damageMovementRepeat,
                 damageMovementDrag = options.damageMovementDrag,
                 damageEnd = options.damageEnd,
-                damageEndRange = options.damageEndRange,
+                damageEndRadius = options.damageEndRadius,
                 damageKind = options.damageKind,
                 damageType = options.damageType,
                 damageEffect = options.damageEffect,
@@ -1761,14 +1761,14 @@ end
     剃[选区型]，参数与leap一致，额外有两个参数，设置范围
     * 需要注意一点的是，pow会自动将对单位跟踪的效果转为对坐标系(不建议使用unit)
     options = {
-        targetRange = 0, --以目标点为中心的选区范围
+        targetRadius = 0, --以目标点为中心的选区半径范围
         hskill.leap.options
     }
 ]]
 hskill.leapRange = function(options)
-    local targetRange = options.targetRange or 0
-    if (targetRange <= 0) then
-        print_err("leapRange: -targetRange")
+    local targetRadius = options.targetRadius or 0
+    if (targetRadius <= 0) then
+        print_err("leapRange: -targetRadius")
         return
     end
     if (options.sourceUnit == nil) then
@@ -1794,7 +1794,7 @@ hskill.leapRange = function(options)
         x = options.x
         y = options.y
     end
-    local g = hgroup.createByXY(x, y, targetRange, filter)
+    local g = hgroup.createByXY(x, y, targetRadius, filter)
     hgroup.loop(
         g,
         function(eu)
@@ -1811,11 +1811,11 @@ hskill.leapRange = function(options)
                 effectMovement = options.effectMovement,
                 effectEnd = options.effectEnd,
                 damageMovement = options.damageMovement,
-                damageMovementRange = options.damageMovementRange,
+                damageMovementRadius = options.damageMovementRadius,
                 damageMovementRepeat = options.damageMovementRepeat,
                 damageMovementDrag = options.damageMovementDrag,
                 damageEnd = options.damageEnd,
-                damageEndRange = options.damageEndRange,
+                damageEndRadius = options.damageEndRadius,
                 damageKind = options.damageKind,
                 damageType = options.damageType,
                 damageEffect = options.damageEffect,
@@ -2042,4 +2042,3 @@ hskill.rectangleStrike = function(options)
         )
     end
 end
-

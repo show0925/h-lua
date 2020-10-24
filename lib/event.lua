@@ -147,7 +147,7 @@ hevent.deleteEvent = function(handle, key, eventId)
     if (hRuntime.event.register[handle] == nil or hRuntime.event.register[handle][key] == nil) then
         return
     end
-    table.remove(hRuntime.event.register[handle], eventId)
+    table.remove(hRuntime.event.register[handle][key], eventId)
 end
 
 --- 注意到攻击目标
