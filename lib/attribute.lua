@@ -403,7 +403,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
         -- table类型只有+-没有别的
         if (opr == "+") then
             -- 添加
-            local hkey = string.vkey(val)
+            local hkey = string.attrBuffKey(val)
             table.insert(params[attr], { hash = hkey, table = val })
             if (dur > 0) then
                 htime.setTimeout(
@@ -416,13 +416,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
             end
         elseif (opr == "-") then
             -- 减少
-            local valx = table.obj2arr(val, CONST_ATTR_BUFF_KEYS)
-            local valxx = {}
-            for _, xv in ipairs(valx) do
-                table.insert(valxx, xv.value)
-            end
-            valx = nil
-            local hkey = string.vkey(valxx)
+            local hkey = string.attrBuffKey(val)
             local hasKey = false
             for k, v in ipairs(params[attr]) do
                 if (v.hash == hkey) then
