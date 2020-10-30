@@ -1679,33 +1679,33 @@ end
 
 --[[
     剃[爪子状]，参数与leap一致，额外有两个参数，设置角度
-    * 需要注意一点的是，pow会自动将对单位跟踪的效果转为对坐标系(不建议使用unit)
+    * 需要注意一点的是，paw会自动将对单位跟踪的效果转为对坐标系(不建议使用unit)
     options = {
         qty = 0, --数量
         deg = 15, --角度
         hskill.leap.options
     }
 ]]
-hskill.leapPow = function(options)
+hskill.leapPaw = function(options)
     local qty = options.qty or 0
     local deg = options.deg or 15
     if (qty <= 1) then
-        print_err("leapPow: -qty")
+        print_err("leapPaw: -qty")
         return
     end
     if (options.sourceUnit == nil) then
-        print_err("leapPow: -sourceUnit")
+        print_err("leapPaw: -sourceUnit")
         return
     end
     if (type(options.filter) ~= "function") then
-        print_err("leapPow: -filter")
+        print_err("leapPaw: -filter")
         return
     end
     if (options.tokenArrow == nil) then
-        print_err("leapPow: -not arrow")
+        print_err("leapPaw: -not arrow")
     end
     if (options.targetUnit == nil and options.x == nil and options.y == nil) then
-        print_err("leapPow: -target")
+        print_err("leapPaw: -target")
         return
     end
     local x, y
