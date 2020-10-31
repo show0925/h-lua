@@ -260,7 +260,10 @@ hring.insert = function(whichUnit, id)
                         end
                         -- 检测是否有自定义的matcher，用于给玩家自定义额外的操作
                         if (matchAction ~= nil and type(matchAction) == 'function') then
-                            matchAction(enumUnit)
+                            matchAction({
+                                triggerUnit = u,
+                                enumUnit = enumUnit,
+                            })
                         end
                     end)
                 end
