@@ -3,7 +3,7 @@
  * [Demo2:My TD Game](https://github.com/hunzsig-warcraft3/w3x-my-tower)
  * [Test1: DZAPI](https://github.com/hunzsig-warcraft3/w3x-test-dzapi)
  * [Test2: Crash](https://github.com/hunzsig-warcraft3/w3x-test-breakdown)
- * [Quick start(zh-cn)](https://docs.qq.com/doc/DTUZZZWZzYVpyeW1o)
+ * [Quick start(zh-cn)](http://wenku.hunzsig.org/?_=_1_5)
  * Author: hunzsig
  * QQ Group Number: 325338043(China)
 

@@ -3,7 +3,7 @@
  * [开源地图：我塔非凡](https://github.com/hunzsig-warcraft3/w3x-my-tower)
  * [功能测试：DZAPI](https://github.com/hunzsig-warcraft3/w3x-test-dzapi)
  * [功能测试：崩溃压力](https://github.com/hunzsig-warcraft3/w3x-test-breakdown)
- * [极速上手文档](https://docs.qq.com/doc/DTUZZZWZzYVpyeW1o)
+ * [技术文档](http://wenku.hunzsig.org/?_=_1_5)
  * Author：hunzsig
  * QQ：325338043
 
