@@ -1,0 +1,72 @@
+common 通用
+echo(msg, whichPlayer, duration, x, y) --- 在屏幕打印信息给所有玩家
+json.stringify(obj) --- json encode
+json.parse(str)) --- json decode
+
+debug 调试
+rem(key1, key2) --- 记录运行时间rem方法。只有key1时为记录，有key2时会打印对应记录间的差值，如：
+print_stack(...) --- 打印栈
+print_mb(...) --- 打印utf8->ansi编码,此方法可以打印出中文
+print_err(val) --- 错误调试
+print_r(t, printMethod, showDetail) --- 打印 
+print_mbr(t) --- 打印 （可以打印中文）
+
+math 数学处理
+math.random(n, m) --- 随机数
+math.polarProjection(x, y, dist, angle) --- 极坐标位移
+math.round(decimal) --- 四舍五入
+math.numberFormat(value) --- 数字格式化(单位K/M/B/T)
+math.integerFormat(value) --- 整型格式化(单位K/M/B/T)
+math.getDegBetweenXY(x1, y1, x2, y2) --- 获取两个坐标间角度，如果其中一个单位为空 返回0
+math.getDegBetweenLoc(l1, l2) --- 获取两个点间角度，如果其中一个单位为空 返回0
+math.getDegBetweenUnit(u1, u2) --- 获取两个单位间角度，如果其中一个单位为空 返回0
+math.getDistanceBetweenXY(x1, y1, x2, y2) --- 获取两个坐标距离
+math.getDistanceBetweenLoc(l1, l2) --- 获取两个点距离
+math.getDistanceBetweenUnit(u1, u2) --- 获取两个单位距离
+math.getMaxDistanceInRect(w, h, deg) --- 获取矩形区域内某角度距离边缘最大距离
+
+string 字符串
+string.char2id(idChar) --- 获取一个对象的id
+string.id2char(id) --- 获取一个对象的id字符串
+string.mb_len(inputStr) --- 获取字符串真实长度
+string.md5(t) --- 生成MD5
+string.vkey(t) --- 根据值获取一个key
+string.addslashes(s) --- 转义
+string.stripslashes(s) --- 反转义
+string.base64Encode(source_str) --- base64编码
+string.base64Decode(str64) -- base64解码
+string.explode(delimeter, str) --- 把字符串以分隔符打散为数组
+string.implode(delimeter, table) --- 把数组以分隔符拼接回字符串
+string.strpos(str, pattern) --- 统计某个子串出现的首位,不包含返回false
+string.findCount(str, pattern) --- 统计某个子串出现的次数
+
+table 表(仅支持ipairs)
+table.random(arr) --- 随机在数组内取一个
+table.clone(org) --- 克隆table
+table.merge(...) --- 合并table
+table.includes(val, arr) --- 在数组内
+table.delete(val, arr, qty) --- 删除数组一次某个值(qty次,默认删除全部)
+table.obj2arr(obj, keyMap) --- 将obj形式的attr数据转为有序数组{key=[key],value=[value]}
+
+color 颜色
+hColor.mixed(str, color) --- hex字符串颜色
+hColor.gold(str) --- 耀金
+hColor.white(str) --- 纯白
+hColor.black(str) --- 纯黑
+hColor.grey(str) --- 浅灰
+hColor.greyDeep(str) --- 深灰
+hColor.redLight(str) --- 亮红
+hColor.red(str) --- 大红
+hColor.greenLight(str) --- 浅绿
+hColor.green(str) --- 深绿
+hColor.yellowLight(str) --- 浅黄
+hColor.yellow(str) --- 亮黄
+hColor.orange(str) --- 橙色
+hColor.skyLight(str) --- 天空蓝
+hColor.sky(str) --- 青空蓝
+hColor.seaLight(str) --- 浅海蓝
+hColor.sea(str) --- 深海蓝
+hColor.purpleLight(str) --- 浅紫
+hColor.purple(str) --- 亮紫
+
+

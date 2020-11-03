@@ -277,6 +277,7 @@ string.findCount = function(str, pattern)
 end
 
 --- 获取属性table合成key
+---@private
 ---@param val table
 string.attrBuffKey = function(val)
     local valx = table.obj2arr(val, CONST_ATTR_BUFF_KEYS)
