@@ -132,7 +132,7 @@ hcamera.shock = function(whichPlayer, whichType, during, scale)
     end
 end
 
---- 获取镜头模型
+--- 获取镜头模式
 ---@param whichPlayer userdata 玩家
 hcamera.getModel = function(whichPlayer)
     return hplayer.get(whichPlayer, 'cameraModel', 'normal')

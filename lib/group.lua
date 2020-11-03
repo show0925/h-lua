@@ -1,6 +1,6 @@
 hgroup = {}
 
---- 循环group
+--- 循环单位组
 ---@alias GroupLoop fun(enumUnit: userdata):void
 ---@param whichGroup table
 ---@param actions GroupLoop | "function(enumUnit) end"

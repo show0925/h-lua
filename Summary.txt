@@ -1,4 +1,7 @@
+库大纲 - 具体运用请看源码
+
 common 通用
+const --- 多组静态数据协助编码，告别魔数
 echo(msg, whichPlayer, duration, x, y) --- 在屏幕打印信息给所有玩家
 json.stringify(obj) --- json encode
 json.parse(str)) --- json decode
@@ -68,5 +71,322 @@ hColor.seaLight(str) --- 浅海蓝
 hColor.sea(str) --- 深海蓝
 hColor.purpleLight(str) --- 浅紫
 hColor.purple(str) --- 亮紫
+
+attribute 属性
+hattribute.setThreeBuff(buff) --- 设置三围的影响
+hattribute.set(whichUnit, during, data) --- 设置单位属性
+hattribute.get(whichUnit, attr) --- 通用get
+
+award 奖励
+haward.setShareRange(range) --- 设置共享范围
+haward.forUnit(whichUnit, exp, gold, lumber) --- 奖励单位（经验黄金木头）
+haward.forUnitExp(whichUnit, exp) --- 奖励单位经验
+haward.forUnitGold(whichUnit, gold) --- 奖励单位黄金
+haward.forUnitLumber(whichUnit, lumber) --- 奖励单位木头
+haward.forGroup(whichUnit, exp, gold, lumber) --- 平分奖励英雄组（经验黄金木头）
+haward.forGroupExp(whichUnit, exp) --- 平分奖励英雄组（经验）
+haward.forGroupGold(whichUnit, gold) --- 平分奖励英雄组（黄金）
+haward.forGroupLumber(whichUnit, lumber) --- 平分奖励英雄组（木头）
+haward.forPlayer(gold, lumber) --- 平分奖励玩家组（黄金木头）
+haward.forPlayerGold(gold) --- 平分奖励玩家组（黄金）
+haward.forPlayerLumber(lumber) --- 平分奖励玩家组（木头）
+
+camera 镜头
+hcamera.reset(whichPlayer, during) --- 重置镜头
+hcamera.apply(whichPlayer, during, camerasetup) --- 应用镜头
+hcamera.toXY(whichPlayer, during, x, y) --- 移动到XY
+hcamera.toLoc(whichPlayer, during, loc) --- 移动到点
+hcamera.toUnit(whichPlayer, during, whichUnit) --- 移动到单位位置
+hcamera.lock(whichPlayer, whichUnit) --- 锁定镜头
+hcamera.changeDistance(whichPlayer, diffDistance) --- 更改镜头距离
+hcamera.shock(whichPlayer, whichType, during, scale) --- 玩家镜头震动，震动包括两种
+hcamera.getModel(whichPlayer) --- 获取镜头模型
+hcamera.setModel(bean) --- 设置镜头模式
+
+dialog 对话框
+hdialog.hotkey(key) --- 自动根据key识别热键
+hdialog.del(whichDialog) --- 删除一个对话框
+hdialog.create(whichPlayer, options, action) --- 创建一个新的对话框
+
+DZapi
+hdzapi.isVipRed(whichPlayer) --- 是否红V
+hdzapi.isVipBlue(whichPlayer) --- 是否蓝V
+hdzapi.mapLv(whichPlayer) --- 获取地图等级
+hdzapi.hasMallItem(whichPlayer, key) --- 是否有商城道具,由于官方设置的key必须大写，所以这里自动转换
+hdzapi.setMallItemCheater(whichPlayer) --- 设置一个玩家为特殊商城人员，可以获得所有的道具
+hdzapi.server.ready(whichPlayer) --- 读取服务器存档是否成功，没有开通或这服务器崩了返回false
+hdzapi.setRoomStat(whichPlayer, key, text) --- 设置房间数据
+hdzapi.server.clear --- 清理服务器存档数据
+hdzapi.server.set --- 设置服务器存档数据
+hdzapi.server.get --- 获取服务器存档数据
+
+effect 特效
+heffect.del(e) --- 删除特效
+heffect.toXY(effectModel, x, y, during) --- 在XY坐标创建特效
+heffect.toLoc(effectModel, loc, during) --- 在点创建特效
+heffect.toUnit(effectModel, targetUnit, during) --- 在单位所处位置创建特效
+heffect.bindUnit(effectModel, targetUnit, attach, during) --- 创建特效绑定单位模型
+
+enemy 敌人
+henemy.setName(name) --- 设置敌人的名称
+henemy.getName() --- 获取敌人的名称
+henemy.setColor(color) --- 设置敌人的颜色
+henemy.getColor() --- 获取敌人的颜色
+henemy.setShareSight(bool) --- 设置敌人是否共享视野
+henemy.isShareSight() --- 获取敌人是否共享视野
+henemy.setPlayer(whichPlayer) --- 将某个玩家位置设定为敌人，同时将他名字设定为全局的emptyName，颜色调节为黑色ConvertPlayerColor(12)
+henemy.setPlayers(playerArray) --- 将一组玩家位置设定为敌人
+henemy.getPlayer(createQty) --- 最优化自动获取一个敌人玩家
+henemy.create(options) --- 创建敌人单位/单位组
+
+env 环境
+henv.setFogStatus(enable, enableMark) --- 设置迷雾状态
+henv.setDoodad(doodads) --- 随机构建时的装饰物池
+henv.setGround(grounds) --- 随机构建时的地表纹理池
+henv.clearDestructable(whichRect) --- 清空一片区域的可破坏物
+henv.build(whichRect, typeStr, isInvulnerable, isDestroyRect, ground, doodad, units) --- 构建区域装饰
+henv.random(whichRect, typeStr, isInvulnerable, isDestroyRect) --- 随机构建区域装饰
+
+event 事件
+hevent.deleteEvent(handle, key, eventId) --- 删除事件（需要event_id）
+hevent.onAttackDetect(whichUnit, callFunc) --- 注意到攻击目标
+hevent.onAttackGetTarget(whichUnit, callFunc) --- 获取攻击目标
+hevent.onBeAttackReady(whichUnit, callFunc) --- 准备被攻击
+hevent.onAttack(whichUnit, callFunc) --- 造成攻击
+hevent.onBeAttack(whichUnit, callFunc) --- 承受攻击
+hevent.onSkillStudy(whichUnit, callFunc) --- 学习技能
+hevent.onSkillReady(whichUnit, callFunc) --- 准备施放技能
+hevent.onSkillCast(whichUnit, callFunc) --- 开始施放技能
+hevent.onSkillStop(whichUnit, callFunc) --- 停止施放技能
+hevent.onSkillEffect(whichUnit, callFunc) --- 发动技能效果
+hevent.onSkillFinish(whichUnit, callFunc) --- 施放技能结束
+hevent.onItemUsed(whichUnit, callFunc) --- 单位使用物品
+hevent.onItemDrop(whichUnit, callFunc) --- 丢弃(传递)物品
+hevent.onItemGet(whichUnit, callFunc) --- 获得物品
+hevent.onItemPawn(whichUnit, callFunc) --- 抵押物品（玩家把物品扔给商店）
+hevent.onItemSell(whichUnit, callFunc) --- 出售物品(商店卖给玩家)
+hevent.onUnitSell(whichUnit, callFunc) --- 出售单位(商店卖给玩家)
+hevent.onItemDestroy(whichItem, callFunc) --- 物品被破坏
+hevent.onItemSeparate(whichItem, callFunc) --- 物品被拆分
+hevent.onItemSynthesis(whichUnit, callFunc) --- 物品被合成
+hevent.onItemOverWeight(whichUnit, callFunc) --- 物品超重
+hevent.onItemOverSlot(whichUnit, callFunc) --- 单位满格
+hevent.onDamage(whichUnit, callFunc) --- 造成伤害
+hevent.onBeDamage(whichUnit, callFunc) --- 承受伤害
+hevent.onAvoid(whichUnit, callFunc) --- 回避攻击成功
+hevent.onBeAvoid(whichUnit, callFunc) --- 攻击被回避
+hevent.onBreakArmor(whichUnit, callFunc) --- 破防（护甲/魔抗）成功
+hevent.onBeBreakArmor(whichUnit, callFunc) --- 被破防（护甲/魔抗）成功
+hevent.onSwim(whichUnit, callFunc) --- 眩晕成功
+hevent.onBeSwim(whichUnit, callFunc) --- 被眩晕
+hevent.onBroken(whichUnit, callFunc) --- 打断成功
+hevent.onBeBroken(whichUnit, callFunc) --- 被打断
+hevent.onSilent(whichUnit, callFunc) --- 沉默成功
+hevent.onBeSilent(whichUnit, callFunc) --- 被沉默
+hevent.onUnarm(whichUnit, callFunc) --- 缴械成功
+hevent.onBeUnarm(whichUnit, callFunc) --- 被缴械
+hevent.onFetter(whichUnit, callFunc) --- 缚足成功
+hevent.onBeFetter(whichUnit, callFunc) --- 被缚足
+hevent.onBomb(whichUnit, callFunc) --- 爆破成功
+hevent.onBeBomb(whichUnit, callFunc) --- 被爆破
+hevent.onLightningChain(whichUnit, callFunc) --- 闪电链成功
+hevent.onBeLightningChain(whichUnit, callFunc) --- 被闪电链
+hevent.onCrackFly(whichUnit, callFunc) --- 击飞成功
+hevent.onBeCrackFly(whichUnit, callFunc) --- 被击飞
+hevent.onRebound(whichUnit, callFunc) --- 反伤时
+hevent.onBeRebound(whichUnit, callFunc) --- 被反伤时
+hevent.onNoAvoid(whichUnit, callFunc) --- 造成无法回避的伤害时
+hevent.onBeNoAvoid(whichUnit, callFunc) --- 被造成无法回避的伤害时
+hevent.onKnocking(whichUnit, callFunc) --- 物理暴击时
+hevent.onBeKnocking(whichUnit, callFunc) --- 承受物理暴击时
+hevent.onViolence(whichUnit, callFunc) --- 魔法暴击时
+hevent.onBeViolence(whichUnit, callFunc) --- 承受魔法暴击时
+hevent.onSpilt(whichUnit, callFunc) --- 分裂时
+hevent.onBeSpilt(whichUnit, callFunc) --- 承受分裂时
+hevent.onLimitToughness(whichUnit, callFunc) --- 极限减伤抵抗（减伤不足以抵扣）
+hevent.onHemophagia(whichUnit, callFunc) --- 吸血时
+hevent.onBeHemophagia(whichUnit, callFunc) --- 被吸血时
+hevent.onSkillHemophagia(whichUnit, callFunc) --- 技能吸血时
+hevent.onBeSkillHemophagia(whichUnit, callFunc) --- 被技能吸血时
+hevent.onPunish(whichUnit, callFunc) --- 硬直时
+hevent.onDead(whichUnit, callFunc) --- 死亡时
+hevent.onKill(whichUnit, callFunc) --- 杀敌时
+hevent.onReborn(whichUnit, callFunc) --- 复活时(必须使用 hunit.reborn 方法才能嵌入到事件系统)
+hevent.onLevelUp(whichUnit, callFunc) --- 提升等级时
+hevent.onUpgradeStart(whichUnit, callFunc) --- 建筑升级开始时
+hevent.onUpgradeCancel(whichUnit, callFunc) --- 建筑升级取消时
+hevent.onUpgradeFinish(whichUnit, callFunc) --- 建筑升级完成时
+hevent.onEnterUnitRange(whichUnit, radius, callFunc) --- 进入某单位（whichUnit）半径范围内
+hevent.onEnterRect(whichRect, callFunc) --- 进入某区域
+hevent.onLeaveRect(whichRect, callFunc) --- 离开某区域
+hevent.onConstructStart(whichPlayer, callFunc) --- 任意建筑建造开始时
+hevent.onConstructCancel(whichPlayer, callFunc) --- 任意建筑建造取消时
+hevent.onConstructFinish(whichPlayer, callFunc) --- 任意建筑建造完成时
+hevent.onChat(whichPlayer, chatStr, matchAll, callFunc) --- 当聊天时
+hevent.onEsc(whichPlayer, callFunc) --- 按ESC
+hevent.onSelection(whichPlayer, qty, callFunc) --- 玩家选择单位(点击了qty次)
+hevent.onDeSelection(whichPlayer, callFunc) --- 玩家取消选择单位
+hevent.onPlayerLeave(callFunc) --- 玩家离开游戏事件(注意这是全局事件)
+hevent.onPickHero(callFunc) --- 任意单位经过hero方法被玩家所挑选为英雄时(注意这是全局事件)
+hevent.onDestructableDestroy(whichDestructable, callFunc) --- 可破坏物死亡
+hevent.onMapDestructableDestroy(callFunc) --- 全图当前可破坏物死亡
+hevent.onCourierBlink(whichUnit, callFunc) --- 信使闪烁时
+hevent.onCourierRangePickUp(whichUnit, callFunc) --- 信使范围拾取时
+hevent.onCourierSeparate(whichUnit, callFunc) --- 信使拆分时
+hevent.onCourierDeliver(whichUnit, callFunc) --- 信使批量传递时
+hevent.onMoveStart(whichUnit, callFunc) --- 当单位移动开始捕获瞬间
+hevent.onMoving(whichUnit, callFunc) --- 当单位移动中
+hevent.onMoveStop(whichUnit, callFunc) --- 当单位移动停止捕获瞬间
+hevent.onHoldOn(whichUnit, callFunc) --- 当单位发布驻扎(H)命令
+hevent.onStop(whichUnit, callFunc) --- 当单位发布停止(S)命令
+
+group 单位组
+hgroup.loop(whichGroup, actions, autoDel) --- 循环单位组
+hgroup.count(whichGroup) --- 统计单位组当前单位数
+hgroup.includes(whichGroup, whichUnit) --- 判断单位是否在单位组内
+hgroup.isEmpty(whichGroup) --- 判断单位组是否为空
+hgroup.addUnit(whichGroup, whichUnit) --- 单位组添加单位
+hgroup.removeUnit(whichGroup, whichUnit) --- 单位组删除单位
+hgroup.createByXY(x, y, radius, filterFunc) --- 创建单位组,以(x,y)点为中心radius距离
+hgroup.createByUnit(u, radius, filterFunc) --- 创建单位组,以某个单位为中心radius距离
+hgroup.createByLoc(loc, radius, filterFunc) --- 创建单位组,以loc点为中心radius距离
+hgroup.createByRect(r, filterFunc) --- 创建单位组,以区域为范围选择
+hgroup.getClosest(whichGroup, x, y) --- 获取单位组内离选定的(x,y)最近的单位
+hgroup.portal(whichGroup, x, y, eff, isFollow) --- 瞬间移动单位组
+hgroup.animate(whichGroup, animate) --- 指挥单位组所有单位做动作
+hgroup.clear(whichGroup, isDestroy, isDestroyUnit) --- 清空单位组
+
+hero 英雄
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

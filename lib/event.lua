@@ -734,7 +734,7 @@ hevent.onDead = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.dead, callFunc)
 end
 
---- 击杀时
+--- 杀敌时
 ---@alias onKill fun(evtData: {triggerUnit:"触发单位",killer:"凶手单位",targetUnit:"获取死亡单位"}):void
 ---@param whichUnit userdata
 ---@param callFunc onKill | "function(evtData) end"
