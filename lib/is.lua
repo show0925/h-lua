@@ -386,7 +386,7 @@ end
 ---@param whichUnit userdata
 ---@param whichItemId number|string
 ---@return boolean
-his.ownItem = function(whichUnit, whichItemId)
+his.hasItem = function(whichUnit, whichItemId)
     local f = false
     if (type(whichItemId) == "string") then
         whichItemId = string.char2id(whichItemId)
