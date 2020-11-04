@@ -1,9 +1,3 @@
---[[
-
-#include "./helper/cargo.lua"
-
-]]
-
 --- slk hash data
 slkHelperHashData = {}
 
@@ -1817,9 +1811,3 @@ slkHelper.ability = {
         return id
     end,
 }
-
---[[
-
-#include "./helper/data.lua"
-
-]]

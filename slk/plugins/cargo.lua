@@ -1,5 +1,7 @@
 ]]
 
+#include "./plugins/dzapi.j"
+
 #include "./math.lua"
 
 #include "./../../const/hotKey.lua"
