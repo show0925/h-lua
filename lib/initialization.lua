@@ -8,7 +8,7 @@
 cj.TimerStart(cj.CreateTimer(), 1.00, true, htime.clock)
 
 -- 预读 preread
-local preread_u = cj.CreateUnit(hplayer.player_passive, hslk_global.unit_token, 0, 0, 0)
+local preread_u = cj.CreateUnit(hplayer.player_passive, hslk.unit_token, 0, 0, 0)
 hattr.regAllAbility(preread_u)
 hunit.del(preread_u)
 

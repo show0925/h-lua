@@ -2,7 +2,7 @@
 hhero = {
     player_allow_qty = {}, -- 玩家最大单位数量,默认1
     player_heroes = {}, -- 玩家当前英雄
-    build_token = hslk_global.unit_hero_tavern_token,
+    build_token = hslk.unit_hero_tavern_token,
     --- 英雄出生地
     bornX = 0,
     bornY = 0,
@@ -325,7 +325,7 @@ hhero.buildSelector = function(options)
                 tavern = hunit.create(
                     {
                         whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
-                        unitId = options.tavernId or hslk_global.unit_hero_tavern,
+                        unitId = options.tavernId or hslk.unit_hero_tavern,
                         x = x,
                         y = y,
                     }

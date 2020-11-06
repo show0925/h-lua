@@ -1,7 +1,7 @@
 ---@class htexture 纹理（遮罩/警示圈）
 htexture = {
     --- 警示圈模型
-    TEXTURE_ALERT_CIRCLE_TOKEN = hslk_global.unit_token_alert_circle,
+    TEXTURE_ALERT_CIRCLE_TOKEN = hslk.unit_token_alert_circle,
     --- 系统自带遮罩
     DEFAULT_MARKS = {
         WHITE = "ReplaceableTextures\\CameraMasks\\White_mask.blp", --白色迷雾

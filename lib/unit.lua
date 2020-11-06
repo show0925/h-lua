@@ -63,7 +63,7 @@ hunit.getSlk = function(whichUnit)
         default.AGIplus = nil
         default.INTplus = nil
     end
-    return hslk_global.id2Value.unit[hunit.getId(whichUnit)] or default
+    return hslk.id2Value.unit[hunit.getId(whichUnit)] or default
 end
 
 --- 获取单位的头像
@@ -409,7 +409,7 @@ hunit.embed = function(u, options)
         end)
     end
     -- 信使事件
-    local slk = hslk_global.id2Value.unit[id]
+    local slk = hslk.id2Value.unit[id]
     if (slk ~= nil) then
         if (slk.UNIT_TYPE == "courier_hero" or slk.UNIT_TYPE == "courier") then
             if (slk.COURIER_AUTO_SKILL == true) then

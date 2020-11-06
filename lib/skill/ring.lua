@@ -15,8 +15,8 @@ hring.getSlk = function(id)
     if (type(id) == "number") then
         id = string.id2char(id)
     end
-    if (hslk_global.id2Value.ring[id] ~= nil) then
-        slk = hslk_global.id2Value.ring[id]
+    if (hslk.id2Value.ring[id] ~= nil) then
+        slk = hslk.id2Value.ring[id]
     end
     return slk
 end

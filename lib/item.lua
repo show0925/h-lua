@@ -13,25 +13,25 @@ hitem = {
         UNIT = "unit" --单位
     },
     FLEETING_IDS = {
-        GOLD = hslk_global.item_fleeting[1], -- 默认金币（模型）
-        LUMBER = hslk_global.item_fleeting[2], -- 默认木头
-        BOOK_YELLOW = hslk_global.item_fleeting[3], -- 技能书系列
-        BOOK_GREEN = hslk_global.item_fleeting[4],
-        BOOK_PURPLE = hslk_global.item_fleeting[5],
-        BOOK_BLUE = hslk_global.item_fleeting[6],
-        BOOK_RED = hslk_global.item_fleeting[7],
-        RUNE = hslk_global.item_fleeting[8], -- 神符（紫色符文）
-        RELIEF = hslk_global.item_fleeting[9], -- 浮雕（橙色像块炭）
-        EGG = hslk_global.item_fleeting[10], -- 蛋
-        FRAGMENT = hslk_global.item_fleeting[11], -- 碎片（蓝色石头）
-        QUESTION = hslk_global.item_fleeting[12], -- 问号
-        GRASS = hslk_global.item_fleeting[13], -- 荧光草
-        DOTA2_GOLD = hslk_global.item_fleeting[14], -- Dota2赏金符
-        DOTA2_DAMAGE = hslk_global.item_fleeting[15], -- Dota2伤害符
-        DOTA2_CURE = hslk_global.item_fleeting[16], -- Dota2恢复符
-        DOTA2_SPEED = hslk_global.item_fleeting[17], -- Dota2极速符
-        DOTA2_VISION = hslk_global.item_fleeting[18], -- Dota2幻象符
-        DOTA2_INVISIBLE = hslk_global.item_fleeting[19], -- Dota2隐身符
+        GOLD = hslk.item_fleeting[1], -- 默认金币（模型）
+        LUMBER = hslk.item_fleeting[2], -- 默认木头
+        BOOK_YELLOW = hslk.item_fleeting[3], -- 技能书系列
+        BOOK_GREEN = hslk.item_fleeting[4],
+        BOOK_PURPLE = hslk.item_fleeting[5],
+        BOOK_BLUE = hslk.item_fleeting[6],
+        BOOK_RED = hslk.item_fleeting[7],
+        RUNE = hslk.item_fleeting[8], -- 神符（紫色符文）
+        RELIEF = hslk.item_fleeting[9], -- 浮雕（橙色像块炭）
+        EGG = hslk.item_fleeting[10], -- 蛋
+        FRAGMENT = hslk.item_fleeting[11], -- 碎片（蓝色石头）
+        QUESTION = hslk.item_fleeting[12], -- 问号
+        GRASS = hslk.item_fleeting[13], -- 荧光草
+        DOTA2_GOLD = hslk.item_fleeting[14], -- Dota2赏金符
+        DOTA2_DAMAGE = hslk.item_fleeting[15], -- Dota2伤害符
+        DOTA2_CURE = hslk.item_fleeting[16], -- Dota2恢复符
+        DOTA2_SPEED = hslk.item_fleeting[17], -- Dota2极速符
+        DOTA2_VISION = hslk.item_fleeting[18], -- Dota2幻象符
+        DOTA2_INVISIBLE = hslk.item_fleeting[19], -- Dota2隐身符
     },
 }
 
@@ -220,8 +220,8 @@ hitem.getSlk = function(itOrId)
     else
         itId = hitem.getId(itOrId)
     end
-    if (hslk_global.id2Value.item[itId] ~= nil) then
-        slk = hslk_global.id2Value.item[itId]
+    if (hslk.id2Value.item[itId] ~= nil) then
+        slk = hslk.id2Value.item[itId]
     end
     return slk
 end
@@ -518,14 +518,14 @@ hitem.synthesis = function(whichUnit, items)
     while (matchCount > 0) do
         matchCount = 0
         for _, itId in ipairs(itemKinds) do
-            if (hslk_global.synthesis.fragment[itId] ~= nil) then
-                for need = #hslk_global.synthesis.fragment[itId], 1, -1 do
+            if (hslk.synthesis.fragment[itId] ~= nil) then
+                for need = #hslk.synthesis.fragment[itId], 1, -1 do
                     if ((itemQuantity[itId] or 0) >= need) then
-                        local maybeProfits = hslk_global.synthesis.fragment[itId][need]
+                        local maybeProfits = hslk.synthesis.fragment[itId][need]
                         for _, mp in ipairs(maybeProfits) do
                             local profitId = mp.profit
                             local profitIndex = mp.index
-                            local whichProfit = hslk_global.synthesis.profit[profitId][profitIndex]
+                            local whichProfit = hslk.synthesis.profit[profitId][profitIndex]
                             local needFragments = whichProfit.fragment
                             local match = true
                             for _, frag in ipairs(needFragments) do
@@ -561,7 +561,7 @@ hitem.synthesis = function(whichUnit, items)
     -- 处理结果物品
     local final = {}
     for _, itId in ipairs(itemKinds) do
-        local slk = hslk_global.id2Value.item[itId]
+        local slk = hslk.id2Value.item[itId]
         if (slk ~= nil) then
             local overlie = slk.OVERLIE or 1
             while (itemQuantity[itId] > 0) do
@@ -679,14 +679,14 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
             hitem.create({ itemId = id, charges = 1, x = x, y = y, during = 0 })
         end
     elseif (separateType == "formula") then
-        local originSlk = hslk_global.id2Value.item[id]
+        local originSlk = hslk.id2Value.item[id]
         if (originSlk ~= nil and originSlk.SHADOW == true) then
-            id = hslk_global.id2Value.item[originSlk.SHADOW_ID].ITEM_ID
+            id = hslk.id2Value.item[originSlk.SHADOW_ID].ITEM_ID
         end
-        if (hslk_global.synthesis.profit[id] == nil) then
+        if (hslk.synthesis.profit[id] == nil) then
             return "物品不存在公式，无法拆分"
         end
-        local profit = hslk_global.synthesis.profit[id][formulaIndex] or nil
+        local profit = hslk.synthesis.profit[id][formulaIndex] or nil
         if (profit == nil) then
             return "物品找不到公式，无法拆分"
         end
@@ -700,7 +700,7 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
                     end
                 else
                     local qty = frag[2]
-                    local slk = hslk_global.id2Value.item[flagId]
+                    local slk = hslk.id2Value.item[flagId]
                     if (slk ~= nil) then
                         local overlie = slk.OVERLIE or 1
                         while (qty > 0) do
@@ -878,7 +878,7 @@ hitem.detector = function(whichUnit, originItem)
     end
     if (#extra > 0) then
         for _, e in ipairs(extra) do
-            local slk = hslk_global.id2Value.item[e.id]
+            local slk = hslk.id2Value.item[e.id]
             local id = slk.ITEM_ID
             if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
                 id = slk.SHADOW_ID

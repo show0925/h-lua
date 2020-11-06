@@ -107,55 +107,55 @@ hattribute.setThreeBuff = function(buff)
 end
 
 --- 为单位注册属性系统所需要的基础技能
---- hslk_global.attr
+--- hslk.attr
 ---@private
 hattribute.regAllAbility = function(whichUnit)
-    for _, v in ipairs(hslk_global.attr.ablis_gradient) do
+    for _, v in ipairs(hslk.attr.ablis_gradient) do
         -- 生命
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.life.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.life.add[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.life.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.life.sub[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.life.add[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.life.add[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.life.sub[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.life.sub[v])
         -- 魔法
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.mana.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.mana.add[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.mana.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.mana.sub[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.mana.add[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.add[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.mana.sub[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.sub[v])
         -- 绿字攻击
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.attack_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.attack_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.attack_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.attack_green.sub[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.add[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.add[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.sub[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.sub[v])
         -- 绿色属性
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.str_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.str_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.str_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.str_green.sub[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.agi_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.agi_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.agi_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.agi_green.sub[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.int_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.int_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.int_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.int_green.sub[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.str_green.add[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.str_green.add[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.str_green.sub[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.str_green.sub[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.agi_green.add[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.agi_green.add[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.agi_green.sub[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.agi_green.sub[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.int_green.add[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.int_green.add[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.int_green.sub[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.int_green.sub[v])
         -- 攻击速度
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.attack_speed.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.attack_speed.add[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.attack_speed.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.attack_speed.sub[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.add[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.add[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.sub[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.sub[v])
         -- 防御
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.defend.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.defend.add[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.defend.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.defend.sub[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.defend.add[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.defend.add[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.defend.sub[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.defend.sub[v])
     end
-    for _, v in ipairs(hslk_global.attr.sight_gradient) do
+    for _, v in ipairs(hslk.attr.sight_gradient) do
         -- 视野
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.sight.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.sight.add[v])
-        cj.UnitAddAbility(whichUnit, hslk_global.attr.sight.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk_global.attr.sight.sub[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.sight.add[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.add[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.sight.sub[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.sub[v])
     end
 end
 
@@ -539,9 +539,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
                         level = math.floor(tempVal / max)
                         tempVal = math.floor(tempVal - level * max)
                         if (diff > 0) then
-                            hattribute.setLM(whichUnit, hslk_global.attr[attr].add[max], level)
+                            hattribute.setLM(whichUnit, hslk.attr[attr].add[max], level)
                         else
-                            hattribute.setLM(whichUnit, hslk_global.attr[attr].sub[max], level)
+                            hattribute.setLM(whichUnit, hslk.attr[attr].sub[max], level)
                         end
                         max = math.floor(max / 10)
                     end
@@ -569,9 +569,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
                         level = math.floor(tempVal / max)
                         tempVal = math.floor(tempVal - level * max)
                         if (diff > 0) then
-                            hattribute.setAttackWhite(whichUnit, hslk_global.attr.item_attack_white.add[max], level)
+                            hattribute.setAttackWhite(whichUnit, hslk.attr.item_attack_white.add[max], level)
                         else
-                            hattribute.setAttackWhite(whichUnit, hslk_global.attr.item_attack_white.sub[max], level)
+                            hattribute.setAttackWhite(whichUnit, hslk.attr.item_attack_white.sub[max], level)
                         end
                         max = math.floor(max / 10)
                     end
@@ -589,12 +589,12 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
                 cj.SetUnitAcquireRange(whichUnit, futureVal * 1.1)
             elseif (attr == "sight") then
                 -- 视野
-                for _, gradient in ipairs(hslk_global.attr.sight_gradient) do
-                    cj.UnitRemoveAbility(whichUnit, hslk_global.attr.sight.add[gradient])
-                    cj.UnitRemoveAbility(whichUnit, hslk_global.attr.sight.sub[gradient])
+                for _, gradient in ipairs(hslk.attr.sight_gradient) do
+                    cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.add[gradient])
+                    cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.sub[gradient])
                 end
                 tempVal = math.floor(math.abs(futureVal))
-                local sight_gradient = table.clone(hslk_global.attr.sight_gradient)
+                local sight_gradient = table.clone(hslk.attr.sight_gradient)
                 if (tempVal ~= 0) then
                     while (true) do
                         local isFound = false
@@ -603,9 +603,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
                                 tempVal = math.floor(tempVal - v)
                                 table.delete(v, sight_gradient)
                                 if (futureVal > 0) then
-                                    cj.UnitAddAbility(whichUnit, hslk_global.attr.sight.add[v])
+                                    cj.UnitAddAbility(whichUnit, hslk.attr.sight.add[v])
                                 else
-                                    cj.UnitAddAbility(whichUnit, hslk_global.attr.sight.sub[v])
+                                    cj.UnitAddAbility(whichUnit, hslk.attr.sight.sub[v])
                                 end
                                 isFound = true
                                 break
@@ -623,12 +623,12 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
                 elseif (futureVal > 99999999) then
                     futureVal = 99999999
                 end
-                for _, grad in ipairs(hslk_global.attr.ablis_gradient) do
-                    local ab = hslk_global.attr[attr].add[grad]
+                for _, grad in ipairs(hslk.attr.ablis_gradient) do
+                    local ab = hslk.attr[attr].add[grad]
                     if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
                         cj.SetUnitAbilityLevel(whichUnit, ab, 1)
                     end
-                    ab = hslk_global.attr[attr].sub[grad]
+                    ab = hslk.attr[attr].sub[grad]
                     if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
                         cj.SetUnitAbilityLevel(whichUnit, ab, 1)
                     end
@@ -640,15 +640,15 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
                         level = math.floor(tempVal / max)
                         tempVal = math.floor(tempVal - level * max)
                         if (futureVal > 0) then
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk_global.attr[attr].add[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk_global.attr[attr].add[max])
+                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
+                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
                             end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk_global.attr[attr].add[max], level + 1)
+                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
                         else
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk_global.attr[attr].sub[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk_global.attr[attr].sub[max])
+                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
+                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
                             end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk_global.attr[attr].sub[max], level + 1)
+                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
                         end
                         max = math.floor(max / 10)
                     end
@@ -660,12 +660,12 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
                 elseif (futureVal > 99999999) then
                     futureVal = 99999999
                 end
-                for _, grad in ipairs(hslk_global.attr.ablis_gradient) do
-                    local ab = hslk_global.attr[attr].add[grad]
+                for _, grad in ipairs(hslk.attr.ablis_gradient) do
+                    local ab = hslk.attr[attr].add[grad]
                     if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
                         cj.SetUnitAbilityLevel(whichUnit, ab, 1)
                     end
-                    ab = hslk_global.attr[attr].sub[grad]
+                    ab = hslk.attr[attr].sub[grad]
                     if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
                         cj.SetUnitAbilityLevel(whichUnit, ab, 1)
                     end
@@ -677,15 +677,15 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
                         level = math.floor(tempVal / max)
                         tempVal = math.floor(tempVal - level * max)
                         if (futureVal > 0) then
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk_global.attr[attr].add[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk_global.attr[attr].add[max])
+                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
+                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
                             end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk_global.attr[attr].add[max], level + 1)
+                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
                         else
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk_global.attr[attr].sub[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk_global.attr[attr].sub[max])
+                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
+                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
                             end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk_global.attr[attr].sub[max], level + 1)
+                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
                         end
                         max = math.floor(max / 10)
                     end
@@ -960,62 +960,3 @@ hattribute.caleAttribute = function(isAdd, whichUnit, attr, times)
         end
     end
 end
-
---- 重置注册
----@private
---hattribute.reRegister = function(whichUnit)
---    local life = hRuntime.attribute[whichUnit].life
---    local mana = hRuntime.attribute[whichUnit].mana
---    local move = hRuntime.attribute[whichUnit].move
---    local strGreen = hRuntime.attribute[whichUnit].str_green
---    local agiGreen = hRuntime.attribute[whichUnit].agi_green
---    local intGreen = hRuntime.attribute[whichUnit].int_green
---    local strWhite = hRuntime.attribute[whichUnit].str_white
---    local agiWhite = hRuntime.attribute[whichUnit].agi_white
---    local intWhite = hRuntime.attribute[whichUnit].int_white
---    local attackWhite = hRuntime.attribute[whichUnit].attack_white
---    local attackGreen = hRuntime.attribute[whichUnit].attack_green
---    local attackSpeed = hRuntime.attribute[whichUnit].attack_speed
---    local defend = hRuntime.attribute[whichUnit].defend
---    -- 注册技能
---    if (hattribute.init(whichUnit) == false) then
---        return
---    end
---    -- 弥补属性
---    cj.SetHeroStr(whichUnit, cj.R2I(strWhite), true)
---    cj.SetHeroAgi(whichUnit, cj.R2I(agiWhite), true)
---    cj.SetHeroInt(whichUnit, cj.R2I(intWhite), true)
---    if (move < 0) then
---        cj.SetUnitMoveSpeed(whichUnit, 0)
---    else
---        if (hcamera.model == "zoomin") then
---            cj.SetUnitMoveSpeed(whichUnit, cj.R2I(move * 0.5))
---        else
---            cj.SetUnitMoveSpeed(whichUnit, cj.R2I(move))
---        end
---    end
---    hRuntime.attribute[whichUnit].life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)
---    hRuntime.attribute[whichUnit].mana = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_MANA)
---    hRuntime.attribute[whichUnit].defend = hslk_global.id2Value.unit[hunit.getId(whichUnit)].def or 0.0
---    hRuntime.attribute[whichUnit].attack_speed = 0
---    hRuntime.attribute[whichUnit].attack_white = 0
---    hRuntime.attribute[whichUnit].attack_green = 0
---    hRuntime.attribute[whichUnit].str_green = 0
---    hRuntime.attribute[whichUnit].agi_green = 0
---    hRuntime.attribute[whichUnit].int_green = 0
---    hattribute.set(
---        whichUnit,
---        0,
---        {
---            life = "+" .. (life - cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)),
---            mana = "+" .. (mana - cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)),
---            str_green = "+" .. strGreen,
---            agi_green = "+" .. agiGreen,
---            int_green = "+" .. intGreen,
---            attack_white = "+" .. attackWhite,
---            attack_green = "+" .. attackGreen,
---            attack_speed = "+" .. attackSpeed,
---            defend = "+" .. defend
---        }
---    )
---end

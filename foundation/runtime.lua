@@ -2,58 +2,58 @@ hRuntime = {
     -- 注册runtime的数据
     register = {
         unit = function(json)
-            hslk_global.id2Value.unit[json.UNIT_ID] = json
-            hslk_global.name2Value.unit[json.Name] = json
+            hslk.id2Value.unit[json.UNIT_ID] = json
+            hslk.name2Value.unit[json.Name] = json
             if (json.CLASS_GROUP ~= nil) then
-                if (hslk_global.class_group.unit[json.CLASS_GROUP] == nil) then
-                    hslk_global.class_group.unit[json.CLASS_GROUP] = {}
+                if (hslk.class_group.unit[json.CLASS_GROUP] == nil) then
+                    hslk.class_group.unit[json.CLASS_GROUP] = {}
                 end
-                table.insert(hslk_global.class_group.unit[json.CLASS_GROUP], json.UNIT_ID)
+                table.insert(hslk.class_group.unit[json.CLASS_GROUP], json.UNIT_ID)
             end
         end,
         item = function(json)
-            hslk_global.id2Value.item[json.ITEM_ID] = json
-            hslk_global.name2Value.item[json.Name] = json
+            hslk.id2Value.item[json.ITEM_ID] = json
+            hslk.name2Value.item[json.Name] = json
             if (json.CLASS_GROUP ~= nil) then
-                if (hslk_global.class_group.item[json.CLASS_GROUP] == nil) then
-                    hslk_global.class_group.item[json.CLASS_GROUP] = {}
+                if (hslk.class_group.item[json.CLASS_GROUP] == nil) then
+                    hslk.class_group.item[json.CLASS_GROUP] = {}
                 end
-                table.insert(hslk_global.class_group.item[json.CLASS_GROUP], json.ITEM_ID)
+                table.insert(hslk.class_group.item[json.CLASS_GROUP], json.ITEM_ID)
             end
             if (json.cooldownID ~= nil) then
-                hslk_global.item_cooldown_ids[json.cooldownID] = json.ITEM_ID
+                hslk.item_cooldown_ids[json.cooldownID] = json.ITEM_ID
             end
             if (json.RING ~= nil) then
                 json.RING.RING_ID = json.ITEM_ID
                 json.RING.Name = json.Name
-                hslk_global.id2Value.ring[json.ITEM_ID] = json.RING
-                hslk_global.name2Value.ring[json.Name] = json.RING
+                hslk.id2Value.ring[json.ITEM_ID] = json.RING
+                hslk.name2Value.ring[json.Name] = json.RING
             end
         end,
         ability = function(json)
-            hslk_global.id2Value.ability[json.ABILITY_ID] = json
-            hslk_global.name2Value.ability[json.Name] = json
+            hslk.id2Value.ability[json.ABILITY_ID] = json
+            hslk.name2Value.ability[json.Name] = json
             if (json.CLASS_GROUP ~= nil) then
-                if (hslk_global.class_group.ability[json.CLASS_GROUP] == nil) then
-                    hslk_global.class_group.ability[json.CLASS_GROUP] = {}
+                if (hslk.class_group.ability[json.CLASS_GROUP] == nil) then
+                    hslk.class_group.ability[json.CLASS_GROUP] = {}
                 end
-                table.insert(hslk_global.class_group.ability[json.CLASS_GROUP], json.ABILITY_ID)
+                table.insert(hslk.class_group.ability[json.CLASS_GROUP], json.ABILITY_ID)
             end
             if (json.RING ~= nil) then
                 json.RING.RING_ID = json.ABILITY_ID
                 json.RING.Name = json.Name
-                hslk_global.id2Value.ring[json.ABILITY_ID] = json.RING
-                hslk_global.name2Value.ring[json.Name] = json.RING
+                hslk.id2Value.ring[json.ABILITY_ID] = json.RING
+                hslk.name2Value.ring[json.Name] = json.RING
             end
         end,
         technology = function(json)
-            hslk_global.id2Value.technology[json.TECHNOLOGY_ID] = json
-            hslk_global.name2Value.technology[json.Name] = json
+            hslk.id2Value.technology[json.TECHNOLOGY_ID] = json
+            hslk.name2Value.technology[json.Name] = json
             if (json.CLASS_GROUP ~= nil) then
-                if (hslk_global.class_group.technology[json.CLASS_GROUP] == nil) then
-                    hslk_global.class_group.technology[json.CLASS_GROUP] = {}
+                if (hslk.class_group.technology[json.CLASS_GROUP] == nil) then
+                    hslk.class_group.technology[json.CLASS_GROUP] = {}
                 end
-                table.insert(hslk_global.class_group.technology[json.CLASS_GROUP], json.TECHNOLOGY_ID)
+                table.insert(hslk.class_group.technology[json.CLASS_GROUP], json.TECHNOLOGY_ID)
             end
         end,
         synthesis = function(json)
@@ -62,31 +62,31 @@ hRuntime = {
             local jsonFragment = {}
             for k, v in ipairs(json.fragment) do
                 json.fragment[k][2] = math.floor(v[2])
-                local fragmentId = hslk_global.name2Value.item[v[1]].ITEM_ID or nil
+                local fragmentId = hslk.name2Value.item[v[1]].ITEM_ID or nil
                 if (fragmentId ~= nil) then
                     table.insert(jsonFragment, { fragmentId, v[2] })
                 end
             end
-            local profitId = hslk_global.name2Value.item[json.profit[1]].ITEM_ID or nil
+            local profitId = hslk.name2Value.item[json.profit[1]].ITEM_ID or nil
             if (profitId == nil) then
                 return
             end
-            if (hslk_global.synthesis.profit[profitId] == nil) then
-                hslk_global.synthesis.profit[profitId] = {}
+            if (hslk.synthesis.profit[profitId] == nil) then
+                hslk.synthesis.profit[profitId] = {}
             end
-            table.insert(hslk_global.synthesis.profit[profitId], {
+            table.insert(hslk.synthesis.profit[profitId], {
                 qty = json.profit[2],
                 fragment = jsonFragment,
             })
-            local profitIndex = #hslk_global.synthesis.profit[profitId]
+            local profitIndex = #hslk.synthesis.profit[profitId]
             for _, f in ipairs(jsonFragment) do
-                if (hslk_global.synthesis.fragment[f[1]] == nil) then
-                    hslk_global.synthesis.fragment[f[1]] = {}
+                if (hslk.synthesis.fragment[f[1]] == nil) then
+                    hslk.synthesis.fragment[f[1]] = {}
                 end
-                if (hslk_global.synthesis.fragment[f[1]][f[2]] == nil) then
-                    hslk_global.synthesis.fragment[f[1]][f[2]] = {}
+                if (hslk.synthesis.fragment[f[1]][f[2]] == nil) then
+                    hslk.synthesis.fragment[f[1]][f[2]] = {}
                 end
-                table.insert(hslk_global.synthesis.fragment[f[1]][f[2]], {
+                table.insert(hslk.synthesis.fragment[f[1]][f[2]], {
                     profit = profitId,
                     index = profitIndex,
                 })

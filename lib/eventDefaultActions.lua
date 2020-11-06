@@ -583,7 +583,7 @@ hevent_default_actions = {
                 return
             end
             abilityId = string.id2char(abilityId)
-            local slk = hslk_global.id2Value.ability[abilityId]
+            local slk = hslk.id2Value.ability[abilityId]
             if (slk == nil) then
                 return
             end
@@ -619,12 +619,12 @@ hevent_default_actions = {
                 end
                 local id = hitem.getId(it)
                 local name = hitem.getName(it)
-                local originSlk = hslk_global.id2Value.item[id]
+                local originSlk = hslk.id2Value.item[id]
                 if (originSlk ~= nil and originSlk.SHADOW == true) then
-                    id = hslk_global.id2Value.item[originSlk.SHADOW_ID].ITEM_ID
+                    id = hslk.id2Value.item[originSlk.SHADOW_ID].ITEM_ID
                 end
                 local charges = hitem.getCharges(it)
-                local formulas = hslk_global.synthesis.profit[id]
+                local formulas = hslk.synthesis.profit[id]
                 local allowFormulaIndex = {}
                 if (formulas ~= nil) then
                     for fi, f in ipairs(formulas) do
@@ -791,7 +791,7 @@ hevent_default_actions = {
         pickup = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = cj.GetItemTypeId(it)
-            if (table.includes(itId, hslk_global.attr.item_attack_white.items)) then
+            if (table.includes(itId, hslk.attr.item_attack_white.items)) then
                 --过滤hlua白字攻击物品
                 return
             end
@@ -819,7 +819,7 @@ hevent_default_actions = {
         drop = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = cj.GetItemTypeId(it)
-            if (table.includes(itId, hslk_global.attr.item_attack_white.items)) then
+            if (table.includes(itId, hslk.attr.item_attack_white.items)) then
                 --过滤hlua白字攻击物品
                 return
             end
@@ -932,7 +932,7 @@ hevent_default_actions = {
         end),
         use_s = cj.Condition(function()
             local skillId = string.id2char(cj.GetSpellAbilityId())
-            local itId = hslk_global.item_cooldown_ids[skillId] or nil
+            local itId = hslk.item_cooldown_ids[skillId] or nil
             if (itId == nil) then
                 return
             end
