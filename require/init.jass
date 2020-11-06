@@ -1,3 +1,5 @@
+?>
+
 globals
     hashtable hash_hslk = null
     hashtable hash_hslk_helper = null
@@ -82,3 +84,5 @@ library zzzSlk initializer Init
     endfunction
 
 endlibrary
+
+<?

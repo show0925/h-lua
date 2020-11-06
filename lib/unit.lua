@@ -23,55 +23,20 @@ hunit.get = function(whichUnit, key, default)
     return hRuntime.unit[whichUnit][key] or default
 end
 
---- [SLK] 获取英雄在slkHelper设定的部分数据
 --- 数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
 ---@param whichUnit userdata
 ---@return table
 hunit.getSlk = function(whichUnit)
-    local default = {
-        -- 参考数据
-        UNIT_ID = nil,
-        UNIT_TYPE = "normal",
-        CUSTOM_DATA = {},
-        Art = nil,
-        file = nil,
-        goldcost = 0,
-        lumbercost = 0,
-        cool1 = 1.50,
-        def = 0,
-        rangeN1 = 100,
-        sight = 1800,
-        nsight = 800,
-    }
-    if (whichUnit ~= nil) then
-        default.Name = cj.GetUnitName(whichUnit)
-    else
-        default.Name = ""
-    end
-    if (whichUnit == nil) then
-        return default
-    elseif (his.deleted(whichUnit)) then
-        return default
-    end
-    if (his.hero(whichUnit)) then
-        default.UNIT_TYPE = "hero"
-        default.Primary = nil
-        default.STR = cj.GetHeroStr(whichUnit, false)
-        default.AGI = cj.GetHeroStr(whichUnit, false)
-        default.INT = cj.GetHeroStr(whichUnit, false)
-        default.STRplus = nil
-        default.AGIplus = nil
-        default.INTplus = nil
-    end
-    return hslk.id2Value.unit[hunit.getId(whichUnit)] or default
+    local id = hunit.getId(whichUnit)
+    return slk.unit[id] or {}
 end
 
 --- 获取单位的头像
----@param uOrUid any
+---@param whichUnit userdata
 ---@return string
 hunit.getAvatar = function(whichUnit)
-    local slk = hunit.getSlk(whichUnit)
-    return slk.Art or "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp"
+    local uSlk = hunit.getSlk(whichUnit)
+    return uSlk.Art or "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp"
 end
 
 --- 获取单位的最大生命值

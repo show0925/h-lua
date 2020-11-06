@@ -1,5 +1,3 @@
-]]
-
 local slkHashData = {}
 
 --单位
@@ -1099,5 +1097,3 @@ table.insert(
         "int"
     }
 )
-
---[[

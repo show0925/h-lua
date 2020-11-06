@@ -1,9 +1,9 @@
-]]
 
 #include "./../const/hotKey.lua"
 #include "./../const/attribute.lua"
 #include "./../const/unit.lua"
 #include "./../const/target.lua"
+#include "./../const/hSlkKeys.lua"
 #include "./../foundation/json.lua"
 #include "./../foundation/table.lua"
 #include "./../foundation/string.lua"
@@ -13,5 +13,4 @@ slk = require 'slk'
 
 #include "./math.lua"
 #include "./helper.lua"
-
---[[
+#include "./data.lua"

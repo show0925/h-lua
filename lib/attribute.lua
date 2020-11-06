@@ -166,20 +166,32 @@ hattribute.init = function(whichUnit)
         return false
     end
     -- init
-    local slkData = hunit.getSlk(whichUnit)
+    local uSlk = hunit.getSlk(whichUnit)
+    if (uSlk.def) then
+        uSlk.def = math.round(uSlk.def)
+    end
+    if (uSlk.cool1) then
+        uSlk.cool1 = math.round(uSlk.cool1)
+    end
+    if (uSlk.rangeN1) then
+        uSlk.rangeN1 = math.floor(uSlk.rangeN1)
+    end
+    if (uSlk.sight) then
+        uSlk.sight = math.floor(uSlk.sight)
+    end
     local attribute = {
-        primary = slkData.Primary or "STR",
+        primary = uSlk.Primary or "STR",
         life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE),
         mana = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_MANA),
         move = cj.GetUnitDefaultMoveSpeed(whichUnit),
-        defend = slkData.def or 0,
+        defend = 0,
         attack_damage_type = {},
         attack_speed = 0.0,
-        attack_speed_space = slkData.cool1 or 1.50,
+        attack_speed_space = uSlk.cool1 or 1.50,
         attack_white = 0.0,
         attack_green = 0.0,
-        attack_range = slkData.rangeN1 or 100,
-        sight = slkData.sight or 1800,
+        attack_range = uSlk.rangeN1 or 100,
+        sight = uSlk.sight or 1800,
         str_green = 0.0,
         agi_green = 0.0,
         int_green = 0.0,
@@ -300,7 +312,16 @@ hattribute.init = function(whichUnit)
     else
         attribute.attack_damage_type = { CONST_DAMAGE_TYPE.physical }
     end
+    -- 初始化数据
     hunit.set(whichUnit, 'attribute', attribute)
+    -- 处理物编有影响的数据
+    if (uSlk.def ~= nil) then
+        if (uSlk.def > 0) then
+            hattr.set(whichUnit, 0, { defend = '+' .. uSlk.def })
+        else
+            hattr.set(whichUnit, 0, { defend = '-' .. uSlk.def })
+        end
+    end
     return true
 end
 
