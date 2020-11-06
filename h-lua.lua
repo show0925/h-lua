@@ -1,6 +1,7 @@
 -- 加载YDWE库
 cj = require "jass.common"
 cg = require "jass.globals"
+slk = require "jass.slk"
 
 -- 加载blizzard
 require "foundation.blizzard_c"
@@ -34,8 +35,8 @@ require "foundation.string"
 require "foundation.table"
 -- 加载color
 require "foundation.color"
--- 加载runtime
-require "foundation.slk"
+-- 加载h-lua自带的slk数据
+require "foundation.hslk"
 -- 加载h-lua的F9
 require "foundation.f9"
 -- 加载echo

@@ -12,6 +12,7 @@
 #include "./../../foundation/table.lua"
 #include "./../../foundation/string.lua"
 #include "./../../foundation/color.lua"
+#include "./../../foundation/hSlkKeys.lua"
 
 slk = require 'slk'
 

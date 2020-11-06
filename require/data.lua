@@ -2,48 +2,6 @@
 
 local slkHashData = {}
 
-HLUA_SLK_KEYS = {
-    COMMON = 99,
-    UNIT_TOKEN = 101,
-    UNIT_TOKEN_LEAP = 102,
-    UNIT_TOKEN_ALERT_CIRCLE = 103,
-    UNIT_TREE = 104,
-    SKILL_BREAK = 106,
-    SKILL_SWIM_UNLIMIT = 107,
-    SKILL_INVISIBLE = 108,
-    SKILL_HERO_TAVERN_SELECTION = 109,
-    UNIT_HERO_TAVERN = 110,
-    UNIT_HERO_TAVERN_TOKEN = 111,
-    UNIT_HERO_DEATH_TOKEN = 112,
-    ITEM_FLEETING = 113,
-    ATTR_STR_GREEN_ADD = 114,
-    ATTR_STR_GREEN_SUB = 115,
-    ATTR_AGI_GREEN_ADD = 116,
-    ATTR_AGI_GREEN_SUB = 117,
-    ATTR_INT_GREEN_ADD = 118,
-    ATTR_INT_GREEN_SUB = 119,
-    ATTR_ATTACK_GREEN_ADD = 120,
-    ATTR_ATTACK_GREEN_SUB = 121,
-    ATTR_ATTACK_WHITE_ADD = 122,
-    ATTR_ATTACK_WHITE_SUB = 123,
-    ATTR_ITEM_ATTACK_WHITE_ADD = 124,
-    ATTR_ITEM_ATTACK_WHITE_SUB = 125,
-    ATTR_ATTACK_SPEED_ADD = 126,
-    ATTR_ATTACK_SPEED_SUB = 127,
-    ATTR_DEFEND_ADD = 128,
-    ATTR_DEFEND_SUB = 129,
-    ATTR_MANA_ADD = 130,
-    ATTR_MANA_SUB = 131,
-    ATTR_LIFE_ADD = 132,
-    ATTR_LIFE_SUB = 133,
-    ATTR_AVOID_ADD = 134,
-    ATTR_AVOID_SUB = 135,
-    ATTR_SIGHT_ADD = 136,
-    ATTR_SIGHT_SUB = 137,
-    ENV_MODEL_NAME = 138,
-    ENV_MODEL = 139,
-}
-
 --单位
 -- #token
 local obj = slk.unit.ogru:new("unit_token")
@@ -71,8 +29,8 @@ obj.upgrades = ""
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.UNIT_TOKEN,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.UNIT_TOKEN,
         obj:get_id(),
         "int"
     }
@@ -106,8 +64,8 @@ obj.upgrades = ""
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.UNIT_TOKEN_LEAP,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.UNIT_TOKEN_LEAP,
         obj:get_id(),
         "int"
     }
@@ -144,8 +102,8 @@ obj.green = 0
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.UNIT_TOKEN_ALERT_CIRCLE,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.UNIT_TOKEN_ALERT_CIRCLE,
         obj:get_id(),
         "int"
     }
@@ -177,8 +135,8 @@ obj.upgrades = ""
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.UNIT_TREE,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.UNIT_TREE,
         obj:get_id(),
         "int"
     }
@@ -209,7 +167,7 @@ for dur = 1, 10, 1 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.SKILL_BREAK,
+            HSLK_KEYS.SKILL_BREAK,
             dur,
             obj:get_id(),
             "int"
@@ -241,8 +199,8 @@ obj.Rng1 = 9999.00
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.SKILL_SWIM_UNLIMIT,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.SKILL_SWIM_UNLIMIT,
         obj:get_id(),
         "int"
     }
@@ -263,8 +221,8 @@ obj.HeroDur1 = 0
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.SKILL_INVISIBLE,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.SKILL_INVISIBLE,
         obj:get_id(),
         "int"
     }
@@ -283,8 +241,8 @@ TAVERN_SELECTION_OBJ_ID = obj:get_id()
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.SKILL_HERO_TAVERN_SELECTION,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.SKILL_HERO_TAVERN_SELECTION,
         TAVERN_SELECTION_OBJ_ID,
         "int"
     }
@@ -305,8 +263,8 @@ obj.teamColor = 12
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.UNIT_HERO_TAVERN,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.UNIT_HERO_TAVERN,
         obj:get_id(),
         "int"
     }
@@ -338,8 +296,8 @@ obj.upgrades = ""
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.UNIT_HERO_TAVERN_TOKEN,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.UNIT_HERO_TAVERN_TOKEN,
         obj:get_id(),
         "int"
     }
@@ -381,8 +339,8 @@ obj.upgrades = ""
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.UNIT_HERO_DEATH_TOKEN,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.UNIT_HERO_DEATH_TOKEN,
         obj:get_id(),
         "int"
     }
@@ -436,7 +394,7 @@ for k, v in ipairs(itemFleeting) do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ITEM_FLEETING,
+            HSLK_KEYS.ITEM_FLEETING,
             k,
             obj:get_id(),
             "int"
@@ -446,7 +404,7 @@ end
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.ITEM_FLEETING,
+        HSLK_KEYS.ITEM_FLEETING,
         -1,
         itemFleetingLen,
         "int"
@@ -474,7 +432,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_STR_GREEN_ADD,
+            HSLK_KEYS.ATTR_STR_GREEN_ADD,
             val,
             obj:get_id(),
             "int"
@@ -498,7 +456,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_STR_GREEN_SUB,
+            HSLK_KEYS.ATTR_STR_GREEN_SUB,
             val,
             obj:get_id(),
             "int"
@@ -522,7 +480,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_AGI_GREEN_ADD,
+            HSLK_KEYS.ATTR_AGI_GREEN_ADD,
             val,
             obj:get_id(),
             "int"
@@ -546,7 +504,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_AGI_GREEN_SUB,
+            HSLK_KEYS.ATTR_AGI_GREEN_SUB,
             val,
             obj:get_id(),
             "int"
@@ -570,7 +528,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_INT_GREEN_ADD,
+            HSLK_KEYS.ATTR_INT_GREEN_ADD,
             val,
             obj:get_id(),
             "int"
@@ -594,7 +552,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_INT_GREEN_SUB,
+            HSLK_KEYS.ATTR_INT_GREEN_SUB,
             val,
             obj:get_id(),
             "int"
@@ -612,7 +570,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_ATTACK_GREEN_ADD,
+            HSLK_KEYS.ATTR_ATTACK_GREEN_ADD,
             val,
             obj:get_id(),
             "int"
@@ -630,7 +588,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_ATTACK_GREEN_SUB,
+            HSLK_KEYS.ATTR_ATTACK_GREEN_SUB,
             val,
             obj:get_id(),
             "int"
@@ -648,7 +606,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_ATTACK_WHITE_ADD,
+            HSLK_KEYS.ATTR_ATTACK_WHITE_ADD,
             val,
             obj:get_id(),
             "int"
@@ -671,7 +629,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_ITEM_ATTACK_WHITE_ADD,
+            HSLK_KEYS.ATTR_ITEM_ATTACK_WHITE_ADD,
             val,
             obj:get_id(),
             "int"
@@ -689,7 +647,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_ATTACK_WHITE_SUB,
+            HSLK_KEYS.ATTR_ATTACK_WHITE_SUB,
             val,
             obj:get_id(),
             "int"
@@ -712,7 +670,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_ITEM_ATTACK_WHITE_SUB,
+            HSLK_KEYS.ATTR_ITEM_ATTACK_WHITE_SUB,
             val,
             obj:get_id(),
             "int"
@@ -730,7 +688,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_ATTACK_SPEED_ADD,
+            HSLK_KEYS.ATTR_ATTACK_SPEED_ADD,
             val,
             obj:get_id(),
             "int"
@@ -748,7 +706,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_ATTACK_SPEED_SUB,
+            HSLK_KEYS.ATTR_ATTACK_SPEED_SUB,
             val,
             obj:get_id(),
             "int"
@@ -766,7 +724,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_DEFEND_ADD,
+            HSLK_KEYS.ATTR_DEFEND_ADD,
             val,
             obj:get_id(),
             "int"
@@ -784,7 +742,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_DEFEND_SUB,
+            HSLK_KEYS.ATTR_DEFEND_SUB,
             val,
             obj:get_id(),
             "int"
@@ -801,7 +759,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_MANA_ADD,
+            HSLK_KEYS.ATTR_MANA_ADD,
             val,
             obj:get_id(),
             "int"
@@ -818,7 +776,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_MANA_SUB,
+            HSLK_KEYS.ATTR_MANA_SUB,
             val,
             obj:get_id(),
             "int"
@@ -835,7 +793,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_LIFE_ADD,
+            HSLK_KEYS.ATTR_LIFE_ADD,
             val,
             obj:get_id(),
             "int"
@@ -852,7 +810,7 @@ for i = 1, 9 do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ATTR_LIFE_SUB,
+            HSLK_KEYS.ATTR_LIFE_SUB,
             val,
             obj:get_id(),
             "int"
@@ -871,8 +829,8 @@ obj.DataA2 = -10000000
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.ATTR_AVOID_ADD,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.ATTR_AVOID_ADD,
         obj:get_id(),
         "int"
     }
@@ -887,8 +845,8 @@ obj.DataA2 = 10000000
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.ATTR_AVOID_SUB,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.ATTR_AVOID_SUB,
         obj:get_id(),
         "int"
     }
@@ -910,7 +868,7 @@ while (i <= 10000) do
         table.insert(
             slkHashData,
             {
-                HLUA_SLK_KEYS.ATTR_SIGHT_ADD,
+                HSLK_KEYS.ATTR_SIGHT_ADD,
                 v,
                 obj:get_id(),
                 "int"
@@ -926,7 +884,7 @@ while (i <= 10000) do
         table.insert(
             slkHashData,
             {
-                HLUA_SLK_KEYS.ATTR_SIGHT_SUB,
+                HSLK_KEYS.ATTR_SIGHT_SUB,
                 v,
                 obj:get_id(),
                 "int"
@@ -1116,7 +1074,7 @@ for k, v in ipairs(envs) do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ENV_MODEL_NAME,
+            HSLK_KEYS.ENV_MODEL_NAME,
             k,
             v.Name,
             "str"
@@ -1125,7 +1083,7 @@ for k, v in ipairs(envs) do
     table.insert(
         slkHashData,
         {
-            HLUA_SLK_KEYS.ENV_MODEL,
+            HSLK_KEYS.ENV_MODEL,
             k,
             obj:get_id(),
             "int"
@@ -1135,8 +1093,8 @@ end
 table.insert(
     slkHashData,
     {
-        HLUA_SLK_KEYS.COMMON,
-        HLUA_SLK_KEYS.ENV_MODEL,
+        HSLK_KEYS.COMMON,
+        HSLK_KEYS.ENV_MODEL,
         envsLen,
         "int"
     }
