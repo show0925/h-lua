@@ -79,8 +79,6 @@ library zzzSlk initializer Init
             <?
         end
         ?>
-        //exec
-        call Cheat( "exec-lua:\"main\"" )
     endfunction
 
 endlibrary
