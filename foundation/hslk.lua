@@ -183,36 +183,36 @@ table.sort(
     end
 )
 
-for i = 1, 5 do
-    local qty = cj.LoadInteger(cg.hash_hslk_helper, 0, i)
-    if (qty > 0) then
-        for j = 1, qty do
-            local js = cj.LoadStr(cg.hash_hslk_helper, i, j)
-            local data = json.parse(js)
-            if (data) then
-                if (i == 1) then
-                    hRuntime.register.item(data)
-                elseif (i == 2) then
-                    hRuntime.register.unit(data)
-                    if (hRuntime.unit_type_ids[data.UNIT_TYPE] == nil) then
-                        hRuntime.unit_type_ids[data.UNIT_TYPE] = {}
-                    end
-                    table.insert(hRuntime.unit_type_ids[data.UNIT_TYPE], data.UNIT_ID)
-                elseif (i == 3) then
-                    hRuntime.register.ability(data)
-                elseif (i == 4) then
-                    hRuntime.register.technology(data)
+local qty = cj.LoadInteger(cg.hash_hslk_helper, 1, 0)
+if (qty > 0) then
+    for i = 1, qty do
+        local js = cj.LoadStr(cg.hash_hslk_helper, 1, i)
+        local data = json.parse(js)
+        if (data) then
+            if (data.class == 'item') then
+                hRuntime.register.item(data)
+            elseif (data.class == 'unit') then
+                hRuntime.register.unit(data)
+                if (hRuntime.unit_type_ids[data._type] == nil) then
+                    hRuntime.unit_type_ids[data._type] = {}
                 end
+                table.insert(hRuntime.unit_type_ids[data._type], data._id)
+            elseif (data.class == 'ability') then
+                hRuntime.register.ability(data)
+            elseif (data.class == 'technology') then
+                hRuntime.register.technology(data)
             end
+            data = nil
         end
-        for j = 1, qty do
-            local js = cj.LoadStr(cg.hash_hslk_helper, i, j)
-            local data = json.parse(js)
-            if (data) then
-                if (i == 5) then
-                    hRuntime.register.synthesis(data)
-                end
+    end
+    for i = 1, qty do
+        local js = cj.LoadStr(cg.hash_hslk_helper, 1, i)
+        local data = json.parse(js)
+        if (data) then
+            if (data.class == 'synthesis') then
+                hRuntime.register.synthesis(data)
             end
+            data = nil
         end
     end
 end

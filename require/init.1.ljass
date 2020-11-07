@@ -1,0 +1,46 @@
+?>
+
+library zzzSlk1 initializer Init
+
+    private function Init takes nothing returns nothing
+        local integer key1 = 0
+        local integer key2 = 0
+        local string vs = null
+        local integer vi = 0
+        //slk注册
+        <?
+        for _,v in ipairs(slkHashData)do
+            local key1 = v[1]
+            local key2 = v[2]
+            local val = v[3]
+            local t = v[4]
+            if(t == "str")then
+                ?>
+                set vs = "<?=val?>"
+                <?
+            elseif(t == "int" and type(val) == "string")then
+                ?>
+                set vi = '<?=val?>'
+                <?
+            else
+                ?>
+                set vi = <?=val?>
+                <?
+            end
+            if(t == "str")then
+                ?>
+                call SaveStr(hash_hslk, <?=key1?>, <?=key2?>, vs)
+                <?
+            elseif(t == "int")then
+                ?>
+                call SaveInteger(hash_hslk, <?=key1?>, <?=key2?>, vi)
+                <?
+            end
+        end
+        ?>
+    endfunction
+
+endlibrary
+
+<?
+

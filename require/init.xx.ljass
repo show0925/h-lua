@@ -44,7 +44,6 @@ library zzzSlk initializer Init
                 <?
             end
         end
-        local hi = { 0, 0, 0, 0, 0 }
         for _,v in ipairs(slkHelperHashData)do
             if(v.type == "item")then
                 hi[1] = hi[1] + 1

@@ -2,14 +2,8 @@ hRuntime = {
     -- 注册runtime的数据
     register = {
         unit = function(json)
-            hslk.id2Value.unit[json.UNIT_ID] = json
-            hslk.name2Value.unit[json.Name] = json
-            if (json.CLASS_GROUP ~= nil) then
-                if (hslk.class_group.unit[json.CLASS_GROUP] == nil) then
-                    hslk.class_group.unit[json.CLASS_GROUP] = {}
-                end
-                table.insert(hslk.class_group.unit[json.CLASS_GROUP], json.UNIT_ID)
-            end
+            hslk.id2Value.unit[json._id] = json
+            hslk.name2Value.unit[json._name] = json
         end,
         item = function(json)
             hslk.id2Value.item[json.ITEM_ID] = json

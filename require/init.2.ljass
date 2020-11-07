@@ -1,0 +1,13 @@
+?>
+
+library zzzSlk2 initializer Init
+
+    private function Init takes nothing returns nothing
+        // 执行F4内定义的lua文件
+        call Cheat( "exec-lua:\"main\"" )
+    endfunction
+
+endlibrary
+
+<?
+import("main.lua") ("hot.lua", true)

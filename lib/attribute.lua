@@ -167,18 +167,6 @@ hattribute.init = function(whichUnit)
     end
     -- init
     local uSlk = hunit.getSlk(whichUnit)
-    if (uSlk.def) then
-        uSlk.def = math.round(uSlk.def)
-    end
-    if (uSlk.cool1) then
-        uSlk.cool1 = math.round(uSlk.cool1)
-    end
-    if (uSlk.rangeN1) then
-        uSlk.rangeN1 = math.floor(uSlk.rangeN1)
-    end
-    if (uSlk.sight) then
-        uSlk.sight = math.floor(uSlk.sight)
-    end
     local attribute = {
         primary = uSlk.Primary or "STR",
         life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE),
@@ -187,11 +175,11 @@ hattribute.init = function(whichUnit)
         defend = 0,
         attack_damage_type = {},
         attack_speed = 0.0,
-        attack_speed_space = uSlk.cool1 or 1.50,
+        attack_speed_space = 1.50,
         attack_white = 0.0,
         attack_green = 0.0,
-        attack_range = uSlk.rangeN1 or 100,
-        sight = uSlk.sight or 1800,
+        attack_range = 100,
+        sight = 1800,
         str_green = 0.0,
         agi_green = 0.0,
         int_green = 0.0,
@@ -306,6 +294,16 @@ hattribute.init = function(whichUnit)
             * 至于是否同一种效果，是根据你设定的值自动计算出来的
         ]]
     }
+    -- 初始化物编slk数据
+    if (uSlk.cool1) then
+        attribute.attack_speed_space = math.round(uSlk.cool1)
+    end
+    if (uSlk.rangeN1) then
+        attribute.attack_range = math.floor(uSlk.rangeN1)
+    end
+    if (uSlk.sight) then
+        attribute.sight = math.floor(uSlk.sight)
+    end
     -- 智力英雄的攻击默认为魔法，力量敏捷为物理
     if (attribute.primary == "INT") then
         attribute.attack_damage_type = { CONST_DAMAGE_TYPE.magic }
@@ -314,12 +312,16 @@ hattribute.init = function(whichUnit)
     end
     -- 初始化数据
     hunit.set(whichUnit, 'attribute', attribute)
-    -- 处理物编有影响的数据
+    -- 延后处理护甲
     if (uSlk.def ~= nil) then
-        if (uSlk.def > 0) then
-            hattr.set(whichUnit, 0, { defend = '+' .. uSlk.def })
+        local def = 0
+        if (uSlk.def) then
+            def = math.round(uSlk.def)
+        end
+        if (def > 0) then
+            hattr.set(whichUnit, 0, { defend = '+' .. def })
         else
-            hattr.set(whichUnit, 0, { defend = '-' .. uSlk.def })
+            hattr.set(whichUnit, 0, { defend = '-' .. def })
         end
     end
     return true

@@ -229,12 +229,10 @@ slkHelper.item.synthesis = function(formula)
         end
         slkHelper.item.synthesisMapping.profit[profit[1]] = string.implode('+', fmStr)
         --
-        table.insert(slkHelperHashData, {
-            type = "synthesis",
-            data = {
-                profit = profit,
-                fragment = fragment,
-            }
+        slkHelper.save({
+            class = "synthesis",
+            profit = profit,
+            fragment = fragment,
         })
     end
 end

@@ -11,6 +11,9 @@
 
 slk = require 'slk'
 
+#include "./init.0.ljass"
 #include "./math.lua"
 #include "./helper.ljass"
 #include "./data.lua"
+#include "./init.1.ljass"
+#include "./init.2.ljass"

@@ -1,4 +1,3 @@
-
 ---@private 信使技能缓存
 slkHelper.courierBlink = nil
 slkHelper.courierRangePickUp = nil
@@ -301,23 +300,10 @@ slkHelper.unit = {
         obj.Sellitems = v.Sellitems or ""
         local id = obj:get_id()
         table.insert(slkHelperHashData, {
-            type = "unit",
-            data = {
-                CUSTOM_DATA = v.CUSTOM_DATA or {},
-                CLASS_GROUP = v.CLASS_GROUP or nil,
-                UNIT_ID = id,
-                UNIT_TYPE = "normal",
-                Name = v.Name,
-                Art = v.Art,
-                file = v.file,
-                goldcost = v.goldcost,
-                lumbercost = v.lumbercost,
-                cool1 = v.cool1,
-                def = v.def,
-                rangeN1 = v.rangeN1,
-                sight = v.sight,
-                nsight = v.nsight,
-            }
+            class = "unit",
+            _unit_id = id,
+            _unit_name = v.Name,
+            _unit_type = "normal",
         })
         return id
     end,
@@ -498,30 +484,10 @@ slkHelper.unit = {
         obj.lumbercost = v.lumbercost
         local id = obj:get_id()
         table.insert(slkHelperHashData, {
-            type = "unit",
-            data = {
-                CUSTOM_DATA = v.CUSTOM_DATA or {},
-                CLASS_GROUP = v.CLASS_GROUP or nil,
-                UNIT_ID = id,
-                UNIT_TYPE = "hero",
-                Primary = Primary,
-                STR = v.STR,
-                AGI = v.AGI,
-                INT = v.INT,
-                STRplus = v.STRplus,
-                AGIplus = v.AGIplus,
-                INTplus = v.INTplus,
-                Name = v.Name,
-                Art = v.Art,
-                file = v.file,
-                goldcost = v.goldcost,
-                lumbercost = v.lumbercost,
-                cool1 = v.cool1,
-                def = v.def,
-                rangeN1 = v.rangeN1,
-                sight = v.sight,
-                nsight = v.nsight,
-            }
+            class = "unit",
+            _id = id,
+            _name = v.Name,
+            _type = "hero",
         })
         return id
     end,
