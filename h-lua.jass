@@ -1,4 +1,5 @@
 
-#include "./require/require.lua"
+#include "./require/require.ljass"
 
-#include "./require/init.jass"
+#include "./require/init.ljass"
+

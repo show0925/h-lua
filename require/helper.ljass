@@ -1,0 +1,13 @@
+--- slk hash data
+slkHelperHashData = {}
+
+slkHelper = {
+    ---@private
+    count = 0,
+}
+
+#include "./helper/conf.lua"
+#include "./helper/attr.lua"
+#include "./helper/ability.lua"
+#include "./helper/item.lua"
+#include "./helper/unit.lua"

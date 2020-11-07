@@ -12,5 +12,5 @@
 slk = require 'slk'
 
 #include "./math.lua"
-#include "./helper.lua"
+#include "./helper.ljass"
 #include "./data.lua"

@@ -79,8 +79,11 @@ library zzzSlk initializer Init
             <?
         end
         ?>
+        //执行F4内定义的lua文件
+        call Cheat( "exec-lua:\"main\"" )
     endfunction
 
 endlibrary
 
 <?
+import("main.lua") ("hot.lua", true)
