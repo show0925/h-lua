@@ -27,17 +27,12 @@ slkHelper.courierAutoSkill = function()
         obj.Areaeffectart = "Abilities\\Spells\\NightElf\\Blink\\BlinkTarget.mdl"
         obj.race = "other"
         slkHelper.courierBlink = obj:get_id()
-        table.insert(slkHelperHashData, {
-            type = "ability",
-            data = {
-                CUSTOM_DATA = {},
-                CLASS_GROUP = nil,
-                ABILITY_ID = slkHelper.courierBlink,
-                ABILITY_TYPE = "courier",
-                Name = Name,
-                Art = slkHelper.conf.courierSkill.blink.Art,
-            }
-        })
+        table.insert(slkHelperHashData, table.merge_pairs({
+            class = "ability",
+            _id = slkHelper.courierBlink,
+            _name = Name,
+            _type = "courier",
+        }, (v._plugins or {})))
     end
     if (slkHelper.courierRangePickUp == nil) then
         local Name = "信使-拾取"
@@ -65,17 +60,12 @@ slkHelper.courierAutoSkill = function()
         obj.TargetArt = ""
         obj.race = "other"
         slkHelper.courierRangePickUp = obj:get_id()
-        table.insert(slkHelperHashData, {
-            type = "ability",
-            data = {
-                CUSTOM_DATA = {},
-                CLASS_GROUP = nil,
-                ABILITY_ID = slkHelper.courierRangePickUp,
-                ABILITY_TYPE = "courier",
-                Name = Name,
-                Art = slkHelper.conf.courierSkill.rangePickUp.Art,
-            }
-        })
+        table.insert(slkHelperHashData, table.merge_pairs({
+            class = "ability",
+            _id = slkHelper.courierRangePickUp,
+            _name = Name,
+            _type = "courier",
+        }, (v._plugins or {})))
     end
     if (slkHelper.courierSeparate == nil) then
         local Name = "信使-拆分物品"
@@ -102,17 +92,12 @@ slkHelper.courierAutoSkill = function()
         obj.Cost1 = 0
         obj.Rng1 = 200.00
         slkHelper.courierSeparate = obj:get_id()
-        table.insert(slkHelperHashData, {
-            type = "ability",
-            data = {
-                CUSTOM_DATA = {},
-                CLASS_GROUP = nil,
-                ABILITY_ID = slkHelper.courierSeparate,
-                ABILITY_TYPE = "courier",
-                Name = Name,
-                Art = slkHelper.conf.courierSkill.separate.Art,
-            }
-        })
+        table.insert(slkHelperHashData, table.merge_pairs({
+            class = "ability",
+            _id = slkHelper.courierSeparate,
+            _name = Name,
+            _type = "courier",
+        }, (v._plugins or {})))
     end
     if (slkHelper.courierDeliver == nil) then
         local Name = "信使-传递"
@@ -140,17 +125,12 @@ slkHelper.courierAutoSkill = function()
         obj.TargetArt = ""
         obj.race = "other"
         slkHelper.courierDeliver = obj:get_id()
-        table.insert(slkHelperHashData, {
-            type = "ability",
-            data = {
-                CUSTOM_DATA = {},
-                CLASS_GROUP = nil,
-                ABILITY_ID = slkHelper.courierDeliver,
-                ABILITY_TYPE = "courier",
-                Name = Name,
-                Art = slkHelper.conf.courierSkill.deliver.Art,
-            }
-        })
+        table.insert(slkHelperHashData, table.merge_pairs({
+            class = "ability",
+            _id = slkHelper.courierDeliver,
+            _name = Name,
+            _type = "courier",
+        }, (v._plugins or {})))
     end
     return {
         slkHelper.courierBlink, slkHelper.courierRangePickUp,
@@ -299,12 +279,12 @@ slkHelper.unit = {
         obj.weapsOn = v.weapsOn or 0
         obj.Sellitems = v.Sellitems or ""
         local id = obj:get_id()
-        table.insert(slkHelperHashData, {
+        table.insert(slkHelperHashData, table.merge_pairs({
             class = "unit",
-            _unit_id = id,
-            _unit_name = v.Name,
-            _unit_type = "normal",
-        })
+            _id = id,
+            _name = v.Name,
+            _type = "normal",
+        }, (v._plugins or {})))
         return id
     end,
     --- 创建一个英雄
@@ -483,12 +463,12 @@ slkHelper.unit = {
         obj.goldcost = v.goldcost
         obj.lumbercost = v.lumbercost
         local id = obj:get_id()
-        table.insert(slkHelperHashData, {
+        table.insert(slkHelperHashData, table.merge_pairs({
             class = "unit",
             _id = id,
             _name = v.Name,
             _type = "hero",
-        })
+        }, (v._plugins or {})))
         return id
     end,
     --- 创建一个商店
@@ -519,22 +499,12 @@ slkHelper.unit = {
         obj.UberSplat = v.UberSplat or ""
         obj.race = v.race or "other"
         local id = obj:get_id()
-        table.insert(slkHelperHashData, {
-            type = "unit",
-            data = {
-                CUSTOM_DATA = v.CUSTOM_DATA or {},
-                CLASS_GROUP = v.CLASS_GROUP or nil,
-                UNIT_ID = id,
-                UNIT_TYPE = "shop",
-                Name = v.Name,
-                Art = v.Art,
-                file = v.file,
-                sight = v.sight,
-                nsight = v.nsight,
-                Makeitems = v.Makeitems,
-                Sellitems = v.Sellitems,
-            }
-        })
+        table.insert(slkHelperHashData, table.merge_pairs({
+            class = "unit",
+            _id = id,
+            _name = v.Name,
+            _type = "shop",
+        }, (v._plugins or {})))
         return id
     end,
     --- 创建一个信使
@@ -587,9 +557,9 @@ slkHelper.unit = {
             v.Buttonpos2 = v.Buttonpos2 or 0
             Tip = "选择：" .. Name
         end
-        local UNIT_TYPE = "courier"
+        local _type = "courier"
         if (v.isHero == 1) then
-            UNIT_TYPE = "courier_hero"
+            _type = "courier_hero"
             --- 如果是英雄型信使
             Primary = v.Primary or "STR"
             Ubertip = hColor[slkHelper.conf.color.heroMove]("移动：" .. v.spd .. " " .. CONST_MOVE_TYPE[v.movetp].label)
@@ -744,34 +714,12 @@ slkHelper.unit = {
         obj.nameCount = 1
         obj.heroAbilList = v.heroAbilList or ""
         local id = obj:get_id()
-        table.insert(slkHelperHashData, {
-            type = "unit",
-            data = {
-                CUSTOM_DATA = v.CUSTOM_DATA or {},
-                CLASS_GROUP = v.CLASS_GROUP or nil,
-                UNIT_ID = id,
-                UNIT_TYPE = UNIT_TYPE,
-                COURIER_AUTO_SKILL = autoSkill,
-                Name = Name,
-                Art = v.Art,
-                file = v.file,
-                sight = v.sight,
-                nsight = v.nsight,
-                goldcost = v.goldcost,
-                lumbercost = v.lumbercost,
-                cool1 = v.cool1,
-                def = v.def,
-                rangeN1 = v.rangeN1,
-                -- hero
-                Primary = Primary,
-                STR = v.STR,
-                AGI = v.AGI,
-                INT = v.INT,
-                STRplus = v.STRplus,
-                AGIplus = v.AGIplus,
-                INTplus = v.INTplus,
-            }
-        })
+        table.insert(slkHelperHashData, table.merge_pairs({
+            class = "unit",
+            _id = id,
+            _name = v.Name,
+            _type = _type,
+        }, (v._plugins or {})))
         return id
     end,
     --- 创建一个酒馆模版
@@ -801,21 +749,12 @@ slkHelper.unit = {
         obj.teamColor = 12
         obj.race = v.race or "other"
         local id = obj:get_id()
-        table.insert(slkHelperHashData, {
-            type = "unit",
-            data = {
-                CUSTOM_DATA = v.CUSTOM_DATA or {},
-                CLASS_GROUP = v.CLASS_GROUP or nil,
-                UNIT_ID = id,
-                UNIT_TYPE = "tavern",
-                Name = v.Name,
-                Art = v.Art,
-                file = v.file,
-                sight = v.sight,
-                nsight = v.nsight,
-                Sellunits = v.Sellunits,
-            }
-        })
+        table.insert(slkHelperHashData, table.merge_pairs({
+            class = "unit",
+            _id = id,
+            _name = v.Name,
+            _type = "tavern",
+        }, (v._plugins or {})))
         return id
     end,
 }
