@@ -185,10 +185,12 @@ table.sort(
 
 local qty = cj.LoadInteger(cg.hash_hslk_helper, 1, 0)
 if (qty > 0) then
+    local checked = {}
     for i = 1, qty do
         local js = cj.LoadStr(cg.hash_hslk_helper, 1, i)
         local data = json.parse(js)
         if (data) then
+            checked[i] = 1
             if (data.class == 'item') then
                 hRuntime.register.item(data)
             elseif (data.class == 'unit') then
@@ -201,20 +203,25 @@ if (qty > 0) then
                 hRuntime.register.ability(data)
             elseif (data.class == 'technology') then
                 hRuntime.register.technology(data)
+            else
+                checked[i] = nil
             end
             data = nil
         end
     end
     for i = 1, qty do
-        local js = cj.LoadStr(cg.hash_hslk_helper, 1, i)
-        local data = json.parse(js)
-        if (data) then
-            if (data.class == 'synthesis') then
-                hRuntime.register.synthesis(data)
+        if (checked[i] ~= 1) then
+            local js = cj.LoadStr(cg.hash_hslk_helper, 1, i)
+            local data = json.parse(js)
+            if (data) then
+                if (data.class == 'synthesis') then
+                    hRuntime.register.synthesis(data)
+                end
+                data = nil
             end
-            data = nil
         end
     end
+    checked = nil
 end
 
 cj.FlushParentHashtable(cg.hash_hslk)

@@ -10,4 +10,3 @@ library zzzSlk2 initializer Init
 endlibrary
 
 <?
-import("main.lua") ("hot.lua", true)

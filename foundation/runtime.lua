@@ -6,14 +6,8 @@ hRuntime = {
             hslk.name2Value.unit[json._name] = json
         end,
         item = function(json)
-            hslk.id2Value.item[json.ITEM_ID] = json
-            hslk.name2Value.item[json.Name] = json
-            if (json.CLASS_GROUP ~= nil) then
-                if (hslk.class_group.item[json.CLASS_GROUP] == nil) then
-                    hslk.class_group.item[json.CLASS_GROUP] = {}
-                end
-                table.insert(hslk.class_group.item[json.CLASS_GROUP], json.ITEM_ID)
-            end
+            hslk.id2Value.item[json._id] = json
+            hslk.name2Value.item[json._name] = json
             if (json.cooldownID ~= nil) then
                 hslk.item_cooldown_ids[json.cooldownID] = json.ITEM_ID
             end
@@ -25,30 +19,18 @@ hRuntime = {
             end
         end,
         ability = function(json)
-            hslk.id2Value.ability[json.ABILITY_ID] = json
-            hslk.name2Value.ability[json.Name] = json
-            if (json.CLASS_GROUP ~= nil) then
-                if (hslk.class_group.ability[json.CLASS_GROUP] == nil) then
-                    hslk.class_group.ability[json.CLASS_GROUP] = {}
-                end
-                table.insert(hslk.class_group.ability[json.CLASS_GROUP], json.ABILITY_ID)
-            end
+            hslk.id2Value.ability[json._id] = json
+            hslk.name2Value.ability[json._name] = json
             if (json.RING ~= nil) then
                 json.RING.RING_ID = json.ABILITY_ID
                 json.RING.Name = json.Name
-                hslk.id2Value.ring[json.ABILITY_ID] = json.RING
-                hslk.name2Value.ring[json.Name] = json.RING
+                hslk.id2Value.ring[json._id] = json.RING
+                hslk.name2Value.ring[json._name] = json.RING
             end
         end,
         technology = function(json)
-            hslk.id2Value.technology[json.TECHNOLOGY_ID] = json
-            hslk.name2Value.technology[json.Name] = json
-            if (json.CLASS_GROUP ~= nil) then
-                if (hslk.class_group.technology[json.CLASS_GROUP] == nil) then
-                    hslk.class_group.technology[json.CLASS_GROUP] = {}
-                end
-                table.insert(hslk.class_group.technology[json.CLASS_GROUP], json.TECHNOLOGY_ID)
-            end
+            hslk.id2Value.technology[json._id] = json
+            hslk.name2Value.technology[json._name] = json
         end,
         synthesis = function(json)
             -- 数据格式化
@@ -56,12 +38,12 @@ hRuntime = {
             local jsonFragment = {}
             for k, v in ipairs(json.fragment) do
                 json.fragment[k][2] = math.floor(v[2])
-                local fragmentId = hslk.name2Value.item[v[1]].ITEM_ID or nil
+                local fragmentId = hslk.name2Value.item[v[1]]._id or nil
                 if (fragmentId ~= nil) then
                     table.insert(jsonFragment, { fragmentId, v[2] })
                 end
             end
-            local profitId = hslk.name2Value.item[json.profit[1]].ITEM_ID or nil
+            local profitId = hslk.name2Value.item[json.profit[1]]._id or nil
             if (profitId == nil) then
                 return
             end
