@@ -24,6 +24,7 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依�
     │   ├── event - 事件
     │   ├── hero - 英雄
     │   ├── hotKey - 热键
+    │   ├── hSlkKeys - slk键值
     │   ├── item - 物品
     │   ├── playerColor - 玩家颜色
     │   └── unit - 单位
@@ -98,7 +99,6 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依�
 ```
 <?
 #include "[YOUR PATH]/h-lua/slk/helper.lua"
-#include "[YOUR PATH]/h-lua/slk/data.lua"
 #include "[YOUR PATH]/h-lua/slk/init.jass"
 import("main.lua") ("hot.lua", true)
 ?>

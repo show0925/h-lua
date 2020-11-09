@@ -23,6 +23,7 @@ Contains a variety of rich attribute systems, built-in up to dozens of custom ev
     │   ├── event
     │   ├── hero
     │   ├── hotKey
+    │   ├── hSlkKeys
     │   ├── item
     │   ├── playerColor
     │   └── unit
@@ -97,7 +98,6 @@ Contains a variety of rich attribute systems, built-in up to dozens of custom ev
 ```
 <?
 #include "[YOUR PATH]/h-lua/slk/helper.lua"
-#include "[YOUR PATH]/h-lua/slk/data.lua"
 #include "[YOUR PATH]/h-lua/slk/init.jass"
 import("main.lua") ("hot.lua", true)
 ?>
