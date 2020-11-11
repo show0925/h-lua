@@ -49,7 +49,7 @@ hdzapi = {
     exec = function(command, ...)
         if (hdzapi.enable ~= true) then
             if (hdzapi.tips_showed == false) then
-                print("Copy ./plugin/dzapi.jass For Dzapi.lua")
+                print("Copy ./plugin/dzapi.v2.jass For Dzapi.lua")
                 hdzapi.tips_showed = true
             end
             return

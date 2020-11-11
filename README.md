@@ -24,8 +24,10 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依�
     │   ├── event - 事件
     │   ├── hero - 英雄
     │   ├── hotKey - 热键
+    │   ├── hSlkKeys - hslk使用键值
     │   ├── item - 物品
     │   ├── playerColor - 玩家颜色
+    │   ├── target - 目标
     │   └── unit - 单位
     ├── foundation - 基础文件
     │   ├── blizzard_b.lua - 暴雪B全局变量
@@ -70,13 +72,18 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依�
     │   ├── unit.lua - 单位
     │   └── weather.lua - 天气
     ├── package - 打包上线用exe
-    ├── plugins
-    │   └── dzapi.jass - 拓展dzapi，使用时复制到触发内
-    ├── resource - 资源数据(不需要在意的)
-    └── slk - SLK物编生成数据
-        ├── data.lua - 需要在触发编辑器加载的文件，slk数据
-        ├── helper.lua - 可选在触发编辑器加载的文件，slk生成帮助函数
-        └── init.jass - 需要在触发编辑器加载的文件，用于初始化及调用lua-exec
+    ├── plugins（使用时需整段复制到触发内）
+    │   ├── dzapi.v1.jass - 拓展dzapi(前期第1个版本)
+    │   └── dzapi.v2.jass - 拓展dzapi(现任第2个版本)
+    ├── require - F4触发器载入
+    │   ├── data.lua - 需要在触发编辑器加载的文件，slk数据
+    │   ├── helper.ljass - lua&vjass混合文件，slkHelper帮助物编构建
+    │   ├── init.0.ljass - lua&vjass混合文件，用于初始化hslk哈希表
+    │   ├── init.1.ljass - lua&vjass混合文件，用于hslk数据保存
+    │   ├── math.lua - 拓展数学函数
+    │   ├── require.ljass - 加载的入口文件
+    │   └── table.lua - 拓展表相关函数
+    └── resource - 资源数据(不需要在意的)
 ```
 
 > 本套代码免费提供给了解lua的作者试用，如果不了解lua语言请使用T来制作地图或自行学习，此处不提供教学，本教程以YDWE为例
@@ -98,18 +105,18 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依�
 ```
 <?
 #include "[YOUR PATH]/h-lua/slk/helper.lua"
-#include "[YOUR PATH]/h-lua/slk/data.lua"
-#include "[YOUR PATH]/h-lua/slk/init.jass"
-import("main.lua") ("hot.lua", true)
+#include "[YOUR MAP PATH]/slk/init.ljass"
 ?>
 ```
 > （不建议路径存在有中文）
 
-> 上线打包package用 import("main.lua") ("dist.lua", true)
+> 你需要自己觉得在你的init.ljass中import你的入口文件和执行那个lua文件（h-lua框架现在不再自动执行此行为）
+
+> 你可以参考：https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld
 
 ```
 注意：
-h-lua库开源，不定时更新，可访问 http://hlua.book.hunzsig.org 查看最新文档
+h-lua库开源，不定时更新，可访问 http://wenku.hunzsig.org 查看最新文档
 h-lua库仅提供一些功能函数协助做图作者更加轻松制作地图
 h-lua库不保证完全正确且无bug，如有需要，请自行修改源码进行游戏制作，这里不过是提供思路与帮助
 由于h-lua使用了slk，保存时会自动帮助你生成框架需要的所有物编，所以无需自行构建物编

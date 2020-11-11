@@ -23,8 +23,10 @@ Contains a variety of rich attribute systems, built-in up to dozens of custom ev
     │   ├── event
     │   ├── hero
     │   ├── hotKey
+    │   ├── hSlkKeys
     │   ├── item
     │   ├── playerColor
+    │   ├── target
     │   └── unit
     ├── foundation
     │   ├── blizzard_b.lua - Blizzard B global variables
@@ -69,13 +71,18 @@ Contains a variety of rich attribute systems, built-in up to dozens of custom ev
     │   ├── unit.lua
     │   └── weather.lua 
     ├── package - Package on the WY platform
-    ├── plugins
-    │   └── dzapi.jass - WY expand dzapi, Copy to trigger when using
-    ├── resource - [INVALID]
-    └── slk - SLK Object editing data
-        ├── data.lua - Files that need to be loaded in the trigger editor
-        ├── helper.lua - Files that need to be loaded in the trigger editor
-        └── init.jass - Files that need to be loaded in the trigger editor
+    ├── plugins（Copy all codes to the TRIGGER when using）
+    │   ├── dzapi.v1.jass - WY expand dzapi(ver.1)
+    │   └── dzapi.v2.jass - WY expand dzapi(ver.2)
+    ├── require - F4 h-lua enter
+    │   ├── data.lua - Files that need to be loaded in the trigger editor
+    │   ├── helper.ljass - lua&vjass mixed file，help slk building
+    │   ├── init.0.ljass - lua&vjass mixed file，init hslk hashtable
+    │   ├── init.1.ljass - lua&vjass mixed file，save hslk data
+    │   ├── math.lua - extent functions
+    │   ├── require.ljass - enter
+    │   └── table.lua - extent functions
+    └── resource - [INVALID]
 ```
 
 > This set of codes is free for trial by authors who understand Lua. If you do n’t know Lua language, please use T to make maps or learn by yourself. Teaching is not provided here. This tutorial uses YDWE as an example
@@ -97,16 +104,15 @@ Contains a variety of rich attribute systems, built-in up to dozens of custom ev
 ```
 <?
 #include "[YOUR PATH]/h-lua/slk/helper.lua"
-#include "[YOUR PATH]/h-lua/slk/data.lua"
-#include "[YOUR PATH]/h-lua/slk/init.jass"
-import("main.lua") ("hot.lua", true)
+#include "[YOUR MAP PATH]/slk/init.jass"
 ?>
 ```
-> When you upload to the WY platform, use package and: import("main.lua") ("dist.lua", true)
+> You need to feel in your init.ljass Import your entry file and execute the Lua file (the h-lua framework does not automatically perform this behavior now)
 
+> You can refer to it: https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld
 ```
 Note：
-The h-lua library is open source, updated from time to time, you can visit http://hlua.book.hunzsig.org to view the latest documents
+The h-lua library is open source, updated from time to time, you can visit http://wenku.hunzsig.org to view the latest documents
 The h-lua library only provides some functional functions to help map authors make maps easier
 The h-lua library is not guaranteed to be completely correct and bug-free. If necessary, please modify the source code for game production. Here is just to provide ideas and help.
 Because h-lua uses slk, it will automatically help you generate all the object compilations needed by the framework when saving, so there is no need to build the object compilations by yourself.

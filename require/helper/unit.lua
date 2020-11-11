@@ -9,7 +9,7 @@ slkHelper.courierAutoSkill = function()
     if (slkHelper.courierBlink == nil) then
         local Name = "信使-闪烁"
         local obj = slk.ability.AEbl:new("slk_courier_blink")
-        local Tip = Name .. "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.blink.Hotkey) .. ")"
+        local Tip = Name .. "(" .. hColor.mixed(slkHelper.conf.courierSkill.blink.Hotkey, slkHelper.conf.color.hotKey) .. ")"
         obj.Name = Name
         obj.Tip = Tip
         obj.Hotkey = slkHelper.conf.courierSkill.blink.Hotkey
@@ -37,7 +37,7 @@ slkHelper.courierAutoSkill = function()
     if (slkHelper.courierRangePickUp == nil) then
         local Name = "信使-拾取"
         local obj = slk.ability.ANcl:new("slk_courier_range_pickup")
-        local Tip = Name .. "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.rangePickUp.Hotkey) .. ")"
+        local Tip = Name .. "(" .. hColor.mixed(slkHelper.conf.courierSkill.rangePickUp.Hotkey, slkHelper.conf.color.hotKey) .. ")"
         obj.Order = "manaburn"
         obj.DataF1 = "manaburn"
         obj.Name = Name
@@ -69,7 +69,7 @@ slkHelper.courierAutoSkill = function()
     end
     if (slkHelper.courierSeparate == nil) then
         local Name = "信使-拆分物品"
-        local Tip = Name .. "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.separate.Hotkey) .. ")"
+        local Tip = Name .. "(" .. hColor.mixed(slkHelper.conf.courierSkill.separate.Hotkey, slkHelper.conf.color.hotKey) .. ")"
         local obj = slk.ability.ANtm:new("slk_courier_separate")
         obj.Name = Name
         obj.DataD1 = 0
@@ -102,7 +102,7 @@ slkHelper.courierAutoSkill = function()
     if (slkHelper.courierDeliver == nil) then
         local Name = "信使-传递"
         local obj = slk.ability.ANcl:new("slk_courier_deliver")
-        local Tip = Name .. "(" .. hColor[slkHelper.conf.color.hotKey](slkHelper.conf.courierSkill.deliver.Hotkey) .. ")"
+        local Tip = Name .. "(" .. hColor.mixed(slkHelper.conf.courierSkill.deliver.Hotkey, slkHelper.conf.color.hotKey) .. ")"
         obj.Order = "polymorph"
         obj.DataF1 = "polymorph"
         obj.Name = Name
@@ -173,7 +173,7 @@ slkHelper.unit = {
             obj.Hotkey = v.Hotkey
             v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
-            obj.Tip = "选择：" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. ")"
+            obj.Tip = "选择：" .. v.Name .. "(" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. ")"
         else
             obj.Buttonpos1 = v.Buttonpos1 or 0
             obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -296,25 +296,25 @@ slkHelper.unit = {
         v.Name = v.Name or "英雄-" .. slkHelper.count
         local Primary = v.Primary or "STR"
         local Ubertip = ""
-        Ubertip = Ubertip .. hColor[slkHelper.conf.color.heroWeapon]("攻击类型：" .. CONST_WEAPON_TYPE[v.weapTp1].label .. "(" .. v.cool1 .. "秒/击)")
-        Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroAttack]("基础攻击：" .. v.dmgplus1)
-        Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroRange]("攻击范围：" .. v.rangeN1)
+        Ubertip = Ubertip .. hColor.mixed("攻击类型：" .. CONST_WEAPON_TYPE[v.weapTp1].label .. "(" .. v.cool1 .. "秒/击)", slkHelper.conf.color.heroWeapon)
+        Ubertip = Ubertip .. "|n" .. hColor.mixed("基础攻击：" .. v.dmgplus1, slkHelper.conf.color.heroAttack)
+        Ubertip = Ubertip .. "|n" .. hColor.mixed("攻击范围：" .. v.rangeN1, slkHelper.conf.color.heroRange)
         if (Primary == "STR") then
-            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor.mixed("力量：" .. v.STR .. "(+" .. v.STRplus .. ")", slkHelper.conf.color.heroPrimary)
         else
-            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor.mixed("力量：" .. v.STR .. "(+" .. v.STRplus .. ")", slkHelper.conf.color.heroSecondary)
         end
         if (Primary == "AGI") then
-            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor.mixed("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")", slkHelper.conf.color.heroPrimary)
         else
-            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor.mixed("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")", slkHelper.conf.color.heroSecondary)
         end
         if (Primary == "INT") then
-            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor.mixed("智力：" .. v.INT .. "(+" .. v.INTplus .. ")", slkHelper.conf.color.heroPrimary)
         else
-            Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
+            Ubertip = Ubertip .. "|n" .. hColor.mixed("智力：" .. v.INT .. "(+" .. v.INTplus .. ")", slkHelper.conf.color.heroSecondary)
         end
-        Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroMove]("移动：" .. v.spd .. " " .. CONST_MOVE_TYPE[v.movetp].label)
+        Ubertip = Ubertip .. "|n" .. hColor.mixed("移动：" .. v.spd .. " " .. CONST_MOVE_TYPE[v.movetp].label, slkHelper.conf.color.heroMove)
         if (v.Ubertip ~= nil) then
             Ubertip = Ubertip .. "|n|n" .. v.Ubertip -- 自定义说明会在最后
         end
@@ -348,7 +348,7 @@ slkHelper.unit = {
             obj.Hotkey = v.Hotkey
             v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
-            obj.Tip = "选择：" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. ")"
+            obj.Tip = "选择：" .. v.Name .. "(" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. ")"
         else
             obj.Buttonpos1 = v.Buttonpos1 or 0
             obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -551,7 +551,7 @@ slkHelper.unit = {
         if (v.Hotkey ~= nil) then
             v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
-            Tip = "选择：" .. Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. ")"
+            Tip = "选择：" .. Name .. "(" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. ")"
         else
             v.Buttonpos1 = v.Buttonpos1 or 0
             v.Buttonpos2 = v.Buttonpos2 or 0
@@ -562,25 +562,25 @@ slkHelper.unit = {
             _type = "courier_hero"
             --- 如果是英雄型信使
             Primary = v.Primary or "STR"
-            Ubertip = hColor[slkHelper.conf.color.heroMove]("移动：" .. v.spd .. " " .. CONST_MOVE_TYPE[v.movetp].label)
+            Ubertip = hColor.mixed("移动：" .. v.spd .. " " .. CONST_MOVE_TYPE[v.movetp].label, slkHelper.conf.color.heroMove)
             if (v.weapsOn == 1) then
-                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroWeapon]("攻击类型：" .. CONST_WEAPON_TYPE[v.weapTp1].label .. "(" .. v.cool1 .. "秒/击)")
-                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroAttack]("基础攻击：" .. v.dmgplus1)
-                Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroRange]("攻击范围：" .. v.rangeN1)
+                Ubertip = Ubertip .. "|n" .. hColor.mixed("攻击类型：" .. CONST_WEAPON_TYPE[v.weapTp1].label .. "(" .. v.cool1 .. "秒/击)", slkHelper.conf.color.heroWeapon)
+                Ubertip = Ubertip .. "|n" .. hColor.mixed("基础攻击：" .. v.dmgplus1, slkHelper.conf.color.heroAttack)
+                Ubertip = Ubertip .. "|n" .. hColor.mixed("攻击范围：" .. v.rangeN1, slkHelper.conf.color.heroRange)
                 if (Primary == "STR") then
-                    Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
+                    Ubertip = Ubertip .. "|n" .. hColor.mixed("力量：" .. v.STR .. "(+" .. v.STRplus .. ")", slkHelper.conf.color.heroPrimary)
                 else
-                    Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("力量：" .. v.STR .. "(+" .. v.STRplus .. ")")
+                    Ubertip = Ubertip .. "|n" .. hColor.mixed("力量：" .. v.STR .. "(+" .. v.STRplus .. ")", slkHelper.conf.color.heroSecondary)
                 end
                 if (Primary == "AGI") then
-                    Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
+                    Ubertip = Ubertip .. "|n" .. hColor.mixed("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")", slkHelper.conf.color.heroPrimary)
                 else
-                    Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")")
+                    Ubertip = Ubertip .. "|n" .. hColor.mixed("敏捷：" .. v.AGI .. "(+" .. v.AGIplus .. ")", slkHelper.conf.color.heroSecondary)
                 end
                 if (Primary == "INT") then
-                    Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroPrimary]("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
+                    Ubertip = Ubertip .. "|n" .. hColor.mixed("智力：" .. v.INT .. "(+" .. v.INTplus .. ")", slkHelper.conf.color.heroPrimary)
                 else
-                    Ubertip = Ubertip .. "|n" .. hColor[slkHelper.conf.color.heroSecondary]("智力：" .. v.INT .. "(+" .. v.INTplus .. ")")
+                    Ubertip = Ubertip .. "|n" .. hColor.mixed("智力：" .. v.INT .. "(+" .. v.INTplus .. ")", slkHelper.conf.color.heroSecondary)
                 end
             end
             if (v.Ubertip ~= nil) then

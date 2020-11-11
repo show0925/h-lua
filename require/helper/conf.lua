@@ -1,4 +1,3 @@
-
 ---@public slkHelper默认配置项
 slkHelper.conf = {
     -- 是否自动启用影子物品
@@ -50,55 +49,55 @@ slkHelper.conf = {
     shopSight = 1200,
     -- 商店单位黑夜视野默认值
     shopNSight = 1200,
-    -- 描述文本颜色,需要配置 hColor 里拥有的颜色函数名
+    -- 描述文本颜色,可配置 hColor 里拥有的颜色函数，也可以配置 hex 6位颜色码
     color = {
         -- 热键
-        hotKey = "gold",
+        hotKey = "ffcc00",
         -- 物品主动
-        itemActive = "yellow",
+        itemActive = "ffff00",
         -- 物品被动
-        itemPassive = "seaLight",
+        itemPassive = "99ccff",
         -- 物品冷却时间
-        itemCoolDown = "skyLight",
+        itemCoolDown = "ccffff",
         -- 物品属性
-        itemAttr = "green",
+        itemAttr = "80ff00",
         -- 物品叠加
-        itemOverlie = "purple",
+        itemOverlie = "ff59ff",
         -- 物品重量
-        itemWeight = "purpleLight",
+        itemWeight = "ee82ee",
         -- 物品描述
-        itemDesc = "greyDeep",
+        itemDesc = "969696",
         -- 物品合成品
-        itemProfit = "orangeLight",
+        itemProfit = "ffd88c",
         -- 物品零部件
         itemFragment = "orange",
         -- 技能主动
-        abilityActive = "yellow",
+        abilityActive = "ffff00",
         -- 技能被动
-        abilityPassive = "seaLight",
+        abilityPassive = "99ccff",
         -- 技能冷却时间
-        abilityCoolDown = "skyLight",
+        abilityCoolDown = "ccffff",
         -- 技能属性
-        abilityAttr = "green",
+        abilityAttr = "80ff00",
         -- 技能描述
-        abilityDesc = "grey",
+        abilityDesc = "c0c0c0",
         -- 光环范围
-        ringArea = "seaLight",
+        ringArea = "99ccff",
         -- 光环作用目标
-        ringTarget = "seaLight",
+        ringTarget = "99ccff",
         -- 光环描述
-        abilityRingDesc = "white",
+        abilityRingDesc = hColor.white,
         -- 英雄攻击武器类型
-        heroWeapon = "red",
+        heroWeapon = "ff3939",
         -- 英雄基础攻击
-        heroAttack = "redLight",
+        heroAttack = "ff8080",
         -- 英雄攻击范围
-        heroRange = "seaLight",
+        heroRange = "99ccff",
         -- 英雄主属性
-        heroPrimary = "yellow",
+        heroPrimary = "ffff00",
         -- 英雄主属性
-        heroSecondary = "yellowLight",
+        heroSecondary = "ffffcc",
         -- 英雄移动
-        heroMove = "greenLight",
+        heroMove = "ccffcc",
     },
 }

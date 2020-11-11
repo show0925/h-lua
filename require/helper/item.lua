@@ -2,27 +2,27 @@
 ---@private
 slkHelper.itemDesc = function(v)
     local d = {}
-    if (v.ACTIVE ~= nil) then
-        table.insert(d, "主动：" .. v.ACTIVE)
+    if (v._active ~= nil) then
+        table.insert(d, "主动：" .. v._active)
     end
-    if (v.PASSIVE ~= nil) then
-        table.insert(d, "被动：" .. v.PASSIVE)
+    if (v._passive ~= nil) then
+        table.insert(d, "被动：" .. v._passive)
     end
-    if (v.ATTR ~= nil) then
-        table.sort(v.ATTR)
-        table.insert(d, slkHelper.attrDesc(v.ATTR, ";"))
+    if (v._attr ~= nil) then
+        table.sort(v._attr)
+        table.insert(d, slkHelper.attrDesc(v._attr, ";"))
     end
     -- 仅文本无效果，适用于例如技能书这类的物品
-    if (v.ATTR_TXT ~= nil) then
-        table.sort(v.ATTR_TXT)
-        table.insert(d, slkHelper.attrDesc(v.ATTR_TXT, ";"))
+    if (v._attr_txt ~= nil) then
+        table.sort(v._attr_txt)
+        table.insert(d, slkHelper.attrDesc(v._attr_txt, ";"))
     end
-    local overlie = v.OVERLIE or 1
-    local weight = v.WEIGHT or 0
+    local overlie = v._overlie or 1
+    local weight = v._weight or 0
     weight = tostring(math.round(weight))
     table.insert(d, "叠加：" .. overlie .. ";重量：" .. weight .. "Kg")
-    if (v.Desc ~= nil and v.Desc ~= "") then
-        table.insert(d, v.Desc)
+    if (v._desc ~= nil and v._desc ~= "") then
+        table.insert(d, v._desc)
     end
     return string.implode("|n", d)
 end
@@ -31,63 +31,64 @@ end
 ---@private
 slkHelper.itemUbertip = function(v)
     local d = {}
-    if (v.ACTIVE ~= nil) then
-        table.insert(d, hColor[slkHelper.conf.color.itemActive]("主动：" .. v.ACTIVE))
+    if (v._active ~= nil) then
+        table.insert(d, hColor.mixed("主动：" .. v._active, slkHelper.conf.color.itemActive))
         if (v.cooldown ~= nil and v.cooldown > 0) then
-            table.insert(d, hColor[slkHelper.conf.color.itemCoolDown]("冷却：" .. v.cooldown .. "秒"))
+            table.insert(d, hColor.mixed("冷却：" .. v.cooldown .. "秒", slkHelper.conf.color.itemCoolDown))
         end
     end
-    if (v.PASSIVE ~= nil) then
-        table.insert(d, hColor[slkHelper.conf.color.itemPassive]("被动：" .. v.PASSIVE))
+    if (v._passive ~= nil) then
+        table.insert(d, hColor.mixed("被动：" .. v._passive, slkHelper.conf.color.itemPassive))
     end
-    if (v.RING ~= nil) then
-        if (v.RING.radius ~= nil or (type(v.RING.target) == 'table' and #v.RING.target > 0)) then
+    if (v._ring ~= nil) then
+        if (v._ring.radius ~= nil or (type(v._ring.target) == 'table' and #v._ring.target > 0)) then
             local txt = "光环目标："
-            if (v.RING.radius ~= nil) then
-                txt = txt .. v.RING.radius .. '范围内'
+            if (v._ring.radius ~= nil) then
+                txt = txt .. v._ring.radius .. '范围内'
             end
-            if (type(v.RING.target) == 'table' and #v.RING.target > 0) then
+            if (type(v._ring.target) == 'table' and #v._ring.target > 0) then
                 local labels = {}
-                for _, t in ipairs(v.RING.target) do
+                for _, t in ipairs(v._ring.target) do
                     table.insert(labels, CONST_TARGET_LABEL[t])
                 end
                 txt = txt .. string.implode(',', labels)
             end
-            table.insert(d, hColor[slkHelper.conf.color.ringArea](txt))
+            table.insert(d, hColor.mixed(txt, slkHelper.conf.color.ringArea))
         end
-        if (v.RING.attr ~= nil) then
-            table.insert(d, hColor[slkHelper.conf.color.ringTarget]("光环效果：|n" .. slkHelper.attrDesc(v.RING.attr, "|n", ' - ')))
+        if (v._ring.attr ~= nil) then
+            table.insert(d, hColor.mixed("光环效果：|n" .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
         end
-        table.sort(v.RING.attr)
+        table.sort(v._ring.attr)
     end
-    if (v.ATTR ~= nil) then
-        table.sort(v.ATTR)
-        table.insert(d, hColor[slkHelper.conf.color.itemAttr](slkHelper.attrDesc(v.ATTR, "|n")))
+    if (v._attr ~= nil) then
+        table.sort(v._attr)
+        table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr, "|n"), slkHelper.conf.color.itemAttr))
     end
     -- 仅文本无效果，适用于例如技能书这类的物品
-    if (v.ATTR_TXT ~= nil) then
-        table.sort(v.ATTR_TXT)
-        table.insert(d, hColor[slkHelper.conf.color.itemAttr](slkHelper.attrDesc(v.ATTR_TXT, "|n")))
+    if (v._attr_txt ~= nil) then
+        table.sort(v._attr_txt)
+        table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr_txt, "|n"), slkHelper.conf.color.itemAttr))
     end
     -- 作为零件
     if (slkHelper.item.synthesisMapping.fragment[v.Name] ~= nil
-        and #slkHelper.item.synthesisMapping.fragment[v.Name] > 0) then
-        table.insert(d, hColor[slkHelper.conf.color.itemFragment]("可以合成：" .. string.implode(
-            '、',
-            slkHelper.item.synthesisMapping.fragment[v.Name]))
-        )
+            and #slkHelper.item.synthesisMapping.fragment[v.Name] > 0) then
+        table.insert(d, hColor.mixed("可以合成：" .. string.implode(
+                '、',
+                slkHelper.item.synthesisMapping.fragment[v.Name]),
+                slkHelper.conf.color.itemFragment
+        ))
     end
     -- 合成公式
     if (slkHelper.item.synthesisMapping.profit[v.Name] ~= nil) then
-        table.insert(d, hColor[slkHelper.conf.color.itemProfit]("需要零件：" .. slkHelper.item.synthesisMapping.profit[v.Name]))
+        table.insert(d, hColor.mixed("需要零件：" .. slkHelper.item.synthesisMapping.profit[v.Name], slkHelper.conf.color.itemProfit))
     end
-    local overlie = v.OVERLIE or 1
-    table.insert(d, hColor[slkHelper.conf.color.itemOverlie]("叠加：" .. overlie))
-    local weight = v.WEIGHT or 0
+    local overlie = v._overlie or 1
+    table.insert(d, hColor.mixed("叠加：" .. overlie, slkHelper.conf.color.itemOverlie))
+    local weight = v._weight or 0
     weight = tostring(math.round(weight))
-    table.insert(d, hColor[slkHelper.conf.color.itemWeight]("重量：" .. weight .. "Kg"))
-    if (v.Desc ~= nil and v.Desc ~= "") then
-        table.insert(d, hColor[slkHelper.conf.color.itemDesc](v.Desc))
+    table.insert(d, hColor.mixed("重量：" .. weight .. "Kg", slkHelper.conf.color.itemWeight))
+    if (v._desc ~= nil and v._desc ~= "") then
+        table.insert(d, hColor.mixed(v._desc, slkHelper.conf.color.itemDesc))
     end
     return string.implode("|n", d)
 end
@@ -239,7 +240,7 @@ end
 
 --- 创建一件影子物品
 --- 不主动使用，由normal设置{useShadow = true}自动调用
---- 设置的CUSTOM_DATA数据会自动传到数据中
+--- 设置的 _plugins 数据会自动传到数据中
 ---@private
 ---@param v table
 slkHelper.item.shadow = function(v)
@@ -283,29 +284,19 @@ slkHelper.item.shadow = function(v)
     end
     local id = obj:get_id()
     return {
-        SHADOW = true,
-        CUSTOM_DATA = v.CUSTOM_DATA or {},
-        CLASS_GROUP = v.CLASS_GROUP or nil,
-        ITEM_ID = id,
-        Name = Name,
-        class = v.class,
-        Art = v.Art,
-        file = v.file,
-        goldcost = v.goldcost,
-        lumbercost = v.lumbercost,
-        usable = 1,
-        powerup = 1,
-        perishable = 1,
-        sellable = v.sellable,
-        OVERLIE = 1,
-        WEIGHT = v.WEIGHT,
-        ATTR = v.ATTR,
-        RING = v.RING,
+        class = "item",
+        _id = id,
+        _name = Name,
+        _type = "shadow",
+        _overlie = 1,
+        _weight = v._weight,
+        _attr = v._attr,
+        _ring = v._ring,
     }
 end
 
 --- 创建一件实体物品
---- 设置的CUSTOM_DATA数据会自动传到数据中
+--- 设置的 _plugins 数据会自动传到数据中
 --- 默认不会自动协助开启shadow模式（满格拾取/合成）可以设置slkHelper的conf来配置
 ---@public
 ---@param v table
@@ -314,7 +305,7 @@ slkHelper.item.normal = function(v)
     local cd = slkHelper.itemCooldownID(v)
     local abilList = ""
     local usable = 0
-    local OVERLIE = v.OVERLIE or 1
+    local _overlie = v._overlie or 1
     local ignoreCD = 0
     if (cd ~= "AIat") then
         abilList = cd
@@ -347,7 +338,7 @@ slkHelper.item.normal = function(v)
     v.sellable = v.sellable or 1
     v.pawnable = v.pawnable or 1
     v.dropable = v.dropable or 1
-    v.WEIGHT = v.WEIGHT or 0
+    v._weight = v._weight or 0
     -- 处理useShadow
     local useShadow = (slkHelper.conf.itemAutoShadow == true and v.powerup == 0)
     if (type(v.useShadow) == 'boolean') then
@@ -357,21 +348,21 @@ slkHelper.item.normal = function(v)
     if (useShadow == true) then
         shadowData = slkHelper.item.shadow(v)
     end
-    if (v.RING ~= nil) then
-        v.RING.effectTarget = v.RING.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
-        v.RING.attach = v.RING.attach or "origin"
-        v.RING.attachTarget = v.RING.attachTarget or "origin"
-        v.RING.radius = v.RING.radius or 600
+    if (v._ring ~= nil) then
+        v._ring.effectTarget = v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
+        v._ring.attach = v._ring.attach or "origin"
+        v._ring.attachTarget = v._ring.attachTarget or "origin"
+        v._ring.radius = v._ring.radius or 600
         -- target请参考物编的目标允许
         local target
-        if (type(v.RING.target) == 'table' and #v.RING.target > 0) then
-            target = v.RING.target
-        elseif (type(v.RING.target) == 'string' and string.len(v.RING.target) > 0) then
-            target = string.explode(',', v.RING.target)
+        if (type(v._ring.target) == 'table' and #v._ring.target > 0) then
+            target = v._ring.target
+        elseif (type(v._ring.target) == 'string' and string.len(v._ring.target) > 0) then
+            target = string.explode(',', v._ring.target)
         else
             target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
         end
-        v.RING.target = target
+        v._ring.target = target
     end
     local obj = slk.item.rat9:new("items_" .. v.Name)
     obj.Name = v.Name
@@ -411,33 +402,20 @@ slkHelper.item.normal = function(v)
         obj.Tip = "获得" .. v.Name
     end
     local id = obj:get_id()
-    if (shadowData.ITEM_ID ~= nil) then
-        shadowData.SHADOW_ID = id
-        table.insert(slkHelperHashData, { type = "item", data = shadowData })
+    if (shadowData._id ~= nil) then
+        shadowData._shadow_id = id
+        table.insert(slkHelperHashData, shadowData)
     end
-    table.insert(slkHelperHashData, {
-        type = "item",
-        data = {
-            CUSTOM_DATA = v.CUSTOM_DATA or {},
-            CLASS_GROUP = v.CLASS_GROUP or nil,
-            ITEM_ID = id,
-            Name = v.Name,
-            class = v.class,
-            Art = v.Art,
-            file = v.file,
-            goldcost = v.goldcost,
-            lumbercost = v.lumbercost,
-            usable = usable,
-            powerup = v.powerup,
-            perishable = v.perishable,
-            sellable = v.sellable,
-            OVERLIE = OVERLIE,
-            WEIGHT = v.WEIGHT,
-            ATTR = v.ATTR,
-            RING = v.RING,
-            SHADOW_ID = shadowData.ITEM_ID or nil,
-            cooldownID = cd
-        }
-    })
-    return shadowData.ITEM_ID or id
+    table.insert(slkHelperHashData, table.merge_pairs({
+        class = "item",
+        _id = id,
+        _name = v.Name,
+        _type = "normal",
+        _overlie = _overlie,
+        _weight = v._weight,
+        _attr = v._attr,
+        _ring = v._ring,
+        _shadow_id = shadowData._id or nil,
+    }, (v._plugins or {})))
+    return shadowData._id or id
 end

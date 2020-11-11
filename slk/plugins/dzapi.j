@@ -1,6 +1,0 @@
-?>
-
-globals
-endglobals
-
-<?

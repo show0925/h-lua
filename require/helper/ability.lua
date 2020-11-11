@@ -1,17 +1,16 @@
-
 --- 组装空白被动技能的说明
 ---@private
 slkHelper.abilityEmptyUbertip = function(v)
     local d = {}
-    if (v.PASSIVE ~= nil) then
-        table.insert(d, hColor[slkHelper.conf.color.abilityPassive]("被动：" .. v.PASSIVE))
+    if (v._passive ~= nil) then
+        table.insert(d, hColor.mixed("被动：" .. v._passive, slkHelper.conf.color.abilityPassive))
     end
-    if (v.ATTR ~= nil) then
-        table.sort(v.ATTR)
-        table.insert(d, hColor[slkHelper.conf.color.abilityAttr](slkHelper.attrDesc(v.ATTR, "|n")))
+    if (v._attr ~= nil) then
+        table.sort(v._attr)
+        table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr, "|n"), slkHelper.conf.color.abilityAttr))
     end
-    if (v.Desc ~= nil and v.Desc ~= "") then
-        table.insert(d, hColor[slkHelper.conf.color.abilityDesc](v.Desc))
+    if (v._desc ~= nil and v._desc ~= "") then
+        table.insert(d, hColor.mixed(v._desc, slkHelper.conf.color.abilityDesc))
     end
     return string.implode("|n", d)
 end
@@ -20,36 +19,36 @@ end
 ---@private
 slkHelper.abilityRingUbertip = function(v)
     local d = {}
-    if (v.RING.radius ~= nil) then
-        table.insert(d, hColor[slkHelper.conf.color.ringArea]("光环范围：" .. v.RING.radius))
+    if (v._ring.radius ~= nil) then
+        table.insert(d, hColor.mixed("光环范围：" .. v._ring.radius, slkHelper.conf.color.ringArea))
     end
-    if (type(v.RING.target) == 'table' and #v.RING.target > 0) then
+    if (type(v._ring.target) == 'table' and #v._ring.target > 0) then
         local labels = {}
-        for _, t in ipairs(v.RING.target) do
+        for _, t in ipairs(v._ring.target) do
             table.insert(labels, CONST_TARGET_LABEL[t])
         end
-        table.insert(d, hColor[slkHelper.conf.color.ringTarget]("光环目标：" .. string.implode(',', labels)))
+        table.insert(d, hColor.mixed("光环目标：" .. string.implode(',', labels), slkHelper.conf.color.ringTarget))
         labels = nil
     end
-    if (v.RING.attr ~= nil) then
-        table.insert(d, hColor[slkHelper.conf.color.ringTarget]("光环效果：|n" .. slkHelper.attrDesc(v.RING.attr, "|n", ' - ')))
-        table.sort(v.RING.attr)
+    if (v._ring.attr ~= nil) then
+        table.insert(d, hColor.mixed("光环效果：|n" .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
+        table.sort(v._ring.attr)
     end
-    if (v.ATTR ~= nil) then
-        table.insert(d, hColor[slkHelper.conf.color.abilityAttr]("独占效果："))
-        table.sort(v.ATTR)
-        table.insert(d, hColor[slkHelper.conf.color.abilityAttr](slkHelper.attrDesc(v.ATTR, "|n", ' - ')))
+    if (v._attr ~= nil) then
+        table.insert(d, hColor.mixed("独占效果：", slkHelper.conf.color.abilityAttr))
+        table.sort(v._attr)
+        table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr, "|n", ' - '), slkHelper.conf.color.abilityAttr))
         table.insert(d, "|n")
     end
-    if (v.Desc ~= nil and v.Desc ~= "") then
-        table.insert(d, hColor[slkHelper.conf.color.abilityRingDesc](v.Desc))
+    if (v._desc ~= nil and v._desc ~= "") then
+        table.insert(d, hColor.mixed(v._desc, slkHelper.conf.color.abilityRingDesc))
     end
     return string.implode("|n", d)
 end
 
 slkHelper.ability = {
     --- 创建一个空白的被动技能
-    --- 设置的CUSTOM_DATA数据会自动传到数据中
+    --- 设置的 _plugins 数据会自动传到数据中
     ---@public
     ---@param v table
     empty = function(v)
@@ -61,7 +60,7 @@ slkHelper.ability = {
         if (v.Hotkey ~= nil) then
             v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos2 or 0
-            v.Tip = Name .. "[" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. "]"
+            v.Tip = Name .. "[" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. "]"
             Name = Name .. v.Hotkey
         else
             v.Tip = Name
@@ -81,22 +80,17 @@ slkHelper.ability = {
         obj.race = v.race or "other"
         obj.Art = Art
         local id = obj:get_id()
-        table.insert(slkHelperHashData, {
-            type = "ability",
-            data = {
-                CUSTOM_DATA = v.CUSTOM_DATA or {},
-                CLASS_GROUP = v.CLASS_GROUP or nil,
-                ABILITY_ID = id,
-                ABILITY_TYPE = "empty",
-                ATTR = v.ATTR,
-                Name = v.Name,
-                Art = Art,
-            }
-        })
+        table.insert(slkHelperHashData, table.merge_pairs({
+            class = "ability",
+            _id = id,
+            _name = Name,
+            _type = "empty",
+            _attr = v._attr,
+        }, (v._plugins or {})))
         return id
     end,
     --- 创建一个空白的光环技能
-    --- 设置的CUSTOM_DATA数据会自动传到数据中
+    --- 设置的 _plugins 数据会自动传到数据中
     ---@public
     ---@param v table
     ring = function(v)
@@ -108,28 +102,28 @@ slkHelper.ability = {
         if (v.Hotkey ~= nil) then
             v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos2 or 0
-            v.Tip = Name .. "[" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. "]"
+            v.Tip = Name .. "[" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. "]"
             Name = Name .. v.Hotkey
         else
             v.Tip = Name
         end
-        if (v.RING == nil) then
+        if (v._ring == nil) then
             return
         else
-            v.RING.effectTarget = v.RING.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
-            v.RING.attach = v.RING.attach or "origin"
-            v.RING.attachTarget = v.RING.attachTarget or "origin"
-            v.RING.radius = v.RING.radius or 600
+            v._ring.effectTarget = v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
+            v._ring.attach = v._ring.attach or "origin"
+            v._ring.attachTarget = v._ring.attachTarget or "origin"
+            v._ring.radius = v._ring.radius or 600
             -- target请参考物编的目标允许
             local target
-            if (type(v.RING.target) == 'table' and #v.RING.target > 0) then
-                target = v.RING.target
-            elseif (type(v.RING.target) == 'string' and string.len(v.RING.target) > 0) then
-                target = string.explode(',', v.RING.target)
+            if (type(v._ring.target) == 'table' and #v._ring.target > 0) then
+                target = v._ring.target
+            elseif (type(v._ring.target) == 'string' and string.len(v._ring.target) > 0) then
+                target = string.explode(',', v._ring.target)
             else
                 target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
             end
-            v.RING.target = target
+            v._ring.target = target
         end
         local obj = slk.ability.Aamk:new("slk_ability_ring_" .. Name)
         obj.Hotkey = v.Hotkey or ""
@@ -146,19 +140,14 @@ slkHelper.ability = {
         obj.race = v.race or "other"
         obj.Art = Art
         local id = obj:get_id()
-        table.insert(slkHelperHashData, {
-            type = "ability",
-            data = {
-                CUSTOM_DATA = v.CUSTOM_DATA or {},
-                CLASS_GROUP = v.CLASS_GROUP or nil,
-                ABILITY_ID = id,
-                ABILITY_TYPE = "ring",
-                ATTR = v.ATTR,
-                RING = v.RING,
-                Name = v.Name,
-                Art = Art,
-            }
-        })
+        table.insert(slkHelperHashData, table.merge_pairs({
+            class = "ability",
+            _id = id,
+            _name = Name,
+            _type = "ring",
+            _attr = v._attr,
+            _ring = v._ring,
+        }, (v._plugins or {})))
         return id
     end,
 }
