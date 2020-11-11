@@ -4,8 +4,6 @@ CONST_DAMAGE_TYPE = {
     common = "common",
     physical = "physical",
     magic = "magic",
-    real = "real",
-    absolute = "absolute",
     fire = "fire",
     soil = "soil",
     water = "water",
@@ -53,14 +51,6 @@ CONST_DAMAGE_TYPE_MAP = {
     magic = {
         label = "魔法",
         color = "4876ff"
-    },
-    real = {
-        label = "真实",
-        color = "ffd700"
-    },
-    absolute = {
-        label = "绝对",
-        color = "ee5c42"
     },
     fire = {
         label = "火",

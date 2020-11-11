@@ -1,13 +1,7 @@
 -- 破防种类
-
 CONST_BREAK_ARMOR_TYPE = {
-    DEFEND = "defend",
-    RESISTANCE = "resistance",
-    AVOID = "avoid"
-}
-
-CONST_BREAK_ARMOR_TYPE_MAP = {
-    DEFEND = "无视护甲",
-    RESISTANCE = "无视魔抗",
-    AVOID = "无视回避"
+    defend = { value = "defend", label = "护甲" },
+    resistance = { value = "resistance", label = "魔抗" },
+    avoid = { value = "avoid", label = "回避" },
+    invincible = { value = "invincible", label = "无敌" },
 }

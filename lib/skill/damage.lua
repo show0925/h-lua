@@ -29,9 +29,10 @@ end
         damageString = "", --伤害漂浮字颜色
         damageStringColor = "", --伤害漂浮字颜色
         effect = nil, --伤害特效
-        damageKind = "attack", --伤害种类请查看 CONST_DAMAGE_KIND
+        damageKind = "unknown", --伤害种类请查看 CONST_DAMAGE_KIND
         damageType = { "common" }, --伤害类型请查看 CONST_DAMAGE_TYPE
-        breakArmorType 无视的类型：{ 'defend', 'resistance', 'avoid' } --破防类型请查看 CONST_BREAK_ARMOR_TYPE
+        breakArmorType = {} --破防(无视防御)类型请查看 CONST_BREAK_ARMOR_TYPE
+        isFixed = false, --是否固定伤害，伤害在固定下(无视类型、护甲、魔抗、自然、增幅、减伤)不计算，而自然虽然不影响伤害，但会有自然效果
     }
 ]]
 hskill.damage = function(options)
@@ -54,7 +55,7 @@ hskill.damage = function(options)
         return
     end
     if (options.damageKind == nil) then
-        options.damageKind = CONST_DAMAGE_KIND.special
+        options.damageKind = CONST_DAMAGE_KIND.unknown
     end
     --双方attr get
     local targetUnitAttr = hattr.get(targetUnit)
@@ -88,8 +89,11 @@ hskill.damage = function(options)
     local lastDamagePercent = 0.0
     -- 僵直计算
     local punishEffectRatio = 0
-    -- bool
-    local isAvoid = false
+    -- 是否固伤
+    local isFixed = false
+    if (type(options.isFixed) == 'boolean') then
+        isFixed = options.isFixed
+    end
     -- 文本显示
     local breakArmorType = options.breakArmorType or {}
     local damageString = options.damageString or ""
@@ -105,31 +109,17 @@ hskill.damage = function(options)
             return
         end
     elseif (damageKind == CONST_DAMAGE_KIND.item) then
-    elseif (damageKind == CONST_DAMAGE_KIND.special) then
-    else
-        print_err("DAMAGE -damageKind")
-        return
-    end
-    -- 计算单位是否无敌且伤害类型不混合绝对伤害（无敌属性为百分比计算，被动触发抵挡一次）
-    if (his.invincible(targetUnit) == true or math.random(1, 100) < targetUnitAttr.invincible) then
-        if (table.includes(CONST_DAMAGE_TYPE.absolute, damageType) == false) then
+        if (his.silent(sourceUnit) == true) then
             return
         end
+    else
+        damageKind = CONST_DAMAGE_KIND.unknown
     end
-    -- 计算硬直抵抗
-    punishEffectRatio = 0.99
-    if (targetUnitAttr.punish_oppose > 0) then
-        punishEffectRatio = punishEffectRatio - targetUnitAttr.punish_oppose * 0.01
-        if (punishEffectRatio < 0.100) then
-            punishEffectRatio = 0.100
+    -- 计算单位是否无敌（无敌属性为百分比计算，被动触发抵挡一次）
+    if (his.invincible(targetUnit) == true or math.random(1, 100) < targetUnitAttr.invincible) then
+        if (table.includes(CONST_BREAK_ARMOR_TYPE.invincible.value, breakArmorType) == false) then
+            return
         end
-    end
-    -- *重要* 地图平衡常数必须设定护甲因子为0，这里为了修正魔兽负护甲依然因子保持0.06的bug
-    -- 当护甲x为负时，最大-20,公式2-(1-a)^abs(x)
-    if (targetUnitAttr.defend < 0 and targetUnitAttr.defend >= -20) then
-        damage = damage / (2 - cj.Pow(0.94, math.abs(targetUnitAttr.defend)))
-    elseif (targetUnitAttr.defend < 0 and targetUnitAttr.defend < -20) then
-        damage = damage / (2 - cj.Pow(0.94, 20))
     end
     -- 攻击者的攻击里各种类型的占比
     local dmgRatio = 1 / #damageType
@@ -140,68 +130,79 @@ hskill.damage = function(options)
         end
         typeRatio[d] = typeRatio[d] + dmgRatio
     end
+    -- 计算硬直抵抗
+    punishEffectRatio = 0.99
+    if (targetUnitAttr.punish_oppose > 0) then
+        punishEffectRatio = punishEffectRatio - targetUnitAttr.punish_oppose * 0.01
+        if (punishEffectRatio < 0.100) then
+            punishEffectRatio = 0.100
+        end
+    end
+    if (isFixed == false) then
+        -- 判断无视装甲类型
+        if (breakArmorType ~= nil and #breakArmorType > 0) then
+            damageString = damageString .. "无视"
+            if (table.includes(CONST_BREAK_ARMOR_TYPE.defend.value, breakArmorType)) then
+                if (targetUnitAttr.defend > 0) then
+                    targetUnitAttr.defend = 0
+                end
+                damageString = damageString .. CONST_BREAK_ARMOR_TYPE.defend.label
+                damageStringColor = "f97373"
+            end
+            if (table.includes(CONST_BREAK_ARMOR_TYPE.resistance.value, breakArmorType)) then
+                if (targetUnitAttr.resistance > 0) then
+                    targetUnitAttr.resistance = 0
+                end
+                damageString = damageString .. CONST_BREAK_ARMOR_TYPE.resistance.label
+                damageStringColor = "6fa8dc"
+            end
+            if (table.includes(CONST_BREAK_ARMOR_TYPE.avoid.value, breakArmorType)) then
+                if (targetUnitAttr.avoid > 0) then
+                    targetUnitAttr.avoid = 0
+                end
+                damageString = damageString .. CONST_BREAK_ARMOR_TYPE.avoid.label
+                damageStringColor = "76a5af"
+            end
+            if (table.includes(CONST_BREAK_ARMOR_TYPE.invincible.value, breakArmorType)) then
+                if (targetUnitAttr.avoid > 0) then
+                    targetUnitAttr.avoid = 0
+                end
+                damageString = damageString .. CONST_BREAK_ARMOR_TYPE.invincible.label
+                damageStringColor = "ff4500"
+            end
+            -- @触发无视防御事件
+            hevent.triggerEvent(
+                sourceUnit,
+                CONST_EVENT.breakArmor,
+                {
+                    triggerUnit = sourceUnit,
+                    targetUnit = targetUnit,
+                    breakType = breakArmorType
+                }
+            )
+            -- @触发被无视防御事件
+            hevent.triggerEvent(
+                targetUnit,
+                CONST_EVENT.beBreakArmor,
+                {
+                    triggerUnit = targetUnit,
+                    sourceUnit = sourceUnit,
+                    breakType = breakArmorType
+                }
+            )
+        end
+        -- *重要* 地图平衡常数必须设定护甲因子为0，这里为了修正魔兽负护甲依然因子保持0.06的bug
+        -- 当护甲x为负时，最大-20,公式2-(1-a)^abs(x)
+        if (targetUnitAttr.defend < 0 and targetUnitAttr.defend >= -20) then
+            damage = damage / (2 - cj.Pow(0.94, math.abs(targetUnitAttr.defend)))
+        elseif (targetUnitAttr.defend < 0 and targetUnitAttr.defend < -20) then
+            damage = damage / (2 - cj.Pow(0.94, 20))
+        end
+    end
     -- 开始神奇的伤害计算
     lastDamage = damage
-    -- 判断无视装甲类型
-    if (breakArmorType ~= nil and #breakArmorType > 0) then
-        damageString = damageString .. "无视"
-        if (table.includes("defend", breakArmorType)) then
-            if (targetUnitAttr.defend > 0) then
-                targetUnitAttr.defend = 0
-            end
-            damageString = damageString .. "护甲"
-            damageStringColor = "f97373"
-        end
-        if (table.includes("resistance", breakArmorType)) then
-            if (targetUnitAttr.resistance > 0) then
-                targetUnitAttr.resistance = 0
-            end
-            damageString = damageString .. "魔抗"
-            damageStringColor = "6fa8dc"
-        end
-        if (table.includes("avoid", breakArmorType)) then
-            targetUnitAttr.avoid = -9999
-            damageString = damageString .. "回避"
-            damageStringColor = "76a5af"
-        end
-        -- @触发无视防御事件
-        hevent.triggerEvent(
-            sourceUnit,
-            CONST_EVENT.breakArmor,
-            {
-                triggerUnit = sourceUnit,
-                targetUnit = targetUnit,
-                breakType = breakArmorType
-            }
-        )
-        -- @触发被无视防御事件
-        hevent.triggerEvent(
-            targetUnit,
-            CONST_EVENT.beBreakArmor,
-            {
-                triggerUnit = targetUnit,
-                sourceUnit = sourceUnit,
-                breakType = breakArmorType
-            }
-        )
-    end
-    -- 如果遇到真实伤害，无法回避
-    if (table.includes(CONST_DAMAGE_TYPE.real, damageType) == true) then
-        targetUnitAttr.avoid = -99999
-        damageString = damageString .. CONST_DAMAGE_TYPE_MAP.real.label
-        damageStringColor = CONST_DAMAGE_TYPE_MAP.real.color
-    end
-    -- 如果遇到绝对伤害，无法回避，无视无敌
-    if (table.includes(CONST_DAMAGE_TYPE.absolute, damageType) == true) then
-        targetUnitAttr.avoid = -99999
-        damageString = damageString .. CONST_DAMAGE_TYPE_MAP.absolute.label
-        damageStringColor = CONST_DAMAGE_TYPE_MAP.absolute.color
-    end
     -- 计算回避 X 命中
-    if (damageKind == CONST_DAMAGE_KIND.attack
-        and targetUnitAttr.avoid - (sourceUnitAttr.aim or 0) > 0
-        and math.random(1, 100) <= targetUnitAttr.avoid - (sourceUnitAttr.aim or 0)) then
-        isAvoid = true
+    if (damageKind == CONST_DAMAGE_KIND.attack and targetUnitAttr.avoid - (sourceUnitAttr.aim or 0) > 0 and math.random(1, 100) <= targetUnitAttr.avoid - (sourceUnitAttr.aim or 0)) then
         lastDamage = 0
         htextTag.style(htextTag.create2Unit(targetUnit, "回避", 6.00, "5ef78e", 10, 1.00, 10.00), "scale", 0, 0.2)
         -- @触发回避事件
@@ -224,9 +225,8 @@ hskill.damage = function(options)
             }
         )
     end
-    -- 计算自然属性
     if (lastDamage > 0) then
-        -- 自然属性
+        -- 计算自然属性
         local tempNatural = {}
         for _, natural in ipairs(CONST_DAMAGE_TYPE_NATURE) do
             tempNatural[natural] = 10 + (sourceUnitAttr["natural_" .. natural] or 0) - targetUnitAttr["natural_" .. natural .. "_oppose"]
@@ -234,59 +234,62 @@ hskill.damage = function(options)
                 tempNatural[natural] = -100
             end
             if (table.includes(natural, damageType) and tempNatural[natural] ~= 0) then
-                lastDamagePercent = lastDamagePercent + typeRatio[natural] * tempNatural[natural] * 0.01
+                if (isFixed == false) then
+                    lastDamagePercent = lastDamagePercent + typeRatio[natural] * tempNatural[natural] * 0.01
+                end
                 damageString = damageString .. CONST_DAMAGE_TYPE_MAP[natural].label
                 damageStringColor = CONST_DAMAGE_TYPE_MAP[natural].color
             end
         end
-    end
-
-    -- 计算护甲
-    if (targetUnitAttr.defend ~= 0 and typeRatio[CONST_DAMAGE_TYPE.physical] ~= nil) then
-        local defendPercent = 0
-        if (targetUnitAttr.defend > 0) then
-            defendPercent = targetUnitAttr.defend / (targetUnitAttr.defend + 200)
-        else
-            local dfd = math.abs(targetUnitAttr.defend)
-            defendPercent = -dfd / (dfd * 0.33 + 100)
+        if (isFixed == false) then
+            -- 计算护甲
+            if (targetUnitAttr.defend ~= 0 and typeRatio[CONST_DAMAGE_TYPE.physical] ~= nil) then
+                local defendPercent = 0
+                if (targetUnitAttr.defend > 0) then
+                    defendPercent = targetUnitAttr.defend / (targetUnitAttr.defend + 200)
+                else
+                    local dfd = math.abs(targetUnitAttr.defend)
+                    defendPercent = -dfd / (dfd * 0.33 + 100)
+                end
+                defendPercent = defendPercent * typeRatio[CONST_DAMAGE_TYPE.physical]
+                lastDamagePercent = lastDamagePercent - defendPercent
+            end
+            -- 计算魔抗
+            if (targetUnitAttr.resistance ~= 0 and typeRatio[CONST_DAMAGE_TYPE.magic] ~= nil) then
+                local resistancePercent = 0
+                if (targetUnitAttr.resistance >= 100) then
+                    resistancePercent = -1
+                else
+                    resistancePercent = -targetUnitAttr.resistance * 0.01
+                end
+                resistancePercent = resistancePercent * typeRatio[CONST_DAMAGE_TYPE.magic]
+                lastDamagePercent = lastDamagePercent - resistancePercent
+            end
+            -- 计算伤害增幅
+            if (lastDamage > 0 and sourceUnit ~= nil and sourceUnitAttr.damage_extent ~= 0) then
+                lastDamagePercent = lastDamagePercent + sourceUnitAttr.damage_extent * 0.01
+            end
         end
-        defendPercent = defendPercent * typeRatio[CONST_DAMAGE_TYPE.physical]
-        lastDamagePercent = lastDamagePercent - defendPercent
-    end
-
-    -- 计算魔抗
-    if (targetUnitAttr.resistance ~= 0 and typeRatio[CONST_DAMAGE_TYPE.magic] ~= nil) then
-        local resistancePercent = 0
-        if (targetUnitAttr.resistance >= 100) then
-            resistancePercent = -1
-        else
-            resistancePercent = -targetUnitAttr.resistance * 0.01
-        end
-        resistancePercent = resistancePercent * typeRatio[CONST_DAMAGE_TYPE.magic]
-        lastDamagePercent = lastDamagePercent - resistancePercent
-    end
-
-    -- 计算伤害增幅
-    if (lastDamage > 0 and sourceUnit ~= nil and sourceUnitAttr.damage_extent ~= 0) then
-        lastDamagePercent = lastDamagePercent + sourceUnitAttr.damage_extent * 0.01
-    end
-    -- 合计 lastDamagePercent
-    lastDamage = lastDamage * (1 + lastDamagePercent)
-    -- 计算减伤
-    if (targetUnitAttr.toughness > 0) then
-        if (targetUnitAttr.toughness >= lastDamage) then
-            --@当减伤100%以上时触发事件,触发极限减伤抵抗事件
-            hevent.triggerEvent(
-                targetUnit,
-                CONST_EVENT.limitToughness,
-                {
-                    triggerUnit = targetUnit,
-                    sourceUnit = sourceUnit
-                }
-            )
-            lastDamage = 0
-        else
-            lastDamage = lastDamage - targetUnitAttr.toughness
+        -- 合计 lastDamagePercent
+        lastDamage = lastDamage * (1 + lastDamagePercent)
+        if (isFixed == false) then
+            -- 计算减伤
+            if (targetUnitAttr.toughness > 0) then
+                if (targetUnitAttr.toughness >= lastDamage) then
+                    --@当减伤100%以上时触发事件,触发极限减伤抵抗事件
+                    hevent.triggerEvent(
+                        targetUnit,
+                        CONST_EVENT.limitToughness,
+                        {
+                            triggerUnit = targetUnit,
+                            sourceUnit = sourceUnit
+                        }
+                    )
+                    lastDamage = 0
+                else
+                    lastDamage = lastDamage - targetUnitAttr.toughness
+                end
+            end
         end
     end
     -- 上面都是先行计算
@@ -597,7 +600,7 @@ hskill.damage = function(options)
                                     percent = b.percent,
                                     sourceUnit = sourceUnit,
                                     effect = b.effect,
-                                    damageKind = CONST_DAMAGE_KIND.special,
+                                    damageKind = CONST_DAMAGE_KIND.unknown,
                                     damageType = { CONST_DAMAGE_TYPE.physical }
                                 }
                             )
@@ -613,7 +616,7 @@ hskill.damage = function(options)
                                     percent = b.percent,
                                     sourceUnit = sourceUnit,
                                     effect = b.effect,
-                                    damageKind = CONST_DAMAGE_KIND.special,
+                                    damageKind = CONST_DAMAGE_KIND.unknown,
                                     damageType = { CONST_DAMAGE_TYPE.magic }
                                 }
                             )
@@ -630,7 +633,7 @@ hskill.damage = function(options)
                                     radius = b.radius,
                                     sourceUnit = sourceUnit,
                                     effect = b.effect,
-                                    damageKind = CONST_DAMAGE_KIND.special,
+                                    damageKind = CONST_DAMAGE_KIND.unknown,
                                     damageType = { CONST_DAMAGE_TYPE.common }
                                 }
                             )
@@ -644,7 +647,7 @@ hskill.damage = function(options)
                                 damage = b.val or 0,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.special,
+                                damageKind = CONST_DAMAGE_KIND.unknown,
                                 damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
                             }
                         )
@@ -658,7 +661,7 @@ hskill.damage = function(options)
                                 during = b.during,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.special,
+                                damageKind = CONST_DAMAGE_KIND.unknown,
                                 damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
                             }
                         )
@@ -672,7 +675,7 @@ hskill.damage = function(options)
                                 during = b.during,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.special,
+                                damageKind = CONST_DAMAGE_KIND.unknown,
                                 damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
                             }
                         )
@@ -686,7 +689,7 @@ hskill.damage = function(options)
                                 during = b.during,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.special,
+                                damageKind = CONST_DAMAGE_KIND.unknown,
                                 damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
                             }
                         )
@@ -700,7 +703,7 @@ hskill.damage = function(options)
                                 during = b.during,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.special,
+                                damageKind = CONST_DAMAGE_KIND.unknown,
                                 damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
                             }
                         )
@@ -715,7 +718,7 @@ hskill.damage = function(options)
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
                                 effectSingle = b.effectSingle,
-                                damageKind = CONST_DAMAGE_KIND.special,
+                                damageKind = CONST_DAMAGE_KIND.unknown,
                                 damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
                             }
                         )
@@ -734,7 +737,7 @@ hskill.damage = function(options)
                                 whichUnit = targetUnit,
                                 prevUnit = sourceUnit,
                                 sourceUnit = sourceUnit,
-                                damageKind = CONST_DAMAGE_KIND.special,
+                                damageKind = CONST_DAMAGE_KIND.unknown,
                                 damageType = b.damageType or { CONST_DAMAGE_TYPE.common, CONST_DAMAGE_TYPE.thunder }
                             }
                         )
@@ -750,7 +753,7 @@ hskill.damage = function(options)
                                 high = b.high,
                                 during = b.during,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.special,
+                                damageKind = CONST_DAMAGE_KIND.unknown,
                                 damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
                             }
                         )
@@ -765,26 +768,28 @@ end
 --- 特别适用于例如中毒，灼烧等效果
 --[[
     options = {
-        whichUnit = [unit], --受伤单位（必须有）
+        targetUnit = [unit], --受伤单位（必须有）
         frequency = 0, --伤害频率（必须有）
         times = 0, --伤害次数（必须有）
+        extraInfluence = [function],
+        -- 其他的和伤害函数一致，例如：
         effect = "", --特效（可选）
         damage = 0, --单次伤害（大于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
-        damageType = {CONST_DAMAGE_TYPE.real} --伤害的类型,注意是table（可选）
-        extraInfluence = [function],
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = CONST_DAMAGE_TYPE, --伤害的类型,注意是table（可选）
+        isFixed = false, --是否固伤（可选）
     }
 ]]
 hskill.damageStep = function(options)
     local times = options.times or 0
     local frequency = options.frequency or 0
-    local damage = options.damage or 0
-    if (options.whichUnit == nil) then
-        print_err("hskill.damageStep:-whichUnit")
+    options.damage = options.damage or 0
+    if (options.targetUnit == nil) then
+        print_err("hskill.damageStep:-targetUnit")
         return
     end
-    if (times <= 0 or damage <= 0) then
+    if (times <= 0 or options.damage <= 0) then
         print_err("hskill.damageStep:-times -damage")
         return
     end
@@ -793,18 +798,9 @@ hskill.damageStep = function(options)
         return
     end
     if (times <= 1) then
-        hskill.damage(
-            {
-                sourceUnit = options.sourceUnit,
-                targetUnit = options.whichUnit,
-                effect = options.effect,
-                damage = damage,
-                damageKind = options.damageKind,
-                damageType = options.damageType
-            }
-        )
+        hskill.damage(options)
         if (type(options.extraInfluence) == "function") then
-            options.extraInfluence(eu)
+            options.extraInfluence(options.targetUnit)
         end
     else
         local ti = 0
@@ -816,18 +812,9 @@ hskill.damageStep = function(options)
                     htime.delTimer(t)
                     return
                 end
-                hskill.damage(
-                    {
-                        sourceUnit = options.sourceUnit,
-                        targetUnit = options.whichUnit,
-                        effect = options.effect,
-                        damage = damage,
-                        damageKind = options.damageKind,
-                        damageType = options.damageType
-                    }
-                )
+                hskill.damage(options)
                 if (type(options.extraInfluence) == "function") then
-                    options.extraInfluence(eu)
+                    options.extraInfluence(options.targetUnit)
                 end
             end
         )
@@ -849,8 +836,9 @@ end
         y = [point], --目标坐标Y（可选）
         damage = 0, --伤害（可选，但是这里可以等于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
-        damageType = {CONST_DAMAGE_TYPE.real} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = CONST_DAMAGE_TYPE, --伤害的类型,注意是table（可选）
+        isFixed = false, --是否固伤（可选）
         extraInfluence = [function],
     }
 ]]
@@ -908,7 +896,8 @@ hskill.damageRange = function(options)
                         effect = options.effectSingle,
                         damage = damage,
                         damageKind = options.damageKind,
-                        damageType = options.damageType
+                        damageType = options.damageType,
+                        isFixed = options.isFixed,
                     }
                 )
                 if (type(options.extraInfluence) == "function") then
@@ -944,7 +933,8 @@ hskill.damageRange = function(options)
                                 effect = options.effectSingle,
                                 damage = damage,
                                 damageKind = options.damageKind,
-                                damageType = options.damageType
+                                damageType = options.damageType,
+                                isFixed = options.isFixed,
                             }
                         )
                         if (type(options.extraInfluence) == "function") then
@@ -967,8 +957,9 @@ end
         whichGroup = [group], --单位组（必须有）
         damage = 0, --伤害（可选，但是这里可以等于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageKind = CONST_DAMAGE_KIND.skill, --伤害的种类（可选）
-        damageType = {CONST_DAMAGE_TYPE.real}, --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = CONST_DAMAGE_TYPE, --伤害的类型,注意是table（可选）
+        isFixed = false, --是否固伤（可选）
         extraInfluence = [function],
     }
 ]]
@@ -995,7 +986,8 @@ hskill.damageGroup = function(options)
                         effect = options.effect,
                         damage = damage,
                         damageKind = options.damageKind,
-                        damageType = options.damageType
+                        damageType = options.damageType,
+                        isFixed = options.isFixed,
                     }
                 )
                 if (type(options.extraInfluence) == "function") then
@@ -1023,7 +1015,8 @@ hskill.damageGroup = function(options)
                                 effect = options.effect,
                                 damage = damage,
                                 damageKind = options.damageKind,
-                                damageType = options.damageType
+                                damageType = options.damageType,
+                                isFixed = options.isFixed,
                             }
                         )
                         if (type(options.extraInfluence) == "function") then
