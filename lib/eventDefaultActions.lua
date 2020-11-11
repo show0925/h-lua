@@ -912,6 +912,9 @@ hevent_default_actions = {
         end),
         use = cj.Condition(function()
             local u = cj.GetTriggerUnit()
+            if (his.silent(u)) then
+                return
+            end
             local it = cj.GetManipulatedItem()
             local itId = hitem.getId(it)
             local perishable = hitem.getIsPerishable(itId)
@@ -931,12 +934,16 @@ hevent_default_actions = {
             end
         end),
         use_s = cj.Condition(function()
+            local u = cj.GetTriggerUnit()
+            if (his.silent(u)) then
+                return
+            end
             local skillId = string.id2char(cj.GetSpellAbilityId())
             local itId = hslk.item_cooldown_ids[skillId] or nil
             if (itId == nil) then
                 return
             end
-            hunit.set(cj.GetTriggerUnit(), "item-use-" .. itId, {
+            hunit.set(u, "item-use-" .. itId, {
                 triggerSkill = skillId,
                 targetUnit = cj.GetSpellTargetUnit(),
                 targetLoc = cj.GetSpellTargetLoc()

@@ -24,6 +24,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
             "luck",
             "invincible",
             "damage_extent",
+            "damage_decrease",
             "damage_rebound",
             "cure",
             "gold_ratio",

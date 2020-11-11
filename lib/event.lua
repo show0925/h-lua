@@ -401,6 +401,15 @@ hevent.onBeDamage = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.beDamage, callFunc)
 end
 
+--- 极限减伤抵抗（完全减免）
+---@alias onDamageResistance fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",resistance: "抵扣伤害值"}):void
+---@param whichUnit userdata
+---@param callFunc onDamageResistance | "function(evtData) end"
+---@return any
+hevent.onDamageResistance = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.damageResistance, callFunc)
+end
+
 --- 回避攻击成功
 ---@alias onAvoid fun(evtData: {triggerUnit:"触发单位",attacker:"攻击单位"}):void
 ---@param whichUnit userdata
@@ -669,15 +678,6 @@ end
 ---@return any
 hevent.onBeSpilt = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.beSpilt, callFunc)
-end
-
---- 极限减伤抵抗（减伤不足以抵扣）
----@alias onLimitToughness fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位"}):void
----@param whichUnit userdata
----@param callFunc onLimitToughness | "function(evtData) end"
----@return any
-hevent.onLimitToughness = function(whichUnit, callFunc)
-    return hevent.registerEvent(whichUnit, CONST_EVENT.limitToughness, callFunc)
 end
 
 --- 吸血时

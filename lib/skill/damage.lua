@@ -274,20 +274,30 @@ hskill.damage = function(options)
         lastDamage = lastDamage * (1 + lastDamagePercent)
         if (isFixed == false) then
             -- 计算减伤
-            if (targetUnitAttr.toughness > 0) then
-                if (targetUnitAttr.toughness >= lastDamage) then
+            local resistance = 0
+            -- 固定值减少
+            if (targetUnitAttr.damage_reduction > 0) then
+                resistance = resistance + targetUnitAttr.damage_reduction
+            end
+            -- 百分比减少
+            if (targetUnitAttr.damage_decrease > 0) then
+                resistance = resistance + lastDamage * targetUnitAttr.damage_decrease * 0.01
+            end
+            if (resistance > 0) then
+                if (resistance >= lastDamage) then
                     --@当减伤100%以上时触发事件,触发极限减伤抵抗事件
                     hevent.triggerEvent(
                         targetUnit,
-                        CONST_EVENT.limitToughness,
+                        CONST_EVENT.damageResistance,
                         {
                             triggerUnit = targetUnit,
-                            sourceUnit = sourceUnit
+                            sourceUnit = sourceUnit,
+                            resistance = resistance,
                         }
                     )
                     lastDamage = 0
                 else
-                    lastDamage = lastDamage - targetUnitAttr.toughness
+                    lastDamage = lastDamage - resistance
                 end
             end
         end
