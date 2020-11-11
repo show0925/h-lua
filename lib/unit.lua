@@ -374,7 +374,7 @@ hunit.embed = function(u, options)
         end)
     end
     -- 信使事件
-    local slk = hslk.id2Value.unit[id]
+    local slk = hslk.i2v.unit[id]
     if (slk ~= nil) then
         if (slk.UNIT_TYPE == "courier_hero" or slk.UNIT_TYPE == "courier") then
             if (slk.COURIER_AUTO_SKILL == true) then
@@ -593,6 +593,16 @@ end
 ---@return string
 hunit.getId = function(u)
     return string.id2char(cj.GetUnitTypeId(u))
+end
+
+--- 根据名称获取单位ID字符串
+---@param name string
+---@return string
+hunit.n2i = function(name)
+    if (hslk.n2v.unit[name]) then
+        return hslk.n2v.unit[name]._id or nil
+    end
+    return nil
 end
 
 --- 获取单位的名称

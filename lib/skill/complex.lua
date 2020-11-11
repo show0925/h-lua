@@ -36,41 +36,31 @@ hskill.knocking = function(options)
         heffect.toUnit(effect, targetUnit, 0.5)
         --暴！
         local val = damage * percent * 0.01
-        hskill.damage(
-            {
-                sourceUnit = options.sourceUnit,
-                targetUnit = targetUnit,
-                damage = val,
-                damageString = "物暴",
-                damageStringColor = "ef3215",
-                damageKind = damageKind,
-                damageType = damageType
-            }
-        )
+        hskill.damage({
+            sourceUnit = options.sourceUnit,
+            targetUnit = targetUnit,
+            damage = val,
+            damageString = "物暴",
+            damageStringColor = "ef3215",
+            damageKind = damageKind,
+            damageType = damageType
+        })
         --@触发物理暴击事件
-        hevent.triggerEvent(
-            options.sourceUnit,
-            CONST_EVENT.knocking,
-            {
-                triggerUnit = options.sourceUnit,
-                targetUnit = targetUnit,
-                damage = val,
-                odds = odds,
-                percent = percent
-            }
-        )
+        hevent.triggerEvent(options.sourceUnit, CONST_EVENT.knocking, {
+            triggerUnit = options.sourceUnit,
+            targetUnit = targetUnit,
+            damage = val,
+            odds = odds,
+            percent = percent
+        })
         --@触发被物理暴击事件
-        hevent.triggerEvent(
-            targetUnit,
-            CONST_EVENT.beKnocking,
-            {
-                triggerUnit = options.sourceUnit,
-                sourceUnit = targetUnit,
-                damage = val,
-                odds = odds,
-                percent = percent
-            }
-        )
+        hevent.triggerEvent(targetUnit, CONST_EVENT.beKnocking, {
+            triggerUnit = options.sourceUnit,
+            sourceUnit = targetUnit,
+            damage = val,
+            odds = odds,
+            percent = percent
+        })
     end
 end
 

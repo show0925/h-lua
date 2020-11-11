@@ -220,8 +220,8 @@ hitem.getSlk = function(itOrId)
     else
         itId = hitem.getId(itOrId)
     end
-    if (hslk.id2Value.item[itId] ~= nil) then
-        slk = hslk.id2Value.item[itId]
+    if (hslk.i2v.item[itId] ~= nil) then
+        slk = hslk.i2v.item[itId]
     end
     return slk
 end
@@ -561,7 +561,7 @@ hitem.synthesis = function(whichUnit, items)
     -- 处理结果物品
     local final = {}
     for _, itId in ipairs(itemKinds) do
-        local slk = hslk.id2Value.item[itId]
+        local slk = hslk.i2v.item[itId]
         if (slk ~= nil) then
             local overlie = slk.OVERLIE or 1
             while (itemQuantity[itId] > 0) do
@@ -679,9 +679,9 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
             hitem.create({ itemId = id, charges = 1, x = x, y = y, during = 0 })
         end
     elseif (separateType == "formula") then
-        local originSlk = hslk.id2Value.item[id]
+        local originSlk = hslk.i2v.item[id]
         if (originSlk ~= nil and originSlk.SHADOW == true) then
-            id = hslk.id2Value.item[originSlk.SHADOW_ID].ITEM_ID
+            id = hslk.i2v.item[originSlk.SHADOW_ID].ITEM_ID
         end
         if (hslk.synthesis.profit[id] == nil) then
             return "物品不存在公式，无法拆分"
@@ -700,7 +700,7 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
                     end
                 else
                     local qty = frag[2]
-                    local slk = hslk.id2Value.item[flagId]
+                    local slk = hslk.i2v.item[flagId]
                     if (slk ~= nil) then
                         local overlie = slk.OVERLIE or 1
                         while (qty > 0) do
@@ -878,7 +878,7 @@ hitem.detector = function(whichUnit, originItem)
     end
     if (#extra > 0) then
         for _, e in ipairs(extra) do
-            local slk = hslk.id2Value.item[e.id]
+            local slk = hslk.i2v.item[e.id]
             local id = slk.ITEM_ID
             if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
                 id = slk.SHADOW_ID

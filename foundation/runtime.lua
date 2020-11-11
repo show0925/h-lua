@@ -2,35 +2,35 @@ hRuntime = {
     -- 注册runtime的数据
     register = {
         unit = function(json)
-            hslk.id2Value.unit[json._id] = json
-            hslk.name2Value.unit[json._name] = json
+            hslk.i2v.unit[json._id] = json
+            hslk.n2v.unit[json._name] = json
         end,
         item = function(json)
-            hslk.id2Value.item[json._id] = json
-            hslk.name2Value.item[json._name] = json
-            if (json.cooldownID ~= nil) then
-                hslk.item_cooldown_ids[json.cooldownID] = json.ITEM_ID
+            hslk.i2v.item[json._id] = json
+            hslk.n2v.item[json._name] = json
+            if (slk.item[json._id] ~= nil and slk.item[json._id].cooldownID ~= nil) then
+                hslk.item_cooldown_ids[slk.item[json._id].cooldownID] = json._id
             end
-            if (json.RING ~= nil) then
-                json.RING.RING_ID = json.ITEM_ID
-                json.RING.Name = json.Name
-                hslk.id2Value.ring[json.ITEM_ID] = json.RING
-                hslk.name2Value.ring[json.Name] = json.RING
+            if (json._ring ~= nil) then
+                json._ring._id = json._id
+                json._ring.Name = json.Name
+                hslk.i2v.ring[json._ring._id] = json._ring
+                hslk.n2v.ring[json._ring.Name] = json._ring
             end
         end,
         ability = function(json)
-            hslk.id2Value.ability[json._id] = json
-            hslk.name2Value.ability[json._name] = json
-            if (json.RING ~= nil) then
-                json.RING.RING_ID = json.ABILITY_ID
-                json.RING.Name = json.Name
-                hslk.id2Value.ring[json._id] = json.RING
-                hslk.name2Value.ring[json._name] = json.RING
+            hslk.i2v.ability[json._id] = json
+            hslk.n2v.ability[json._name] = json
+            if (json._ring ~= nil) then
+                json._ring._id = json._id
+                json._ring.Name = json.Name
+                hslk.i2v.ring[json._ring._id] = json._ring
+                hslk.n2v.ring[json._ring.Name] = json._ring
             end
         end,
         technology = function(json)
-            hslk.id2Value.technology[json._id] = json
-            hslk.name2Value.technology[json._name] = json
+            hslk.i2v.technology[json._id] = json
+            hslk.n2v.technology[json._name] = json
         end,
         synthesis = function(json)
             -- 数据格式化
@@ -38,12 +38,12 @@ hRuntime = {
             local jsonFragment = {}
             for k, v in ipairs(json.fragment) do
                 json.fragment[k][2] = math.floor(v[2])
-                local fragmentId = hslk.name2Value.item[v[1]]._id or nil
+                local fragmentId = hslk.n2v.item[v[1]]._id or nil
                 if (fragmentId ~= nil) then
                     table.insert(jsonFragment, { fragmentId, v[2] })
                 end
             end
-            local profitId = hslk.name2Value.item[json.profit[1]]._id or nil
+            local profitId = hslk.n2v.item[json.profit[1]]._id or nil
             if (profitId == nil) then
                 return
             end

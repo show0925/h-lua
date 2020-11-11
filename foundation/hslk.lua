@@ -9,25 +9,19 @@ hslk = {
     unit_hero_tavern = 0, -- 酒馆id
     unit_hero_tavern_token = 0, -- 酒馆选择马甲id（视野）
     unit_hero_death_token = 0,
-    id2Value = {
+    i2v = {
         unit = {},
         item = {},
         ability = {},
         technology = {},
         ring = {},
     },
-    name2Value = {
+    n2v = {
         unit = {},
         item = {},
         ability = {},
         technology = {},
         ring = {},
-    },
-    class_group = {
-        unit = {},
-        item = {},
-        ability = {},
-        technology = {},
     },
     attr = {
         agi_green = {

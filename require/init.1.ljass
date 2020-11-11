@@ -1,6 +1,6 @@
 ?>
 
-library zzzSlk1 initializer Init
+library A initializer Init
 
     private function Init takes nothing returns nothing
         local integer key1 = 0

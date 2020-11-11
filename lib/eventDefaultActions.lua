@@ -583,7 +583,7 @@ hevent_default_actions = {
                 return
             end
             abilityId = string.id2char(abilityId)
-            local slk = hslk.id2Value.ability[abilityId]
+            local slk = hslk.i2v.ability[abilityId]
             if (slk == nil) then
                 return
             end
@@ -619,9 +619,9 @@ hevent_default_actions = {
                 end
                 local id = hitem.getId(it)
                 local name = hitem.getName(it)
-                local originSlk = hslk.id2Value.item[id]
+                local originSlk = hslk.i2v.item[id]
                 if (originSlk ~= nil and originSlk.SHADOW == true) then
-                    id = hslk.id2Value.item[originSlk.SHADOW_ID].ITEM_ID
+                    id = hslk.i2v.item[originSlk.SHADOW_ID].ITEM_ID
                 end
                 local charges = hitem.getCharges(it)
                 local formulas = hslk.synthesis.profit[id]

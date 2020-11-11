@@ -45,8 +45,8 @@ hskill.getSlk = function(abilId)
     if (type(abilId) == "number") then
         abilityId = string.id2char(abilId)
     end
-    if (hslk.id2Value.ability[abilityId] ~= nil) then
-        slk = hslk.id2Value.ability[abilityId]
+    if (slk.ability[abilityId] ~= nil) then
+        slk = slk.ability[abilityId]
     end
     return slk
 end
@@ -55,7 +55,10 @@ end
 ---@param abilId string|number
 ---@return table|nil
 hskill.getAttribute = function(abilId)
-    local slk = hskill.getSlk(abilId)
+    if (type(abilId) == "number") then
+        abilId = string.id2char(abilId)
+    end
+    local slk = hslk.i2v.ability[abilId]
     if (slk ~= nil) then
         return slk._attr
     else
