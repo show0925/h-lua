@@ -359,7 +359,7 @@ end
 hitem.getAttribute = function(itOrId)
     local slk = hitem.getSlk(itOrId)
     if (slk ~= nil) then
-        return slk.ATTR or {}
+        return slk._attr or {}
     else
         return {}
     end

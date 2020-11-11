@@ -71,11 +71,11 @@ slkHelper.itemUbertip = function(v)
     end
     -- 作为零件
     if (slkHelper.item.synthesisMapping.fragment[v.Name] ~= nil
-            and #slkHelper.item.synthesisMapping.fragment[v.Name] > 0) then
+        and #slkHelper.item.synthesisMapping.fragment[v.Name] > 0) then
         table.insert(d, hColor.mixed("可以合成：" .. string.implode(
-                '、',
-                slkHelper.item.synthesisMapping.fragment[v.Name]),
-                slkHelper.conf.color.itemFragment
+            '、',
+            slkHelper.item.synthesisMapping.fragment[v.Name]),
+            slkHelper.conf.color.itemFragment
         ))
     end
     -- 合成公式
