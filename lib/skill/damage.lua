@@ -594,14 +594,15 @@ hskill.damage = function(options)
                         if (table.includes(CONST_DAMAGE_TYPE.physical, damageType) == true) then
                             hskill.knocking(
                                 {
-                                    whichUnit = targetUnit,
+                                    targetUnit = targetUnit,
                                     odds = b.odds,
                                     damage = typeRatio[CONST_DAMAGE_TYPE.physical] * damage,
                                     percent = b.percent,
                                     sourceUnit = sourceUnit,
                                     effect = b.effect,
-                                    damageKind = CONST_DAMAGE_KIND.unknown,
-                                    damageType = { CONST_DAMAGE_TYPE.physical }
+                                    damageType = b.damageType or { CONST_DAMAGE_TYPE.physical },
+                                    damageKind = damageKind,
+                                    isFixed = true,
                                 }
                             )
                         end
@@ -610,14 +611,15 @@ hskill.damage = function(options)
                         if (table.includes(CONST_DAMAGE_TYPE.magic, damageType) == true) then
                             hskill.violence(
                                 {
-                                    whichUnit = targetUnit,
+                                    targetUnit = targetUnit,
                                     odds = b.odds,
                                     damage = typeRatio[CONST_DAMAGE_TYPE.magic] * damage,
                                     percent = b.percent,
                                     sourceUnit = sourceUnit,
                                     effect = b.effect,
-                                    damageKind = CONST_DAMAGE_KIND.unknown,
-                                    damageType = { CONST_DAMAGE_TYPE.magic }
+                                    damageType = b.damageType or { CONST_DAMAGE_TYPE.magic },
+                                    damageKind = damageKind,
+                                    isFixed = true,
                                 }
                             )
                         end
@@ -626,15 +628,16 @@ hskill.damage = function(options)
                         if (CONST_DAMAGE_KIND.attack == damageKind) then
                             hskill.split(
                                 {
-                                    whichUnit = targetUnit,
+                                    targetUnit = targetUnit,
                                     odds = b.odds,
                                     damage = damage,
                                     percent = b.percent,
                                     radius = b.radius,
                                     sourceUnit = sourceUnit,
                                     effect = b.effect,
-                                    damageKind = CONST_DAMAGE_KIND.unknown,
-                                    damageType = { CONST_DAMAGE_TYPE.common }
+                                    damageType = b.damageType or { CONST_DAMAGE_TYPE.common },
+                                    damageKind = damageKind,
+                                    isFixed = true,
                                 }
                             )
                         end
@@ -642,69 +645,74 @@ hskill.damage = function(options)
                         --打断
                         hskill.broken(
                             {
-                                whichUnit = targetUnit,
+                                targetUnit = targetUnit,
                                 odds = b.odds,
                                 damage = b.val or 0,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.unknown,
-                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
+                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common },
+                                damageKind = damageKind,
+                                isFixed = true,
                             }
                         )
                     elseif (b.attr == "swim") then
                         --眩晕
                         hskill.swim(
                             {
-                                whichUnit = targetUnit,
+                                targetUnit = targetUnit,
                                 odds = b.odds,
                                 damage = b.val or 0,
                                 during = b.during,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.unknown,
-                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
+                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common },
+                                damageKind = damageKind,
+                                isFixed = true,
                             }
                         )
                     elseif (b.attr == "silent") then
                         --沉默
                         hskill.silent(
                             {
-                                whichUnit = targetUnit,
+                                targetUnit = targetUnit,
                                 odds = b.odds,
                                 damage = b.val or 0,
                                 during = b.during,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.unknown,
-                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
+                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common },
+                                damageKind = damageKind,
+                                isFixed = true,
                             }
                         )
                     elseif (b.attr == "unarm") then
                         --缴械
                         hskill.unarm(
                             {
-                                whichUnit = targetUnit,
+                                targetUnit = targetUnit,
                                 odds = b.odds,
                                 damage = b.val or 0,
                                 during = b.during,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.unknown,
-                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
+                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common },
+                                damageKind = damageKind,
+                                isFixed = true,
                             }
                         )
                     elseif (b.attr == "fetter") then
                         --缚足
                         hskill.fetter(
                             {
-                                whichUnit = targetUnit,
+                                targetUnit = targetUnit,
                                 odds = b.odds,
                                 damage = b.val or 0,
                                 during = b.during,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.unknown,
-                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
+                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common },
+                                damageKind = damageKind,
+                                isFixed = true,
                             }
                         )
                     elseif (b.attr == "bomb") then
@@ -714,12 +722,13 @@ hskill.damage = function(options)
                                 odds = b.odds,
                                 damage = b.val or 0,
                                 radius = b.radius,
-                                whichUnit = targetUnit,
+                                targetUnit = targetUnit,
                                 sourceUnit = sourceUnit,
                                 effect = b.effect,
                                 effectSingle = b.effectSingle,
-                                damageKind = CONST_DAMAGE_KIND.unknown,
-                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
+                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common },
+                                damageKind = damageKind,
+                                isFixed = true,
                             }
                         )
                     elseif (b.attr == "lightning_chain") then
@@ -734,11 +743,12 @@ hskill.damage = function(options)
                                 radius = b.radius or 500,
                                 effect = b.effect,
                                 isRepeat = false,
-                                whichUnit = targetUnit,
+                                targetUnit = targetUnit,
                                 prevUnit = sourceUnit,
                                 sourceUnit = sourceUnit,
-                                damageKind = CONST_DAMAGE_KIND.unknown,
-                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common, CONST_DAMAGE_TYPE.thunder }
+                                damageType = b.damageType or { CONST_DAMAGE_TYPE.thunder },
+                                damageKind = damageKind,
+                                isFixed = true,
                             }
                         )
                     elseif (b.attr == "crack_fly") then
@@ -747,14 +757,15 @@ hskill.damage = function(options)
                             {
                                 odds = b.odds,
                                 damage = b.val or 0,
-                                whichUnit = targetUnit,
+                                targetUnit = targetUnit,
                                 sourceUnit = sourceUnit,
                                 distance = b.distance,
                                 high = b.high,
                                 during = b.during,
                                 effect = b.effect,
-                                damageKind = CONST_DAMAGE_KIND.unknown,
-                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common }
+                                damageType = b.damageType or { CONST_DAMAGE_TYPE.common },
+                                damageKind = damageKind,
+                                isFixed = true,
                             }
                         )
                     end

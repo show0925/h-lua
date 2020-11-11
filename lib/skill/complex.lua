@@ -1,19 +1,20 @@
 --[[
     物理暴击
     options = {
-        whichUnit = unit, --目标单位，必须
+        targetUnit = unit, --目标单位，必须
         odds = 0, --几率，必须
         damage = 0, --原始伤害，必须
         percent = 0, --暴击比例，必须
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE.physical} --伤害的类型,注意是table（可选）
+        isFixed = false, --是否固伤（可选）
     }
 ]]
 hskill.knocking = function(options)
-    if (options.whichUnit == nil) then
-        print_err("knocking: -whichUnit")
+    if (options.targetUnit == nil) then
+        print_err("knocking: -targetUnit")
         return
     end
     local odds = options.odds or 0
@@ -23,14 +24,13 @@ hskill.knocking = function(options)
         print_err("knocking: -odds -damage -percent")
         return
     end
-    local targetUnit = options.whichUnit
+    local targetUnit = options.targetUnit
     local targetOppose = hattr.get(targetUnit, "knocking_oppose")
     odds = odds - targetOppose
     if (odds <= 0) then
         return
     end
     if (math.random(1, 100) <= odds) then
-        local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
         local damageType = options.damageType or { CONST_DAMAGE_TYPE.physical }
         local effect = options.effect or "war3mapImported\\eff_crit.mdl"
         heffect.toUnit(effect, targetUnit, 0.5)
@@ -42,8 +42,9 @@ hskill.knocking = function(options)
             damage = val,
             damageString = "物暴",
             damageStringColor = "ef3215",
-            damageKind = damageKind,
-            damageType = damageType
+            damageKind = options.damageKind,
+            damageType = damageType,
+            isFixed = options.isFixed,
         })
         --@触发物理暴击事件
         hevent.triggerEvent(options.sourceUnit, CONST_EVENT.knocking, {
@@ -67,7 +68,7 @@ end
 --[[
     魔法暴击
     options = {
-        whichUnit = unit, --目标单位，必须
+        targetUnit = unit, --目标单位，必须
         odds = 100, --几率，必须
         damage = 0, --原始伤害，必须
         percent = 0, --暴击比例，必须
@@ -75,11 +76,12 @@ end
         effect = nil, --特效，可选
         damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE.magic} --伤害的类型,注意是table（可选）
+        isFixed = false, --是否固伤（可选）
     }
 ]]
 hskill.violence = function(options)
-    if (options.whichUnit == nil) then
-        print_err("violence: -whichUnit")
+    if (options.targetUnit == nil) then
+        print_err("violence: -targetUnit")
         return
     end
     local odds = options.odds or 0
@@ -89,14 +91,13 @@ hskill.violence = function(options)
         print_err("violence: -odds -damage -percent")
         return
     end
-    local targetUnit = options.whichUnit
+    local targetUnit = options.targetUnit
     local targetOppose = hattr.get(targetUnit, "violence_oppose")
     odds = odds - targetOppose
     if (odds <= 0) then
         return
     end
     if (math.random(1, 100) <= odds) then
-        local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
         local damageType = options.damageType or { CONST_DAMAGE_TYPE.magic }
         local effect = options.effect or "war3mapImported\\eff_demon_explosion.mdl"
         heffect.toUnit(effect, targetUnit, 0.5)
@@ -109,8 +110,9 @@ hskill.violence = function(options)
                 damage = val,
                 damageString = "魔爆",
                 damageStringColor = "15bcef",
-                damageKind = damageKind,
-                damageType = damageType
+                damageKind = options.damageKind,
+                damageType = damageType,
+                isFixed = options.isFixed,
             }
         )
         --@触发魔法暴击事件
@@ -143,7 +145,7 @@ end
 --[[
     分裂
     options = {
-        whichUnit = unit, --目标单位，必须
+        targetUnit = unit, --目标单位，必须
         odds = 100, --几率，必须
         damage = 0, --原始伤害，必须
         percent = 0, --几率比例，必须
@@ -155,8 +157,8 @@ end
     }
 ]]
 hskill.split = function(options)
-    if (options.whichUnit == nil) then
-        print_err("split: -whichUnit")
+    if (options.targetUnit == nil) then
+        print_err("split: -targetUnit")
         return
     end
     local odds = options.odds or 0
@@ -167,7 +169,7 @@ hskill.split = function(options)
         print_err("split: -odds -damage -percent -radius")
         return
     end
-    local targetUnit = options.whichUnit
+    local targetUnit = options.targetUnit
     local targetOppose = hattr.get(targetUnit, "split_oppose")
     odds = odds - targetOppose
     if (odds <= 0) then
@@ -192,8 +194,6 @@ hskill.split = function(options)
             end
         )
         local splitDamage = damage * percent * 0.01
-        local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
-        local damageType = options.damageType or {}
         hgroup.loop(
             g,
             function(eu)
@@ -205,8 +205,9 @@ hskill.split = function(options)
                             damage = splitDamage,
                             damageString = "分裂",
                             damageStringColor = "ff6347",
-                            damageKind = damageKind,
-                            damageType = damageType,
+                            damageKind = options.damageKind,
+                            damageType = options.damageType,
+                            isFixed = options.isFixed,
                             effect = options.effect
                         }
                     )
@@ -244,7 +245,7 @@ end
 --[[
     打断
     options = {
-        whichUnit = unit, --目标单位，必须
+        targetUnit = unit, --目标单位，必须
         odds = 100, --几率，可选
         damage = 0, --伤害，可选
         sourceUnit = nil, --来源单位，可选
@@ -254,15 +255,13 @@ end
     }
 ]]
 hskill.broken = function(options)
-    if (options.whichUnit == nil) then
+    if (options.targetUnit == nil) then
         return
     end
-    local u = options.whichUnit
+    local u = options.targetUnit
     local odds = options.odds or 100
     local damage = options.damage or 0
     local sourceUnit = options.sourceUnit or nil
-    local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
-    local damageType = options.damageType or {}
     --计算抵抗
     local oppose = hattr.get(u, "broken_oppose")
     odds = odds - oppose --(%)
@@ -288,7 +287,7 @@ hskill.broken = function(options)
     cj.IssueTargetOrder(cu, "thunderbolt", u)
     hunit.del(cu, 0.3)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
-        heffect.bindUnit(options.effect, u, "origin", during)
+        heffect.toUnit(options.effect, u, 0)
     end
     if (damage > 0) then
         hskill.damage(
@@ -298,8 +297,9 @@ hskill.broken = function(options)
                 damage = damage,
                 damageString = "打断",
                 damageStringColor = "F0F8FF",
-                damageKind = damageKind,
-                damageType = damageType
+                damageKind = options.damageKind,
+                damageType = options.damageType,
+                isFixed = options.isFixed,
             }
         )
     end
@@ -330,30 +330,29 @@ end
 --[[
     眩晕! 注意这个方法对中立被动无效
     options = {
-        whichUnit = unit, --目标单位，必须
+        targetUnit = unit, --目标单位，必须
         during = 0, --持续时间，必须
         odds = 100, --几率，可选
         damage = 0, --伤害，可选
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
-        damageType = {} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
     }
 ]]
 hskill.swim = function(options)
-    if (options.whichUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
         return
     end
-    if (his.deleted(options.whichUnit)) then
+    if (his.deleted(options.targetUnit)) then
         return
     end
-    local u = options.whichUnit
+    local u = options.targetUnit
     local during = options.during
     local odds = options.odds or 100
     local damage = options.damage or 0
     local sourceUnit = options.sourceUnit
-    local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
-    local damageType = options.damageType or {}
     --计算抵抗
     local oppose = hattr.get(u, "swim_oppose")
     odds = odds - oppose --(%)
@@ -452,8 +451,9 @@ hskill.swim = function(options)
                 sourceUnit = sourceUnit,
                 targetUnit = u,
                 damage = damage,
-                damageKind = damageKind,
-                damageType = damageType,
+                damageKind = options.damageKind,
+                damageType = options.damageType,
+                isFixed = options.isFixed,
                 damageString = damageString,
                 damageStringColor = damageStringColor
             }
@@ -464,30 +464,29 @@ end
 --[[
     沉默
     options = {
-        whichUnit = unit, --目标单位，必须
+        targetUnit = unit, --目标单位，必须
         during = 0, --持续时间，必须
         odds = 100, --几率，可选
         damage = 0, --伤害，可选
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
-        damageType = {} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
     }
 ]]
 hskill.silent = function(options)
-    if (options.whichUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
         return
     end
-    if (his.deleted(options.whichUnit)) then
+    if (his.deleted(options.targetUnit)) then
         return
     end
-    local u = options.whichUnit
+    local u = options.targetUnit
     local during = options.during
     local odds = options.odds or 100
     local damage = options.damage or 0
     local sourceUnit = options.sourceUnit
-    local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
-    local damageType = options.damageType or {}
     --计算抵抗
     local oppose = hattr.get(u, "silent_oppose")
     odds = odds - oppose --(%)
@@ -528,8 +527,9 @@ hskill.silent = function(options)
                 targetUnit = u,
                 damage = damage,
                 damageString = "沉默",
-                damageKind = damageKind,
-                damageType = damageType
+                damageKind = options.damageKind,
+                damageType = options.damageType,
+                isFixed = options.isFixed,
             }
         )
     end
@@ -576,30 +576,29 @@ end
 --[[
     缴械
     options = {
-        whichUnit = unit, --目标单位，必须
+        targetUnit = unit, --目标单位，必须
         during = 0, --持续时间，必须
         odds = 100, --几率，可选
         damage = 0, --伤害，可选
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
-        damageType = {} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
     }
 ]]
 hskill.unarm = function(options)
-    if (options.whichUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
         return
     end
-    if (his.deleted(options.whichUnit)) then
+    if (his.deleted(options.targetUnit)) then
         return
     end
-    local u = options.whichUnit
+    local u = options.targetUnit
     local during = options.during
     local odds = options.odds or 100
     local damage = options.damage or 0
     local sourceUnit = options.sourceUnit
-    local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
-    local damageType = options.damageType or {}
     --计算抵抗
     local oppose = hattr.get(u, "unarm_oppose")
     odds = odds - oppose --(%)
@@ -640,8 +639,9 @@ hskill.unarm = function(options)
                 targetUnit = u,
                 damage = damage,
                 damageString = "缴械",
-                damageKind = damageKind,
-                damageType = damageType
+                damageKind = options.damageKind,
+                damageType = options.damageType,
+                isFixed = options.isFixed,
             }
         )
     end
@@ -688,27 +688,26 @@ end
 --[[
     缚足
     options = {
-        whichUnit = unit, --目标单位，必须
+        targetUnit = unit, --目标单位，必须
         during = 0, --持续时间，必须
         odds = 100, --几率，可选
         damage = 0, --伤害，可选
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
-        damageType = {} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
     }
 ]]
 hskill.fetter = function(options)
-    if (options.whichUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
         return
     end
-    local u = options.whichUnit
+    local u = options.targetUnit
     local during = options.during
     local odds = options.odds or 100
     local damage = options.damage or 0
     local sourceUnit = options.sourceUnit or nil
-    local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
-    local damageType = options.damageType or {}
     --计算抵抗
     local oppose = hattr.get(u, "fetter_oppose")
     odds = odds - oppose --(%)
@@ -739,8 +738,9 @@ hskill.fetter = function(options)
                 targetUnit = u,
                 damage = damage,
                 damageString = "缚足",
-                damageKind = damageKind,
-                damageType = damageType
+                damageKind = options.damageKind,
+                damageType = options.damageType,
+                isFixed = options.isFixed,
             }
         )
     end
@@ -775,14 +775,15 @@ end
     options = {
         damage = 0, --伤害（必须有，小于等于0直接无效）
         radius = 1, --半径范围（可选）
-        whichUnit = nil, --目标单位（挑选，单位时会自动选择与此单位同盟的单位）
+        targetUnit = nil, --目标单位（挑选，单位时会自动选择与此单位同盟的单位）
         whichGroup = nil, --目标单位组（挑选，优先级更高）
         sourceUnit = nil, --伤害来源单位（可选）
         odds = 100, --几率（可选）
         effect = nil --目标位置特效（可选）
         effectSingle = nil --个体的特效（可选）
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
-        damageType = {} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
     }
 ]]
 hskill.bomb = function(options)
@@ -791,18 +792,16 @@ hskill.bomb = function(options)
     end
     local odds = options.odds or 100
     local radius = options.radius or 1
-    local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
-    local damageType = options.damageType or {}
     local whichGroup
     if (options.whichGroup ~= nil) then
         whichGroup = options.whichGroup
-    elseif (options.whichUnit ~= nil) then
+    elseif (options.targetUnit ~= nil) then
         whichGroup = hgroup.createByUnit(
-            options.whichUnit,
+            options.targetUnit,
             radius,
             function(filterUnit)
                 local flag = true
-                if (his.enemy(options.whichUnit, filterUnit)) then
+                if (his.enemy(options.targetUnit, filterUnit)) then
                     flag = false
                 end
                 if (his.dead(filterUnit)) then
@@ -838,8 +837,9 @@ hskill.bomb = function(options)
                     sourceUnit = options.sourceUnit,
                     targetUnit = eu,
                     damage = damage,
-                    damageKind = damageKind,
-                    damageType = damageType,
+                    damageKind = options.damageKind,
+                    damageType = options.damageType,
+                    isFixed = options.isFixed,
                     damageString = "爆破",
                     damageStringColor = "FF6347"
                 }
@@ -877,7 +877,7 @@ end
     闪电链
     options = {
         damage = 0, --伤害（必须有，小于等于0直接无效）
-        whichUnit = [unit], --第一个的目标单位（必须有）
+        targetUnit = [unit], --第一个的目标单位（必须有）
         prevUnit = [unit], --上一个的目标单位（必须有，用于构建两点间闪电特效）
         sourceUnit = nil, --伤害来源单位（可选）
         lightningType = [hlightning.type], -- 闪电效果类型（可选 详情查看 hlightning.type
@@ -887,8 +887,9 @@ end
         radius = 300, --寻找下一目标的作用半径范围（可选，默认300）
         isRepeat = false, --是否允许同一个单位重复打击（临近2次不会同一个）
         effect = nil, --目标位置特效（可选）
-        damageKind = CONST_DAMAGE_KIND.skill, --伤害的种类（可选）
-        damageType = {"thunder"}, --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
         index = 1,--隐藏的参数，用于暗地里记录是第几个被电到的单位
         repeatGroup = [group],--隐藏的参数，用于暗地里记录单位是否被电过
     }
@@ -898,14 +899,14 @@ hskill.lightningChain = function(options)
         print_err("lightningChain -damage")
         return
     end
-    if (options.whichUnit == nil) then
-        print_err("lightningChain -whichUnit")
+    if (options.targetUnit == nil) then
+        print_err("lightningChain -targetUnit")
         return
     end
     local odds = options.odds or 100
     local damage = options.damage
     --计算抵抗
-    local oppose = hattr.get(options.whichUnit, "lightning_chain_oppose")
+    local oppose = hattr.get(options.targetUnit, "lightning_chain_oppose")
     odds = odds - oppose --(%)
     if (odds <= 0) then
         return
@@ -915,13 +916,12 @@ hskill.lightningChain = function(options)
         end
         damage = damage * (1 - oppose * 0.01)
     end
-    local whichUnit = options.whichUnit
+    local targetUnit = options.targetUnit
     local prevUnit = options.prevUnit
     local lightningType = options.lightningType or hlightning.type.shan_dian_lian_ci
     local change = options.change or 0
     local radius = options.radius or 500
     local isRepeat = options.isRepeat or false
-    local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
     local damageType = options.damageType or { "thunder" }
     options.qty = options.qty or 1
     options.qty = options.qty - 1
@@ -933,17 +933,18 @@ hskill.lightningChain = function(options)
     else
         options.index = options.index + 1
     end
-    hlightning.unit2unit(lightningType, prevUnit, whichUnit, 0.25)
+    hlightning.unit2unit(lightningType, prevUnit, targetUnit, 0.25)
     if (options.effect ~= nil) then
-        heffect.bindUnit(options.effect, whichUnit, "origin", 0.5)
+        heffect.bindUnit(options.effect, targetUnit, "origin", 0.5)
     end
     hskill.damage(
         {
             sourceUnit = options.sourceUnit,
-            targetUnit = whichUnit,
+            targetUnit = targetUnit,
             damage = damage,
-            damageKind = damageKind,
-            damageType = damageType,
+            damageKind = options.damageKind,
+            damageType = options.damageType,
+            isFixed = options.isFixed,
             damageString = "电链",
             damageStringColor = "87cefa"
         }
@@ -954,7 +955,7 @@ hskill.lightningChain = function(options)
         CONST_EVENT.lightningChain,
         {
             triggerUnit = options.sourceUnit,
-            targetUnit = whichUnit,
+            targetUnit = targetUnit,
             odds = odds,
             damage = damage,
             radius = radius,
@@ -963,10 +964,10 @@ hskill.lightningChain = function(options)
     )
     -- @触发被闪电链事件
     hevent.triggerEvent(
-        whichUnit,
+        targetUnit,
         CONST_EVENT.beLightningChain,
         {
-            triggerUnit = whichUnit,
+            triggerUnit = targetUnit,
             sourceUnit = options.sourceUnit,
             odds = odds,
             damage = damage,
@@ -979,23 +980,23 @@ hskill.lightningChain = function(options)
             if (options.repeatGroup == nil) then
                 options.repeatGroup = {}
             end
-            hgroup.addUnit(options.repeatGroup, whichUnit)
+            hgroup.addUnit(options.repeatGroup, targetUnit)
         end
         local g = hgroup.createByUnit(
-            whichUnit,
+            targetUnit,
             radius,
             function(filterUnit)
                 local flag = true
                 if (his.dead(filterUnit)) then
                     flag = false
                 end
-                if (his.enemy(filterUnit, whichUnit)) then
+                if (his.enemy(filterUnit, targetUnit)) then
                     flag = false
                 end
                 if (his.structure(filterUnit)) then
                     flag = false
                 end
-                if (his.unit(whichUnit, filterUnit)) then
+                if (his.unit(targetUnit, filterUnit)) then
                     flag = false
                 end
                 if (isRepeat ~= true and hgroup.includes(options.repeatGroup, filterUnit)) then
@@ -1007,9 +1008,9 @@ hskill.lightningChain = function(options)
         if (hgroup.isEmpty(g)) then
             return
         end
-        options.whichUnit = hgroup.getClosest(g, hunit.x(whichUnit), hunit.y(whichUnit))
+        options.targetUnit = hgroup.getClosest(g, hunit.x(targetUnit), hunit.y(targetUnit))
         options.damage = options.damage * (1 + change)
-        options.prevUnit = whichUnit
+        options.prevUnit = targetUnit
         options.odds = 9999 --闪电链只要开始能延续下去就是100%几率了
         hgroup.clear(g, true, false)
         if (options.damage > 0) then
@@ -1032,28 +1033,29 @@ end
     击飞
     options = {
         damage = 0, --伤害（必须有，但是这里可以等于0）
-        whichUnit = [unit], --目标单位（必须有）
+        targetUnit = [unit], --目标单位（必须有）
         sourceUnit = [unit], --伤害来源单位（可选）
         odds = 100, --几率（可选,默认100）
         distance = 0, --击退距离，可选，默认0
         high = 100, --击飞高度，可选，默认100
         during = 0.5, --击飞过程持续时间，可选，默认0.5秒
         effect = nil, --特效（可选）
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
-        damageType = {} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
     }
 ]]
 hskill.crackFly = function(options)
     if (options.damage == nil or options.damage < 0) then
         return
     end
-    if (options.whichUnit == nil) then
+    if (options.targetUnit == nil) then
         return
     end
     local odds = options.odds or 100
     local damage = options.damage or 0
     --计算抵抗
-    local oppose = hattr.get(options.whichUnit, "crack_fly_oppose")
+    local oppose = hattr.get(options.targetUnit, "crack_fly_oppose")
     odds = odds - oppose --(%)
     if (odds <= 0) then
         return
@@ -1072,39 +1074,39 @@ hskill.crackFly = function(options)
         during = 0.5
     end
     --不二次击飞
-    if (hunit.get(options.whichUnit, "isCrackFly", false) == true) then
+    if (hunit.get(options.targetUnit, "isCrackFly", false) == true) then
         return
     end
-    hunit.set(options.whichUnit, "isCrackFly", true)
+    hunit.set(options.targetUnit, "isCrackFly", true)
     --镜头放大模式下，距离缩小一半
-    if (hcamera.getModel(hunit.getOwner(options.whichUnit)) == "zoomin") then
+    if (hcamera.getModel(hunit.getOwner(options.targetUnit)) == "zoomin") then
         distance = distance * 0.5
         high = high * 0.5
     end
     local tempObj = {
         odds = 99999,
-        whichUnit = options.whichUnit,
+        targetUnit = options.targetUnit,
         during = during
     }
     hskill.unarm(tempObj)
     hskill.silent(tempObj)
     hattr.set(
-        options.whichUnit,
+        options.targetUnit,
         during,
         {
             move = "-9999"
         }
     )
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
-        heffect.bindUnit(options.effect, options.whichUnit, "origin", during)
+        heffect.bindUnit(options.effect, options.targetUnit, "origin", during)
     end
-    hunit.setCanFly(options.whichUnit)
-    cj.SetUnitPathing(options.whichUnit, false)
-    local originHigh = cj.GetUnitFlyHeight(options.whichUnit)
-    local originFacing = hunit.getFacing(options.whichUnit)
+    hunit.setCanFly(options.targetUnit)
+    cj.SetUnitPathing(options.targetUnit, false)
+    local originHigh = cj.GetUnitFlyHeight(options.targetUnit)
+    local originFacing = hunit.getFacing(options.targetUnit)
     local originDeg
     if (options.sourceUnit ~= nil) then
-        originDeg = math.getDegBetweenUnit(options.sourceUnit, options.whichUnit)
+        originDeg = math.getDegBetweenUnit(options.sourceUnit, options.targetUnit)
     else
         originDeg = math.random(0, 360)
     end
@@ -1115,7 +1117,7 @@ hskill.crackFly = function(options)
         CONST_EVENT.crackFly,
         {
             triggerUnit = options.sourceUnit,
-            targetUnit = options.whichUnit,
+            targetUnit = options.targetUnit,
             odds = odds,
             damage = damage,
             high = high,
@@ -1124,10 +1126,10 @@ hskill.crackFly = function(options)
     )
     -- @触发被击飞事件
     hevent.triggerEvent(
-        options.whichUnit,
+        options.targetUnit,
         CONST_EVENT.beCrackFly,
         {
-            triggerUnit = options.whichUnit,
+            triggerUnit = options.targetUnit,
             sourceUnit = options.sourceUnit,
             odds = odds,
             damage = damage,
@@ -1146,26 +1148,27 @@ hskill.crackFly = function(options)
                     hskill.damage(
                         {
                             sourceUnit = options.sourceUnit,
-                            targetUnit = options.whichUnit,
+                            targetUnit = options.targetUnit,
                             effect = options.effect,
                             damage = damage,
                             damageKind = options.damageKind,
                             damageType = options.damageType,
+                            isFixed = options.isFixed,
                             damageString = "击飞",
                             damageStringColor = "808000"
                         }
                     )
                 end
-                cj.SetUnitFlyHeight(options.whichUnit, originHigh, 10000)
-                cj.SetUnitPathing(options.whichUnit, true)
-                hunit.set(options.whichUnit, "isCrackFly", false)
+                cj.SetUnitFlyHeight(options.targetUnit, originHigh, 10000)
+                cj.SetUnitPathing(options.targetUnit, true)
+                hunit.set(options.targetUnit, "isCrackFly", false)
                 -- 默认是地面，创建沙尘
                 local tempEff = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
-                if (his.water(options.whichUnit) == true) then
+                if (his.water(options.targetUnit) == true) then
                     -- 如果是水面，创建水花
                     tempEff = "Abilities\\Spells\\Other\\CrushingWave\\CrushingWaveDamage.mdl"
                 end
-                heffect.toUnit(tempEff, options.whichUnit, 0)
+                heffect.toUnit(tempEff, options.targetUnit, 0)
                 htime.delTimer(t)
                 return
             end
@@ -1175,36 +1178,36 @@ hskill.crackFly = function(options)
                 z = high / (during * 0.35 / timerSetTime)
                 if (dist > 0) then
                     local pxy = math.polarProjection(
-                        hunit.x(options.whichUnit),
-                        hunit.y(options.whichUnit),
+                        hunit.x(options.targetUnit),
+                        hunit.y(options.targetUnit),
                         dist,
                         originDeg
                     )
-                    cj.SetUnitFacing(options.whichUnit, originFacing)
+                    cj.SetUnitFacing(options.targetUnit, originFacing)
                     if (his.borderMap(pxy.x, pxy.y) == false) then
-                        hunit.portal(options.whichUnit, pxy.x, pxy.y)
+                        hunit.portal(options.targetUnit, pxy.x, pxy.y)
                     end
                 end
                 if (z > 0) then
-                    cj.SetUnitFlyHeight(options.whichUnit, cj.GetUnitFlyHeight(options.whichUnit) + z, z / timerSetTime)
+                    cj.SetUnitFlyHeight(options.targetUnit, cj.GetUnitFlyHeight(options.targetUnit) + z, z / timerSetTime)
                 end
             else
                 dist = distance / (during * 0.5 / timerSetTime)
                 z = high / (during * 0.65 / timerSetTime)
                 if (dist > 0) then
                     local pxy = math.polarProjection(
-                        hunit.x(options.whichUnit),
-                        hunit.y(options.whichUnit),
+                        hunit.x(options.targetUnit),
+                        hunit.y(options.targetUnit),
                         dist,
                         originDeg
                     )
-                    cj.SetUnitFacing(options.whichUnit, originFacing)
+                    cj.SetUnitFacing(options.targetUnit, originFacing)
                     if (his.borderMap(pxy.x, pxy.y) == false) then
-                        hunit.portal(options.whichUnit, pxy.x, pxy.y)
+                        hunit.portal(options.targetUnit, pxy.x, pxy.y)
                     end
                 end
                 if (z > 0) then
-                    cj.SetUnitFlyHeight(options.whichUnit, cj.GetUnitFlyHeight(options.whichUnit) - z, z / timerSetTime)
+                    cj.SetUnitFlyHeight(options.targetUnit, cj.GetUnitFlyHeight(options.targetUnit) - z, z / timerSetTime)
                 end
             end
         end
@@ -1218,15 +1221,16 @@ end
         during = 0, --眩晕持续时间（必须有）
         odds = 100, --对每个单位的独立几率（可选,默认100）
         effect = "", --特效（可选）
-        whichUnit = [unit], --中心单位（可选）
+        targetUnit = [unit], --中心单位（可选）
         whichLoc = [location], --目标点（可选）
         x = [point], --目标坐标X（可选）
         y = [point], --目标坐标Y（可选）
         filter = [function], --必须有
         damage = 0, --伤害（可选，但是这里可以等于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
-        damageType = {} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
     }
 ]]
 hskill.rangeSwim = function(options)
@@ -1243,9 +1247,9 @@ hskill.rangeSwim = function(options)
     if (options.x ~= nil or options.y ~= nil) then
         x = options.x
         y = options.y
-    elseif (options.whichUnit ~= nil) then
-        x = hunit.x(options.whichUnit)
-        y = hunit.y(options.whichUnit)
+    elseif (options.targetUnit ~= nil) then
+        x = hunit.x(options.targetUnit)
+        y = hunit.y(options.targetUnit)
     elseif (options.whichLoc ~= nil) then
         x = cj.GetLocatonX(options.whichLoc)
         y = cj.GetLocatonY(options.whichLoc)
@@ -1274,12 +1278,13 @@ hskill.rangeSwim = function(options)
             hskill.swim(
                 {
                     odds = odds,
-                    whichUnit = eu,
+                    targetUnit = eu,
                     during = during,
                     damage = damage,
                     sourceUnit = options.sourceUnit,
                     damageKind = options.damageKind,
-                    damageType = options.damageType
+                    damageType = options.damageType,
+                    isFixed = options.isFixed,
                 }
             )
         end,
@@ -1299,8 +1304,9 @@ end
         effect = "", --特效（可选）
         effectSingle = "", --单体砍中特效（可选）
         animation = "spin", --单位附加动作，常见的spin（可选）
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
-        damageType = {} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
     }
 ]]
 hskill.whirlwind = function(options)
@@ -1373,7 +1379,8 @@ hskill.whirlwind = function(options)
                             effect = options.effectSingle,
                             damage = damage,
                             damageKind = options.damageKind,
-                            damageType = options.damageType
+                            damageType = options.damageType,
+                            isFixed = options.isFixed,
                         }
                     )
                 end,
@@ -1406,8 +1413,9 @@ end
         damageMovementDrag = false, --移动过程是否拖拽敌人（可选的，默认为不能）
         damageEnd = 0, --移动结束时对目标的伤害（可选的，默认为0）
         damageEndRadius = 0, --移动结束时对目标的伤害范围（可选的，默认为0，此处0范围是有效的，会只对targetUnit生效，除非unit不存在）
-        damageKind = CONST_DAMAGE_KIND.skill, --伤害的种类（可选）
-        damageType = {} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
         damageEffect = nil, --伤害特效（可选）
         oneHitOnly = false, --是否打击一次就立刻失效（类似格挡，这个一次和只攻击一个单位不是一回事）
         onEnding = [function], --结束时触发的动作
@@ -1584,6 +1592,7 @@ hskill.leap = function(options)
                                         damage = damageMovement,
                                         damageKind = options.damageKind,
                                         damageType = options.damageType,
+                                        isFixed = options.isFixed,
                                         effect = options.damageEffect
                                     }
                                 )
@@ -1620,6 +1629,7 @@ hskill.leap = function(options)
                                 damage = damageEnd,
                                 damageKind = options.damageKind,
                                 damageType = options.damageType,
+                                isFixed = options.isFixed,
                                 effect = options.damageEffect
                             }
                         )
@@ -1640,6 +1650,7 @@ hskill.leap = function(options)
                                         damage = damageEnd,
                                         damageKind = options.damageKind,
                                         damageType = options.damageType,
+                                        isFixed = options.isFixed,
                                         effect = options.damageEffect
                                     }
                                 )
@@ -1738,6 +1749,7 @@ hskill.leapPaw = function(options)
                 damageEndRadius = options.damageEndRadius,
                 damageKind = options.damageKind,
                 damageType = options.damageType,
+                isFixed = options.isFixed,
                 damageEffect = options.damageEffect,
                 oneHitOnly = options.oneHitOnly,
                 onEnding = options.onEnding,
@@ -1808,6 +1820,7 @@ hskill.leapRange = function(options)
                 damageEndRadius = options.damageEndRadius,
                 damageKind = options.damageKind,
                 damageType = options.damageType,
+                isFixed = options.isFixed,
                 damageEffect = options.damageEffect,
                 oneHitOnly = options.oneHitOnly,
                 onEnding = options.onEnding,
@@ -1887,8 +1900,9 @@ end
         effect = nil, --打击特效
         effectScale = 1.30, --打击特效缩放
         effectOffset = 0, --打击特效偏移量（distance+offset才是展示特效距离）
-        damageKind = CONST_DAMAGE_KIND.skill, --伤害的种类（可选）
-        damageType = {} --伤害的类型,注意是table（可选）
+        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
+        isFixed = false --是否固伤（可选）
         damageEffect = nil, --伤害特效（可选）
         oneHitOnly = true, --是否每个敌人只打击一次（可选,默认true）
         extraInfluence = [function] --对击中的敌人的额外影响，会回调该敌人单位，可以对其做出自定义行为
@@ -1919,8 +1933,6 @@ hskill.rectangleStrike = function(options)
         return
     end
     local frequency = options.frequency or 0
-    local damageKind = options.damageKind or CONST_DAMAGE_KIND.skill
-    local damageType = options.damageType or { CONST_DAMAGE_TYPE.common }
     local oneHitOnly = options.oneHitOnly
     local effectScale = options.effectScale or 1.30
     local effectOffset = options.effectOffset or 0
@@ -1974,8 +1986,9 @@ hskill.rectangleStrike = function(options)
                     whichGroup = tg,
                     damage = damage,
                     sourceUnit = options.sourceUnit,
-                    damageKind = damageKind,
-                    damageType = damageType,
+                    damageKind = options.damageKind,
+                    damageType = options.damageType,
+                    isFixed = options.isFixed,
                     extraInfluence = options.extraInfluence
                 }
             )
@@ -2021,8 +2034,9 @@ hskill.rectangleStrike = function(options)
                             whichGroup = g,
                             damage = damage,
                             sourceUnit = options.sourceUnit,
-                            damageKind = damageKind,
-                            damageType = damageType,
+                            damageKind = options.damageKind,
+                            damageType = options.damageType,
+                            isFixed = options.isFixed,
                             extraInfluence = options.extraInfluence
                         }
                     )
