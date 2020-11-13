@@ -253,6 +253,7 @@ hattribute.init = function(whichUnit)
         natural_dragon_oppose = 0.0,
         natural_insect_oppose = 0.0,
         natural_god_oppose = 0.0,
+        xtras = {},
         attack_buff = {},
         attack_debuff = {},
         skill_buff = {},
@@ -795,7 +796,7 @@ end
 ---@param whichUnit userdata
 ---@param during number 0表示无限
 ---@param data any
-hattribute.set = function(whichUnit, during, data)
+hattribute.set = function(whichUnit, during, `data`)
     if (whichUnit == nil) then
         -- 例如有时造成伤害之前把单位删除就捕捉不到这个伤害来源了
         -- 虽然这里直接返回不执行即可，但是提示下可以帮助完善业务的构成~
@@ -824,34 +825,34 @@ hattribute.set = function(whichUnit, during, data)
                 end
                 hattribute.setHandle(whichUnit, attr, opr, val, during)
             elseif (type(v) == "table") then
-                -- table型，如特效，buff等
+                -- table型，如 xtras
                 if (v.add ~= nil and type(v.add) == "table") then
-                    for _, buff in ipairs(v.add) do
-                        if (buff == nil) then
-                            print_err("table effect loss[buff]!")
+                    for _, set in ipairs(v.add) do
+                        if (set == nil) then
+                            print_err("table effect loss[set]!")
                             print_stack()
                             break
                         end
-                        if (type(buff) ~= "table") then
-                            print_err("add type(buff) must be a table!")
+                        if (type(set) ~= "table") then
+                            print_err("add type(set) must be a table!")
                             print_stack()
                             break
                         end
-                        hattribute.setHandle(whichUnit, attr, "+", buff, during)
+                        hattribute.setHandle(whichUnit, attr, "+", set, during)
                     end
                 elseif (v.sub ~= nil and type(v.sub) == "table") then
-                    for _, buff in ipairs(v.sub) do
-                        if (buff == nil) then
-                            print_err("table effect loss[buff]!")
+                    for _, set in ipairs(v.sub) do
+                        if (set == nil) then
+                            print_err("table effect loss[set]!")
                             print_stack()
                             break
                         end
-                        if (type(buff) ~= "table") then
-                            print_err("sub type(buff) must be a table!")
+                        if (type(set) ~= "table") then
+                            print_err("sub type(set) must be a table!")
                             print_stack()
                             break
                         end
-                        hattribute.setHandle(whichUnit, attr, "-", buff, during)
+                        hattribute.setHandle(whichUnit, attr, "-", set, during)
                     end
                 end
             end
@@ -948,17 +949,12 @@ hattribute.caleAttribute = function(isAdd, whichUnit, attr, times)
                 [opt] = tempTable
             }
         end
-        if
-        (table.includes(
-            k,
-            {
-                "gold_ratio",
-                "lumber_ratio",
-                "exp_ratio",
-                "sell_ratio"
-            }
-        ))
-        then
+        if (table.includes(k, {
+            "gold_ratio",
+            "lumber_ratio",
+            "exp_ratio",
+            "sell_ratio"
+        })) then
             table.insert(diffPlayer, { k, tonumber(tempDiff) })
         else
             diff[k] = tempDiff

@@ -555,6 +555,7 @@ hskill.damage = function(options)
                 end
             end
         end
+
         -- 特殊效果,需要非无敌并处于效果启动状态下
         -- buff/debuff
         local buff
