@@ -663,7 +663,7 @@ hevent.onBeNoAvoid = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.beNoAvoid, callFunc)
 end
 
---- 物理暴击时
+--- 暴击时
 ---@alias onKnocking fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位",damage:"伤害",odds:"几率百分比",percent:"增幅百分比"}):void
 ---@param whichUnit userdata
 ---@param callFunc onKnocking | "function(evtData) end"
@@ -672,31 +672,13 @@ hevent.onKnocking = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.knocking, callFunc)
 end
 
---- 承受物理暴击时
+--- 承受暴击时
 ---@alias onBeKnocking fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",damage:"伤害",odds:"几率百分比",percent:"增幅百分比"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeKnocking | "function(evtData) end"
 ---@return any
 hevent.onBeKnocking = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.beKnocking, callFunc)
-end
-
---- 魔法暴击时
----@alias onViolence fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位",damage:"伤害",odds:"几率百分比",percent:"增幅百分比"}):void
----@param whichUnit userdata
----@param callFunc onViolence | "function(evtData) end"
----@return any
-hevent.onViolence = function(whichUnit, callFunc)
-    return hevent.registerEvent(whichUnit, CONST_EVENT.violence, callFunc)
-end
-
---- 承受魔法暴击时
----@alias onBeViolence fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",damage:"伤害",odds:"几率百分比",percent:"增幅百分比"}):void
----@param whichUnit userdata
----@param callFunc onBeViolence | "function(evtData) end"
----@return any
-hevent.onBeViolence = function(whichUnit, callFunc)
-    return hevent.registerEvent(whichUnit, CONST_EVENT.beViolence, callFunc)
 end
 
 --- 分裂时

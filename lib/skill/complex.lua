@@ -40,7 +40,7 @@ hskill.knocking = function(options)
             sourceUnit = options.sourceUnit,
             targetUnit = targetUnit,
             damage = val,
-            damageString = "物暴",
+            damageString = "暴击",
             damageStringColor = "ef3215",
             damageKind = options.damageKind,
             damageType = damageType,
@@ -780,7 +780,7 @@ end
         sourceUnit = nil, --伤害来源单位（可选）
         odds = 100, --几率（可选）
         effect = nil --目标位置特效（可选）
-        effectSingle = nil --个体的特效（可选）
+        effectEnum = nil --选取个体的特效（可选）
         damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
@@ -841,7 +841,8 @@ hskill.bomb = function(options)
                     damageType = options.damageType,
                     isFixed = options.isFixed,
                     damageString = "爆破",
-                    damageStringColor = "FF6347"
+                    damageStringColor = "FF6347",
+                    effect = options.effectEnum,
                 }
             )
             -- @触发爆破事件
@@ -883,7 +884,7 @@ end
         lightningType = [hlightning.type], -- 闪电效果类型（可选 详情查看 hlightning.type
         odds = 100, --几率（可选）
         qty = 1, --传递的最大单位数（可选，默认1）
-        change = 0, --增减率（可选，默认不增不减为0，范围建议[-1.00，1.00]）
+        rate = 0, --增减率（可选，默认不增不减为0，范围建议[-1.00，1.00]）
         radius = 300, --寻找下一目标的作用半径范围（可选，默认300）
         isRepeat = false, --是否允许同一个单位重复打击（临近2次不会同一个）
         effect = nil, --目标位置特效（可选）
@@ -919,10 +920,9 @@ hskill.lightningChain = function(options)
     local targetUnit = options.targetUnit
     local prevUnit = options.prevUnit
     local lightningType = options.lightningType or hlightning.type.shan_dian_lian_ci
-    local change = options.change or 0
+    local rate = options.rate or 0
     local radius = options.radius or 500
     local isRepeat = options.isRepeat or false
-    local damageType = options.damageType or { "thunder" }
     options.qty = options.qty or 1
     options.qty = options.qty - 1
     if (options.qty < 0) then
@@ -1009,7 +1009,7 @@ hskill.lightningChain = function(options)
             return
         end
         options.targetUnit = hgroup.getClosest(g, hunit.x(targetUnit), hunit.y(targetUnit))
-        options.damage = options.damage * (1 + change)
+        options.damage = options.damage * (1 + rate)
         options.prevUnit = targetUnit
         options.odds = 9999 --闪电链只要开始能延续下去就是100%几率了
         hgroup.clear(g, true, false)
@@ -1302,7 +1302,7 @@ end
         damage = 0, --每次伤害（必须有）
         sourceUnit = [unit], --伤害来源单位（必须有）
         effect = "", --特效（可选）
-        effectSingle = "", --单体砍中特效（可选）
+        effectEnum = "", --单体砍中特效（可选）
         animation = "spin", --单位附加动作，常见的spin（可选）
         damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
@@ -1376,7 +1376,7 @@ hskill.whirlwind = function(options)
                         {
                             sourceUnit = options.sourceUnit,
                             targetUnit = eu,
-                            effect = options.effectSingle,
+                            effect = options.effectEnum,
                             damage = damage,
                             damageKind = options.damageKind,
                             damageType = options.damageType,
