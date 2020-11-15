@@ -47,7 +47,7 @@ hattribute.valSupportAttribute = {
 ---         effect 特效字符串，主特效
 ---         effectEnum 特效字符串，选取单位的 (* 爆破有效)
 ---
----         val 数值或伤害~=0,这个字段可以填数字，也可填限定特殊的数据,详情如下：
+---         val 数值或伤害~=0,这个字段可以填数字，在spec时也可填限定特殊的数据，详情如下：
 ---             1、数字型，如 100, 50.50
 ---             2、字符串 "damage"，会自动获取evtData里面的damage数据
 ---             3、字符串-目标单位属性段 "targetUnit.attack_white"
@@ -124,7 +124,7 @@ hattribute.xtras = function(triggerUnit, key, evtData)
                     if (his.alive(evtData[target]) and his.deleted(evtData[target]) == false) then
                         local targetUnit = evtData[target]
                         local actionField = actions[3]
-                        if (actionType == 'attr') then
+                        if (actionType == 'attr' and type(x.val) == 'number') then
                             -- 属性改动
                             if (x.val ~= 0 and x.dur > 0 and math.random(1, 1000) <= x.odds * 10) then
                                 -- 判断是否buff/debuff(判断基准就是判断val是否大于/小于0)
