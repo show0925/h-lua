@@ -25,12 +25,11 @@ hattribute.xtrasSupportEvents = {
 
 --- 属性系统，val数据支持的单位属性
 hattribute.valSupportAttribute = {
-    -- 单位属性
     "life", "mana",
     "move", "defend",
     "attack_white", "attack_green",
     "str_green", "agi_green", "int_green", "str_white", "agi_white", "int_white",
-    -- 玩家当前属性
+    "level",
     "gold", "lumber",
 }
 
@@ -47,13 +46,20 @@ hattribute.valSupportAttribute = {
 ---         dur 持续时间>0，这个时间在不同场景意义不同(*attr有效、spec里的眩晕、沉默、缴械、缚足、击飞有效)
 ---         effect 特效字符串，主特效
 ---         effectEnum 特效字符串，选取单位的 (* 爆破有效)
+---
 ---         val 数值或伤害~=0,这个字段可以填数字，也可填限定特殊的数据,详情如下：
 ---             1、数字型，如 100, 50.50
 ---             2、字符串 "damage"，会自动获取evtData里面的damage数据
 ---             3、字符串-目标单位属性段 "targetUnit.attack_white"
----                以点分隔，会自动获取evtData里面的targetUnit单位,并使用它的白字攻击作为数据
+---                以点分隔，上例会自动获取evtData里面的targetUnit单位,并使用它的白字攻击作为数据
 ---                第二个属性不能随意调用任意属性，可查看 hattribute.valSupportAttribute
----                (所以可以利用这个来构建简单的公式伤害)
+---             4、字符串-单位等级 "targetUnit.level"
+---                以点分隔，上例会自动获取evtData里面的"targetUnit"单位的单位等级作为数据
+---                这是运用 hhero.getCurLevel
+---             5、字符串-目标玩家属性段 "targetUnit.gold"
+---                以点分隔，上例会自动获取evtData里面的"targetUnit"单位的拥有者,并使用玩家属性作为数据
+---                第二个属性是gold|lumber时自动切换
+---
 ---         percent 程度>0(%)对val的补充，默认100%,可大于100% (*attr有效、spec里的眩晕、沉默、缴械、缚足、击飞有效)
 ---         damageKind 伤害种类（可选的，如果evtData有且无自定义，自动使用）
 ---         damageType 伤害类型（可选的，如果evtData有且无自定义，自动使用）
