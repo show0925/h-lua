@@ -176,7 +176,15 @@ hattribute.xtras = function(triggerUnit, key, evtData)
                                             local au = evtData[valAttr[1]]
                                             local aa = valAttr[2]
                                             if (au and table.includes(aa, hattribute.valSupportAttribute)) then
-                                                val = hattribute.get(au, aa)
+                                                if (aa == 'level') then
+                                                    val = hhero.getCurLevel(au)
+                                                elseif (aa == 'gold') then
+                                                    val = hplayer.getGold(hunit.getOwner(au))
+                                                elseif (aa == 'lumber') then
+                                                    val = hplayer.getLumber(hunit.getOwner(au))
+                                                else
+                                                    val = hattribute.get(au, aa)
+                                                end
                                             end
                                         end
                                     end
