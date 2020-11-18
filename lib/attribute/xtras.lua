@@ -24,7 +24,7 @@ hattribute.xtrasSupportEvents = {
 }
 
 --- 属性系统，val数据支持的单位属性
-hattribute.valSupportAttribute = {
+hattribute.xtrasSupportVals = {
     "life", "mana",
     "move", "defend",
     "attack_white", "attack_green",
@@ -32,6 +32,38 @@ hattribute.valSupportAttribute = {
     "level",
     "gold", "lumber",
 }
+
+--- 快速取单位xtras的数据
+---@param whichUnit userdata
+---@param eventKey string
+---@return table
+hattribute.getXtras = function(whichUnit, eventKey)
+    if (whichUnit == nil or eventKey == nil) then
+        return {}
+    end
+    if (hunit.getName(whichUnit) == nil) then
+        return {}
+    end
+    local xtras = hattribute.get(whichUnit, 'xtras')
+    if (xtras == nil or type(xtras) ~= 'table' or #xtras <= 0) then
+        return {}
+    end
+    local xtrasInEvent = {}
+    for _, x in ipairs(xtras) do
+        if (eventKey == x.table.on) then
+            table.insert(xtrasInEvent, x.table)
+        end
+    end
+    return xtrasInEvent
+end
+
+--- 判断是否有xtras
+---@param whichUnit userdata
+---@param eventKey string
+---@return table
+hattribute.hasXtras = function(whichUnit, eventKey)
+    return #(hattribute.getXtras(whichUnit, eventKey)) > 0
+end
 
 --- 属性系统，事件密切的功能扩展
 --- 以事件的handle作为主引导，例如attack事件的引导就是攻击者，而beDamage事件的引导就是受伤者
@@ -60,8 +92,11 @@ hattribute.valSupportAttribute = {
 ---                以点分隔，上例会自动获取evtData里面的"targetUnit"单位的拥有者,并使用玩家属性作为数据
 ---                第二个属性是gold|lumber时自动切换
 ---
----         percent 程度>0(%)对val的补充，默认100%,可大于100% (*attr有效、spec里的眩晕、沉默、缴械、缚足、击飞有效)
----         damageKind 伤害种类（可选的，如果evtData有且无自定义，自动使用）
+---         percent 程度>0(%) 对val的补充，默认100%,可大于100% (*attr有效、spec里的眩晕、沉默、缴械、缚足、击飞有效)
+---             也可填限定特殊的数据，详情如下：
+---             1、数字型，如 100, 50
+-----           2、范围型如一个table {10, 90} 表示随机 10%~90%
+---         damageSrc 伤害来源（可选的，如果evtData有且无自定义，自动使用）
 ---         damageType 伤害类型（可选的，如果evtData有且无自定义，自动使用）
 ---         radius 半径范围>0 (* 分裂、爆破有效)
 ---         qty 数量>0 (* 只有闪电链有效)
@@ -79,7 +114,7 @@ hattribute.valSupportAttribute = {
 --                { on = CONST_EVENT.item, action = "user.attr.int_white", odds = 20.0, val = 2, dur = 3.0, effect = nil },
 --                { on = CONST_EVENT.attack, action = "targetUnit.spec.knocking", odds = 100, percent = 100, effect = nil },
 --                { on = CONST_EVENT.skill, action = "targetUnit.spec.violence", odds = 100, percent = 100, effect = nil },
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.split", odds = 100, percent = 30, radius = 250 },
+--                { on = CONST_EVENT.attack, action = "targetUnit.spec.split", odds = 100, percent = {30,50}, radius = 250 },
 --                { on = CONST_EVENT.attack, action = "targetUnit.spec.swim",odds = 0.0, val = 0.0, dur = 0.0, effect = nil},
 --                { on = CONST_EVENT.attack, action = "targetUnit.spec.broken",odds = 0.0, val = 0.0, effect = nil},
 --                { on = CONST_EVENT.attack, action = "targetUnit.spec.silent",odds = 0.0, val = 0.0, dur = 0.0, effect = nil},
@@ -92,12 +127,12 @@ hattribute.valSupportAttribute = {
 --        },
 --  })
 ---@private
-hattribute.xtras = function(triggerUnit, key, evtData)
-    if (triggerUnit == nil or key == nil or evtData == nil) then
+hattribute.xtras = function(triggerUnit, eventKey, evtData)
+    if (triggerUnit == nil or eventKey == nil or evtData == nil) then
         return
     end
     -- 排除不支持的事件
-    if (table.includes(key, hattribute.xtrasSupportEvents) == false) then
+    if (table.includes(eventKey, hattribute.xtrasSupportEvents) == false) then
         return
     end
     -- 排除非单位
@@ -109,239 +144,241 @@ hattribute.xtras = function(triggerUnit, key, evtData)
         return
     end
     -- 获取属性
-    local xtras = hattribute.get(triggerUnit, 'xtras')
-    if (xtras == nil or type(xtras) ~= 'table') then
+    local xtras = hattribute.getXtras(triggerUnit, eventKey)
+    if (#xtras <= 0) then
+        xtras = nil
         return
     end
-    for _, xtra in ipairs(xtras) do
-        local x = xtra.table
-        if (x.on == key and type(x.action) == 'string') then
-            local actions = string.explode('.', x.action)
-            if (#actions == 3) then
-                local target = actions[1]
-                local actionType = actions[2]
-                if (table.includes(actionType, { 'attr', 'spec' }) ~= false and evtData[target] ~= nil and hunit.getName(evtData[target]) ~= nil) then
-                    if (his.alive(evtData[target]) and his.deleted(evtData[target]) == false) then
-                        local targetUnit = evtData[target]
-                        local actionField = actions[3]
-                        if (actionType == 'attr' and type(x.val) == 'number') then
-                            -- 属性改动
-                            if (x.val ~= 0 and x.dur > 0 and math.random(1, 1000) <= x.odds * 10) then
-                                -- 判断是否buff/debuff(判断基准就是判断val是否大于/小于0)
-                                -- buff时，要计算目标单位的buff阻碍（如:可以设计一个boss造成强化阻碍，影响玩家的被动加成）
-                                -- debuff时，要计算目标单位的debuff抵抗（如:可以设计一个物品抵抗debuff，减少影响）
-                                -- 以上两个都是大于0才有效
+    for _, x in ipairs(xtras) do
+        local actions = string.explode('.', x.action)
+        if (#actions == 3) then
+            local target = actions[1]
+            local actionType = actions[2]
+            if (table.includes(actionType, { 'attr', 'spec' }) ~= false and evtData[target] ~= nil and hunit.getName(evtData[target]) ~= nil) then
+                if (his.alive(evtData[target]) and his.deleted(evtData[target]) == false) then
+                    local targetUnit = evtData[target]
+                    local actionField = actions[3]
+                    if (actionType == 'attr' and type(x.val) == 'number') then
+                        -- 属性改动
+                        if (x.val ~= 0 and x.dur > 0 and math.random(1, 1000) <= x.odds * 10) then
+                            -- 判断是否buff/debuff(判断基准就是判断val是否大于/小于0)
+                            -- buff时，要计算目标单位的buff阻碍（如:可以设计一个boss造成强化阻碍，影响玩家的被动加成）
+                            -- debuff时，要计算目标单位的debuff抵抗（如:可以设计一个物品抵抗debuff，减少影响）
+                            -- 以上两个都是大于0才有效
+                            if (x.val > 0) then
+                                -- buff; > 0
+                                local buff_oppose = hattribute.get(targetUnit, 'buff_oppose')
+                                if (buff_oppose > 0) then
+                                    x.val = x.val * (1 - 0.01 * buff_oppose)
+                                end
                                 if (x.val > 0) then
-                                    -- buff; > 0
-                                    local buff_oppose = hattribute.get(targetUnit, 'buff_oppose')
-                                    if (buff_oppose > 0) then
-                                        x.val = x.val * (1 - 0.01 * buff_oppose)
+                                    hattr.set(targetUnit, x.dur, { [actionField] = "+" .. x.val })
+                                    if (type(x.effect) == "string" and string.len(x.effect) > 0) then
+                                        heffect.bindUnit(x.effect, targetUnit, "origin", x.dur)
                                     end
-                                    if (x.val > 0) then
-                                        hattr.set(targetUnit, x.dur, { [actionField] = "+" .. x.val })
-                                        if (type(x.effect) == "string" and string.len(x.effect) > 0) then
-                                            heffect.bindUnit(x.effect, targetUnit, "origin", x.dur)
-                                        end
-                                    end
-                                else
-                                    -- debuff; < 0
-                                    local debuff_oppose = hattribute.get(targetUnit, 'debuff_oppose')
-                                    if (debuff_oppose > 0) then
-                                        x.val = x.val * (1 - 0.01 * debuff_oppose)
-                                    end
-                                    if (x.val < 0) then
-                                        hattr.set(targetUnit, x.dur, { [actionField] = tostring(x.val) })
-                                        if (type(x.effect) == "string" and string.len(x.effect) > 0) then
-                                            heffect.bindUnit(x.effect, targetUnit, "origin", x.dur)
-                                        end
+                                end
+                            else
+                                -- debuff; < 0
+                                local debuff_oppose = hattribute.get(targetUnit, 'debuff_oppose')
+                                if (debuff_oppose > 0) then
+                                    x.val = x.val * (1 - 0.01 * debuff_oppose)
+                                end
+                                if (x.val < 0) then
+                                    hattr.set(targetUnit, x.dur, { [actionField] = tostring(x.val) })
+                                    if (type(x.effect) == "string" and string.len(x.effect) > 0) then
+                                        heffect.bindUnit(x.effect, targetUnit, "origin", x.dur)
                                     end
                                 end
                             end
-                        elseif (actionType == 'spec') then
-                            -- 特殊效果
-                            if ((x.odds or 0) > 0) then
-                                local damageKind = x.damageKind or evtData.damageKind or { CONST_DAMAGE_TYPE.common }
-                                local damageType = x.damageType or evtData.damageType or { CONST_DAMAGE_TYPE.common }
-                                local val = 0
-                                local percent = x.percent or 100
-                                -- 处理数据
-                                if (type(x.val) == 'number') then
-                                    val = math.round(x.val)
-                                elseif (type(x.val) == 'string') then
-                                    if (x.val == 'damage') then
-                                        val = evtData.damage or -1
-                                    else
-                                        local valAttr = string.explode('.', x.val)
-                                        if (#valAttr == 2) then
-                                            local au = evtData[valAttr[1]]
-                                            local aa = valAttr[2]
-                                            if (au and table.includes(aa, hattribute.valSupportAttribute)) then
-                                                if (aa == 'level') then
-                                                    val = hhero.getCurLevel(au)
-                                                elseif (aa == 'gold') then
-                                                    val = hplayer.getGold(hunit.getOwner(au))
-                                                elseif (aa == 'lumber') then
-                                                    val = hplayer.getLumber(hunit.getOwner(au))
-                                                else
-                                                    val = hattribute.get(au, aa)
-                                                end
+                        end
+                    elseif (actionType == 'spec') then
+                        -- 特殊效果
+                        if ((x.odds or 0) > 0) then
+                            local damageSrc = x.damageSrc or CONST_DAMAGE_SRC.unknown
+                            local damageType = x.damageType or { CONST_DAMAGE_TYPE.common }
+                            local val = 0
+                            local percent = x.percent or 100
+                            -- 处理数值
+                            if (type(x.val) == 'number') then
+                                val = math.round(x.val)
+                            elseif (type(x.val) == 'string') then
+                                if (x.val == 'damage') then
+                                    val = evtData.damage or -1
+                                else
+                                    local valAttr = string.explode('.', x.val)
+                                    if (#valAttr == 2) then
+                                        local au = evtData[valAttr[1]]
+                                        local aa = valAttr[2]
+                                        if (au and table.includes(aa, hattribute.xtrasSupportVals)) then
+                                            if (aa == 'level') then
+                                                val = hhero.getCurLevel(au)
+                                            elseif (aa == 'gold') then
+                                                val = hplayer.getGold(hunit.getOwner(au))
+                                            elseif (aa == 'lumber') then
+                                                val = hplayer.getLumber(hunit.getOwner(au))
+                                            else
+                                                val = hattribute.get(au, aa)
                                             end
                                         end
                                     end
                                 end
-                                if (percent < 0) then
-                                    percent = 0
-                                end
-                                if (val >= 0) then
-                                    if (actionField == "knocking") then
-                                        -- 暴击；已不分物理还是魔法，触发方式是自定义的
-                                        hskill.knocking({
+                            end
+                            -- 处理百分比
+                            if (type(percent) == 'table') then
+                                percent = math.random(percent[1] or 0, percent[2] or 0)
+                            end
+                            if (percent < 0) then
+                                percent = 0
+                            end
+                            if (val >= 0) then
+                                if (actionField == "knocking") then
+                                    -- 暴击；已不分物理还是魔法，触发方式是自定义的
+                                    hskill.knocking({
+                                        targetUnit = targetUnit,
+                                        odds = x.odds,
+                                        damage = val,
+                                        percent = percent,
+                                        sourceUnit = triggerUnit,
+                                        effect = x.effect,
+                                        damageType = damageType,
+                                        damageSrc = damageSrc,
+                                        isFixed = true,
+                                    })
+                                elseif (actionField == "split") then
+                                    --分裂
+                                    hskill.split({
+                                        targetUnit = targetUnit,
+                                        odds = x.odds,
+                                        damage = val,
+                                        percent = percent,
+                                        radius = x.radius,
+                                        sourceUnit = triggerUnit,
+                                        effect = x.effect,
+                                        damageType = damageType,
+                                        damageSrc = damageSrc,
+                                        isFixed = true,
+                                    })
+                                elseif (actionField == "broken") then
+                                    --打断
+                                    hskill.broken({
+                                        targetUnit = targetUnit,
+                                        odds = x.odds,
+                                        damage = val,
+                                        sourceUnit = triggerUnit,
+                                        effect = x.effect,
+                                        damageType = damageType,
+                                        damageSrc = damageSrc,
+                                        isFixed = true,
+                                    })
+                                elseif (actionField == "swim") then
+                                    --眩晕
+                                    hskill.swim({
+                                        targetUnit = targetUnit,
+                                        odds = x.odds,
+                                        damage = val,
+                                        during = x.dur,
+                                        sourceUnit = triggerUnit,
+                                        effect = x.effect,
+                                        damageType = damageType,
+                                        damageSrc = damageSrc,
+                                        isFixed = true,
+                                    })
+                                elseif (actionField == "silent") then
+                                    --沉默
+                                    hskill.silent({
+                                        targetUnit = targetUnit,
+                                        odds = x.odds,
+                                        damage = val,
+                                        during = x.dur,
+                                        sourceUnit = triggerUnit,
+                                        effect = x.effect,
+                                        damageType = damageType,
+                                        damageSrc = damageSrc,
+                                        isFixed = true,
+                                    })
+                                elseif (actionField == "unarm") then
+                                    --缴械
+                                    hskill.unarm(
+                                        {
                                             targetUnit = targetUnit,
                                             odds = x.odds,
                                             damage = val,
-                                            percent = percent,
+                                            during = x.dur,
                                             sourceUnit = triggerUnit,
                                             effect = x.effect,
                                             damageType = damageType,
-                                            damageKind = damageKind,
+                                            damageSrc = damageSrc,
                                             isFixed = true,
-                                        })
-                                    elseif (actionField == "split") then
-                                        --分裂
-                                        hskill.split({
+                                        }
+                                    )
+                                elseif (actionField == "fetter") then
+                                    --缚足
+                                    hskill.fetter(
+                                        {
                                             targetUnit = targetUnit,
                                             odds = x.odds,
                                             damage = val,
-                                            percent = percent,
+                                            during = x.dur,
+                                            sourceUnit = triggerUnit,
+                                            effect = x.effect,
+                                            damageType = damageType,
+                                            damageSrc = damageSrc,
+                                            isFixed = true,
+                                        }
+                                    )
+                                elseif (actionField == "bomb") then
+                                    --爆破
+                                    hskill.bomb(
+                                        {
+                                            odds = x.odds,
+                                            damage = val,
                                             radius = x.radius,
+                                            targetUnit = targetUnit,
                                             sourceUnit = triggerUnit,
                                             effect = x.effect,
+                                            effectEnum = x.effectEnum,
                                             damageType = damageType,
-                                            damageKind = damageKind,
+                                            damageSrc = damageSrc,
                                             isFixed = true,
-                                        })
-                                    elseif (actionField == "broken") then
-                                        --打断
-                                        hskill.broken({
-                                            targetUnit = targetUnit,
+                                        }
+                                    )
+                                elseif (actionField == "lightning_chain") then
+                                    --闪电链
+                                    hskill.lightningChain(
+                                        {
                                             odds = x.odds,
                                             damage = val,
-                                            sourceUnit = triggerUnit,
+                                            lightningType = x.lightning_type,
+                                            qty = x.qty,
+                                            rate = x.rate,
+                                            radius = x.radius or 500,
                                             effect = x.effect,
-                                            damageType = damageType,
-                                            damageKind = damageKind,
-                                            isFixed = true,
-                                        })
-                                    elseif (actionField == "swim") then
-                                        --眩晕
-                                        hskill.swim({
+                                            isRepeat = false,
                                             targetUnit = targetUnit,
+                                            prevUnit = triggerUnit,
+                                            sourceUnit = triggerUnit,
+                                            damageType = damageType,
+                                            damageSrc = damageSrc,
+                                            isFixed = true,
+                                        }
+                                    )
+                                elseif (actionField == "crack_fly") then
+                                    --击飞
+                                    hskill.crackFly(
+                                        {
                                             odds = x.odds,
                                             damage = val,
+                                            targetUnit = targetUnit,
+                                            sourceUnit = triggerUnit,
+                                            distance = x.distance,
+                                            high = x.height,
                                             during = x.dur,
-                                            sourceUnit = triggerUnit,
                                             effect = x.effect,
                                             damageType = damageType,
-                                            damageKind = damageKind,
+                                            damageSrc = damageSrc,
                                             isFixed = true,
-                                        })
-                                    elseif (actionField == "silent") then
-                                        --沉默
-                                        hskill.silent({
-                                            targetUnit = targetUnit,
-                                            odds = x.odds,
-                                            damage = val,
-                                            during = x.dur,
-                                            sourceUnit = triggerUnit,
-                                            effect = x.effect,
-                                            damageType = damageType,
-                                            damageKind = damageKind,
-                                            isFixed = true,
-                                        })
-                                    elseif (actionField == "unarm") then
-                                        --缴械
-                                        hskill.unarm(
-                                            {
-                                                targetUnit = targetUnit,
-                                                odds = x.odds,
-                                                damage = val,
-                                                during = x.dur,
-                                                sourceUnit = triggerUnit,
-                                                effect = x.effect,
-                                                damageType = damageType,
-                                                damageKind = damageKind,
-                                                isFixed = true,
-                                            }
-                                        )
-                                    elseif (actionField == "fetter") then
-                                        --缚足
-                                        hskill.fetter(
-                                            {
-                                                targetUnit = targetUnit,
-                                                odds = x.odds,
-                                                damage = val,
-                                                during = x.dur,
-                                                sourceUnit = triggerUnit,
-                                                effect = x.effect,
-                                                damageType = damageType,
-                                                damageKind = damageKind,
-                                                isFixed = true,
-                                            }
-                                        )
-                                    elseif (actionField == "bomb") then
-                                        --爆破
-                                        hskill.bomb(
-                                            {
-                                                odds = x.odds,
-                                                damage = val,
-                                                radius = x.radius,
-                                                targetUnit = targetUnit,
-                                                sourceUnit = triggerUnit,
-                                                effect = x.effect,
-                                                effectEnum = x.effectEnum,
-                                                damageType = damageType,
-                                                damageKind = damageKind,
-                                                isFixed = true,
-                                            }
-                                        )
-                                    elseif (actionField == "lightning_chain") then
-                                        --闪电链
-                                        hskill.lightningChain(
-                                            {
-                                                odds = x.odds,
-                                                damage = val,
-                                                lightningType = x.lightning_type,
-                                                qty = x.qty,
-                                                rate = x.rate,
-                                                radius = x.radius or 500,
-                                                effect = x.effect,
-                                                isRepeat = false,
-                                                targetUnit = targetUnit,
-                                                prevUnit = triggerUnit,
-                                                sourceUnit = triggerUnit,
-                                                damageType = damageType,
-                                                damageKind = damageKind,
-                                                isFixed = true,
-                                            }
-                                        )
-                                    elseif (actionField == "crack_fly") then
-                                        --击飞
-                                        hskill.crackFly(
-                                            {
-                                                odds = x.odds,
-                                                damage = val,
-                                                targetUnit = targetUnit,
-                                                sourceUnit = triggerUnit,
-                                                distance = x.distance,
-                                                high = x.height,
-                                                during = x.dur,
-                                                effect = x.effect,
-                                                damageType = damageType,
-                                                damageKind = damageKind,
-                                                isFixed = true,
-                                            }
-                                        )
-                                    end
+                                        }
+                                    )
                                 end
                             end
                         end

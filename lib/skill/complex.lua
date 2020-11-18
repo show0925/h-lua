@@ -7,7 +7,7 @@
         percent = 0, --暴击比例，必须
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE.physical} --伤害的类型,注意是table（可选）
         isFixed = false, --是否固伤（可选）
     }
@@ -41,8 +41,8 @@ hskill.knocking = function(options)
             targetUnit = targetUnit,
             damage = val,
             damageString = "暴击",
-            damageStringColor = "ef3215",
-            damageKind = options.damageKind,
+            damageStringColor = "ff4500",
+            damageSrc = options.damageSrc,
             damageType = damageType,
             isFixed = options.isFixed,
         })
@@ -74,7 +74,7 @@ end
         percent = 0, --暴击比例，必须
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC.skill --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE.magic} --伤害的类型,注意是table（可选）
         isFixed = false, --是否固伤（可选）
     }
@@ -110,7 +110,7 @@ hskill.violence = function(options)
                 damage = val,
                 damageString = "魔爆",
                 damageStringColor = "15bcef",
-                damageKind = options.damageKind,
+                damageSrc = options.damageSrc,
                 damageType = damageType,
                 isFixed = options.isFixed,
             }
@@ -152,7 +152,7 @@ end
         radius = 0, --分裂半径范围，必须
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC.skill --伤害的种类（可选）
         damageType = {} --伤害的类型,注意是table（可选）
     }
 ]]
@@ -205,7 +205,7 @@ hskill.split = function(options)
                             damage = splitDamage,
                             damageString = "分裂",
                             damageStringColor = "ff6347",
-                            damageKind = options.damageKind,
+                            damageSrc = options.damageSrc,
                             damageType = options.damageType,
                             isFixed = options.isFixed,
                             effect = options.effect
@@ -250,7 +250,7 @@ end
         damage = 0, --伤害，可选
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND.skill --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC.skill --伤害的种类（可选）
         damageType = {} --伤害的类型,注意是table（可选）
     }
 ]]
@@ -297,7 +297,7 @@ hskill.broken = function(options)
                 damage = damage,
                 damageString = "打断",
                 damageStringColor = "F0F8FF",
-                damageKind = options.damageKind,
+                damageSrc = options.damageSrc,
                 damageType = options.damageType,
                 isFixed = options.isFixed,
             }
@@ -336,7 +336,7 @@ end
         damage = 0, --伤害，可选
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
     }
@@ -451,7 +451,7 @@ hskill.swim = function(options)
                 sourceUnit = sourceUnit,
                 targetUnit = u,
                 damage = damage,
-                damageKind = options.damageKind,
+                damageSrc = options.damageSrc,
                 damageType = options.damageType,
                 isFixed = options.isFixed,
                 damageString = damageString,
@@ -470,7 +470,7 @@ end
         damage = 0, --伤害，可选
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
     }
@@ -527,7 +527,7 @@ hskill.silent = function(options)
                 targetUnit = u,
                 damage = damage,
                 damageString = "沉默",
-                damageKind = options.damageKind,
+                damageSrc = options.damageSrc,
                 damageType = options.damageType,
                 isFixed = options.isFixed,
             }
@@ -582,7 +582,7 @@ end
         damage = 0, --伤害，可选
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
     }
@@ -639,7 +639,7 @@ hskill.unarm = function(options)
                 targetUnit = u,
                 damage = damage,
                 damageString = "缴械",
-                damageKind = options.damageKind,
+                damageSrc = options.damageSrc,
                 damageType = options.damageType,
                 isFixed = options.isFixed,
             }
@@ -694,7 +694,7 @@ end
         damage = 0, --伤害，可选
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
     }
@@ -738,7 +738,7 @@ hskill.fetter = function(options)
                 targetUnit = u,
                 damage = damage,
                 damageString = "缚足",
-                damageKind = options.damageKind,
+                damageSrc = options.damageSrc,
                 damageType = options.damageType,
                 isFixed = options.isFixed,
             }
@@ -781,7 +781,7 @@ end
         odds = 100, --几率（可选）
         effect = nil --目标位置特效（可选）
         effectEnum = nil --选取个体的特效（可选）
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
     }
@@ -837,7 +837,7 @@ hskill.bomb = function(options)
                     sourceUnit = options.sourceUnit,
                     targetUnit = eu,
                     damage = damage,
-                    damageKind = options.damageKind,
+                    damageSrc = options.damageSrc,
                     damageType = options.damageType,
                     isFixed = options.isFixed,
                     damageString = "爆破",
@@ -888,7 +888,7 @@ end
         radius = 300, --寻找下一目标的作用半径范围（可选，默认300）
         isRepeat = false, --是否允许同一个单位重复打击（临近2次不会同一个）
         effect = nil, --目标位置特效（可选）
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
         index = 1,--隐藏的参数，用于暗地里记录是第几个被电到的单位
@@ -942,7 +942,7 @@ hskill.lightningChain = function(options)
             sourceUnit = options.sourceUnit,
             targetUnit = targetUnit,
             damage = damage,
-            damageKind = options.damageKind,
+            damageSrc = options.damageSrc,
             damageType = options.damageType,
             isFixed = options.isFixed,
             damageString = "电链",
@@ -1040,7 +1040,7 @@ end
         high = 100, --击飞高度，可选，默认100
         during = 0.5, --击飞过程持续时间，可选，默认0.5秒
         effect = nil, --特效（可选）
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
     }
@@ -1151,7 +1151,7 @@ hskill.crackFly = function(options)
                             targetUnit = options.targetUnit,
                             effect = options.effect,
                             damage = damage,
-                            damageKind = options.damageKind,
+                            damageSrc = options.damageSrc,
                             damageType = options.damageType,
                             isFixed = options.isFixed,
                             damageString = "击飞",
@@ -1228,7 +1228,7 @@ end
         filter = [function], --必须有
         damage = 0, --伤害（可选，但是这里可以等于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
     }
@@ -1282,7 +1282,7 @@ hskill.rangeSwim = function(options)
                     during = during,
                     damage = damage,
                     sourceUnit = options.sourceUnit,
-                    damageKind = options.damageKind,
+                    damageSrc = options.damageSrc,
                     damageType = options.damageType,
                     isFixed = options.isFixed,
                 }
@@ -1304,7 +1304,7 @@ end
         effect = "", --特效（可选）
         effectEnum = "", --单体砍中特效（可选）
         animation = "spin", --单位附加动作，常见的spin（可选）
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
     }
@@ -1378,7 +1378,7 @@ hskill.whirlwind = function(options)
                             targetUnit = eu,
                             effect = options.effectEnum,
                             damage = damage,
-                            damageKind = options.damageKind,
+                            damageSrc = options.damageSrc,
                             damageType = options.damageType,
                             isFixed = options.isFixed,
                         }
@@ -1413,7 +1413,7 @@ end
         damageMovementDrag = false, --移动过程是否拖拽敌人（可选的，默认为不能）
         damageEnd = 0, --移动结束时对目标的伤害（可选的，默认为0）
         damageEndRadius = 0, --移动结束时对目标的伤害范围（可选的，默认为0，此处0范围是有效的，会只对targetUnit生效，除非unit不存在）
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
         damageEffect = nil, --伤害特效（可选）
@@ -1590,7 +1590,7 @@ hskill.leap = function(options)
                                         sourceUnit = sourceUnit,
                                         targetUnit = eu,
                                         damage = damageMovement,
-                                        damageKind = options.damageKind,
+                                        damageSrc = options.damageSrc,
                                         damageType = options.damageType,
                                         isFixed = options.isFixed,
                                         effect = options.damageEffect
@@ -1627,7 +1627,7 @@ hskill.leap = function(options)
                                 sourceUnit = options.sourceUnit,
                                 targetUnit = options.targetUnit,
                                 damage = damageEnd,
-                                damageKind = options.damageKind,
+                                damageSrc = options.damageSrc,
                                 damageType = options.damageType,
                                 isFixed = options.isFixed,
                                 effect = options.damageEffect
@@ -1648,7 +1648,7 @@ hskill.leap = function(options)
                                         sourceUnit = options.sourceUnit,
                                         targetUnit = eu,
                                         damage = damageEnd,
-                                        damageKind = options.damageKind,
+                                        damageSrc = options.damageSrc,
                                         damageType = options.damageType,
                                         isFixed = options.isFixed,
                                         effect = options.damageEffect
@@ -1747,7 +1747,7 @@ hskill.leapPaw = function(options)
                 damageMovementDrag = options.damageMovementDrag,
                 damageEnd = options.damageEnd,
                 damageEndRadius = options.damageEndRadius,
-                damageKind = options.damageKind,
+                damageSrc = options.damageSrc,
                 damageType = options.damageType,
                 isFixed = options.isFixed,
                 damageEffect = options.damageEffect,
@@ -1818,7 +1818,7 @@ hskill.leapRange = function(options)
                 damageMovementDrag = options.damageMovementDrag,
                 damageEnd = options.damageEnd,
                 damageEndRadius = options.damageEndRadius,
-                damageKind = options.damageKind,
+                damageSrc = options.damageSrc,
                 damageType = options.damageType,
                 isFixed = options.isFixed,
                 damageEffect = options.damageEffect,
@@ -1900,7 +1900,7 @@ end
         effect = nil, --打击特效
         effectScale = 1.30, --打击特效缩放
         effectOffset = 0, --打击特效偏移量（distance+offset才是展示特效距离）
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = {CONST_DAMAGE_TYPE} --伤害的类型,注意是table（可选）
         isFixed = false --是否固伤（可选）
         damageEffect = nil, --伤害特效（可选）
@@ -1986,7 +1986,7 @@ hskill.rectangleStrike = function(options)
                     whichGroup = tg,
                     damage = damage,
                     sourceUnit = options.sourceUnit,
-                    damageKind = options.damageKind,
+                    damageSrc = options.damageSrc,
                     damageType = options.damageType,
                     isFixed = options.isFixed,
                     extraInfluence = options.extraInfluence
@@ -2034,7 +2034,7 @@ hskill.rectangleStrike = function(options)
                             whichGroup = g,
                             damage = damage,
                             sourceUnit = options.sourceUnit,
-                            damageKind = options.damageKind,
+                            damageSrc = options.damageSrc,
                             damageType = options.damageType,
                             isFixed = options.isFixed,
                             extraInfluence = options.extraInfluence

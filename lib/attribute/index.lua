@@ -254,47 +254,6 @@ hattribute.init = function(whichUnit)
         natural_insect_oppose = 0.0,
         natural_god_oppose = 0.0,
         xtras = {},
-        attack_buff = {},
-        attack_debuff = {},
-        skill_buff = {},
-        skill_debuff = {},
-        -- 特殊特效
-        attack_effect = {},
-        skill_effect = {}
-        --[[
-            buff/debuff例子
-            attack_buff = {
-                攻击伤害时buff=20%几率增加自身 1.5% 的攻击速度 3 秒
-                add = { --这个add表示添加这一种效果，而不是数值的增减
-                    { attr="attack_speed", odds = 20.0, val = 1.5, during = 3.0, effect = nil },
-                },
-                sub = { --这个sub表示删除这一种效果，如果效果不存在，而无动作
-                    { attr="attack_speed", odds = 20.0, val = 1.5, during = 3.0, effect = nil },
-                }
-            }
-            skill_debuff = {
-                技能伤害时buff=13%几率减少目标 3.5% 的攻击速度 4.4 秒，特效是 war3mapImported\\ExplosionBIG.mdl
-                add = {
-                    { attr="move",odds = 13.0, val = 3.5, during = 4.4, effect = 'war3mapImported\\ExplosionBIG.mdl' },
-                },
-                sub = { --这个sub表示删除这一种效果，如果效果不存在，而无动作
-                    { attr="move",odds = 13.0, val = 3.5, during = 4.4, effect = 'war3mapImported\\ExplosionBIG.mdl' },
-                }
-            }
-            attack_effect / skill_effect同理,effect只能设定下列的值，会在属性系统自动调用：
-                {attr="knocking",odds = 0.0, percent = 0.0, effect = nil},
-                {attr="violence",odds = 0.0, percent = 0.0, effect = nil},
-                {attr="split",odds = 0.0, percent=0.0, range = 0.0, effect = nil},
-                {attr="swim",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
-                {attr="broken",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
-                {attr="silent",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
-                {attr="unarm",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
-                {attr="fetter",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
-                {attr="bomb",odds = 0.0, range = 0.0, val = 0.0, during = 0.0, effect = nil},
-                {attr="lightning_chain",odds = 0.0, val = 0.0, effect = nil, qty = 0, reduce = 0.0},
-                {attr="crack_fly",odds = 0.0, val = 0.0, during = 0.0, effect = nil, distance = 0, high = 0.0}
-            * 至于是否同一种效果，是根据你设定的值自动计算出来的
-        ]]
     }
     -- 初始化物编slk数据
     if (uSlk.cool1) then
@@ -885,13 +844,14 @@ end
 
 --- 计算单位的属性浮动影响
 ---@private
-hattribute.caleAttribute = function(isAdd, whichUnit, attr, times)
+hattribute.caleAttribute = function(damageSrc, isAdd, whichUnit, attr, times)
     if (isAdd == nil) then
         isAdd = true
     end
     if (attr == nil) then
         return
     end
+    damageSrc = damageSrc or CONST_DAMAGE_SRC.unknown
     times = times or 1
     local diff = {}
     local diffPlayer = {}
@@ -938,6 +898,7 @@ hattribute.caleAttribute = function(isAdd, whichUnit, attr, times)
             local tempTable = {}
             for _ = 1, times do
                 for _, vv in ipairs(v) do
+                    vv.damageSrc = damageSrc
                     table.insert(tempTable, vv)
                 end
             end

@@ -458,7 +458,7 @@ end
 hitem.addProperty = function(whichUnit, itId, charges)
     local attr = hitem.getAttribute(itId)
     attr.weight_current = "+" .. hitem.getWeight(itId, 1)
-    hattribute.caleAttribute(true, whichUnit, attr, charges)
+    hattribute.caleAttribute(CONST_DAMAGE_SRC.item, true, whichUnit, attr, charges)
     for _ = 1, charges, 1 do
         hring.insert(whichUnit, itId)
     end
@@ -468,7 +468,7 @@ end
 hitem.subProperty = function(whichUnit, itId, charges)
     local attr = hitem.getAttribute(itId)
     attr.weight_current = "+" .. hitem.getWeight(itId, 1)
-    hattribute.caleAttribute(false, whichUnit, attr, charges)
+    hattribute.caleAttribute(CONST_DAMAGE_SRC.item, false, whichUnit, attr, charges)
     for _ = 1, charges, 1 do
         hring.remove(whichUnit, itId)
     end

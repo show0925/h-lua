@@ -389,7 +389,7 @@ hevent_default_actions = {
                                 sourceUnit = sourceUnit,
                                 targetUnit = targetUnit,
                                 damage = damage,
-                                damageKind = "attack"
+                                damageSrc = "attack"
                             }
                         )
                     end

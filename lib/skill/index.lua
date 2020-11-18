@@ -69,13 +69,13 @@ end
 --- 附加单位获得技能后的属性
 ---@protected
 hskill.addProperty = function(whichUnit, abilId)
-    hattribute.caleAttribute(true, whichUnit, hskill.getAttribute(abilId), 1)
+    hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, true, whichUnit, hskill.getAttribute(abilId), 1)
     hring.insert(whichUnit, abilId)
 end
 --- 削减单位获得技能后的属性
 ---@protected
 hskill.subProperty = function(whichUnit, abilId)
-    hattribute.caleAttribute(false, whichUnit, hskill.getAttribute(abilId), 1)
+    hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, false, whichUnit, hskill.getAttribute(abilId), 1)
     hring.remove(whichUnit, abilId)
 end
 

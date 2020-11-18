@@ -109,30 +109,42 @@ end
 --- 触发事件（私有通用）
 ---@protected
 hevent.triggerEvent = function(handle, key, triggerData)
-    if (handle == nil) then
+    if (handle == nil or key == nil) then
         return
     end
-    if (hRuntime.event.register[handle] == nil or hRuntime.event.register[handle][key] == nil) then
-        return
+    local execRegister = false
+    local execXtras = false
+    -- 判断事件注册执行与否
+    if (hRuntime.event.register[handle] ~= nil
+        and hRuntime.event.register[handle][key] ~= nil
+        and #hRuntime.event.register[handle][key] > 0) then
+        execRegister = true
     end
-    if (#hRuntime.event.register[handle][key] <= 0) then
-        return
+    -- 判断xtras执行与否
+    if (hattribute.hasXtras(handle, key)) then
+        execXtras = true
     end
-    -- 处理数据
-    triggerData = triggerData or {}
-    if (triggerData.triggerSkill ~= nil and type(triggerData.triggerSkill) == "number") then
-        triggerData.triggerSkill = string.id2char(triggerData.triggerSkill)
-    end
-    if (triggerData.targetLoc ~= nil) then
-        triggerData.targetX = cj.GetLocationX(triggerData.targetLoc)
-        triggerData.targetY = cj.GetLocationY(triggerData.targetLoc)
-        triggerData.targetZ = cj.GetLocationZ(triggerData.targetLoc)
-        cj.RemoveLocation(triggerData.targetLoc)
-        triggerData.targetLoc = nil
-    end
-    for _, callFunc in ipairs(hRuntime.event.register[handle][key]) do
-        callFunc(triggerData)
-        hattribute.xtras(handle, key, triggerData)
+    if (execRegister or execXtras) then
+        -- 处理数据
+        triggerData = triggerData or {}
+        if (triggerData.triggerSkill ~= nil and type(triggerData.triggerSkill) == "number") then
+            triggerData.triggerSkill = string.id2char(triggerData.triggerSkill)
+        end
+        if (triggerData.targetLoc ~= nil) then
+            triggerData.targetX = cj.GetLocationX(triggerData.targetLoc)
+            triggerData.targetY = cj.GetLocationY(triggerData.targetLoc)
+            triggerData.targetZ = cj.GetLocationZ(triggerData.targetLoc)
+            cj.RemoveLocation(triggerData.targetLoc)
+            triggerData.targetLoc = nil
+        end
+        if (execRegister) then
+            for _, callFunc in ipairs(hRuntime.event.register[handle][key]) do
+                callFunc(triggerData)
+            end
+        end
+        if (execXtras) then
+            hattribute.xtras(handle, key, triggerData)
+        end
     end
 end
 
@@ -188,7 +200,7 @@ hevent.onBeAttackReady = function(whichUnit, callFunc)
 end
 
 --- 造成攻击
----@alias onAttack fun(evtData: {triggerUnit:"攻击单位",targetUnit:"被攻击单位",attacker:"攻击单位",damage:"伤害",damageKind:"伤害方式",damageType:"伤害类型"}):void
+---@alias onAttack fun(evtData: {triggerUnit:"攻击单位",targetUnit:"被攻击单位",attacker:"攻击单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onAttack | "function(evtData) end"
 ---@return any
@@ -197,7 +209,7 @@ hevent.onAttack = function(whichUnit, callFunc)
 end
 
 --- 承受攻击
----@alias onBeAttack fun(evtData: {triggerUnit:"被攻击单位",targetUnit:"被攻击单位",attacker:"攻击来源",damage:"伤害",damageKind:"伤害方式",damageType:"伤害类型"}):void
+---@alias onBeAttack fun(evtData: {triggerUnit:"被攻击单位",targetUnit:"被攻击单位",attacker:"攻击来源",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeAttack | "function(evtData) end"
 ---@return any
@@ -206,7 +218,7 @@ hevent.onBeAttack = function(whichUnit, callFunc)
 end
 
 --- 技能造成伤害
----@alias onSkill fun(evtData: {triggerUnit:"施法单位",targetUnit:"被伤害单位",caster:"施法单位",damage:"伤害",damageKind:"伤害方式",damageType:"伤害类型"}):void
+---@alias onSkill fun(evtData: {triggerUnit:"施法单位",targetUnit:"被伤害单位",caster:"施法单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onSkill | "function(evtData) end"
 ---@return any
@@ -215,7 +227,7 @@ hevent.onSkill = function(whichUnit, callFunc)
 end
 
 --- 被技能伤害
----@alias onBeSkill fun(evtData: {triggerUnit:"被伤害单位",targetUnit:"被伤害单位",caster:"施法单位",damage:"伤害",damageKind:"伤害方式",damageType:"伤害类型"}):void
+---@alias onBeSkill fun(evtData: {triggerUnit:"被伤害单位",targetUnit:"被伤害单位",caster:"施法单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeSkill | "function(evtData) end"
 ---@return any
@@ -296,7 +308,7 @@ hevent.onSkillFinish = function(whichUnit, callFunc)
 end
 
 --- 物品造成伤害
----@alias onItem fun(evtData: {triggerUnit:"施法单位",targetUnit:"被伤害单位",user:"使用物品单位",damage:"伤害",damageKind:"伤害方式",damageType:"伤害类型"}):void
+---@alias onItem fun(evtData: {triggerUnit:"施法单位",targetUnit:"被伤害单位",user:"使用物品单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onItem | "function(evtData) end"
 ---@return any
@@ -305,7 +317,7 @@ hevent.onItem = function(whichUnit, callFunc)
 end
 
 --- 被物品伤害
----@alias onBeItem fun(evtData: {triggerUnit:"被伤害单位",targetUnit:"被伤害单位",user:"使用物品单位",damage:"伤害",damageKind:"伤害方式",damageType:"伤害类型"}):void
+---@alias onBeItem fun(evtData: {triggerUnit:"被伤害单位",targetUnit:"被伤害单位",user:"使用物品单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeItem | "function(evtData) end"
 ---@return any
@@ -421,7 +433,7 @@ hevent.onItemOverSlot = function(whichUnit, callFunc)
 end
 
 --- 造成伤害
----@alias onDamage fun(evtData: {triggerUnit:"伤害来源",targetUnit:"被伤害单位",sourceUnit:"伤害来源",damage:"伤害",damageKind:"伤害方式",damageType:"伤害类型"}):void
+---@alias onDamage fun(evtData: {triggerUnit:"伤害来源",targetUnit:"被伤害单位",sourceUnit:"伤害来源",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onDamage | "function(evtData) end"
 ---@return any
@@ -430,7 +442,7 @@ hevent.onDamage = function(whichUnit, callFunc)
 end
 
 --- 承受伤害
----@alias onBeDamage fun(evtData: {triggerUnit:"被伤害单位",sourceUnit:"伤害来源",damage:"伤害",damageKind:"伤害方式",damageType:"伤害类型"}):void
+---@alias onBeDamage fun(evtData: {triggerUnit:"被伤害单位",sourceUnit:"伤害来源",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeDamage | "function(evtData) end"
 ---@return any

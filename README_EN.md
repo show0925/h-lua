@@ -18,7 +18,7 @@ Contains a variety of rich attribute systems, built-in up to dozens of custom ev
     ├── const
     │   ├── attritube
     │   ├── breakArmorType
-    │   ├── damageKind
+    │   ├── damageSource
     │   ├── damageType
     │   ├── event
     │   ├── hero

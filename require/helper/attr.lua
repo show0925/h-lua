@@ -55,14 +55,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
             tempStr = tempStr .. opt .. string.implode(",", av)
             av = nil
             table.insert(str, tempStr)
-        elseif (table.includes(k, {
-            "attack_buff",
-            "attack_debuff",
-            "skill_buff",
-            "skill_debuff",
-            "attack_effect",
-            "skill_effect"
-        })) then
+        elseif (k == "xtras") then
             table.insert(strTable, (CONST_ATTR[k] or "") .. "：")
             local tempStr = {}
             for _, vv in pairs(v) do

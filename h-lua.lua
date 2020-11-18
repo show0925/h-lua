@@ -9,7 +9,7 @@ require "foundation.blizzard_b"
 
 -- 加载const
 require "const.attribute"
-require "const.damageKind"
+require "const.damageSource"
 require "const.damageType"
 require "const.hero"
 require "const.hotKey"

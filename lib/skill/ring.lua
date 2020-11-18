@@ -221,7 +221,7 @@ hring.insert = function(whichUnit, id)
                 if (type(slk.attr) == 'table') then
                     hgroup.loop(ring.group, function(enumUnit)
                         if (hgroup.includes(g, enumUnit) == false) then
-                            hattribute.caleAttribute(false, enumUnit, slk.attr, 1)
+                            hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, false, enumUnit, slk.attr, 1)
                             if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] ~= nil) then
                                 hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count = hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count - 1
                                 if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count == 0) then
@@ -246,7 +246,7 @@ hring.insert = function(whichUnit, id)
                     hgroup.loop(g, function(enumUnit)
                         -- slk配置的RING属性
                         if (type(slk.attr) == 'table' and false == hgroup.includes(ring.group, enumUnit)) then
-                            hattribute.caleAttribute(true, enumUnit, slk.attr, 1)
+                            hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, true, enumUnit, slk.attr, 1)
                             if (slk.effectTarget) then
                                 if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] == nil) then
                                     hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] = {

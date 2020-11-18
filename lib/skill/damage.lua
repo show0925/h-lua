@@ -3,13 +3,11 @@ local _damageTtgQty = 0
 local _damageTtg = function(targetUnit, damage, fix, color)
     _damageTtgQty = _damageTtgQty + 1
     local during = 1.0
-    local offx = -0.05 - _damageTtgQty * 0.015
-    local offy = 0.05 + _damageTtgQty * 0.015
+    local offx = -0.05 - _damageTtgQty * 0.013
+    local offy = 0.05 + _damageTtgQty * 0.013
     htextTag.style(
         htextTag.create2Unit(targetUnit, fix .. math.floor(damage), 6.00, color, 1, during, 12.00),
-        "toggle",
-        offx,
-        offy
+        "toggle", offx, offy
     )
     htime.setTimeout(
         during,
@@ -29,7 +27,7 @@ end
         damageString = "", --伤害漂浮字颜色
         damageStringColor = "", --伤害漂浮字颜色
         effect = nil, --伤害特效
-        damageKind = "unknown", --伤害种类请查看 CONST_DAMAGE_KIND
+        damageSrc = "unknown", --伤害来源请查看 CONST_DAMAGE_SRC
         damageType = { "common" }, --伤害类型请查看 CONST_DAMAGE_TYPE
         breakArmorType = {} --破防(无视防御)类型请查看 CONST_BREAK_ARMOR_TYPE
         isFixed = false, --是否固定伤害，伤害在固定下(无视类型、护甲、魔抗、自然、增幅、减伤)不计算，而自然虽然不影响伤害，但会有自然效果
@@ -54,8 +52,8 @@ hskill.damage = function(options)
     if (his.deleted(sourceUnit)) then
         return
     end
-    if (options.damageKind == nil) then
-        options.damageKind = CONST_DAMAGE_KIND.unknown
+    if (options.damageSrc == nil) then
+        options.damageSrc = CONST_DAMAGE_SRC.unknown
     end
     --双方attr get
     local targetUnitAttr = hattr.get(targetUnit)
@@ -71,10 +69,10 @@ hskill.damage = function(options)
             return
         end
     end
-    local damageKind = options.damageKind
+    local damageSrc = options.damageSrc
     local damageType = options.damageType
     if (damageType == nil) then
-        if (damageKind == CONST_DAMAGE_KIND.attack and sourceUnit ~= nil) then
+        if (damageSrc == CONST_DAMAGE_SRC.attack and sourceUnit ~= nil) then
             damageType = hattr.get(sourceUnit, "attack_damage_type")
         else
             damageType = CONST_DAMAGE_TYPE.common
@@ -100,20 +98,20 @@ hskill.damage = function(options)
     local damageStringColor = options.damageStringColor or "d9d9d9"
     local effect = options.effect
     -- 判断伤害方式
-    if (damageKind == CONST_DAMAGE_KIND.attack) then
+    if (damageSrc == CONST_DAMAGE_SRC.attack) then
         if (his.unarm(sourceUnit) == true) then
             return
         end
-    elseif (damageKind == CONST_DAMAGE_KIND.skill) then
+    elseif (damageSrc == CONST_DAMAGE_SRC.skill) then
         if (his.silent(sourceUnit) == true) then
             return
         end
-    elseif (damageKind == CONST_DAMAGE_KIND.item) then
+    elseif (damageSrc == CONST_DAMAGE_SRC.item) then
         if (his.silent(sourceUnit) == true) then
             return
         end
     else
-        damageKind = CONST_DAMAGE_KIND.unknown
+        damageSrc = CONST_DAMAGE_SRC.unknown
     end
     -- 计算单位是否无敌（无敌属性为百分比计算，被动触发抵挡一次）
     if (his.invincible(targetUnit) == true or math.random(1, 100) < targetUnitAttr.invincible) then
@@ -202,7 +200,7 @@ hskill.damage = function(options)
     -- 开始神奇的伤害计算
     lastDamage = damage
     -- 计算回避 X 命中
-    if (damageKind == CONST_DAMAGE_KIND.attack and targetUnitAttr.avoid - (sourceUnitAttr.aim or 0) > 0 and math.random(1, 100) <= targetUnitAttr.avoid - (sourceUnitAttr.aim or 0)) then
+    if (damageSrc == CONST_DAMAGE_SRC.attack and targetUnitAttr.avoid - (sourceUnitAttr.aim or 0) > 0 and math.random(1, 100) <= targetUnitAttr.avoid - (sourceUnitAttr.aim or 0)) then
         lastDamage = 0
         htextTag.style(htextTag.create2Unit(targetUnit, "回避", 6.00, "5ef78e", 10, 1.00, 10.00), "scale", 0, 0.2)
         -- @触发回避事件
@@ -355,7 +353,7 @@ hskill.damage = function(options)
                     targetUnit = targetUnit,
                     sourceUnit = sourceUnit,
                     damage = lastDamage,
-                    damageKind = damageKind,
+                    damageSrc = damageSrc,
                     damageType = damageType
                 }
             )
@@ -368,11 +366,11 @@ hskill.damage = function(options)
                 triggerUnit = targetUnit,
                 sourceUnit = sourceUnit,
                 damage = lastDamage,
-                damageKind = damageKind,
+                damageSrc = damageSrc,
                 damageType = damageType
             }
         )
-        if (damageKind == CONST_DAMAGE_KIND.attack) then
+        if (damageSrc == CONST_DAMAGE_SRC.attack) then
             if (sourceUnit ~= nil) then
                 -- @触发攻击事件
                 hevent.triggerEvent(
@@ -383,7 +381,7 @@ hskill.damage = function(options)
                         attacker = sourceUnit,
                         targetUnit = targetUnit,
                         damage = lastDamage,
-                        damageKind = damageKind,
+                        damageSrc = damageSrc,
                         damageType = damageType
                     }
                 )
@@ -397,13 +395,13 @@ hskill.damage = function(options)
                     attacker = sourceUnit,
                     targetUnit = targetUnit,
                     damage = lastDamage,
-                    damageKind = damageKind,
+                    damageSrc = damageSrc,
                     damageType = damageType
                 }
             )
         end
         -- 吸血
-        if (sourceUnit ~= nil and damageKind == CONST_DAMAGE_KIND.attack) then
+        if (sourceUnit ~= nil and damageSrc == CONST_DAMAGE_SRC.attack) then
             local hemophagia = sourceUnitAttr.hemophagia - targetUnitAttr.hemophagia_oppose
             if (hemophagia > 0) then
                 hunit.addCurLife(sourceUnit, lastDamage * hemophagia * 0.01)
@@ -438,7 +436,7 @@ hskill.damage = function(options)
             end
         end
         -- 技能吸血
-        if (sourceUnit ~= nil and damageKind == CONST_DAMAGE_KIND.skill) then
+        if (sourceUnit ~= nil and damageSrc == CONST_DAMAGE_SRC.skill) then
             local hemophagiaSkill = sourceUnitAttr.hemophagia_skill - targetUnitAttr.hemophagia_skill_oppose
             if (hemophagiaSkill > 0) then
                 hunit.addCurLife(sourceUnit, lastDamage * hemophagiaSkill * 0.01)
@@ -570,7 +568,7 @@ end
         effect = "", --特效（可选）
         damage = 0, --单次伤害（大于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = CONST_DAMAGE_TYPE, --伤害的类型,注意是table（可选）
         isFixed = false, --是否固伤（可选）
     }
@@ -630,7 +628,7 @@ end
         y = [point], --目标坐标Y（可选）
         damage = 0, --伤害（可选，但是这里可以等于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = CONST_DAMAGE_TYPE, --伤害的类型,注意是table（可选）
         isFixed = false, --是否固伤（可选）
         extraInfluence = [function],
@@ -689,7 +687,7 @@ hskill.damageRange = function(options)
                         targetUnit = eu,
                         effect = options.effectSingle,
                         damage = damage,
-                        damageKind = options.damageKind,
+                        damageSrc = options.damageSrc,
                         damageType = options.damageType,
                         isFixed = options.isFixed,
                     }
@@ -726,7 +724,7 @@ hskill.damageRange = function(options)
                                 targetUnit = eu,
                                 effect = options.effectSingle,
                                 damage = damage,
-                                damageKind = options.damageKind,
+                                damageSrc = options.damageSrc,
                                 damageType = options.damageType,
                                 isFixed = options.isFixed,
                             }
@@ -751,7 +749,7 @@ end
         whichGroup = [group], --单位组（必须有）
         damage = 0, --伤害（可选，但是这里可以等于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageKind = CONST_DAMAGE_KIND, --伤害的种类（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
         damageType = CONST_DAMAGE_TYPE, --伤害的类型,注意是table（可选）
         isFixed = false, --是否固伤（可选）
         extraInfluence = [function],
@@ -779,7 +777,7 @@ hskill.damageGroup = function(options)
                         targetUnit = eu,
                         effect = options.effect,
                         damage = damage,
-                        damageKind = options.damageKind,
+                        damageSrc = options.damageSrc,
                         damageType = options.damageType,
                         isFixed = options.isFixed,
                     }
@@ -808,7 +806,7 @@ hskill.damageGroup = function(options)
                                 targetUnit = eu,
                                 effect = options.effect,
                                 damage = damage,
-                                damageKind = options.damageKind,
+                                damageSrc = options.damageSrc,
                                 damageType = options.damageType,
                                 isFixed = options.isFixed,
                             }

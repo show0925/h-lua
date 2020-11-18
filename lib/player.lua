@@ -658,7 +658,7 @@ hplayer.addGold = function(whichPlayer, gold, u)
     gold = cj.R2I(gold * hplayer.getGoldRatio(whichPlayer) / 100)
     hplayer.setGold(whichPlayer, hplayer.getGold(whichPlayer) + gold)
     if (u ~= nil) then
-        htextTag.style(htextTag.create2Unit(u, "+" .. gold .. " Gold", 7, "ffcc00", 1, 1.70, 60.00), "toggle", 0, 0.20)
+        htextTag.style(htextTag.create2Unit(u, "+" .. gold .. " Gold", 6, "ffcc00", 1, 1.70, 60.00), "toggle", 0, 0.20)
         hsound.sound2Unit(cg.gg_snd_ReceiveGold, 100, u)
     end
 end

@@ -228,7 +228,8 @@ CONST_ATTR_KEYS = {
 }
 
 CONST_ATTR_BUFF_KEYS = {
-    "attr",
+    "on",
+    "action",
     "odds",
     "percent",
     "val",
@@ -237,5 +238,10 @@ CONST_ATTR_BUFF_KEYS = {
     "radius",
     "rate",
     "distance",
-    "height"
+    "height",
+    "lightning_type",
+    "effect",
+    "effectEnum",
+    "damageSrc",
+    "damageType",
 }
