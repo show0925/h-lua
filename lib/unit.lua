@@ -39,6 +39,24 @@ hunit.getAvatar = function(whichUnit)
     return uSlk.Art or "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp"
 end
 
+--- 获取单位的浮动攻击
+--- 这是根据slk计算的浮动攻击，每次获取到的值可能不一样
+---@param whichUnit userdata
+---@return number
+hunit.getDmgPlus = function(whichUnit)
+    local uSlk = hunit.getSlk(whichUnit)
+    local dmgplus1 = uSlk.dmgplus1 or 0
+    local sides1 = uSlk.sides1 or 1
+    local dice1 = uSlk.dice1 or 0
+    dmgplus1 = math.floor(dmgplus1)
+    sides1 = math.floor(sides1)
+    dice1 = math.floor(dice1)
+    if (sides1 < 1) then
+        sides1 = 1
+    end
+    return dmgplus1 + dice1 * math.random(1, sides1)
+end
+
 --- 获取单位的最大生命值
 ---@param u userdata
 ---@return number

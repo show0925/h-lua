@@ -27,8 +27,8 @@ hattribute.xtrasSupportEvents = {
 hattribute.xtrasSupportVals = {
     "life", "mana",
     "move", "defend",
-    "attack_white", "attack_green",
-    "str_green", "agi_green", "int_green", "str_white", "agi_white", "int_white",
+    "attack", "attack_white", "attack_green",
+    "str", "agi", "int", "str_green", "agi_green", "int_green", "str_white", "agi_white", "int_white",
     "level",
     "gold", "lumber",
 }
