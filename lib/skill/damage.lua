@@ -199,6 +199,35 @@ hskill.damage = function(options)
     end
     -- 开始神奇的伤害计算
     lastDamage = damage
+    -- 自身暴击计算，自身暴击触发下，回避几率减少一半
+    if (isFixed == false and lastDamage > 0 and sourceUnitAttr.knocking_odds > 0 and sourceUnitAttr.knocking_percent > 0) then
+        local targetKnockingOppose = hattr.get(targetUnit, "knocking_oppose")
+        sourceUnitAttr.knocking_odds = sourceUnitAttr.knocking_odds - targetKnockingOppose
+        if (math.random(1, 100) <= sourceUnitAttr.knocking_odds) then
+            damageString = "暴击!" .. damageString
+            damageStringColor = "ff0000"
+            lastDamagePercent = lastDamagePercent + sourceUnitAttr.knocking_percent * 0.01
+            if (targetUnitAttr.avoid > 0) then
+                targetUnitAttr.avoid = targetUnitAttr.avoid * 0.5
+            end
+            --@触发物理暴击事件
+            hevent.triggerEvent(sourceUnit, CONST_EVENT.knocking, {
+                triggerUnit = sourceUnit,
+                targetUnit = targetUnit,
+                damage = lastDamage,
+                odds = sourceUnitAttr.knocking_odds,
+                percent = sourceUnitAttr.knocking_percent
+            })
+            --@触发被物理暴击事件
+            hevent.triggerEvent(targetUnit, CONST_EVENT.beKnocking, {
+                triggerUnit = sourceUnit,
+                sourceUnit = targetUnit,
+                damage = lastDamage,
+                odds = sourceUnitAttr.knocking_odds,
+                percent = sourceUnitAttr.knocking_percent
+            })
+        end
+    end
     -- 计算回避 X 命中
     if (damageSrc == CONST_DAMAGE_SRC.attack and targetUnitAttr.avoid - (sourceUnitAttr.aim or 0) > 0 and math.random(1, 100) <= targetUnitAttr.avoid - (sourceUnitAttr.aim or 0)) then
         lastDamage = 0

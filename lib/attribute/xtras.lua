@@ -232,7 +232,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                             end
                             if (val >= 0) then
                                 if (actionField == "knocking") then
-                                    -- 暴击；已不分物理还是魔法，触发方式是自定义的
+                                    -- 额外暴击；已不分物理还是魔法，触发方式是自定义的
                                     hskill.knocking({
                                         targetUnit = targetUnit,
                                         odds = x.odds,
