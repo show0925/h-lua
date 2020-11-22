@@ -110,6 +110,7 @@ slkHelper.ability = {
         if (v._ring == nil) then
             return
         else
+            v._ring.effect = v._ring.effect or nil
             v._ring.effectTarget = v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
             v._ring.attach = v._ring.attach or "origin"
             v._ring.attachTarget = v._ring.attachTarget or "origin"
