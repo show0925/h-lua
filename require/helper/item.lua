@@ -231,16 +231,16 @@ slkHelper.item.synthesis = function(formula)
         slkHelper.item.synthesisMapping.profit[profit[1]] = string.implode('+', fmStr)
         --
         slkHelper.save({
-            class = "synthesis",
-            profit = profit,
-            fragment = fragment,
+            _class = "synthesis",
+            _profit = profit,
+            _fragment = fragment,
         })
     end
 end
 
 --- 创建一件影子物品
 --- 不主动使用，由normal设置{useShadow = true}自动调用
---- 设置的 _plugins 数据会自动传到数据中
+--- 设置的 _hslk 数据会自动传到数据中
 ---@private
 ---@param v table
 slkHelper.item.shadow = function(v)
@@ -284,7 +284,7 @@ slkHelper.item.shadow = function(v)
     end
     local id = obj:get_id()
     return {
-        class = "item",
+        _class = "item",
         _id = id,
         _name = Name,
         _type = "shadow",
@@ -296,7 +296,7 @@ slkHelper.item.shadow = function(v)
 end
 
 --- 创建一件实体物品
---- 设置的 _plugins 数据会自动传到数据中
+--- 设置的 _hslk 数据会自动传到数据中
 --- 默认不会自动协助开启shadow模式（满格拾取/合成）可以设置slkHelper的conf来配置
 ---@public
 ---@param v table
@@ -407,7 +407,7 @@ slkHelper.item.normal = function(v)
         table.insert(slkHelperHashData, shadowData)
     end
     table.insert(slkHelperHashData, table.merge_pairs({
-        class = "item",
+        _class = "item",
         _id = id,
         _name = v.Name,
         _type = "normal",
@@ -416,6 +416,6 @@ slkHelper.item.normal = function(v)
         _attr = v._attr,
         _ring = v._ring,
         _shadow_id = shadowData._id or nil,
-    }, (v._plugins or {})))
+    }, (v._hslk or {})))
     return shadowData._id or id
 end

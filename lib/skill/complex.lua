@@ -1,5 +1,5 @@
 --[[
-    物理暴击
+    暴击
     options = {
         targetUnit = unit, --目标单位，必须
         odds = 0, --几率，必须
@@ -8,7 +8,7 @@
         sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
         damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
-        damageType = {CONST_DAMAGE_TYPE.physical} --伤害的类型,注意是table（可选）
+        damageType = {CONST_DAMAGE_TYPE.common} --伤害的类型,注意是table（可选）
         isFixed = false, --是否固伤（可选）
     }
 ]]
@@ -31,7 +31,6 @@ hskill.knocking = function(options)
         return
     end
     if (math.random(1, 100) <= odds) then
-        local damageType = options.damageType or { CONST_DAMAGE_TYPE.physical }
         local effect = options.effect or "war3mapImported\\eff_crit.mdl"
         heffect.toUnit(effect, targetUnit, 0.5)
         --暴！
@@ -43,10 +42,10 @@ hskill.knocking = function(options)
             damageString = "暴击",
             damageStringColor = "ff0000",
             damageSrc = options.damageSrc,
-            damageType = damageType,
+            damageType = options.damageType,
             isFixed = options.isFixed,
         })
-        --@触发物理暴击事件
+        --@触发暴击事件
         hevent.triggerEvent(options.sourceUnit, CONST_EVENT.knocking, {
             triggerUnit = options.sourceUnit,
             targetUnit = targetUnit,
@@ -54,7 +53,7 @@ hskill.knocking = function(options)
             odds = odds,
             percent = percent
         })
-        --@触发被物理暴击事件
+        --@触发被物暴击事件
         hevent.triggerEvent(targetUnit, CONST_EVENT.beKnocking, {
             triggerUnit = options.sourceUnit,
             sourceUnit = targetUnit,
@@ -62,83 +61,6 @@ hskill.knocking = function(options)
             odds = odds,
             percent = percent
         })
-    end
-end
-
---[[
-    魔法暴击
-    options = {
-        targetUnit = unit, --目标单位，必须
-        odds = 100, --几率，必须
-        damage = 0, --原始伤害，必须
-        percent = 0, --暴击比例，必须
-        sourceUnit = nil, --来源单位，可选
-        effect = nil, --特效，可选
-        damageSrc = CONST_DAMAGE_SRC.skill --伤害的种类（可选）
-        damageType = {CONST_DAMAGE_TYPE.magic} --伤害的类型,注意是table（可选）
-        isFixed = false, --是否固伤（可选）
-    }
-]]
-hskill.violence = function(options)
-    if (options.targetUnit == nil) then
-        print_err("violence: -targetUnit")
-        return
-    end
-    local odds = options.odds or 0
-    local damage = options.damage or 0
-    local percent = options.percent or 0
-    if (odds <= 0 or damage <= 0 or percent <= 0) then
-        print_err("violence: -odds -damage -percent")
-        return
-    end
-    local targetUnit = options.targetUnit
-    local targetOppose = hattr.get(targetUnit, "violence_oppose")
-    odds = odds - targetOppose
-    if (odds <= 0) then
-        return
-    end
-    if (math.random(1, 100) <= odds) then
-        local damageType = options.damageType or { CONST_DAMAGE_TYPE.magic }
-        local effect = options.effect or "war3mapImported\\eff_demon_explosion.mdl"
-        heffect.toUnit(effect, targetUnit, 0.5)
-        --暴！
-        local val = damage * percent * 0.01
-        hskill.damage(
-            {
-                sourceUnit = options.sourceUnit,
-                targetUnit = targetUnit,
-                damage = val,
-                damageString = "魔爆",
-                damageStringColor = "15bcef",
-                damageSrc = options.damageSrc,
-                damageType = damageType,
-                isFixed = options.isFixed,
-            }
-        )
-        --@触发魔法暴击事件
-        hevent.triggerEvent(
-            sourceUnit,
-            CONST_EVENT.violence,
-            {
-                triggerUnit = options.sourceUnit,
-                targetUnit = targetUnit,
-                damage = val,
-                odds = odds,
-                percent = percent
-            }
-        )
-        --@触发被魔法暴击事件
-        hevent.triggerEvent(
-            targetUnit,
-            CONST_EVENT.beViolence,
-            {
-                triggerUnit = targetUnit,
-                sourceUnit = targetUnit,
-                damage = val,
-                odds = odds,
-                percent = percent
-            }
-        )
     end
 end
 

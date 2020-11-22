@@ -200,32 +200,19 @@ hskill.damage = function(options)
     -- 开始神奇的伤害计算
     lastDamage = damage
     -- 自身暴击计算，自身暴击触发下，回避几率减少一半
+    local isKnocking = false
     if (isFixed == false and lastDamage > 0 and sourceUnitAttr.knocking_odds > 0 and sourceUnitAttr.knocking_percent > 0) then
         local targetKnockingOppose = hattr.get(targetUnit, "knocking_oppose")
         sourceUnitAttr.knocking_odds = sourceUnitAttr.knocking_odds - targetKnockingOppose
         if (math.random(1, 100) <= sourceUnitAttr.knocking_odds) then
+            isKnocking = true
             damageString = "暴击!" .. damageString
             damageStringColor = "ff0000"
             lastDamagePercent = lastDamagePercent + sourceUnitAttr.knocking_percent * 0.01
             if (targetUnitAttr.avoid > 0) then
                 targetUnitAttr.avoid = targetUnitAttr.avoid * 0.5
             end
-            --@触发物理暴击事件
-            hevent.triggerEvent(sourceUnit, CONST_EVENT.knocking, {
-                triggerUnit = sourceUnit,
-                targetUnit = targetUnit,
-                damage = lastDamage,
-                odds = sourceUnitAttr.knocking_odds,
-                percent = sourceUnitAttr.knocking_percent
-            })
-            --@触发被物理暴击事件
-            hevent.triggerEvent(targetUnit, CONST_EVENT.beKnocking, {
-                triggerUnit = sourceUnit,
-                sourceUnit = targetUnit,
-                damage = lastDamage,
-                odds = sourceUnitAttr.knocking_odds,
-                percent = sourceUnitAttr.knocking_percent
-            })
+            heffect.toUnit("war3mapImported\\eff_crit.mdl", targetUnit, 0.5)
         end
     end
     -- 计算回避 X 命中
@@ -428,6 +415,25 @@ hskill.damage = function(options)
                     damageType = damageType
                 }
             )
+        end
+        -- 本体暴击
+        if (isKnocking == true) then
+            --@触发物理暴击事件
+            hevent.triggerEvent(sourceUnit, CONST_EVENT.knocking, {
+                triggerUnit = sourceUnit,
+                targetUnit = targetUnit,
+                damage = lastDamage,
+                odds = sourceUnitAttr.knocking_odds,
+                percent = sourceUnitAttr.knocking_percent
+            })
+            --@触发被物理暴击事件
+            hevent.triggerEvent(targetUnit, CONST_EVENT.beKnocking, {
+                triggerUnit = sourceUnit,
+                sourceUnit = targetUnit,
+                damage = lastDamage,
+                odds = sourceUnitAttr.knocking_odds,
+                percent = sourceUnitAttr.knocking_percent
+            })
         end
         -- 吸血
         if (sourceUnit ~= nil and damageSrc == CONST_DAMAGE_SRC.attack) then

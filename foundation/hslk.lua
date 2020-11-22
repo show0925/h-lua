@@ -185,17 +185,17 @@ if (qty > 0) then
         local data = json.parse(js)
         if (data) then
             checked[i] = 1
-            if (data.class == 'item') then
+            if (data._class == 'item') then
                 hRuntime.register.item(data)
-            elseif (data.class == 'unit') then
+            elseif (data._class == 'unit') then
                 hRuntime.register.unit(data)
                 if (hRuntime.unit_type_ids[data._type] == nil) then
                     hRuntime.unit_type_ids[data._type] = {}
                 end
                 table.insert(hRuntime.unit_type_ids[data._type], data._id)
-            elseif (data.class == 'ability') then
+            elseif (data._class == 'ability') then
                 hRuntime.register.ability(data)
-            elseif (data.class == 'technology') then
+            elseif (data._class == 'technology') then
                 hRuntime.register.technology(data)
             else
                 checked[i] = nil

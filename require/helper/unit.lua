@@ -28,11 +28,11 @@ slkHelper.courierAutoSkill = function()
         obj.race = "other"
         slkHelper.courierBlink = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "ability",
+            _class = "ability",
             _id = slkHelper.courierBlink,
             _name = Name,
             _type = "courier",
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
     end
     if (slkHelper.courierRangePickUp == nil) then
         local Name = "信使-拾取"
@@ -61,11 +61,11 @@ slkHelper.courierAutoSkill = function()
         obj.race = "other"
         slkHelper.courierRangePickUp = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "ability",
+            _class = "ability",
             _id = slkHelper.courierRangePickUp,
             _name = Name,
             _type = "courier",
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
     end
     if (slkHelper.courierSeparate == nil) then
         local Name = "信使-拆分物品"
@@ -93,11 +93,11 @@ slkHelper.courierAutoSkill = function()
         obj.Rng1 = 200.00
         slkHelper.courierSeparate = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "ability",
+            _class = "ability",
             _id = slkHelper.courierSeparate,
             _name = Name,
             _type = "courier",
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
     end
     if (slkHelper.courierDeliver == nil) then
         local Name = "信使-传递"
@@ -126,11 +126,11 @@ slkHelper.courierAutoSkill = function()
         obj.race = "other"
         slkHelper.courierDeliver = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "ability",
+            _class = "ability",
             _id = slkHelper.courierDeliver,
             _name = Name,
             _type = "courier",
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
     end
     return {
         slkHelper.courierBlink, slkHelper.courierRangePickUp,
@@ -280,11 +280,11 @@ slkHelper.unit = {
         obj.Sellitems = v.Sellitems or ""
         local id = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "unit",
+            _class = "unit",
             _id = id,
             _name = v.Name,
             _type = "normal",
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
         return id
     end,
     --- 创建一个英雄
@@ -464,11 +464,11 @@ slkHelper.unit = {
         obj.lumbercost = v.lumbercost
         local id = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "unit",
+            _class = "unit",
             _id = id,
             _name = v.Name,
             _type = "hero",
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
         return id
     end,
     --- 创建一个商店
@@ -500,11 +500,11 @@ slkHelper.unit = {
         obj.race = v.race or "other"
         local id = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "unit",
+            _class = "unit",
             _id = id,
             _name = v.Name,
             _type = "shop",
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
         return id
     end,
     --- 创建一个信使
@@ -715,11 +715,11 @@ slkHelper.unit = {
         obj.heroAbilList = v.heroAbilList or ""
         local id = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "unit",
+            _class = "unit",
             _id = id,
             _name = v.Name,
             _type = _type,
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
         return id
     end,
     --- 创建一个酒馆模版
@@ -750,11 +750,11 @@ slkHelper.unit = {
         obj.race = v.race or "other"
         local id = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "unit",
+            _class = "unit",
             _id = id,
             _name = v.Name,
             _type = "tavern",
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
         return id
     end,
 }

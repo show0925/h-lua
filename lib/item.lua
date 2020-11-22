@@ -153,10 +153,18 @@ hitem.del = function(it, delay)
 end
 
 --- 获取物品ID字符串
----@param it userdata
----@return string
-hitem.getId = function(it)
-    return string.id2char(cj.GetItemTypeId(it))
+---@param itOrId userdata|number|string
+---@return string|nil
+hitem.getId = function(itOrId)
+    local id
+    if (type(itOrId) == 'userdata') then
+        id = string.id2char(cj.GetItemTypeId(itOrId))
+    elseif (type(itOrId) == 'number') then
+        id = string.id2char(itOrId)
+    elseif (type(itOrId) == 'string') then
+        id = itOrId
+    end
+    return id
 end
 
 --- 获取物品名称

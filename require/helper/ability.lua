@@ -48,7 +48,7 @@ end
 
 slkHelper.ability = {
     --- 创建一个空白的被动技能
-    --- 设置的 _plugins 数据会自动传到数据中
+    --- 设置的 _hslk 数据会自动传到数据中
     ---@public
     ---@param v table
     empty = function(v)
@@ -81,16 +81,16 @@ slkHelper.ability = {
         obj.Art = Art
         local id = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "ability",
+            _class = "ability",
             _id = id,
             _name = Name,
             _type = "empty",
             _attr = v._attr,
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
         return id
     end,
     --- 创建一个空白的光环技能
-    --- 设置的 _plugins 数据会自动传到数据中
+    --- 设置的 _hslk 数据会自动传到数据中
     ---@public
     ---@param v table
     ring = function(v)
@@ -141,13 +141,13 @@ slkHelper.ability = {
         obj.Art = Art
         local id = obj:get_id()
         table.insert(slkHelperHashData, table.merge_pairs({
-            class = "ability",
+            _class = "ability",
             _id = id,
             _name = Name,
             _type = "ring",
             _attr = v._attr,
             _ring = v._ring,
-        }, (v._plugins or {})))
+        }, (v._hslk or {})))
         return id
     end,
 }

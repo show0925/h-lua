@@ -24,27 +24,38 @@ hunit.get = function(whichUnit, key, default)
 end
 
 --- 数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
----@param whichUnit userdata
----@return table
-hunit.getSlk = function(whichUnit)
-    local id = hunit.getId(whichUnit)
-    return slk.unit[id] or {}
+---@param uOrId userdata|string|number
+---@return table|nil
+hunit.getSlk = function(uOrId)
+    local id = hunit.getId(uOrId)
+    return slk.unit[id]
+end
+
+--- 获取单位的 _hslk 自定义数据
+---@param uOrId userdata|string|number
+---@return table|nil
+hunit.getHSlk = function(uOrId)
+    local id = hunit.getId(uOrId)
+    if (hslk.i2v.unit[id]) then
+        return hslk.i2v.unit[id]
+    end
+    return {}
 end
 
 --- 获取单位的头像
----@param whichUnit userdata
+---@param uOrId userdata|string|number
 ---@return string
-hunit.getAvatar = function(whichUnit)
-    local uSlk = hunit.getSlk(whichUnit)
+hunit.getAvatar = function(uOrId)
+    local uSlk = hunit.getSlk(uOrId)
     return uSlk.Art or "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp"
 end
 
 --- 获取单位的浮动攻击
 --- 这是根据slk计算的浮动攻击，每次获取到的值可能不一样
----@param whichUnit userdata
+---@param uOrId userdata|string|number
 ---@return number
-hunit.getDmgPlus = function(whichUnit)
-    local uSlk = hunit.getSlk(whichUnit)
+hunit.getDmgPlus = function(uOrId)
+    local uSlk = hunit.getSlk(uOrId)
     local dmgplus1 = uSlk.dmgplus1 or 0
     local sides1 = uSlk.sides1 or 1
     local dice1 = uSlk.dice1 or 0
@@ -607,10 +618,18 @@ hunit.create = function(options)
 end
 
 --- 获取单位ID字符串
----@param u userdata
----@return string
-hunit.getId = function(u)
-    return string.id2char(cj.GetUnitTypeId(u))
+---@param uOrId userdata|number|string
+---@return string|nil
+hunit.getId = function(uOrId)
+    local id
+    if (type(uOrId) == 'userdata') then
+        id = string.id2char(cj.GetUnitTypeId(uOrId))
+    elseif (type(uOrId) == 'number') then
+        id = string.id2char(uOrId)
+    elseif (type(uOrId) == 'string') then
+        id = uOrId
+    end
+    return id
 end
 
 --- 根据名称获取单位ID字符串
