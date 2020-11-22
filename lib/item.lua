@@ -212,174 +212,129 @@ hitem.setPositionType = function(it, type)
     end
 end
 
---- 获取物品SLK数据集,需要注册
+--- 数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
 ---@param itOrId userdata|string|number
----@return any
+---@return table|nil
 hitem.getSlk = function(itOrId)
-    local slk
-    local itId
-    if (itOrId == nil) then
-        return
-    end
-    if (type(itOrId) == "string") then
-        itId = itOrId
-    elseif (type(itOrId) == "number") then
-        itId = string.id2char(itOrId)
-    else
-        itId = hitem.getId(itOrId)
-    end
-    if (hslk.i2v.item[itId] ~= nil) then
-        slk = hslk.i2v.item[itId]
-    end
-    return slk
+    local id = hitem.getId(itOrId)
+    return slk.item[id]
 end
--- 获取物品的图标路径,需要注册
+
+--- 获取单位的 _hslk 自定义数据
+---@param itOrId userdata|string|number
+---@return table|nil
+hitem.getHSlk = function(itOrId)
+    local id = hitem.getId(itOrId)
+    if (hslk.i2v.item[id]) then
+        return hslk.i2v.item[id]
+    end
+    return {}
+end
+
+-- 获取物品的图标路径
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getArt = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return slk.Art
-    else
-        return ""
-    end
+    local s = hitem.getSlk(itOrId)
+    return s.Art
 end
---- 获取物品的模型路径,需要注册
+
+--- 获取物品的模型路径
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getFile = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return slk.file
-    else
-        return ""
-    end
+    local s = hitem.getSlk(itOrId)
+    return s.file
 end
---- 获取物品的分类,需要注册
+
+--- 获取物品的分类
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getClass = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return slk.class
-    else
-        return "Permanent"
-    end
+    local s = hitem.getSlk(itOrId)
+    return s.class
 end
---- 获取物品所需的金币,需要注册
+
+--- 获取物品所需的金币
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getGoldCost = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return math.floor(slk.goldcost)
-    else
-        return 0
-    end
+    local s = hitem.getSlk(itOrId)
+    return math.floor(s.goldcost)
 end
---- 获取物品所需的木头,需要注册
+
+--- 获取物品所需的木头
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getLumberCost = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return math.floor(slk.lumbercost)
-    else
-        return 0
-    end
+    local s = hitem.getSlk(itOrId)
+    return math.floor(s.lumbercost)
 end
---- 获取物品是否可以使用,需要注册
+
+--- 获取物品是否可以使用
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsUsable = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return slk.usable == 1
-    else
-        return false
-    end
+    local s = hitem.getSlk(itOrId)
+    return s.usable == "1"
 end
---- 获取物品是否自动使用,需要注册
+
+--- 获取物品是否自动使用
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsPowerUp = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return slk.powerup == 1
-    else
-        return false
-    end
+    local s = hitem.getSlk(itOrId)
+    return s.powerup == "1"
 end
---- 获取物品是否使用后自动消失,需要注册
+
+--- 获取物品是否使用后自动消失
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsPerishable = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return slk.perishable == 1
-    else
-        return nil
-    end
+    local s = hitem.getSlk(itOrId)
+    return s.perishable == "1"
 end
---- 获取物品是否可卖,需要注册
+
+--- 获取物品是否可卖
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsSellAble = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return slk.sellable == 1
-    else
-        return false
-    end
+    local s = hitem.getSlk(itOrId)
+    return s.sellable == "1"
 end
 
---- 获取物品的最大叠加数(默认是1个,此系统以使用次数作为数量使用),需要注册
+--- 获取物品的最大叠加数(默认是1个,此系统以使用次数作为数量使用)
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getOverlie = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return slk.OVERLIE or 1
-    else
-        return 1
-    end
+    local s = hitem.getHSlk(itOrId)
+    return s._overlie or 1
 end
---- 获取物品的重量（默认为0）,需要注册
+
+--- 获取物品的重量（默认为0）
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getWeight = function(itOrId, charges)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
+    local s = hitem.getHSlk(itOrId)
+    if (s ~= nil) then
         if (charges == nil and type(itOrId) == "userdata") then
             -- 如果没有传次数，并且传入的是物品对象，会直接获取物品的次数，请注意
             charges = hitem.getCharges(itOrId)
         else
             charges = 1
         end
-        return (slk.WEIGHT or 0) * charges
+        return (s._weight or 0) * charges
     else
         return 0
     end
 end
---- 获取物品的属性加成,需要注册
+--- 获取物品的属性加成
 ---@param itOrId userdata|string|number
 ---@return table
 hitem.getAttribute = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return slk._attr or {}
-    else
-        return {}
-    end
-end
-
---- 获取物品的SLK自定义数据CUSTOM_DATA
----@param itOrId any
----@return table
-hitem.getCustomData = function(itOrId)
-    local slk = hitem.getSlk(itOrId)
-    if (slk ~= nil) then
-        return slk.CUSTOM_DATA or {}
+    local s = hitem.getHSlk(itOrId)
+    if (s ~= nil) then
+        return s._attr or {}
     else
         return {}
     end
@@ -687,9 +642,9 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
             hitem.create({ itemId = id, charges = 1, x = x, y = y, during = 0 })
         end
     elseif (separateType == "formula") then
-        local originSlk = hslk.i2v.item[id]
-        if (originSlk ~= nil and originSlk.SHADOW == true) then
-            id = hslk.i2v.item[originSlk.SHADOW_ID].ITEM_ID
+        local originHSlk = hslk.i2v.item[id]
+        if (originHSlk ~= nil and originHSlk._type == "shadow") then
+            id = hslk.i2v.item[originHSlk._shadow_id]._id
         end
         if (hslk.synthesis.profit[id] == nil) then
             return "物品不存在公式，无法拆分"
@@ -760,14 +715,14 @@ hitem.detector = function(whichUnit, originItem)
             0.05
         )
         -- 判断如果是真实物品并且有影子，转为影子物品掉落
-        local originSlk = hitem.getSlk(originItem)
-        if (originSlk.SHADOW == nil and originSlk.SHADOW_ID) then
+        local hs = hitem.getHSlk(originItem)
+        if (hs._type ~= "shadow" and hs._shadow_id) then
             local x = cj.GetItemX(originItem)
             local y = cj.GetItemY(originItem)
             local c = cj.GetItemCharges(originItem)
             hitem.del(originItem, 0)
             originItem = hitem.create({
-                itemId = originSlk.SHADOW_ID,
+                itemId = hs._shadow_id,
                 x = x,
                 y = y,
                 charges = c,
@@ -792,15 +747,15 @@ hitem.detector = function(whichUnit, originItem)
     local getItem
 
     -- 判断如果是影子物品，转为真实物品来判断
-    local originSlk = hitem.getSlk(originItem)
-    if (originSlk ~= nil and originSlk.SHADOW == true and originSlk.SHADOW_ID) then
+    local hs = hitem.getHSlk(originItem)
+    if (originhsl and hs._type == "shadow" and hs._shadow_id) then
         local realX = cj.GetItemX(originItem)
         local realY = cj.GetItemY(originItem)
         local realCharges = cj.GetItemCharges(originItem)
         hitem.del(originItem, 0)
         getItem = hitem.create({
             autoShadow = false,
-            itemId = originSlk.SHADOW_ID,
+            itemId = hs._shadow_id,
             x = realX,
             y = realY,
             charges = realCharges,
@@ -887,16 +842,16 @@ hitem.detector = function(whichUnit, originItem)
     if (#extra > 0) then
         for _, e in ipairs(extra) do
             local slk = hslk.i2v.item[e.id]
-            local id = slk.ITEM_ID
-            if (slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
-                id = slk.SHADOW_ID
+            local id = slk._id
+            if (slk._type ~= "shadow" and slk._shadow_id ~= nil) then
+                id = slk._shadow_id
             end
             local x = hunit.x(whichUnit)
             local y = hunit.y(whichUnit)
             local charges = e.charges
             local extraIt = hitem.create(
                 {
-                    itemId = slk.SHADOW_ID,
+                    itemId = slk._shadow_id,
                     x = x,
                     y = y,
                     charges = charges,
@@ -985,12 +940,12 @@ hitem.create = function(bean)
         end
         if (bean.autoShadow == true) then
             -- 默认如果可能的话，自动协助将真实物品转为影子物品(*小心死循环)
-            local slk = hitem.getSlk(it)
-            if (slk ~= nil and slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
+            local hs = hitem.getHSlk(it)
+            if (hs ~= nil and hs._type ~= "shadow" and hs._shadow_id ~= nil) then
                 x = cj.GetItemX(it)
                 y = cj.GetItemY(it)
                 hitem.del(it, 0)
-                it = cj.CreateItem(string.char2id(slk.SHADOW_ID), x, y)
+                it = cj.CreateItem(string.char2id(hs._shadow_id), x, y)
                 cj.SetItemCharges(it, charges)
             end
         end

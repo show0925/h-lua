@@ -46,8 +46,8 @@ end
 ---@param uOrId userdata|string|number
 ---@return string
 hunit.getAvatar = function(uOrId)
-    local uSlk = hunit.getSlk(uOrId)
-    return uSlk.Art or "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp"
+    local s = hunit.getSlk(uOrId)
+    return s.Art
 end
 
 --- 获取单位的浮动攻击
@@ -55,10 +55,10 @@ end
 ---@param uOrId userdata|string|number
 ---@return number
 hunit.getDmgPlus = function(uOrId)
-    local uSlk = hunit.getSlk(uOrId)
-    local dmgplus1 = uSlk.dmgplus1 or 0
-    local sides1 = uSlk.sides1 or 1
-    local dice1 = uSlk.dice1 or 0
+    local s = hunit.getSlk(uOrId)
+    local dmgplus1 = s.dmgplus1 or 0
+    local sides1 = s.sides1 or 1
+    local dice1 = s.dice1 or 0
     dmgplus1 = math.floor(dmgplus1)
     sides1 = math.floor(sides1)
     dice1 = math.floor(dice1)

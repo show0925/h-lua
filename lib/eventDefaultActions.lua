@@ -619,9 +619,9 @@ hevent_default_actions = {
                 end
                 local id = hitem.getId(it)
                 local name = hitem.getName(it)
-                local originSlk = hslk.i2v.item[id]
-                if (originSlk ~= nil and originSlk.SHADOW == true) then
-                    id = hslk.i2v.item[originSlk.SHADOW_ID].ITEM_ID
+                local hs = hslk.i2v.item[id]
+                if (hs ~= nil and hs._type == "shadow") then
+                    id = hslk.i2v.item[hs._shadow_id]._id
                 end
                 local charges = hitem.getCharges(it)
                 local formulas = hslk.synthesis.profit[id]
@@ -795,15 +795,11 @@ hevent_default_actions = {
                 --过滤hlua白字攻击物品
                 return
             end
-            itId = string.id2char(itId)
-            local itSlk = hitem.getSlk(itId)
-            if (itSlk == nil) then
-                return
-            end
             if (hRuntime.item[it] ~= nil and hRuntime.item[it].positionType == hitem.POSITION_TYPE.UNIT) then
                 -- 排除掉runtime内已创建给unit的物品
                 return
             end
+            itId = string.id2char(itId)
             local u = cj.GetTriggerUnit()
             local charges = cj.GetItemCharges(it)
             hitem.del(it, 0)
@@ -844,14 +840,14 @@ hevent_default_actions = {
                     htime.delTimer(t)
                     local n = cj.GetItemName(it)
                     if (n ~= nil) then
-                        local slk = hitem.getSlk(it)
-                        if (slk ~= nil and slk.SHADOW ~= true and slk.SHADOW_ID ~= nil) then
+                        local hs = hitem.getHSlk(it)
+                        if (hs ~= nil and hs._type ~= "shadow" and hs._shadow_id ~= nil) then
                             local x = cj.GetItemX(it)
                             local y = cj.GetItemY(it)
                             hitem.del(it, 0)
                             hitem.create(
                                 {
-                                    itemId = slk.SHADOW_ID,
+                                    itemId = hs._shadow_id,
                                     x = x,
                                     y = y,
                                     charges = charges,
