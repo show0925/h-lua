@@ -5,7 +5,9 @@ slkHelper.attrDesc = function(attr, sep, indent)
     local str = {}
     local strTable = {}
     sep = sep or "|n"
-    for k, v in pairs(attr) do
+    for _, arr in ipairs(table.obj2arr(attr, CONST_ATTR_KEYS)) do
+        local k = arr.key
+        local v = arr.value
         -- 附加单位
         if (k == "attack_speed_space") then
             v = v .. "击每秒"
@@ -23,6 +25,8 @@ slkHelper.attrDesc = function(attr, sep, indent)
             "split",
             "luck",
             "invincible",
+            "knocking_odds",
+            "knocking_extent",
             "damage_extent",
             "damage_decrease",
             "damage_rebound",
@@ -30,7 +34,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
             "gold_ratio",
             "lumber_ratio",
             "exp_ratio",
-            "sell_ratio"
+            "sell_ratio",
         }))
         then
             v = v .. "%"
@@ -59,16 +63,19 @@ slkHelper.attrDesc = function(attr, sep, indent)
             table.insert(strTable, (CONST_ATTR[k] or "") .. "：")
             local tempStr = {}
             for _, vv in pairs(v) do
-                local odds = vv["odds"] or 0
-                local during = vv["during"] or 0
-                local val = vv["val"] or 0
-                local percent = vv["percent"] or 0
-                local qty = vv["qty"] or 0
-                local reduce = vv["reduce"] or 0
-                local range = vv["range"] or 0
-                local distance = vv["distance"] or 0
-                local high = vv["high"] or 0
-                local temp2 = "　- "
+                local on = vv["on"]
+                if (CONST_EVENT_LABELS[on] ~= nil) then
+                    local odds = vv["odds"] or 0
+                    local during = vv["during"] or 0
+                    local val = vv["val"] or 0
+                    local percent = vv["percent"] or 0
+                    local qty = vv["qty"] or 0
+                    local rate = vv["rate"] or 0
+                    local radius = vv["radius"] or 0
+                    local distance = vv["distance"] or 0
+                    local height = vv["height"] or 0
+                    local temp2 = "　- " .. CONST_EVENT_LABELS[on] .. '时,'
+                end
                 if (k == "attack_buff" or k == "skill_buff") then
                     temp2 = temp2 .. "有"
                     temp2 = temp2 .. odds .. "%几率"

@@ -41,7 +41,7 @@ slkHelper.abilityRingUbertip = function(v)
         table.insert(d, "|n")
     end
     if (v._desc ~= nil and v._desc ~= "") then
-        table.insert(d, hColor.mixed(v._desc, slkHelper.conf.color.abilityRingDesc))
+        table.insert(d, hColor.mixed(v._desc, slkHelper.conf.color.ringDesc))
     end
     return string.implode("|n", d)
 end

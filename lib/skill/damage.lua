@@ -201,14 +201,14 @@ hskill.damage = function(options)
     lastDamage = damage
     -- 自身暴击计算，自身暴击触发下，回避几率减少一半
     local isKnocking = false
-    if (isFixed == false and lastDamage > 0 and sourceUnitAttr.knocking_odds > 0 and sourceUnitAttr.knocking_percent > 0) then
+    if (isFixed == false and lastDamage > 0 and sourceUnitAttr.knocking_odds > 0 and sourceUnitAttr.knocking_extent > 0) then
         local targetKnockingOppose = hattr.get(targetUnit, "knocking_oppose")
         sourceUnitAttr.knocking_odds = sourceUnitAttr.knocking_odds - targetKnockingOppose
         if (math.random(1, 100) <= sourceUnitAttr.knocking_odds) then
             isKnocking = true
             damageString = "暴击!" .. damageString
             damageStringColor = "ff0000"
-            lastDamagePercent = lastDamagePercent + sourceUnitAttr.knocking_percent * 0.01
+            lastDamagePercent = lastDamagePercent + sourceUnitAttr.knocking_extent * 0.01
             if (targetUnitAttr.avoid > 0) then
                 targetUnitAttr.avoid = targetUnitAttr.avoid * 0.5
             end
@@ -424,7 +424,7 @@ hskill.damage = function(options)
                 targetUnit = targetUnit,
                 damage = lastDamage,
                 odds = sourceUnitAttr.knocking_odds,
-                percent = sourceUnitAttr.knocking_percent
+                percent = sourceUnitAttr.knocking_extent
             })
             --@触发被物理暴击事件
             hevent.triggerEvent(targetUnit, CONST_EVENT.beKnocking, {
@@ -432,7 +432,7 @@ hskill.damage = function(options)
                 sourceUnit = targetUnit,
                 damage = lastDamage,
                 odds = sourceUnitAttr.knocking_odds,
-                percent = sourceUnitAttr.knocking_percent
+                percent = sourceUnitAttr.knocking_extent
             })
         end
         -- 吸血

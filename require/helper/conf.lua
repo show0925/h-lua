@@ -70,11 +70,11 @@ slkHelper.conf = {
         -- 物品合成品
         itemProfit = "ffd88c",
         -- 物品零部件
-        itemFragment = "orange",
+        itemFragment = hColor.orange,
         -- 技能主动
         abilityActive = "ffff00",
         -- 技能被动
-        abilityPassive = "99ccff",
+        abilityPassive = "57a8fa",
         -- 技能冷却时间
         abilityCoolDown = "ccffff",
         -- 技能属性
@@ -86,7 +86,7 @@ slkHelper.conf = {
         -- 光环作用目标
         ringTarget = "99ccff",
         -- 光环描述
-        abilityRingDesc = hColor.white,
+        ringDesc = hColor.white,
         -- 英雄攻击武器类型
         heroWeapon = "ff3939",
         -- 英雄基础攻击

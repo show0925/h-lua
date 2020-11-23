@@ -41,22 +41,15 @@ slkHelper.itemUbertip = function(v)
         table.insert(d, hColor.mixed("被动：" .. v._passive, slkHelper.conf.color.itemPassive))
     end
     if (v._ring ~= nil) then
-        if (v._ring.radius ~= nil or (type(v._ring.target) == 'table' and #v._ring.target > 0)) then
-            local txt = "光环目标："
-            if (v._ring.radius ~= nil) then
-                txt = txt .. v._ring.radius .. '范围内'
+        if (v._ring.attr ~= nil and v._ring.radius ~= nil and (type(v._ring.target) == 'table' and #v._ring.target > 0)) then
+            local txt = "光环：[" .. v._ring.radius .. 'px]['
+            local labels = {}
+            for _, t in ipairs(v._ring.target) do
+                table.insert(labels, CONST_TARGET_LABEL[t])
             end
-            if (type(v._ring.target) == 'table' and #v._ring.target > 0) then
-                local labels = {}
-                for _, t in ipairs(v._ring.target) do
-                    table.insert(labels, CONST_TARGET_LABEL[t])
-                end
-                txt = txt .. string.implode(',', labels)
-            end
-            table.insert(d, hColor.mixed(txt, slkHelper.conf.color.ringArea))
-        end
-        if (v._ring.attr ~= nil) then
-            table.insert(d, hColor.mixed("光环效果：|n" .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
+            txt = txt .. string.implode(',', labels)
+            txt = txt .. "]|n"
+            table.insert(d, hColor.mixed(txt .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
         end
         table.sort(v._ring.attr)
     end
@@ -230,7 +223,7 @@ slkHelper.item.synthesis = function(formula)
         end
         slkHelper.item.synthesisMapping.profit[profit[1]] = string.implode('+', fmStr)
         --
-        slkHelper.save({
+        table.insert(slkHelperHashData, {
             _class = "synthesis",
             _profit = profit,
             _fragment = fragment,

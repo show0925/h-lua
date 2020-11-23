@@ -657,24 +657,6 @@ hevent.onBeRebound = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.beRebound, callFunc)
 end
 
---- 造成无法回避的伤害时
----@alias onNoAvoid fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位",damage:"伤害"}):void
----@param whichUnit userdata
----@param callFunc onNoAvoid | "function(evtData) end"
----@return any
-hevent.onNoAvoid = function(whichUnit, callFunc)
-    return hevent.registerEvent(whichUnit, CONST_EVENT.noAvoid, callFunc)
-end
-
---- 被造成无法回避的伤害时
----@alias onBeNoAvoid fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",damage:"伤害"}):void
----@param whichUnit userdata
----@param callFunc onBeNoAvoid | "function(evtData) end"
----@return any
-hevent.onBeNoAvoid = function(whichUnit, callFunc)
-    return hevent.registerEvent(whichUnit, CONST_EVENT.beNoAvoid, callFunc)
-end
-
 --- 暴击时
 ---@alias onKnocking fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位",damage:"伤害",odds:"几率百分比",percent:"增幅百分比"}):void
 ---@param whichUnit userdata
