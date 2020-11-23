@@ -4,10 +4,10 @@ hattribute.xtrasSupportEvents = {
     CONST_EVENT.skill, CONST_EVENT.beSkill,
     CONST_EVENT.item, CONST_EVENT.beItem,
     CONST_EVENT.damage, CONST_EVENT.beDamage,
-    CONST_EVENT.attackDetect, CONST_EVENT.attackGetTarget, CONST_EVENT.attackReady, CONST_EVENT.beAttackReady,
+    CONST_EVENT.attackDetect, CONST_EVENT.attackGetTarget, CONST_EVENT.beAttackReady,
     CONST_EVENT.skillStudy, CONST_EVENT.skillReady, CONST_EVENT.skillCast, CONST_EVENT.skillEffect, CONST_EVENT.skillStop, CONST_EVENT.skillFinish,
     CONST_EVENT.itemUsed, CONST_EVENT.itemSell, CONST_EVENT.unitSell, CONST_EVENT.itemDrop, CONST_EVENT.itemPawn, CONST_EVENT.itemGet,
-    CONST_EVENT.itemSynthesis, CONST_EVENT.itemSeparate, CONST_EVENT.itemOverWeight, CONST_EVENT.itemOverSlot,
+    CONST_EVENT.itemSynthesis, CONST_EVENT.itemOverWeight, CONST_EVENT.itemOverSlot,
     CONST_EVENT.damageResistance,
     CONST_EVENT.avoid, CONST_EVENT.beAvoid, CONST_EVENT.breakArmor, CONST_EVENT.beBreakArmor,
     CONST_EVENT.swim, CONST_EVENT.beSwim, CONST_EVENT.broken, CONST_EVENT.beBroken,
@@ -158,21 +158,56 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                 if (his.alive(evtData[target]) and his.deleted(evtData[target]) == false) then
                     local targetUnit = evtData[target]
                     local actionField = actions[3]
-                    if (actionType == 'attr' and type(x.val) == 'number') then
+                    local val = 0
+                    local percent = x.percent or 100
+                    -- 处理数值
+                    if (type(x.val) == 'number') then
+                        val = math.round(x.val)
+                    elseif (type(x.val) == 'string') then
+                        if (x.val == 'damage') then
+                            val = evtData.damage or -1
+                        else
+                            local valAttr = string.explode('.', x.val)
+                            if (#valAttr == 2) then
+                                local au = evtData[valAttr[1]]
+                                local aa = valAttr[2]
+                                if (au and table.includes(aa, hattribute.xtrasSupportVals)) then
+                                    if (aa == 'level') then
+                                        val = hhero.getCurLevel(au)
+                                    elseif (aa == 'gold') then
+                                        val = hplayer.getGold(hunit.getOwner(au))
+                                    elseif (aa == 'lumber') then
+                                        val = hplayer.getLumber(hunit.getOwner(au))
+                                    else
+                                        val = hattribute.get(au, aa)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                    -- 处理百分比
+                    if (type(percent) == 'table') then
+                        percent = math.random(percent[1] or 0, percent[2] or 0)
+                    end
+                    if (percent < 0) then
+                        percent = 0
+                    end
+                    val = math.round(val * percent * 0.01)
+                    if (actionType == 'attr') then
                         -- 属性改动
-                        if (x.val ~= 0 and x.dur > 0 and math.random(1, 1000) <= x.odds * 10) then
+                        if (val ~= 0 and x.dur > 0 and math.random(1, 1000) <= x.odds * 10) then
                             -- 判断是否buff/debuff(判断基准就是判断val是否大于/小于0)
                             -- buff时，要计算目标单位的buff阻碍（如:可以设计一个boss造成强化阻碍，影响玩家的被动加成）
                             -- debuff时，要计算目标单位的debuff抵抗（如:可以设计一个物品抵抗debuff，减少影响）
                             -- 以上两个都是大于0才有效
-                            if (x.val > 0) then
+                            if (val > 0) then
                                 -- buff; > 0
                                 local buff_oppose = hattribute.get(targetUnit, 'buff_oppose')
                                 if (buff_oppose > 0) then
-                                    x.val = x.val * (1 - 0.01 * buff_oppose)
+                                    val = val * (1 - 0.01 * buff_oppose)
                                 end
-                                if (x.val > 0) then
-                                    hattr.set(targetUnit, x.dur, { [actionField] = "+" .. x.val })
+                                if (val > 0) then
+                                    hattr.set(targetUnit, x.dur, { [actionField] = "+" .. val })
                                     if (type(x.effect) == "string" and string.len(x.effect) > 0) then
                                         heffect.bindUnit(x.effect, targetUnit, "origin", x.dur)
                                     end
@@ -181,10 +216,10 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                 -- debuff; < 0
                                 local debuff_oppose = hattribute.get(targetUnit, 'debuff_oppose')
                                 if (debuff_oppose > 0) then
-                                    x.val = x.val * (1 - 0.01 * debuff_oppose)
+                                    val = val * (1 - 0.01 * debuff_oppose)
                                 end
-                                if (x.val < 0) then
-                                    hattr.set(targetUnit, x.dur, { [actionField] = tostring(x.val) })
+                                if (val < 0) then
+                                    hattr.set(targetUnit, x.dur, { [actionField] = tostring(val) })
                                     if (type(x.effect) == "string" and string.len(x.effect) > 0) then
                                         heffect.bindUnit(x.effect, targetUnit, "origin", x.dur)
                                     end
@@ -196,40 +231,6 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                         if ((x.odds or 0) > 0) then
                             local damageSrc = x.damageSrc or CONST_DAMAGE_SRC.unknown
                             local damageType = x.damageType or { CONST_DAMAGE_TYPE.common }
-                            local val = 0
-                            local percent = x.percent or 100
-                            -- 处理数值
-                            if (type(x.val) == 'number') then
-                                val = math.round(x.val)
-                            elseif (type(x.val) == 'string') then
-                                if (x.val == 'damage') then
-                                    val = evtData.damage or -1
-                                else
-                                    local valAttr = string.explode('.', x.val)
-                                    if (#valAttr == 2) then
-                                        local au = evtData[valAttr[1]]
-                                        local aa = valAttr[2]
-                                        if (au and table.includes(aa, hattribute.xtrasSupportVals)) then
-                                            if (aa == 'level') then
-                                                val = hhero.getCurLevel(au)
-                                            elseif (aa == 'gold') then
-                                                val = hplayer.getGold(hunit.getOwner(au))
-                                            elseif (aa == 'lumber') then
-                                                val = hplayer.getLumber(hunit.getOwner(au))
-                                            else
-                                                val = hattribute.get(au, aa)
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                            -- 处理百分比
-                            if (type(percent) == 'table') then
-                                percent = math.random(percent[1] or 0, percent[2] or 0)
-                            end
-                            if (percent < 0) then
-                                percent = 0
-                            end
                             if (val >= 0) then
                                 if (actionField == "knocking") then
                                     -- 额外暴击；已不分物理还是魔法，触发方式是自定义的
@@ -237,7 +238,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                         targetUnit = targetUnit,
                                         odds = x.odds,
                                         damage = val,
-                                        percent = percent,
+                                        percent = 100,
                                         sourceUnit = triggerUnit,
                                         effect = x.effect,
                                         damageType = damageType,
@@ -250,7 +251,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                         targetUnit = targetUnit,
                                         odds = x.odds,
                                         damage = val,
-                                        percent = percent,
+                                        percent = 100,
                                         radius = x.radius,
                                         sourceUnit = triggerUnit,
                                         effect = x.effect,

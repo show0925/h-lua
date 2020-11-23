@@ -188,7 +188,7 @@ hevent.onAttackGetTarget = function(whichUnit, callFunc)
 end
 
 --- 准备被攻击
----@alias onBeAttackReady fun(evtData: {triggerUnit:"被攻击单位",targetUnit:"攻击单位",attacker:"攻击单位"}):void
+---@alias onBeAttackReady fun(evtData: {triggerUnit:"被攻击单位",attacker:"攻击单位"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeAttackReady | "function(evtData) end"
 ---@return any
