@@ -276,7 +276,7 @@ slkHelper.item.shadow = function(v)
         obj.Hotkey = v.Hotkey
         v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
         v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
-        obj.Tip = "获得" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. ")"
+        obj.Tip = "获得" .. v.Name .. "(" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. ")"
     else
         obj.Buttonpos1 = v.Buttonpos1 or 0
         obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -395,7 +395,7 @@ slkHelper.item.normal = function(v)
         obj.Hotkey = v.Hotkey
         v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
         v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
-        obj.Tip = "获得" .. v.Name .. "(" .. hColor[slkHelper.conf.color.hotKey](v.Hotkey) .. ")"
+        obj.Tip = "获得" .. v.Name .. "(" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. ")"
     else
         obj.Buttonpos1 = v.Buttonpos1 or 0
         obj.Buttonpos2 = v.Buttonpos2 or 0
