@@ -163,8 +163,8 @@ CONST_EVENT_LABELS = {
 }
 
 CONST_EVENT_TARGET_LABELS = {
-    [CONST_EVENT.attack] = { triggerUnit = '己', targetUnit = '敌', attacker = '己' },
-    [CONST_EVENT.beAttack] = { triggerUnit = '己', targetUnit = '己', attacker = '敌' },
+    [CONST_EVENT.attack] = { triggerUnit = '己', targetUnit = '敌' },
+    [CONST_EVENT.beAttack] = { triggerUnit = '己', attackUnit = '敌' },
     [CONST_EVENT.skill] = { triggerUnit = '己', targetUnit = '敌', caster = '己' },
     [CONST_EVENT.beSkill] = { triggerUnit = '己', targetUnit = '己', caster = '敌' },
     [CONST_EVENT.item] = { triggerUnit = '己', targetUnit = '敌', user = '己' },
@@ -173,7 +173,7 @@ CONST_EVENT_TARGET_LABELS = {
     [CONST_EVENT.beDamage] = { triggerUnit = '己', targetUnit = '己', sourceUnit = '敌' },
     [CONST_EVENT.attackDetect] = { triggerUnit = '己', targetUnit = '敌' },
     [CONST_EVENT.attackGetTarget] = { triggerUnit = '己', targetUnit = '敌' },
-    [CONST_EVENT.beAttackReady] = { triggerUnit = '己', attacker = '敌' },
+    [CONST_EVENT.beAttackReady] = { triggerUnit = '己', attackUnit = '敌' },
     [CONST_EVENT.skillStudy] = { triggerUnit = '己' },
     [CONST_EVENT.skillReady] = { triggerUnit = '己', targetUnit = '敌' },
     [CONST_EVENT.skillCast] = { triggerUnit = '己', targetUnit = '敌' },

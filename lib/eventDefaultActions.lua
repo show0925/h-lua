@@ -263,7 +263,7 @@ hevent_default_actions = {
                 CONST_EVENT.beAttackReady,
                 {
                     triggerUnit = cj.GetTriggerUnit(),
-                    attacker = cj.GetAttacker()
+                    attackUnit = cj.GetAttacker()
                 }
             )
         end),

@@ -188,7 +188,7 @@ hevent.onAttackGetTarget = function(whichUnit, callFunc)
 end
 
 --- 准备被攻击
----@alias onBeAttackReady fun(evtData: {triggerUnit:"被攻击单位",attacker:"攻击单位"}):void
+---@alias onBeAttackReady fun(evtData: {triggerUnit:"被攻击单位",attackUnit:"攻击单位"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeAttackReady | "function(evtData) end"
 ---@return any
@@ -200,7 +200,7 @@ hevent.onBeAttackReady = function(whichUnit, callFunc)
 end
 
 --- 造成攻击
----@alias onAttack fun(evtData: {triggerUnit:"攻击单位",targetUnit:"被攻击单位",attacker:"攻击单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
+---@alias onAttack fun(evtData: {triggerUnit:"攻击单位",targetUnit:"被攻击单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onAttack | "function(evtData) end"
 ---@return any
@@ -209,7 +209,7 @@ hevent.onAttack = function(whichUnit, callFunc)
 end
 
 --- 承受攻击
----@alias onBeAttack fun(evtData: {triggerUnit:"被攻击单位",targetUnit:"被攻击单位",attacker:"攻击来源",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
+---@alias onBeAttack fun(evtData: {triggerUnit:"被攻击单位",attackUnit:"攻击单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeAttack | "function(evtData) end"
 ---@return any
