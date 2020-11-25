@@ -109,9 +109,9 @@ end
 --        xtras = {
 --            add = {
 --                { on = CONST_EVENT.attack, action = "triggerUnit.attr.attack_speed", odds = 20.0, val = 1.5, dur = 3.0, effect = nil },
---                { on = CONST_EVENT.attack, action = "attacker.attr.attack_speed", odds = 20.0, val = 1.5, dur = 3.0, effect = nil },
---                { on = CONST_EVENT.skill, action = "caster.attr.attack_green", odds = 20.0, val = 2, dur = 3.0, effect = nil },
---                { on = CONST_EVENT.item, action = "user.attr.int_white", odds = 20.0, val = 2, dur = 3.0, effect = nil },
+--                { on = CONST_EVENT.attack, action = "attackUnit.attr.attack_speed", odds = 20.0, val = 1.5, dur = 3.0, effect = nil },
+--                { on = CONST_EVENT.skill, action = "castUnit.attr.attack_green", odds = 20.0, val = 2, dur = 3.0, effect = nil },
+--                { on = CONST_EVENT.item, action = "useUnit.attr.int_white", odds = 20.0, val = 2, dur = 3.0, effect = nil },
 --                { on = CONST_EVENT.attack, action = "targetUnit.spec.knocking", odds = 100, percent = 100, effect = nil },
 --                { on = CONST_EVENT.skill, action = "targetUnit.spec.violence", odds = 100, percent = 100, effect = nil },
 --                { on = CONST_EVENT.attack, action = "targetUnit.spec.split", odds = 100, percent = {30,50}, radius = 250 },

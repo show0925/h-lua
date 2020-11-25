@@ -407,7 +407,7 @@ hevent_default_actions = {
                 CONST_EVENT.dead,
                 {
                     triggerUnit = u,
-                    killer = killer
+                    killUnit = killer
                 }
             )
             -- @触发击杀事件
@@ -416,7 +416,6 @@ hevent_default_actions = {
                 CONST_EVENT.kill,
                 {
                     triggerUnit = killer,
-                    killer = killer,
                     targetUnit = u
                 }
             )

@@ -1,3 +1,21 @@
+--- 属性系统目标文本修正
+slkHelper.attrTargetLabel = function(target, actionType, actionField)
+    if (actionType == 'spec' and table.includes(actionField, { 'split', 'bomb', 'lightning_chain' })) then
+        if (target == '己') then
+            target = '友军'
+        else
+            target = '敌军'
+        end
+    else
+        if (target == '己') then
+            target = '自己'
+        else
+            target = '敌人'
+        end
+    end
+    return target
+end
+
 --- 属性系统说明构成
 ---@private
 slkHelper.attrDesc = function(attr, sep, indent)
@@ -79,18 +97,15 @@ slkHelper.attrDesc = function(attr, sep, indent)
                     local radius = vv["radius"] or 0
                     local distance = vv["distance"] or 0
                     local height = vv["height"] or 0
-
-                    --上色
-                    target = hColor.greenLight(target)
-                    actionFieldLabel = hColor.greenLight(actionFieldLabel)
-
-                    if (odds > 0 and dur > 0 and percent ~= 0 and val ~= 0) then
-
+                    --
+                    if (odds > 0 and percent ~= nil and val ~= nil) then
                         -- 拼凑文本
                         local temp2 = "　- " .. CONST_EVENT_LABELS[on] .. '时,'
                         temp2 = temp2 .. "有"
                         temp2 = temp2 .. odds .. "%几率"
-                        temp2 = temp2 .. "在" .. dur .. "秒内"
+                        if (dur > 0) then
+                            temp2 = temp2 .. "在" .. dur .. "秒内"
+                        end
 
                         -- 拼凑值
                         local valLabel
@@ -107,42 +122,37 @@ slkHelper.attrDesc = function(attr, sep, indent)
                             elseif (unitLabel == "倍") then
                                 valLabel = math.round(percent * val)
                             elseif (unitLabel == '') then
-                                valLabel = '随机' .. math.round(percent[1] * 0.01 * val) .. '到' .. math.round(percent[2] * 0.01 * val)
+                                valLabel = '随机' .. math.round(percent[1] * 0.01 * val) .. '~' .. math.round(percent[2] * 0.01 * val)
                             end
                         elseif (type(val) == 'string') then
+                            if (unitLabel == '') then
+                                percent = '随机' .. percent[1] .. '%~' .. percent[2] .. '%'
+                            end
                             if (val == 'damage') then
-                                valLabel = "[" .. percent .. unitLabel .. "当前伤害]"
+                                valLabel = percent .. unitLabel .. "当前伤害"
                             else
                                 local valAttr = string.explode('.', val)
-                                if (#valAttr == 2) then
+                                if (table.len(valAttr) == 2
+                                    and CONST_EVENT_TARGET_LABELS[on]
+                                    and CONST_EVENT_TARGET_LABELS[on][valAttr[1]]) then
                                     local au = CONST_EVENT_TARGET_LABELS[on][valAttr[1]]
+                                    au = slkHelper.attrTargetLabel(au, actionType, actionField)
                                     local aa = valAttr[2]
                                     if (aa == 'level') then
-                                        valLabel = "[" .. percent .. unitLabel .. au .. "的当前等级]"
+                                        valLabel = percent .. unitLabel .. au .. "当前等级"
                                     elseif (aa == 'gold') then
-                                        valLabel = "[" .. percent .. unitLabel .. au .. "的当前黄金量]"
+                                        valLabel = percent .. unitLabel .. au .. "当前黄金量"
                                     elseif (aa == 'lumber') then
-                                        valLabel = "[" .. percent .. unitLabel .. au .. "的当前木头量]"
+                                        valLabel = percent .. unitLabel .. au .. "当前木头量"
                                     else
-                                        valLabel = "[" .. percent .. unitLabel .. au .. '的' .. CONST_ATTR[aa] .. "]"
+                                        valLabel = percent .. unitLabel .. au .. (CONST_ATTR[aa] or '不明属性') .. ""
                                     end
                                 end
                             end
                         end
-
                         -- 对象名称修正
-                        if (target == '己') then
-                            if (actionType == 'attr') then
-                                target = '自己'
-                            end
-                        else
-                            if (actionType == 'attr') then
-                                target = '敌人'
-                            end
-                        end
-
+                        target = slkHelper.attrTargetLabel(target, actionType, actionField)
                         if (valLabel ~= nil) then
-                            valLabel = hColor.yellowLight(valLabel)
                             if (actionType == 'attr') then
                                 if (val > 0) then
                                     temp2 = temp2 .. "提升" .. target
@@ -153,47 +163,40 @@ slkHelper.attrDesc = function(attr, sep, indent)
                             elseif (actionType == 'spec') then
                                 if (actionField == "knocking") then
                                     temp2 = temp2
-                                        .. "对" .. target .. "造成" .. valLabel .. "的" .. actionFieldLabel
-                                elseif (vv["attr"] == "split") then
+                                        .. "对" .. target .. "造成" .. valLabel .. "的" .. actionFieldLabel .. "伤害"
+                                elseif (actionField == "split") then
                                     temp2 = temp2
                                         .. actionFieldLabel .. "攻击" .. radius .. "范围的"
-                                        .. target .. "方，造成" .. actionFieldLabel .. "的额外伤害"
-                                elseif (vv["attr"] == "bomb") then
+                                        .. target .. ",造成" .. valLabel .. "伤害"
+                                elseif (actionField == "bomb") then
                                     temp2 = temp2
-                                        .. actionFieldLabel .. radius .. "范围的" .. actionFieldLabel
-                                    temp2 = temp2 .. "造成" .. actionFieldLabel .. "的额外伤害"
-                                elseif (vv["attr"] == "swim" or vv["attr"] == "silent" or vv["attr"] == "unarm" or vv["attr"] == "fetter") then
-                                    temp2 = temp2 .. actionFieldLabel .. "目标" .. dur .. "秒"
-                                    if (val > 0) then
-                                        temp2 = temp2 .. ",并造成" .. val .. "点伤害"
+                                        .. actionFieldLabel .. radius .. "范围的" .. target
+                                        .. ",造成" .. valLabel .. "伤害"
+                                elseif (table.includes(actionField, { "swim", "silent", "unarm", "fetter" })) then
+                                    temp2 = temp2
+                                        .. actionFieldLabel .. "目标" .. dur .. "秒"
+                                        .. ",并造成" .. valLabel .. "点伤害"
+                                elseif (actionField == "broken") then
+                                    temp2 = temp2
+                                        .. actionFieldLabel .. "目标" .. ",并造成" .. valLabel .. "点伤害"
+                                elseif (actionField == "lightning_chain") then
+                                    temp2 = temp2
+                                        .. "对最多" .. qty .. "个目标"
+                                        .. "发动" .. valLabel .. "伤害的" .. actionFieldLabel
+                                    if (rate > 0) then
+                                        temp2 = temp2 .. ",每次跳跃渐强" .. rate .. "%"
+                                    elseif (rate < 0) then
+                                        temp2 = temp2 .. ",每次跳跃衰减" .. rate .. "%"
                                     end
-                                elseif (vv["attr"] == "broken") then
-                                    temp2 = temp2 .. actionFieldLabel .. "目标"
-                                    if (val > 0) then
-                                        temp2 = temp2 .. ",并造成" .. val .. "点伤害"
-                                    end
-                                elseif (vv["attr"] == "lightning_chain") then
-                                    temp2 = temp2 .. "对最多" .. qty .. "个目标"
-                                    temp2 = temp2 .. "发动" .. val .. "伤害的" .. actionFieldLabel
-                                    if (reduce > 0) then
-                                        temp2 = temp2 .. ",每次击中伤害渐强" .. reduce .. "%"
-                                    elseif (reduce < 0) then
-                                        temp2 = temp2 .. ",每次击中伤害衰减" .. reduce .. "%"
-                                    end
-                                elseif (vv["attr"] == "crack_fly") then
-                                    temp2 = temp2 .. actionFieldLabel .. "目标高达" .. high .. "高度"
-                                    if (val > 0) then
-                                        temp2 = temp2 .. ",并击退" .. distance .. "距离"
-                                    end
-                                    if (val > 0) then
-                                        temp2 = temp2 .. ",同时造成" .. val .. "伤害"
-                                    end
+                                elseif (actionField == "crack_fly") then
+                                    temp2 = temp2
+                                        .. actionFieldLabel .. "目标达" .. height .. "高度并击退" .. distance .. "距离"
+                                        .. ",同时造成" .. valLabel .. "伤害"
                                 end
                             end
                             table.insert(tempStr, indent .. temp2)
                         end
                     end
-
                 end
             end
             table.insert(strTable, string.implode(sep, tempStr))

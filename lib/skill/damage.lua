@@ -225,7 +225,7 @@ hskill.damage = function(options)
             CONST_EVENT.avoid,
             {
                 triggerUnit = targetUnit,
-                attacker = sourceUnit
+                attackUnit = sourceUnit
             }
         )
         -- @触发被回避事件
@@ -234,8 +234,7 @@ hskill.damage = function(options)
             CONST_EVENT.beAvoid,
             {
                 triggerUnit = sourceUnit,
-                attacker = sourceUnit,
-                targetUnit = targetUnit
+                avoidUnit = targetUnit
             }
         )
     end
@@ -367,7 +366,6 @@ hskill.damage = function(options)
                 {
                     triggerUnit = sourceUnit,
                     targetUnit = targetUnit,
-                    sourceUnit = sourceUnit,
                     damage = lastDamage,
                     damageSrc = damageSrc,
                     damageType = damageType
@@ -396,7 +394,6 @@ hskill.damage = function(options)
                         triggerUnit = sourceUnit,
                         targetUnit = targetUnit,
                         damage = lastDamage,
-                        damageSrc = damageSrc,
                         damageType = damageType
                     }
                 )
@@ -409,7 +406,56 @@ hskill.damage = function(options)
                     triggerUnit = targetUnit,
                     attackUnit = sourceUnit,
                     damage = lastDamage,
-                    damageSrc = damageSrc,
+                    damageType = damageType
+                }
+            )
+        elseif (damageSrc == CONST_DAMAGE_SRC.skill) then
+            if (sourceUnit ~= nil) then
+                -- @触发技能事件
+                hevent.triggerEvent(
+                    sourceUnit,
+                    CONST_EVENT.skill,
+                    {
+                        triggerUnit = sourceUnit,
+                        targetUnit = targetUnit,
+                        damage = lastDamage,
+                        damageType = damageType
+                    }
+                )
+            end
+            -- @触发被技能击中事件
+            hevent.triggerEvent(
+                targetUnit,
+                CONST_EVENT.beSkill,
+                {
+                    triggerUnit = targetUnit,
+                    castUnit = sourceUnit,
+                    damage = lastDamage,
+                    damageType = damageType
+                }
+            )
+        elseif (damageSrc == CONST_DAMAGE_SRC.item) then
+            if (sourceUnit ~= nil) then
+                -- @触发物品事件
+                hevent.triggerEvent(
+                    sourceUnit,
+                    CONST_EVENT.item,
+                    {
+                        triggerUnit = sourceUnit,
+                        targetUnit = targetUnit,
+                        damage = lastDamage,
+                        damageType = damageType
+                    }
+                )
+            end
+            -- @触发被物品伤害事件
+            hevent.triggerEvent(
+                targetUnit,
+                CONST_EVENT.beItem,
+                {
+                    triggerUnit = targetUnit,
+                    useUnit = sourceUnit,
+                    damage = lastDamage,
                     damageType = damageType
                 }
             )

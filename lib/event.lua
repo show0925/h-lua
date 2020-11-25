@@ -200,7 +200,7 @@ hevent.onBeAttackReady = function(whichUnit, callFunc)
 end
 
 --- 造成攻击
----@alias onAttack fun(evtData: {triggerUnit:"攻击单位",targetUnit:"被攻击单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
+---@alias onAttack fun(evtData: {triggerUnit:"攻击单位",targetUnit:"被攻击单位",damage:"伤害",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onAttack | "function(evtData) end"
 ---@return any
@@ -209,7 +209,7 @@ hevent.onAttack = function(whichUnit, callFunc)
 end
 
 --- 承受攻击
----@alias onBeAttack fun(evtData: {triggerUnit:"被攻击单位",attackUnit:"攻击单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
+---@alias onBeAttack fun(evtData: {triggerUnit:"被攻击单位",attackUnit:"攻击单位",damage:"伤害",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeAttack | "function(evtData) end"
 ---@return any
@@ -218,7 +218,7 @@ hevent.onBeAttack = function(whichUnit, callFunc)
 end
 
 --- 技能造成伤害
----@alias onSkill fun(evtData: {triggerUnit:"施法单位",targetUnit:"被伤害单位",caster:"施法单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
+---@alias onSkill fun(evtData: {triggerUnit:"施法单位",targetUnit:"被伤害单位",damage:"伤害",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onSkill | "function(evtData) end"
 ---@return any
@@ -227,7 +227,7 @@ hevent.onSkill = function(whichUnit, callFunc)
 end
 
 --- 被技能伤害
----@alias onBeSkill fun(evtData: {triggerUnit:"被伤害单位",targetUnit:"被伤害单位",caster:"施法单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
+---@alias onBeSkill fun(evtData: {triggerUnit:"被伤害单位",targetUnit:"被伤害单位",caster:"施法单位",damage:"伤害",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeSkill | "function(evtData) end"
 ---@return any
@@ -308,7 +308,7 @@ hevent.onSkillFinish = function(whichUnit, callFunc)
 end
 
 --- 物品造成伤害
----@alias onItem fun(evtData: {triggerUnit:"施法单位",targetUnit:"被伤害单位",user:"使用物品单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
+---@alias onItem fun(evtData: {triggerUnit:"使用物品单位",targetUnit:"被伤害单位",damage:"伤害",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onItem | "function(evtData) end"
 ---@return any
@@ -317,7 +317,7 @@ hevent.onItem = function(whichUnit, callFunc)
 end
 
 --- 被物品伤害
----@alias onBeItem fun(evtData: {triggerUnit:"被伤害单位",targetUnit:"被伤害单位",user:"使用物品单位",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
+---@alias onBeItem fun(evtData: {triggerUnit:"被伤害单位",useUnit:"使用物品单位",damage:"伤害",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeItem | "function(evtData) end"
 ---@return any
@@ -433,7 +433,7 @@ hevent.onItemOverSlot = function(whichUnit, callFunc)
 end
 
 --- 造成伤害
----@alias onDamage fun(evtData: {triggerUnit:"伤害来源",targetUnit:"被伤害单位",sourceUnit:"伤害来源",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
+---@alias onDamage fun(evtData: {triggerUnit:"伤害来自单位",targetUnit:"被伤害单位",damage:"伤害",damageSrc:"伤害来源",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onDamage | "function(evtData) end"
 ---@return any
@@ -442,7 +442,7 @@ hevent.onDamage = function(whichUnit, callFunc)
 end
 
 --- 承受伤害
----@alias onBeDamage fun(evtData: {triggerUnit:"被伤害单位",sourceUnit:"伤害来源",damage:"伤害",damageSrc:"伤害方式",damageType:"伤害类型"}):void
+---@alias onBeDamage fun(evtData: {triggerUnit:"被伤害单位",sourceUnit:"伤害来自单位",damage:"伤害",damageSrc:"伤害来源",damageType:"伤害类型"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeDamage | "function(evtData) end"
 ---@return any
@@ -460,7 +460,7 @@ hevent.onDamageResistance = function(whichUnit, callFunc)
 end
 
 --- 回避攻击成功
----@alias onAvoid fun(evtData: {triggerUnit:"触发单位",attacker:"攻击单位"}):void
+---@alias onAvoid fun(evtData: {triggerUnit:"回避的单位",attackUnit:"攻击单位"}):void
 ---@param whichUnit userdata
 ---@param callFunc onAvoid | "function(evtData) end"
 ---@return any
@@ -469,7 +469,7 @@ hevent.onAvoid = function(whichUnit, callFunc)
 end
 
 --- 攻击被回避
----@alias onBeAvoid fun(evtData: {triggerUnit:"攻击单位",attacker:"攻击单位",targetUnit:"回避的单位"}):void
+---@alias onBeAvoid fun(evtData: {triggerUnit:"攻击单位",avoidUnit:"回避的单位"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeAvoid | "function(evtData) end"
 ---@return any
@@ -478,7 +478,7 @@ hevent.onBeAvoid = function(whichUnit, callFunc)
 end
 
 --- 破防（护甲/魔抗）成功
----@alias onBreakArmor fun(evtData: {breakType:"无视类型",triggerUnit:"触发无视单位",targetUnit:"目标单位",value:"破防的数值"}):void
+---@alias onBreakArmor fun(evtData: {breakType:"无视类型",triggerUnit:"破防单位",targetUnit:"目标单位",value:"破防的数值"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBreakArmor | "function(evtData) end"
 ---@return any
@@ -487,7 +487,7 @@ hevent.onBreakArmor = function(whichUnit, callFunc)
 end
 
 --- 被破防（护甲/魔抗）成功
----@alias onBeBreakArmor fun(evtData: {breakType:"无视类型",triggerUnit:"被破甲单位",sourceUnit:"来源单位",value:"破防的数值"}):void
+---@alias onBeBreakArmor fun(evtData: {breakType:"无视类型",triggerUnit:"被破甲单位",sourceUnit:"破防单位",value:"破防的数值"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeBreakArmor | "function(evtData) end"
 ---@return any
@@ -639,7 +639,7 @@ hevent.onBeCrackFly = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.beCrackFly, callFunc)
 end
 
---- 反伤时
+--- 反伤成功时
 ---@alias onRebound fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",damage:"反伤伤害"}):void
 ---@param whichUnit userdata
 ---@param callFunc onRebound | "function(evtData) end"
@@ -648,7 +648,7 @@ hevent.onRebound = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.rebound, callFunc)
 end
 
---- 被反伤时
+--- 被反伤伤害到时
 ---@alias onBeRebound fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",damage:"反伤伤害"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeRebound | "function(evtData) end"
@@ -739,7 +739,7 @@ hevent.onPunish = function(whichUnit, callFunc)
 end
 
 --- 死亡时
----@alias onDead fun(evtData: {triggerUnit:"触发单位",killer:"凶手单位"}):void
+---@alias onDead fun(evtData: {triggerUnit:"死亡单位",killUnit:"凶手单位"}):void
 ---@param whichUnit userdata
 ---@param callFunc onDead | "function(evtData) end"
 ---@return any
@@ -748,7 +748,7 @@ hevent.onDead = function(whichUnit, callFunc)
 end
 
 --- 杀敌时
----@alias onKill fun(evtData: {triggerUnit:"触发单位",killer:"凶手单位",targetUnit:"获取死亡单位"}):void
+---@alias onKill fun(evtData: {triggerUnit:"凶手单位",targetUnit:"死亡单位"}):void
 ---@param whichUnit userdata
 ---@param callFunc onKill | "function(evtData) end"
 ---@return any
