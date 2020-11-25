@@ -54,13 +54,13 @@ slkHelper.conf = {
         -- 热键
         hotKey = "ffcc00",
         -- 物品主动
-        itemActive = "ffff00",
+        itemActive = "fae470",
         -- 物品被动
-        itemPassive = "99ccff",
+        itemPassive = "6ab2f6",
         -- 物品冷却时间
         itemCoolDown = "ccffff",
         -- 物品属性
-        itemAttr = "80ff00",
+        itemAttr = "b0f26e",
         -- 物品叠加
         itemOverlie = "ff59ff",
         -- 物品重量
