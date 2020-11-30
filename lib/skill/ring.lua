@@ -21,6 +21,16 @@ hring.getHSlk = function(id)
     return hs
 end
 
+--- 根据光环名称获取技能ID字符串
+---@param name string
+---@return string
+hring.n2i = function(name)
+    if (hslk.n2v.ring[name]) then
+        return hslk.n2v.ring[name]._id or nil
+    end
+    return nil
+end
+
 --- 检查技能ID是否支持光环服务
 --- 成功则返回ID字符串,失败返回false
 ---@private

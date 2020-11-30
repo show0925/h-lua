@@ -152,6 +152,16 @@ hitem.del = function(it, delay)
     end
 end
 
+--- 根据物品名称获取物品ID字符串
+---@param name string
+---@return string
+hitem.n2i = function(name)
+    if (hslk.n2v.item[name]) then
+        return hslk.n2v.item[name]._id or nil
+    end
+    return nil
+end
+
 --- 获取物品ID字符串
 ---@param itOrId userdata|number|string
 ---@return string|nil

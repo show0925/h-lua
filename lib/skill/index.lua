@@ -66,6 +66,16 @@ hskill.getAttribute = function(abilId)
     end
 end
 
+--- 根据技能名称获取技能ID字符串
+---@param name string
+---@return string
+hskill.n2i = function(name)
+    if (hslk.n2v.ability[name]) then
+        return hslk.n2v.ability[name]._id or nil
+    end
+    return nil
+end
+
 --- 附加单位获得技能后的属性
 ---@protected
 hskill.addProperty = function(whichUnit, abilId)
