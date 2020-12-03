@@ -134,7 +134,8 @@ slkHelper.attrDesc = function(attr, sep, indent)
                                 local valAttr = string.explode('.', val)
                                 if (table.len(valAttr) == 2
                                     and CONST_EVENT_TARGET_LABELS[on]
-                                    and CONST_EVENT_TARGET_LABELS[on][valAttr[1]]) then
+                                    and CONST_EVENT_TARGET_LABELS[on][valAttr[1]]
+                                ) then
                                     local au = CONST_EVENT_TARGET_LABELS[on][valAttr[1]]
                                     au = slkHelper.attrTargetLabel(au, actionType, actionField)
                                     local aa = valAttr[2]

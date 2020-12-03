@@ -27,12 +27,12 @@ slkHelper.courierAutoSkill = function()
         obj.Areaeffectart = "Abilities\\Spells\\NightElf\\Blink\\BlinkTarget.mdl"
         obj.race = "other"
         slkHelper.courierBlink = obj:get_id()
-        table.insert(slkHelperHashData, table.merge_pairs({
+        table.insert(slkHelperHashData, {
             _class = "ability",
             _id = slkHelper.courierBlink,
             _name = Name,
             _type = "courier",
-        }, (v._hslk or {})))
+        })
     end
     if (slkHelper.courierRangePickUp == nil) then
         local Name = "信使-拾取"
@@ -60,12 +60,12 @@ slkHelper.courierAutoSkill = function()
         obj.TargetArt = ""
         obj.race = "other"
         slkHelper.courierRangePickUp = obj:get_id()
-        table.insert(slkHelperHashData, table.merge_pairs({
+        table.insert(slkHelperHashData, {
             _class = "ability",
             _id = slkHelper.courierRangePickUp,
             _name = Name,
             _type = "courier",
-        }, (v._hslk or {})))
+        })
     end
     if (slkHelper.courierSeparate == nil) then
         local Name = "信使-拆分物品"
@@ -92,12 +92,12 @@ slkHelper.courierAutoSkill = function()
         obj.Cost1 = 0
         obj.Rng1 = 200.00
         slkHelper.courierSeparate = obj:get_id()
-        table.insert(slkHelperHashData, table.merge_pairs({
+        table.insert(slkHelperHashData, {
             _class = "ability",
             _id = slkHelper.courierSeparate,
             _name = Name,
             _type = "courier",
-        }, (v._hslk or {})))
+        })
     end
     if (slkHelper.courierDeliver == nil) then
         local Name = "信使-传递"
@@ -125,12 +125,12 @@ slkHelper.courierAutoSkill = function()
         obj.TargetArt = ""
         obj.race = "other"
         slkHelper.courierDeliver = obj:get_id()
-        table.insert(slkHelperHashData, table.merge_pairs({
+        table.insert(slkHelperHashData, {
             _class = "ability",
             _id = slkHelper.courierDeliver,
             _name = Name,
             _type = "courier",
-        }, (v._hslk or {})))
+        })
     end
     return {
         slkHelper.courierBlink, slkHelper.courierRangePickUp,
