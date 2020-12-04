@@ -39,7 +39,7 @@ hunit.getHSlk = function(uOrId)
     if (hslk.i2v.unit[id]) then
         return hslk.i2v.unit[id]
     end
-    return {}
+    return nil
 end
 
 --- 获取单位的头像

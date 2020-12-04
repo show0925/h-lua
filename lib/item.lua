@@ -238,7 +238,7 @@ hitem.getHSlk = function(itOrId)
     if (hslk.i2v.item[id]) then
         return hslk.i2v.item[id]
     end
-    return {}
+    return nil
 end
 
 -- 获取物品的图标路径
@@ -534,9 +534,9 @@ hitem.synthesis = function(whichUnit, items)
     -- 处理结果物品
     local final = {}
     for _, itId in ipairs(itemKinds) do
-        local slk = hslk.i2v.item[itId]
-        if (slk ~= nil) then
-            local overlie = slk.OVERLIE or 1
+        local hs = hitem.getHSlk(itId)
+        if (hs ~= nil) then
+            local overlie = hs._overlie or 1
             while (itemQuantity[itId] > 0) do
                 local charges = 0
                 if (overlie >= itemQuantity[itId]) then
@@ -673,9 +673,9 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
                     end
                 else
                     local qty = frag[2]
-                    local slk = hslk.i2v.item[flagId]
-                    if (slk ~= nil) then
-                        local overlie = slk.OVERLIE or 1
+                    local hs = hitem.getHSlk(flagId)
+                    if (hs ~= nil) then
+                        local overlie = hs._overlie or 1
                         while (qty > 0) do
                             if (overlie >= qty) then
                                 hitem.create({ itemId = flagId, charges = qty, x = x, y = y, during = 0 })
@@ -726,7 +726,7 @@ hitem.detector = function(whichUnit, originItem)
         )
         -- 判断如果是真实物品并且有影子，转为影子物品掉落
         local hs = hitem.getHSlk(originItem)
-        if (hs._type ~= "shadow" and hs._shadow_id) then
+        if (hs ~= nil and hs._type ~= "shadow" and hs._shadow_id) then
             local x = cj.GetItemX(originItem)
             local y = cj.GetItemY(originItem)
             local c = cj.GetItemCharges(originItem)
@@ -851,7 +851,7 @@ hitem.detector = function(whichUnit, originItem)
     end
     if (#extra > 0) then
         for _, e in ipairs(extra) do
-            local slk = hslk.i2v.item[e.id]
+            local slk = hitem.getHSlk(e.id)
             local id = slk._id
             if (slk._type ~= "shadow" and slk._shadow_id ~= nil) then
                 id = slk._shadow_id
