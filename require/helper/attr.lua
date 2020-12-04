@@ -91,7 +91,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
                     local odds = vv["odds"] or 0
                     local dur = vv["dur"] or 0
                     local val = vv["val"] or 0
-                    local percent = vv["percent"] or 0
+                    local percent = vv["percent"] or 100
                     local qty = vv["qty"] or 0
                     local rate = vv["rate"] or 0
                     local radius = vv["radius"] or 0
@@ -117,6 +117,9 @@ slkHelper.attrDesc = function(attr, sep, indent)
                             percent = math.floor(percent / 100)
                         end
                         if (type(val) == 'number') then
+                            if (val < 0) then
+                                val = -val
+                            end
                             if (unitLabel == "%") then
                                 valLabel = math.round(percent * 0.01 * val)
                             elseif (unitLabel == "倍") then

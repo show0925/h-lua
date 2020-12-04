@@ -72,13 +72,13 @@ slkHelper.conf = {
         -- 物品零部件
         itemFragment = hColor.orange,
         -- 技能主动
-        abilityActive = "ffff00",
+        abilityActive = "fae470",
         -- 技能被动
-        abilityPassive = "57a8fa",
+        abilityPassive = "6ab2f6",
         -- 技能冷却时间
         abilityCoolDown = "ccffff",
         -- 技能属性
-        abilityAttr = "80ff00",
+        abilityAttr = "b0f26e",
         -- 技能描述
         abilityDesc = "c0c0c0",
         -- 光环范围
