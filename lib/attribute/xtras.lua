@@ -52,7 +52,7 @@ hattribute.xtrasDefaultDamageSrc = {
 ---@param eventKey string
 ---@return table
 hattribute.getXtras = function(whichUnit, eventKey)
-    if (whichUnit == nil or eventKey == nil) then
+    if (whichUnit == nil or eventKey == nil or type(whichUnit) ~= 'userdata') then
         return {}
     end
     if (hunit.getName(whichUnit) == nil) then
