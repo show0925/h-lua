@@ -33,7 +33,7 @@ hskill.get = function(handle, key, defaultVal)
     return hRuntime.skill[handle][key]
 end
 
---- 获取SLK数据集,需要注册
+--- 获取原生SLK数据集
 ---@param abilId string|number
 ---@return table|nil
 hskill.getSlk = function(abilId)
@@ -49,6 +49,25 @@ hskill.getSlk = function(abilId)
         slk = slk.ability[abilityId]
     end
     return slk
+end
+
+--- 获取HSLK数据集
+---@param idOrName string|number
+---@return table|nil
+hskill.getHSlk = function(idOrName)
+    if (idOrName == nil) then
+        return
+    end
+    local id = idOrName
+    if (type(idOrName) == "number") then
+        id = string.id2char(idOrName)
+    end
+    if (hslk.i2v.ability[id]) then
+        return hslk.i2v.ability[id]
+    elseif (hslk.n2v.ability[id]) then
+        return hslk.n2v.ability[id]
+    end
+    return nil
 end
 
 --- 获取属性加成,需要注册

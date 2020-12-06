@@ -7,18 +7,20 @@ hring = {
 }
 
 ---@private
-hring.getHSlk = function(id)
-    if (id == nil) then
+hring.getHSlk = function(idOrName)
+    if (idOrName == nil) then
         return
     end
-    local hs
-    if (type(id) == "number") then
-        id = string.id2char(id)
+    local id = idOrName
+    if (type(idOrName) == "number") then
+        id = string.id2char(idOrName)
     end
-    if (hslk.i2v.ring[id] ~= nil) then
-        hs = hslk.i2v.ring[id]
+    if (hslk.i2v.ring[id]) then
+        return hslk.i2v.ring[id]
+    elseif (hslk.n2v.ring[id]) then
+        return hslk.n2v.ring[id]
     end
-    return hs
+    return nil
 end
 
 --- 根据光环名称获取技能ID字符串

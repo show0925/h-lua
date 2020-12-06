@@ -231,12 +231,14 @@ hitem.getSlk = function(itOrId)
 end
 
 --- 获取单位的 _hslk 自定义数据
----@param itOrId userdata|string|number
+---@param itOrIdOrName userdata|string|number
 ---@return table|nil
-hitem.getHSlk = function(itOrId)
-    local id = hitem.getId(itOrId)
+hitem.getHSlk = function(itOrIdOrName)
+    local id = hitem.getId(itOrIdOrName)
     if (hslk.i2v.item[id]) then
         return hslk.i2v.item[id]
+    elseif (hslk.n2v.item[id]) then
+        return hslk.n2v.item[id]
     end
     return nil
 end

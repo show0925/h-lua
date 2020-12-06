@@ -32,12 +32,14 @@ hunit.getSlk = function(uOrId)
 end
 
 --- 获取单位的 _hslk 自定义数据
----@param uOrId userdata|string|number
+---@param uOrIdOrName userdata|string|number
 ---@return table|nil
-hunit.getHSlk = function(uOrId)
-    local id = hunit.getId(uOrId)
+hunit.getHSlk = function(uOrIdOrName)
+    local id = hunit.getId(uOrIdOrName)
     if (hslk.i2v.unit[id]) then
         return hslk.i2v.unit[id]
+    elseif (hslk.n2v.unit[id]) then
+        return hslk.n2v.unit[id]
     end
     return nil
 end

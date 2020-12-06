@@ -74,8 +74,6 @@ hskill.damage = function(options)
     if (damageType == nil) then
         if (damageSrc == CONST_DAMAGE_SRC.attack and sourceUnit ~= nil) then
             damageType = hattr.get(sourceUnit, "attack_damage_type")
-        else
-            damageType = CONST_DAMAGE_TYPE.common
         end
     end
     --常规伤害判定
@@ -647,8 +645,8 @@ end
         effect = "", --特效（可选）
         damage = 0, --单次伤害（大于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
-        damageType = CONST_DAMAGE_TYPE, --伤害的类型,注意是table（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的来源（可选）
+        damageType = {CONST_DAMAGE_TYPE}, --伤害的类型,注意是table（可选）
         isFixed = false, --是否固伤（可选）
     }
 ]]
@@ -707,8 +705,8 @@ end
         y = [point], --目标坐标Y（可选）
         damage = 0, --伤害（可选，但是这里可以等于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
-        damageType = CONST_DAMAGE_TYPE, --伤害的类型,注意是table（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的来源（可选）
+        damageType = {CONST_DAMAGE_TYPE}, --伤害的类型,注意是table（可选）
         isFixed = false, --是否固伤（可选）
         extraInfluence = [function],
     }
@@ -828,8 +826,8 @@ end
         whichGroup = [group], --单位组（必须有）
         damage = 0, --伤害（可选，但是这里可以等于0）
         sourceUnit = [unit], --伤害来源单位（可选）
-        damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
-        damageType = CONST_DAMAGE_TYPE, --伤害的类型,注意是table（可选）
+        damageSrc = CONST_DAMAGE_SRC, --伤害的来源（可选）
+        damageType = {CONST_DAMAGE_TYPE}, --伤害的类型,注意是table（可选）
         isFixed = false, --是否固伤（可选）
         extraInfluence = [function],
     }

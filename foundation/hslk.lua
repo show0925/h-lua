@@ -208,7 +208,7 @@ if (qty > 0) then
             local js = cj.LoadStr(cg.hash_hslk_helper, 1, i)
             local data = json.parse(js)
             if (data) then
-                if (data.class == 'synthesis') then
+                if (data._class == 'synthesis') then
                     hRuntime.register.synthesis(data)
                 end
                 data = nil
