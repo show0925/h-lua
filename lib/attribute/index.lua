@@ -267,12 +267,6 @@ hattribute.init = function(whichUnit)
     if (uSlk.sight) then
         attribute.sight = math.floor(uSlk.sight)
     end
-    -- 智力英雄的攻击默认为魔法，力量敏捷为物理
-    if (attribute.primary == "INT") then
-        attribute.attack_damage_type = { CONST_DAMAGE_TYPE.magic }
-    else
-        attribute.attack_damage_type = { CONST_DAMAGE_TYPE.physical }
-    end
     -- 初始化数据
     hunit.set(whichUnit, 'attribute', attribute)
     -- 延后处理护甲
