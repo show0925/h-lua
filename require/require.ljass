@@ -17,5 +17,11 @@ slk = require 'slk'
 
 #include "./init.0.ljass"
 #include "./helper.lua"
+#include "./helper/enable.ljass"
+#include "./helper/conf.lua"
+#include "./helper/attr.lua"
+#include "./helper/ability.lua"
+#include "./helper/item.lua"
+#include "./helper/unit.lua"
 #include "./data.lua"
 #include "./init.1.ljass"

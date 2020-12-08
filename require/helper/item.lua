@@ -311,7 +311,6 @@ end
 --- 创建一件实体物品
 --- 设置的 _hslk 数据会自动传到数据中
 --- 默认不会自动协助开启shadow模式（满格拾取/合成）可以设置slkHelper的conf来配置
----@public
 ---@param v table
 slkHelper.item.normal = function(v)
     slkHelper.count = slkHelper.count + 1
