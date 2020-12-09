@@ -18,6 +18,7 @@ require "const.unit"
 require "const.playerColor"
 require "const.event"
 require "const.hSlkKeys"
+require "const.abilityTarget"
 
 -- 加载foundation
 -- 加载debug

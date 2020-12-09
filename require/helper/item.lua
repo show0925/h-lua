@@ -124,7 +124,7 @@ slkHelper.itemCooldownID = function(v)
     end
     local oobTips = "ITEMS_DEFCD_ID_" .. v.Name
     local oob
-    if (v.cooldownTarget == 'location') then
+    if (v.cooldownTarget == CONST_ABILITY_TARGET.location.value) then
         -- 对点（模版：照明弹）
         oob = slk.ability.Afla:new("items_default_cooldown_" .. v.Name)
         oob.DataA1 = 0
@@ -135,20 +135,20 @@ slkHelper.itemCooldownID = function(v)
         oob.Area1 = 0
         oob.DataA1 = 0
         oob.DataB1 = 0
-    elseif (v.cooldownTarget == 'range') then
+    elseif (v.cooldownTarget == CONST_ABILITY_TARGET.range.value) then
         -- 对点范围（模版：暴风雪）
         oob = slk.ability.ACbz:new("items_default_cooldown_" .. v.Name)
         oob.BuffID1 = ""
         oob.EfctID1 = ""
-        oob.Rng1 = v.Rng1
-        oob.Area1 = v.Area1
+        oob.Rng1 = v.Rng1 or 300
+        oob.Area1 = v.Area1 or 300
         oob.DataA1 = 0
         oob.DataB1 = 0
         oob.DataC1 = 0
         oob.DataD1 = 0
         oob.DataE1 = 0
         oob.DataF1 = 0
-    elseif (v.cooldownTarget == 'unit') then
+    elseif (v.cooldownTarget == CONST_ABILITY_TARGET.unit.value) then
         -- 对单位（模版：霹雳闪电）
         oob = slk.ability.ACfb:new("items_default_cooldown_" .. v.Name)
         oob.Missileart = v.Missileart or "Abilities\\Weapons\\FireBallMissile\\FireBallMissile.mdl"
