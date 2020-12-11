@@ -78,7 +78,7 @@ hskill.damage = function(options)
     end
     --常规伤害判定
     if (damageType == nil or #damageType <= 0) then
-        damageType = { CONST_DAMAGE_TYPE.common }
+        damageType = { CONST_DAMAGE_TYPE.common } -- common是个通常设置，实际上并无特定效果
     end
     -- 最终伤害
     local lastDamage = 0
@@ -237,19 +237,20 @@ hskill.damage = function(options)
         )
     end
     if (lastDamage > 0) then
-        -- 计算自然属性
+        -- 计算附魔属性
         local tempNatural = {}
-        for _, natural in ipairs(CONST_DAMAGE_TYPE_NATURE) do
-            tempNatural[natural] = 10 + (sourceUnitAttr["natural_" .. natural] or 0) - targetUnitAttr["natural_" .. natural .. "_oppose"]
-            if (tempNatural[natural] < -100) then
-                tempNatural[natural] = -100
+        for _, enchant in ipairs(CONST_ENCHANT) do
+            local ev = enchant.value
+            tempNatural[ev] = 10 + (sourceUnitAttr["e_" .. ev] or 0) - targetUnitAttr["e_" .. ev .. "_oppose"]
+            if (tempNatural[ev] < -100) then
+                tempNatural[ev] = -100
             end
-            if (table.includes(natural, damageType) and tempNatural[natural] ~= 0) then
+            if (table.includes(ev, damageType) and tempNatural[ev] ~= 0) then
                 if (isFixed == false) then
-                    lastDamagePercent = lastDamagePercent + typeRatio[natural] * tempNatural[natural] * 0.01
+                    lastDamagePercent = lastDamagePercent + typeRatio[ev] * tempNatural[ev] * 0.01
                 end
-                damageString = damageString .. CONST_DAMAGE_TYPE_MAP[natural].label
-                damageStringColor = CONST_DAMAGE_TYPE_MAP[natural].color
+                damageString = damageString .. enchant.label
+                damageStringColor = enchant.color
             end
         end
         if (isFixed == false) then

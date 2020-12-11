@@ -281,7 +281,7 @@ end
 ---@param val table
 ---@return string
 string.attrBuffKey = function(val)
-    local valx = table.obj2arr(val, CONST_ATTR_BUFF_KEYS)
+    local valx = table.obj2arr(val, CONST_ATTR_XTRAS)
     local valxx = {}
     for _, xv in ipairs(valx) do
         if (xv.value ~= nil) then

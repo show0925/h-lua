@@ -8,6 +8,7 @@ require "foundation.blizzard_c"
 require "foundation.blizzard_b"
 
 -- 加载const
+require "const.enchant"
 require "const.attribute"
 require "const.damageSource"
 require "const.damageType"

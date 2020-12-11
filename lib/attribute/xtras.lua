@@ -263,7 +263,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                         percent = 100,
                                         sourceUnit = triggerUnit,
                                         effect = x.effect,
-                                        damageType = damageType,
+                                        damageType = x.damageType,
                                         damageSrc = damageSrc,
                                         isFixed = true,
                                     })
