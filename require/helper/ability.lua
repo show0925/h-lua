@@ -6,7 +6,6 @@ slkHelper.abilityEmptyUbertip = function(v)
         table.insert(d, hColor.mixed("被动：" .. v._passive, slkHelper.conf.color.abilityPassive))
     end
     if (v._attr ~= nil) then
-        table.sort(v._attr)
         table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr, "|n"), slkHelper.conf.color.abilityAttr))
     end
     if (v._desc ~= nil and v._desc ~= "") then
@@ -32,11 +31,9 @@ slkHelper.abilityRingUbertip = function(v)
     end
     if (v._ring.attr ~= nil) then
         table.insert(d, hColor.mixed("光环效果：|n" .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
-        table.sort(v._ring.attr)
     end
     if (v._attr ~= nil) then
         table.insert(d, hColor.mixed("独占效果：", slkHelper.conf.color.abilityAttr))
-        table.sort(v._attr)
         table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr, "|n", ' - '), slkHelper.conf.color.abilityAttr))
         table.insert(d, "|n")
     end

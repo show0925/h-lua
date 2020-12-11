@@ -26,6 +26,6 @@ CONST_ENCHANT = {
     { value = "poison", label = "毒", color = "3cb371" },
     { value = "evil", label = "邪", color = "983e6f" },
     { value = "ghost", label = "鬼", color = "615656" },
-    { value = "god", label = "神", color = "f8f8a0" },
+    { value = "god", label = "神", color = "ffffff" },
     { value = "holy", label = "圣", color = "efef8f" },
 }

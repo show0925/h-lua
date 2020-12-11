@@ -6,8 +6,7 @@ hColor = {}
 ---@param color string hex
 ---@return string
 hColor.hex = function(str, color)
-    if (str == nil or color == nil) then
-        print_stack()
+    if (str == nil or str == '' or color == nil) then
         return str
     end
     return "|cff" .. color .. str .. "|r"
@@ -18,8 +17,7 @@ end
 ---@param color string|function
 ---@return string
 hColor.mixed = function(str, color)
-    if (str == nil or color == nil) then
-        print_stack()
+    if (str == nil or str == '' or color == nil) then
         return str
     end
     if (type(color) == 'string') then

@@ -73,7 +73,7 @@ hskill.damage = function(options)
     local damageType = options.damageType
     if (damageType == nil) then
         if (damageSrc == CONST_DAMAGE_SRC.attack and sourceUnit ~= nil) then
-            damageType = hattr.get(sourceUnit, "attack_damage_type")
+            damageType = hattr.get(sourceUnit, "attack_enchant")
         end
     end
     --常规伤害判定
@@ -144,13 +144,6 @@ hskill.damage = function(options)
                 end
                 damageString = damageString .. CONST_BREAK_ARMOR_TYPE.defend.label
                 damageStringColor = "f97373"
-            end
-            if (table.includes(CONST_BREAK_ARMOR_TYPE.resistance.value, breakArmorType)) then
-                if (targetUnitAttr.resistance > 0) then
-                    targetUnitAttr.resistance = 0
-                end
-                damageString = damageString .. CONST_BREAK_ARMOR_TYPE.resistance.label
-                damageStringColor = "6fa8dc"
             end
             if (table.includes(CONST_BREAK_ARMOR_TYPE.avoid.value, breakArmorType)) then
                 if (targetUnitAttr.avoid > 0) then
@@ -265,17 +258,6 @@ hskill.damage = function(options)
                 end
                 defendPercent = defendPercent * typeRatio[CONST_DAMAGE_TYPE.physical]
                 lastDamagePercent = lastDamagePercent - defendPercent
-            end
-            -- 计算魔抗
-            if (targetUnitAttr.resistance ~= 0 and typeRatio[CONST_DAMAGE_TYPE.magic] ~= nil) then
-                local resistancePercent = 0
-                if (targetUnitAttr.resistance >= 100) then
-                    resistancePercent = -1
-                else
-                    resistancePercent = -targetUnitAttr.resistance * 0.01
-                end
-                resistancePercent = resistancePercent * typeRatio[CONST_DAMAGE_TYPE.magic]
-                lastDamagePercent = lastDamagePercent - resistancePercent
             end
             -- 计算伤害增幅
             if (lastDamage > 0 and sourceUnit ~= nil and sourceUnitAttr.damage_extent ~= 0) then

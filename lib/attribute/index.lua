@@ -173,7 +173,6 @@ hattribute.init = function(whichUnit)
         mana = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_MANA),
         move = cj.GetUnitDefaultMoveSpeed(whichUnit),
         defend = 0,
-        attack_damage_type = {},
         attack_speed = 0.0,
         attack_speed_space = 1.50,
         attack_white = 0.0,
@@ -188,7 +187,6 @@ hattribute.init = function(whichUnit)
         int_white = 0,
         life_back = 0.0,
         mana_back = 0.0,
-        resistance = 0.0,
         avoid = 0.0,
         aim = 0.0,
         punish = 0.0,
@@ -225,38 +223,16 @@ hattribute.init = function(whichUnit)
         bomb_oppose = 0.0,
         lightning_chain_oppose = 0.0,
         crack_fly_oppose = 0.0,
-        natural_fire = 0.0,
-        natural_soil = 0.0,
-        natural_water = 0.0,
-        natural_ice = 0.0,
-        natural_wind = 0.0,
-        natural_light = 0.0,
-        natural_dark = 0.0,
-        natural_wood = 0.0,
-        natural_thunder = 0.0,
-        natural_poison = 0.0,
-        natural_ghost = 0.0,
-        natural_metal = 0.0,
-        natural_dragon = 0.0,
-        natural_insect = 0.0,
-        natural_god = 0.0,
-        natural_fire_oppose = 0.0,
-        natural_soil_oppose = 0.0,
-        natural_water_oppose = 0.0,
-        natural_ice_oppose = 0.0,
-        natural_wind_oppose = 0.0,
-        natural_light_oppose = 0.0,
-        natural_dark_oppose = 0.0,
-        natural_wood_oppose = 0.0,
-        natural_thunder_oppose = 0.0,
-        natural_poison_oppose = 0.0,
-        natural_ghost_oppose = 0.0,
-        natural_metal_oppose = 0.0,
-        natural_dragon_oppose = 0.0,
-        natural_insect_oppose = 0.0,
-        natural_god_oppose = 0.0,
+        --
         xtras = {},
+        --
+        attack_enchant = {},
+        append_enchant = {},
     }
+    for _, v in ipairs(CONST_ENCHANT) do
+        attribute["e_" .. v.value] = 0.0
+        attribute["e_" .. v.value .. '_oppose'] = 0.0
+    end
     -- 初始化物编slk数据
     if (uSlk.cool1) then
         attribute.attack_speed_space = math.round(uSlk.cool1)
@@ -860,7 +836,7 @@ hattribute.caleAttribute = function(damageSrc, isAdd, whichUnit, attr, times)
         local v = arr.value
         local typev = type(v)
         local tempDiff
-        if (k == "attack_damage_type") then
+        if (k == "attack_enchant" or k == "append_enchant") then
             local opt = "+"
             if (isAdd == false) then
                 opt = "-"

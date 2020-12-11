@@ -9,12 +9,10 @@ slkHelper.itemDesc = function(v)
         table.insert(d, "被动：" .. v._passive)
     end
     if (v._attr ~= nil) then
-        table.sort(v._attr)
         table.insert(d, slkHelper.attrDesc(v._attr, ";"))
     end
     -- 仅文本无效果，适用于例如技能书这类的物品
     if (v._attr_txt ~= nil) then
-        table.sort(v._attr_txt)
         table.insert(d, slkHelper.attrDesc(v._attr_txt, ";"))
     end
     local overlie = v._overlie or 1
@@ -43,23 +41,21 @@ slkHelper.itemUbertip = function(v)
     if (v._ring ~= nil) then
         if (v._ring.attr ~= nil and v._ring.radius ~= nil and (type(v._ring.target) == 'table' and #v._ring.target > 0)) then
             local txt = "光环：[" .. v._ring.radius .. 'px]['
-            local labels = {}
-            for _, t in ipairs(v._ring.target) do
-                table.insert(labels, CONST_TARGET_LABEL[t])
-            end
-            txt = txt .. string.implode(',', labels)
+            ----目标(物品太长不显示)
+            --local labels = {}
+            --for _, t in ipairs(v._ring.target) do
+            --    table.insert(labels, CONST_TARGET_LABEL[t])
+            --end
+            --txt = txt .. string.implode(',', labels)
             txt = txt .. "]|n"
             table.insert(d, hColor.mixed(txt .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
         end
-        table.sort(v._ring.attr)
     end
     if (v._attr ~= nil) then
-        table.sort(v._attr)
         table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr, "|n"), slkHelper.conf.color.itemAttr))
     end
     -- 仅文本无效果，适用于例如技能书这类的物品
     if (v._attr_txt ~= nil) then
-        table.sort(v._attr_txt)
         table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr_txt, "|n"), slkHelper.conf.color.itemAttr))
     end
     -- 作为零件

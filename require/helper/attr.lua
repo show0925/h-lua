@@ -16,6 +16,30 @@ slkHelper.attrTargetLabel = function(target, actionType, actionField)
     return target
 end
 
+--- 键值是否百分比数据
+---@private
+slkHelper.attrIsPercent = function(key)
+    if (table.includes(key, {
+        "attack_speed", "avoid", "aim",
+        "hemophagia", "hemophagia_skill",
+        "luck", "invincible",
+        "knocking_odds", "knocking_extent",
+        "damage_extent", "damage_decrease", "damage_rebound",
+        "cure",
+        "gold_ratio", "lumber_ratio", "exp_ratio", "sell_ratio",
+        "knocking", "split",
+    }))
+    then
+        return true
+    end
+    local s = string.find(key, "_oppose")
+    local n = string.find(key, "e_")
+    if (s ~= nil or n == 1) then
+        return true
+    end
+    return false
+end
+
 --- 属性系统说明构成
 ---@private
 slkHelper.attrDesc = function(attr, sep, indent)
@@ -33,37 +57,11 @@ slkHelper.attrDesc = function(attr, sep, indent)
         if (table.includes(k, { "life_back", "mana_back" })) then
             v = v .. "每秒"
         end
-        if (table.includes(k, {
-            "attack_speed",
-            "resistance",
-            "avoid",
-            "aim",
-            "hemophagia",
-            "hemophagia_skill",
-            "split",
-            "luck",
-            "invincible",
-            "knocking_odds",
-            "knocking_extent",
-            "damage_extent",
-            "damage_decrease",
-            "damage_rebound",
-            "cure",
-            "gold_ratio",
-            "lumber_ratio",
-            "exp_ratio",
-            "sell_ratio",
-        }))
-        then
-            v = v .. "%"
-        end
-        local s = string.find(k, "oppose")
-        local n = string.find(k, "natural")
-        if (s ~= nil or n ~= nil) then
+        if (slkHelper.attrIsPercent(k) == true) then
             v = v .. "%"
         end
         --
-        if (k == "attack_damage_type") then
+        if (k == "attack_enchant") then
             local tempStr = (CONST_ATTR[k] or "") .. "："
             local opt = string.sub(v, 1, 1) or "+"
             if (type(v) == "string") then
@@ -117,15 +115,12 @@ slkHelper.attrDesc = function(attr, sep, indent)
                             percent = math.floor(percent / 100)
                         end
                         if (type(val) == 'number') then
-                            if (val < 0) then
-                                val = -val
-                            end
                             if (unitLabel == "%") then
-                                valLabel = math.round(percent * 0.01 * val)
+                                valLabel = math.round(percent * 0.01 * math.abs(val))
                             elseif (unitLabel == "倍") then
-                                valLabel = math.round(percent * val)
+                                valLabel = math.round(percent * math.abs(val))
                             elseif (unitLabel == '') then
-                                valLabel = '随机' .. math.round(percent[1] * 0.01 * val) .. '~' .. math.round(percent[2] * 0.01 * val)
+                                valLabel = '随机' .. math.round(percent[1] * math.abs(val)) .. '~' .. math.round(percent[2] * 0.01 * math.abs(val))
                             end
                         elseif (type(val) == 'string') then
                             if (unitLabel == '') then
@@ -153,6 +148,10 @@ slkHelper.attrDesc = function(attr, sep, indent)
                                     end
                                 end
                             end
+                        end
+                        -- 补正百分号
+                        if (type(val) == 'number' and slkHelper.attrIsPercent(actionField) == true) then
+                            valLabel = valLabel .. "%"
                         end
                         -- 对象名称修正
                         target = slkHelper.attrTargetLabel(target, actionType, actionField)

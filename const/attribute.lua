@@ -23,7 +23,6 @@ CONST_ATTR = {
     int_white = "本体智力",
     life_back = "生命恢复",
     mana_back = "魔法恢复",
-    --resistance = "魔抗",
     avoid = "回避",
     aim = "命中",
     punish = "僵直",
@@ -88,8 +87,8 @@ CONST_ATTR = {
     exp_ratio = "经验获得率",
     sell_ratio = "售卖比率",
     -- enchant
-    attack_enchant = "攻击伤害类型",
-    append_enchant = "附身伤害类型",
+    attack_enchant = "攻击附魔",
+    append_enchant = "身上附魔",
 }
 
 CONST_ATTR_KEYS = {
@@ -161,6 +160,3 @@ for _, v in ipairs(CONST_ENCHANT) do
     table.insert(CONST_ATTR_KEYS, "e_" .. v.value)
     table.insert(CONST_ATTR_KEYS, "e_" .. v.value .. '_oppose')
 end
-
-print_r(CONST_ATTR)
-print_r(CONST_ATTR_KEYS)
