@@ -66,6 +66,9 @@ hRuntime = {
                     profit = profitId,
                     index = profitIndex,
                 })
+                if (table.includes(f[2], hslk.synthesis.fragmentNeeds) == false) then
+                    table.insert(hslk.synthesis.fragmentNeeds, f[2])
+                end
             end
         end,
     },

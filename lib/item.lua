@@ -494,7 +494,7 @@ hitem.synthesis = function(whichUnit, items)
         matchCount = 0
         for _, itId in ipairs(itemKinds) do
             if (hslk.synthesis.fragment[itId] ~= nil) then
-                for need = #hslk.synthesis.fragment[itId], 1, -1 do
+                for _, need in ipairs(hslk.synthesis.fragmentNeeds) do
                     if ((itemQuantity[itId] or 0) >= need) then
                         local maybeProfits = hslk.synthesis.fragment[itId][need]
                         for _, mp in ipairs(maybeProfits) do

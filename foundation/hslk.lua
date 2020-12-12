@@ -84,6 +84,7 @@ hslk = {
     synthesis = {
         profit = {},
         fragment = {},
+        fragmentNeeds = {},
     },
 }
 
