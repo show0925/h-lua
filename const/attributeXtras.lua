@@ -6,7 +6,7 @@ CONST_ATTR_XTRAS = {
     "odds",
     "percent",
     "val",
-    "dur",
+    "during",
     "qty",
     "radius",
     "rate",

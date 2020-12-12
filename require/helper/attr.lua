@@ -87,7 +87,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
                     local actionField = actions[3]
                     local actionFieldLabel = CONST_ATTR[actionField]
                     local odds = vv["odds"] or 0
-                    local dur = vv["dur"] or 0
+                    local during = vv["during"] or 0
                     local val = vv["val"] or 0
                     local percent = vv["percent"] or 100
                     local qty = vv["qty"] or 0
@@ -101,8 +101,8 @@ slkHelper.attrDesc = function(attr, sep, indent)
                         local temp2 = "　- " .. CONST_EVENT_LABELS[on] .. '时,'
                         temp2 = temp2 .. "有"
                         temp2 = temp2 .. odds .. "%几率"
-                        if (dur > 0) then
-                            temp2 = temp2 .. "在" .. dur .. "秒内"
+                        if (during > 0) then
+                            temp2 = temp2 .. "在" .. during .. "秒内"
                         end
 
                         -- 拼凑值
@@ -177,7 +177,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
                                         .. ",造成" .. valLabel .. "伤害"
                                 elseif (table.includes(actionField, { "swim", "silent", "unarm", "fetter" })) then
                                     temp2 = temp2
-                                        .. actionFieldLabel .. "目标" .. dur .. "秒"
+                                        .. actionFieldLabel .. "目标" .. during .. "秒"
                                         .. ",并造成" .. valLabel .. "点伤害"
                                 elseif (actionField == "broken") then
                                     temp2 = temp2

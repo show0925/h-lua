@@ -210,6 +210,8 @@ hattribute.init = function(whichUnit)
         violence_oppose = 0.0,
         hemophagia_oppose = 0.0,
         hemophagia_skill_oppose = 0.0,
+        buff_oppose = 0.0,
+        debuff_oppose = 0.0,
         split_oppose = 0.0,
         punish_oppose = 0.0,
         damage_rebound_oppose = 0.0,
@@ -303,7 +305,7 @@ end
     during = 0.0 大于0生效；小于等于0时无限持续时间
 ]]
 --- @private
-hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
+hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     local valType = type(val)
     local params = hattr.get(whichUnit)
     if (params == nil) then
@@ -315,9 +317,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
             -- 添加
             local valArr = string.explode(",", val)
             params[attr] = table.merge(params[attr], valArr)
-            if (dur > 0) then
+            if (during > 0) then
                 htime.setTimeout(
-                    dur,
+                    during,
                     function(t)
                         htime.delTimer(t)
                         hattribute.setHandle(whichUnit, attr, "-", val, 0)
@@ -332,9 +334,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
                     table.delete(v, params[attr], 1)
                 end
             end
-            if (dur > 0) then
+            if (during > 0) then
                 htime.setTimeout(
-                    dur,
+                    during,
                     function(t)
                         htime.delTimer(t)
                         hattribute.setHandle(whichUnit, attr, "+", val, 0)
@@ -345,9 +347,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
             -- 设定
             local old = table.clone(params[attr])
             params[attr] = string.explode(",", val)
-            if (dur > 0) then
+            if (during > 0) then
                 htime.setTimeout(
-                    dur,
+                    during,
                     function(t)
                         htime.delTimer(t)
                         hattribute.setHandle(whichUnit, attr, "=", string.implode(",", old), 0)
@@ -361,9 +363,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
             -- 添加
             local hkey = string.attrBuffKey(val)
             table.insert(params[attr], { hash = hkey, table = val })
-            if (dur > 0) then
+            if (during > 0) then
                 htime.setTimeout(
-                    dur,
+                    during,
                     function(t)
                         htime.delTimer(t)
                         hattribute.setHandle(whichUnit, attr, "-", val, 0)
@@ -382,9 +384,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
                 end
             end
             if (hasKey == true) then
-                if (dur > 0) then
+                if (during > 0) then
                     htime.setTimeout(
-                        dur,
+                        during,
                         function(t)
                             htime.delTimer(t)
                             hattribute.setHandle(whichUnit, attr, "+", val, 0)
@@ -461,9 +463,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, dur)
             local currentVal = params[attr]
             local futureVal = params[attr] + diff
             params[attr] = futureVal
-            if (dur > 0) then
+            if (during > 0) then
                 htime.setTimeout(
-                    dur,
+                    during,
                     function(t)
                         htime.delTimer(t)
                         hattribute.setHandle(whichUnit, attr, "-", diff, 0)

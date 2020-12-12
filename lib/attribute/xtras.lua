@@ -89,7 +89,7 @@ end
 --- | - [效果参数] 如attr时，可以填attack_speed改攻速，而effect时可以填knocking触发暴击
 --- | - [其他参数] 其他的参数有常规通用的也有固定搭配，请看说明：
 ---         odds 触发几率>0(%)
----         dur 持续时间>0，这个时间在不同场景意义不同(*attr有效、spec里的眩晕、沉默、缴械、缚足、击飞有效)
+---         during 持续时间>0，这个时间在不同场景意义不同(*attr有效、spec里的眩晕、沉默、缴械、缚足、击飞有效)
 ---         effect 特效字符串，主特效
 ---         effectEnum 特效字符串，选取单位的 (* 爆破有效)
 ---
@@ -122,21 +122,21 @@ end
 --- hattr.set(unit, 0, {
 --        xtras = {
 --            add = {
---                { on = CONST_EVENT.attack, action = "triggerUnit.attr.attack_speed", odds = 20.0, val = 1.5, dur = 3.0, effect = nil },
---                { on = CONST_EVENT.attack, action = "attackUnit.attr.attack_speed", odds = 20.0, val = 1.5, dur = 3.0, effect = nil },
---                { on = CONST_EVENT.skill, action = "castUnit.attr.attack_green", odds = 20.0, val = 2, dur = 3.0, effect = nil },
---                { on = CONST_EVENT.item, action = "useUnit.attr.int_white", odds = 20.0, val = 2, dur = 3.0, effect = nil },
+--                { on = CONST_EVENT.attack, action = "triggerUnit.attr.attack_speed", odds = 20.0, val = 1.5, during = 3.0, effect = nil },
+--                { on = CONST_EVENT.attack, action = "attackUnit.attr.attack_speed", odds = 20.0, val = 1.5, during = 3.0, effect = nil },
+--                { on = CONST_EVENT.skill, action = "castUnit.attr.attack_green", odds = 20.0, val = 2, during = 3.0, effect = nil },
+--                { on = CONST_EVENT.item, action = "useUnit.attr.int_white", odds = 20.0, val = 2, during = 3.0, effect = nil },
 --                { on = CONST_EVENT.attack, action = "targetUnit.spec.knocking", odds = 100, percent = 100, effect = nil },
 --                { on = CONST_EVENT.skill, action = "targetUnit.spec.violence", odds = 100, percent = 100, effect = nil },
 --                { on = CONST_EVENT.attack, action = "targetUnit.spec.split", odds = 100, percent = {30,50}, radius = 250 },
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.swim",odds = 0.0, val = 0.0, dur = 0.0, effect = nil},
+--                { on = CONST_EVENT.attack, action = "targetUnit.spec.swim",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
 --                { on = CONST_EVENT.attack, action = "targetUnit.spec.broken",odds = 0.0, val = 0.0, effect = nil},
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.silent",odds = 0.0, val = 0.0, dur = 0.0, effect = nil},
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.unarm",odds = 0.0, val = 0.0, dur = 0.0, effect = nil},
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.fetter",odds = 0.0, val = 0.0, dur = 0.0, effect = nil},
+--                { on = CONST_EVENT.attack, action = "targetUnit.spec.silent",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
+--                { on = CONST_EVENT.attack, action = "targetUnit.spec.unarm",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
+--                { on = CONST_EVENT.attack, action = "targetUnit.spec.fetter",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
 --                { on = CONST_EVENT.attack, action = "targetUnit.spec.bomb",odds = 0.0, radius = 0.0, val = 0.0, effect = nil},
 --                { on = CONST_EVENT.damage, action = "targetUnit.spec.lightning_chain", odds = 50, val = 100, qty = 0, reduce = 0.0 },
---                { on = CONST_EVENT.beDamage, action = "sourceUnit.spec.crack_fly", odds = 50, val = 100, distance = 300, height = 200, dur = 0.5 },
+--                { on = CONST_EVENT.beDamage, action = "sourceUnit.spec.crack_fly", odds = 50, val = 100, distance = 300, height = 200, during = 0.5 },
 --            }
 --        },
 --  })
@@ -217,7 +217,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                     val = math.round(val * percent * 0.01)
                     if (actionType == 'attr') then
                         -- 属性改动
-                        if (val ~= 0 and x.dur > 0 and math.random(1, 1000) <= x.odds * 10) then
+                        if (val ~= 0 and x.during > 0 and math.random(1, 1000) <= x.odds * 10) then
                             -- 判断是否buff/debuff(判断基准就是判断val是否大于/小于0)
                             -- buff时，要计算目标单位的buff阻碍（如:可以设计一个boss造成强化阻碍，影响玩家的被动加成）
                             -- debuff时，要计算目标单位的debuff抵抗（如:可以设计一个物品抵抗debuff，减少影响）
@@ -229,9 +229,9 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                     val = val * (1 - 0.01 * buff_oppose)
                                 end
                                 if (val > 0) then
-                                    hattr.set(targetUnit, x.dur, { [actionField] = "+" .. val })
+                                    hattr.set(targetUnit, x.during, { [actionField] = "+" .. val })
                                     if (type(x.effect) == "string" and string.len(x.effect) > 0) then
-                                        heffect.bindUnit(x.effect, targetUnit, "origin", x.dur)
+                                        heffect.bindUnit(x.effect, targetUnit, "origin", x.during)
                                     end
                                 end
                             else
@@ -241,9 +241,9 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                     val = val * (1 - 0.01 * debuff_oppose)
                                 end
                                 if (val < 0) then
-                                    hattr.set(targetUnit, x.dur, { [actionField] = tostring(val) })
+                                    hattr.set(targetUnit, x.during, { [actionField] = tostring(val) })
                                     if (type(x.effect) == "string" and string.len(x.effect) > 0) then
-                                        heffect.bindUnit(x.effect, targetUnit, "origin", x.dur)
+                                        heffect.bindUnit(x.effect, targetUnit, "origin", x.during)
                                     end
                                 end
                             end
@@ -299,7 +299,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                         targetUnit = targetUnit,
                                         odds = x.odds,
                                         damage = val,
-                                        during = x.dur,
+                                        during = x.during,
                                         sourceUnit = triggerUnit,
                                         effect = x.effect,
                                         damageType = damageType,
@@ -312,7 +312,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                         targetUnit = targetUnit,
                                         odds = x.odds,
                                         damage = val,
-                                        during = x.dur,
+                                        during = x.during,
                                         sourceUnit = triggerUnit,
                                         effect = x.effect,
                                         damageType = damageType,
@@ -326,7 +326,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                             targetUnit = targetUnit,
                                             odds = x.odds,
                                             damage = val,
-                                            during = x.dur,
+                                            during = x.during,
                                             sourceUnit = triggerUnit,
                                             effect = x.effect,
                                             damageType = damageType,
@@ -341,7 +341,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                             targetUnit = targetUnit,
                                             odds = x.odds,
                                             damage = val,
-                                            during = x.dur,
+                                            during = x.during,
                                             sourceUnit = triggerUnit,
                                             effect = x.effect,
                                             damageType = damageType,
@@ -395,7 +395,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                             sourceUnit = triggerUnit,
                                             distance = x.distance,
                                             high = x.height,
-                                            during = x.dur,
+                                            during = x.during,
                                             effect = x.effect,
                                             damageType = damageType,
                                             damageSrc = damageSrc,

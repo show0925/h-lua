@@ -88,9 +88,9 @@ hslk = {
 }
 
 -- skill_break
-for dur = 1, 10, 1 do
-    local swDur = dur * 0.05
-    hslk.skill_break[swDur] = cj.LoadInteger(cg.hash_hslk, HSLK_KEYS.SKILL_BREAK, dur)
+for during = 1, 10, 1 do
+    local swDur = during * 0.05
+    hslk.skill_break[swDur] = cj.LoadInteger(cg.hash_hslk, HSLK_KEYS.SKILL_BREAK, during)
 end
 -- skill_swim_unlimit
 hslk.skill_swim_unlimit = cj.LoadInteger(cg.hash_hslk, HSLK_KEYS.COMMON, HSLK_KEYS.SKILL_SWIM_UNLIMIT)

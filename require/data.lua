@@ -141,8 +141,8 @@ table.insert(
 )
 
 -- #眩晕[0.05-0.5]
-for dur = 1, 10, 1 do
-    local swDur = dur * 0.05
+for during = 1, 10, 1 do
+    local swDur = during * 0.05
     obj = slk.ability.AHtb:new("skill_break_" .. swDur)
     obj.EditorSuffix = "#h-lua"
     obj.Name = "技能系统-眩晕" .. swDur .. "秒"
@@ -166,7 +166,7 @@ for dur = 1, 10, 1 do
         slkHashData,
         {
             HSLK_KEYS.SKILL_BREAK,
-            dur,
+            during,
             obj:get_id(),
             "int"
         }
