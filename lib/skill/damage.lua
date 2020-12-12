@@ -234,7 +234,7 @@ hskill.damage = function(options)
         local tempNatural = {}
         for _, enchant in ipairs(CONST_ENCHANT) do
             local ev = enchant.value
-            tempNatural[ev] = 10 + (sourceUnitAttr["e_" .. ev] or 0) - targetUnitAttr["e_" .. ev .. "_oppose"]
+            tempNatural[ev] = henchant.INTRINSIC_ADDITION + (sourceUnitAttr["e_" .. ev] or 0) - targetUnitAttr["e_" .. ev .. "_oppose"]
             if (tempNatural[ev] < -100) then
                 tempNatural[ev] = -100
             end
