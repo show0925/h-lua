@@ -4,15 +4,11 @@ hgroup = {}
 ---@alias GroupLoop fun(enumUnit: userdata):void
 ---@param whichGroup table
 ---@param actions GroupLoop | "function(enumUnit) end"
----@param autoDel boolean
-hgroup.loop = function(whichGroup, actions, autoDel)
+hgroup.loop = function(whichGroup, actions)
     if (whichGroup == nil) then
         return
     end
     if (#whichGroup > 0) then
-        if (type(autoDel) ~= "boolean") then
-            autoDel = false
-        end
         for idx, eu in ipairs(whichGroup) do
             if (his.deleted(eu) == false) then
                 if (type(actions) == "function") then
@@ -23,9 +19,6 @@ hgroup.loop = function(whichGroup, actions, autoDel)
                 idx = idx - 1
             end
         end
-    end
-    if (autoDel == true) then
-        whichGroup = nil
     end
 end
 
@@ -220,6 +213,7 @@ end
 ---@param whichGroup userdata
 ---@param isDestroy boolean 是否同时删除单位组
 ---@param isDestroyUnit boolean 是否同时删除单位组里面的单位
+---@todo 删除isDestroy无意义
 ---
 hgroup.clear = function(whichGroup, isDestroy, isDestroyUnit)
     if (whichGroup == nil) then

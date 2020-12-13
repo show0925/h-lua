@@ -184,89 +184,78 @@ hrect.lock = function(bean)
     end
     local inc = 0
     local lockGroup = {}
-    htime.setInterval(
-        0.1,
-        function(t)
-            inc = inc + 1
-            if (inc > (bean.during / 0.10)) then
+    htime.setInterval(0.1, function(t)
+        inc = inc + 1
+        if (inc > (bean.during / 0.10)) then
+            htime.delTimer(t)
+            hgroup.clear(lockGroup, true, false)
+            return
+        end
+        local x = bean.whichX
+        local y = bean.whichY
+        local w = bean.width
+        local h = bean.height
+        --点优先
+        if (bean.whichLoc) then
+            x = cj.GetLocationX(bean.whichLoc)
+            y = cj.GetLocationY(bean.whichLoc)
+        end
+        --单位优先
+        if (bean.whichUnit) then
+            if (his.dead(bean.whichUnit)) then
                 htime.delTimer(t)
-                hgroup.clear(lockGroup, true, false)
                 return
             end
-            local x = bean.whichX
-            local y = bean.whichY
-            local w = bean.width
-            local h = bean.height
-            --点优先
-            if (bean.whichLoc) then
-                x = cj.GetLocationX(bean.whichLoc)
-                y = cj.GetLocationY(bean.whichLoc)
+            x = hunit.x(bean.whichUnit)
+            y = hunit.y(bean.whichUnit)
+        end
+        --区域优先
+        if (bean.whichRect) then
+            x = cj.GetRectCenterX(bean.whichRect)
+            y = cj.GetRectCenterY(bean.whichRect)
+            if (w == nil) then
+                w = hrect.getWidth(bean.whichRect)
             end
-            --单位优先
-            if (bean.whichUnit) then
-                if (his.dead(bean.whichUnit)) then
-                    htime.delTimer(t)
-                    return
-                end
-                x = hunit.x(bean.whichUnit)
-                y = hunit.y(bean.whichUnit)
-            end
-            --区域优先
-            if (bean.whichRect) then
-                x = cj.GetRectCenterX(bean.whichRect)
-                y = cj.GetRectCenterY(bean.whichRect)
-                if (w == nil) then
-                    w = hrect.getWidth(bean.whichRect)
-                end
-                if (h == nil) then
-                    h = hrect.getHeight(bean.whichRect)
-                end
-            end
-            local lockRect
-            local tempGroup
-            if (bean.type == "square") then
-                lockRect = cj.Rect(x - (w * 0.5), y - (h * 0.5), x + (w * 0.5), y + (h * 0.5))
-                tempGroup = hgroup.createByRect(lockRect)
-            elseif (bean.type == "circle") then
-                tempGroup = hgroup.createByXY(x, y, math.min(w / 2, h / 2))
-            end
-            hgroup.loop(
-                tempGroup,
-                function(u)
-                    hgroup.addUnit(lockGroup, u)
-                end,
-                true
-            )
-            hgroup.loop(
-                lockGroup,
-                function(u)
-                    print_mb(hunit.getName(u))
-                    local distance = 0.000
-                    local deg = 0
-                    local xx = hunit.x(u)
-                    local yy = hunit.y(u)
-                    if (bean.type == "square") then
-                        if (his.borderRect(lockRect, xx, yy) == true) then
-                            deg = math.getDegBetweenXY(x, y, xx, yy)
-                            distance = math.getMaxDistanceInRect(w, h, deg)
-                        end
-                    elseif (bean.type == "circle") then
-                        if (math.getDistanceBetweenXY(x, y, xx, yy) > math.min(w / 2, h / 2)) then
-                            deg = math.getDegBetweenXY(x, y, xx, yy)
-                            distance = math.min(w / 2, h / 2)
-                        end
-                    end
-                    if (distance > 0.0) then
-                        local polar = math.polarProjection(x, y, distance, deg)
-                        hunit.portal(u, polar.x, polar.y)
-                        heffect.bindUnit("Abilities\\Spells\\Human\\Defend\\DefendCaster.mdl", u, "origin", 0.2)
-                    end
-                end,
-                false
-            )
-            if (lockRect ~= nil) then
-                hrect.del(lockRect)
+            if (h == nil) then
+                h = hrect.getHeight(bean.whichRect)
             end
         end
-    )
+        local lockRect
+        local tempGroup
+        if (bean.type == "square") then
+            lockRect = cj.Rect(x - (w * 0.5), y - (h * 0.5), x + (w * 0.5), y + (h * 0.5))
+            tempGroup = hgroup.createByRect(lockRect)
+        elseif (bean.type == "circle") then
+            tempGroup = hgroup.createByXY(x, y, math.min(w / 2, h / 2))
+        end
+        hgroup.loop(tempGroup, function(u)
+            hgroup.addUnit(lockGroup, u)
+        end)
+        tempGroup = nil
+        hgroup.loop(lockGroup, function(u)
+            local distance = 0.000
+            local deg = 0
+            local xx = hunit.x(u)
+            local yy = hunit.y(u)
+            if (bean.type == "square") then
+                if (his.borderRect(lockRect, xx, yy) == true) then
+                    deg = math.getDegBetweenXY(x, y, xx, yy)
+                    distance = math.getMaxDistanceInRect(w, h, deg)
+                end
+            elseif (bean.type == "circle") then
+                if (math.getDistanceBetweenXY(x, y, xx, yy) > math.min(w / 2, h / 2)) then
+                    deg = math.getDegBetweenXY(x, y, xx, yy)
+                    distance = math.min(w / 2, h / 2)
+                end
+            end
+            if (distance > 0.0) then
+                local polar = math.polarProjection(x, y, distance, deg)
+                hunit.portal(u, polar.x, polar.y)
+                heffect.bindUnit("Abilities\\Spells\\Human\\Defend\\DefendCaster.mdl", u, "origin", 0.2)
+            end
+        end)
+        if (lockRect ~= nil) then
+            hrect.del(lockRect)
+        end
+    end)
 end

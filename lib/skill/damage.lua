@@ -738,26 +738,23 @@ hskill.damageRange = function(options)
         if (hgroup.count(g) <= 0) then
             return
         end
-        hgroup.loop(
-            g,
-            function(eu)
-                hskill.damage(
-                    {
-                        sourceUnit = options.sourceUnit,
-                        targetUnit = eu,
-                        effect = options.effectSingle,
-                        damage = damage,
-                        damageSrc = options.damageSrc,
-                        damageType = options.damageType,
-                        isFixed = options.isFixed,
-                    }
-                )
-                if (type(options.extraInfluence) == "function") then
-                    options.extraInfluence(eu)
-                end
-            end,
-            true
-        )
+        hgroup.loop(g, function(eu)
+            hskill.damage(
+                {
+                    sourceUnit = options.sourceUnit,
+                    targetUnit = eu,
+                    effect = options.effectSingle,
+                    damage = damage,
+                    damageSrc = options.damageSrc,
+                    damageType = options.damageType,
+                    isFixed = options.isFixed,
+                }
+            )
+            if (type(options.extraInfluence) == "function") then
+                options.extraInfluence(eu)
+            end
+        end)
+        g = nil
     else
         local ti = 0
         htime.setInterval(
@@ -775,26 +772,23 @@ hskill.damageRange = function(options)
                 if (hgroup.count(g) <= 0) then
                     return
                 end
-                hgroup.loop(
-                    g,
-                    function(eu)
-                        hskill.damage(
-                            {
-                                sourceUnit = options.sourceUnit,
-                                targetUnit = eu,
-                                effect = options.effectSingle,
-                                damage = damage,
-                                damageSrc = options.damageSrc,
-                                damageType = options.damageType,
-                                isFixed = options.isFixed,
-                            }
-                        )
-                        if (type(options.extraInfluence) == "function") then
-                            options.extraInfluence(eu)
-                        end
-                    end,
-                    true
-                )
+                hgroup.loop(g, function(eu)
+                    hskill.damage(
+                        {
+                            sourceUnit = options.sourceUnit,
+                            targetUnit = eu,
+                            effect = options.effectSingle,
+                            damage = damage,
+                            damageSrc = options.damageSrc,
+                            damageType = options.damageType,
+                            isFixed = options.isFixed,
+                        }
+                    )
+                    if (type(options.extraInfluence) == "function") then
+                        options.extraInfluence(eu)
+                    end
+                end)
+                g = nil
             end
         )
     end
@@ -828,25 +822,22 @@ hskill.damageGroup = function(options)
         return
     end
     if (times <= 1) then
-        hgroup.loop(
-            options.whichGroup,
-            function(eu)
-                hskill.damage(
-                    {
-                        sourceUnit = options.sourceUnit,
-                        targetUnit = eu,
-                        effect = options.effect,
-                        damage = damage,
-                        damageSrc = options.damageSrc,
-                        damageType = options.damageType,
-                        isFixed = options.isFixed,
-                    }
-                )
-                if (type(options.extraInfluence) == "function") then
-                    options.extraInfluence(eu)
-                end
+        hgroup.loop(options.whichGroup, function(eu)
+            hskill.damage(
+                {
+                    sourceUnit = options.sourceUnit,
+                    targetUnit = eu,
+                    effect = options.effect,
+                    damage = damage,
+                    damageSrc = options.damageSrc,
+                    damageType = options.damageType,
+                    isFixed = options.isFixed,
+                }
+            )
+            if (type(options.extraInfluence) == "function") then
+                options.extraInfluence(eu)
             end
-        )
+        end)
     else
         local ti = 0
         htime.setInterval(
@@ -857,25 +848,22 @@ hskill.damageGroup = function(options)
                     htime.delTimer(t)
                     return
                 end
-                hgroup.loop(
-                    options.whichGroup,
-                    function(eu)
-                        hskill.damage(
-                            {
-                                sourceUnit = options.sourceUnit,
-                                targetUnit = eu,
-                                effect = options.effect,
-                                damage = damage,
-                                damageSrc = options.damageSrc,
-                                damageType = options.damageType,
-                                isFixed = options.isFixed,
-                            }
-                        )
-                        if (type(options.extraInfluence) == "function") then
-                            options.extraInfluence(eu)
-                        end
+                hgroup.loop(options.whichGroup, function(eu)
+                    hskill.damage(
+                        {
+                            sourceUnit = options.sourceUnit,
+                            targetUnit = eu,
+                            effect = options.effect,
+                            damage = damage,
+                            damageSrc = options.damageSrc,
+                            damageType = options.damageType,
+                            isFixed = options.isFixed,
+                        }
+                    )
+                    if (type(options.extraInfluence) == "function") then
+                        options.extraInfluence(eu)
                     end
-                )
+                end)
             end
         )
     end

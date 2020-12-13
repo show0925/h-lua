@@ -224,7 +224,8 @@ hplayer.hideUnit = function(whichPlayer)
     )
     hgroup.loop(g, function(enumUnit)
         cj.ShowUnit(enumUnit, false)
-    end, true)
+    end)
+    g = nil
 end
 --- 令玩家单位全部删除
 ---@param whichPlayer userdata

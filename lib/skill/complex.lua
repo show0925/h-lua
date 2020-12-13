@@ -116,27 +116,24 @@ hskill.split = function(options)
             end
         )
         local splitDamage = damage * percent * 0.01
-        hgroup.loop(
-            g,
-            function(eu)
-                if (eu ~= targetUnit) then
-                    hskill.damage(
-                        {
-                            sourceUnit = options.sourceUnit,
-                            targetUnit = eu,
-                            damage = splitDamage,
-                            damageString = "分裂",
-                            damageStringColor = "ff6347",
-                            damageSrc = options.damageSrc,
-                            damageType = options.damageType,
-                            isFixed = options.isFixed,
-                            effect = options.effect
-                        }
-                    )
-                end
-            end,
-            true
-        )
+        hgroup.loop(g, function(eu)
+            if (eu ~= targetUnit) then
+                hskill.damage(
+                    {
+                        sourceUnit = options.sourceUnit,
+                        targetUnit = eu,
+                        damage = splitDamage,
+                        damageString = "分裂",
+                        damageStringColor = "ff6347",
+                        damageSrc = options.damageSrc,
+                        damageType = options.damageType,
+                        isFixed = options.isFixed,
+                        effect = options.effect
+                    }
+                )
+            end
+        end)
+        g = nil
         -- @触发分裂事件
         hevent.triggerEvent(
             sourceUnit,
@@ -739,61 +736,58 @@ hskill.bomb = function(options)
         print_err("lost bomb target")
         return
     end
-    hgroup.loop(
-        whichGroup,
-        function(eu)
-            --计算抵抗
-            local oppose = hattr.get(eu, "bomb_oppose")
-            local tempOdds = odds - oppose --(%)
-            local damage = options.damage
-            if (tempOdds <= 0) then
+    hgroup.loop(whichGroup, function(eu)
+        --计算抵抗
+        local oppose = hattr.get(eu, "bomb_oppose")
+        local tempOdds = odds - oppose --(%)
+        local damage = options.damage
+        if (tempOdds <= 0) then
+            return
+        else
+            if (math.random(1, 1000) > tempOdds * 10) then
                 return
-            else
-                if (math.random(1, 1000) > tempOdds * 10) then
-                    return
-                end
-                damage = damage * (1 - oppose * 0.01)
             end
-            hskill.damage(
-                {
-                    sourceUnit = options.sourceUnit,
-                    targetUnit = eu,
-                    damage = damage,
-                    damageSrc = options.damageSrc,
-                    damageType = options.damageType,
-                    isFixed = options.isFixed,
-                    damageString = "爆破",
-                    damageStringColor = "FF6347",
-                    effect = options.effectEnum,
-                }
-            )
-            -- @触发爆破事件
-            hevent.triggerEvent(
-                options.sourceUnit,
-                CONST_EVENT.bomb,
-                {
-                    triggerUnit = options.sourceUnit,
-                    targetUnit = eu,
-                    odds = odds,
-                    damage = options.damage,
-                    radius = radius
-                }
-            )
-            -- @触发被爆破事件
-            hevent.triggerEvent(
-                eu,
-                CONST_EVENT.beBomb,
-                {
-                    triggerUnit = eu,
-                    sourceUnit = options.sourceUnit,
-                    odds = odds,
-                    damage = options.damage,
-                    radius = radius
-                }
-            )
-        end,
-        true
-    )
+            damage = damage * (1 - oppose * 0.01)
+        end
+        hskill.damage(
+            {
+                sourceUnit = options.sourceUnit,
+                targetUnit = eu,
+                damage = damage,
+                damageSrc = options.damageSrc,
+                damageType = options.damageType,
+                isFixed = options.isFixed,
+                damageString = "爆破",
+                damageStringColor = "FF6347",
+                effect = options.effectEnum,
+            }
+        )
+        -- @触发爆破事件
+        hevent.triggerEvent(
+            options.sourceUnit,
+            CONST_EVENT.bomb,
+            {
+                triggerUnit = options.sourceUnit,
+                targetUnit = eu,
+                odds = odds,
+                damage = options.damage,
+                radius = radius
+            }
+        )
+        -- @触发被爆破事件
+        hevent.triggerEvent(
+            eu,
+            CONST_EVENT.beBomb,
+            {
+                triggerUnit = eu,
+                sourceUnit = options.sourceUnit,
+                odds = odds,
+                damage = options.damage,
+                radius = radius
+            }
+        )
+    end)
+    whichGroup = nil
 end
 
 --[[
@@ -1194,24 +1188,21 @@ hskill.rangeSwim = function(options)
     if (hgroup.count(g) <= 0) then
         return
     end
-    hgroup.loop(
-        g,
-        function(eu)
-            hskill.swim(
-                {
-                    odds = odds,
-                    targetUnit = eu,
-                    during = during,
-                    damage = damage,
-                    sourceUnit = options.sourceUnit,
-                    damageSrc = options.damageSrc,
-                    damageType = options.damageType,
-                    isFixed = options.isFixed,
-                }
-            )
-        end,
-        true
-    )
+    hgroup.loop(g, function(eu)
+        hskill.swim(
+            {
+                odds = odds,
+                targetUnit = eu,
+                during = during,
+                damage = damage,
+                sourceUnit = options.sourceUnit,
+                damageSrc = options.damageSrc,
+                damageType = options.damageType,
+                isFixed = options.isFixed,
+            }
+        )
+    end)
+    g = nil
 end
 
 --[[
@@ -1291,23 +1282,20 @@ hskill.whirlwind = function(options)
             if (hgroup.count(g) <= 0) then
                 return
             end
-            hgroup.loop(
-                g,
-                function(eu)
-                    hskill.damage(
-                        {
-                            sourceUnit = options.sourceUnit,
-                            targetUnit = eu,
-                            effect = options.effectEnum,
-                            damage = damage,
-                            damageSrc = options.damageSrc,
-                            damageType = options.damageType,
-                            isFixed = options.isFixed,
-                        }
-                    )
-                end,
-                true
-            )
+            hgroup.loop(g, function(eu)
+                hskill.damage(
+                    {
+                        sourceUnit = options.sourceUnit,
+                        targetUnit = eu,
+                        effect = options.effectEnum,
+                        damage = damage,
+                        damageSrc = options.damageSrc,
+                        damageType = options.damageType,
+                        isFixed = options.isFixed,
+                    }
+                )
+            end)
+            g = nil
         end
     )
 end
@@ -1500,34 +1488,31 @@ hskill.leap = function(options)
                     if (oneHitOnly == true) then
                         hunit.kill(arrowUnit, 0)
                     end
-                    hgroup.loop(
-                        g,
-                        function(eu)
-                            if (damageMovementRepeat ~= true and repeatGroup ~= nil) then
-                                hgroup.addUnit(repeatGroup, eu)
-                            end
-                            if (damageMovement > 0) then
-                                hskill.damage(
-                                    {
-                                        sourceUnit = sourceUnit,
-                                        targetUnit = eu,
-                                        damage = damageMovement,
-                                        damageSrc = options.damageSrc,
-                                        damageType = options.damageType,
-                                        isFixed = options.isFixed,
-                                        effect = options.damageEffect
-                                    }
-                                )
-                            end
-                            if (damageMovementDrag == true) then
-                                hunit.portal(eu, txy.x, txy.y)
-                            end
-                            if (type(extraInfluence) == "function") then
-                                extraInfluence(eu)
-                            end
-                        end,
-                        true
-                    )
+                    hgroup.loop(g, function(eu)
+                        if (damageMovementRepeat ~= true and repeatGroup ~= nil) then
+                            hgroup.addUnit(repeatGroup, eu)
+                        end
+                        if (damageMovement > 0) then
+                            hskill.damage(
+                                {
+                                    sourceUnit = sourceUnit,
+                                    targetUnit = eu,
+                                    damage = damageMovement,
+                                    damageSrc = options.damageSrc,
+                                    damageType = options.damageType,
+                                    isFixed = options.isFixed,
+                                    effect = options.damageEffect
+                                }
+                            )
+                        end
+                        if (damageMovementDrag == true) then
+                            hunit.portal(eu, txy.x, txy.y)
+                        end
+                        if (type(extraInfluence) == "function") then
+                            extraInfluence(eu)
+                        end
+                    end)
+                    g = nil
                 end
             end
             local distance = math.getDistanceBetweenXY(hunit.x(arrowUnit), hunit.y(arrowUnit), tx, ty)
@@ -1561,28 +1546,25 @@ hskill.leap = function(options)
                     end
                 elseif (damageEndRadius > 0) then
                     local g = hgroup.createByUnit(arrowUnit, damageEndRadius, filter)
-                    hgroup.loop(
-                        g,
-                        function(eu)
-                            if (damageEnd > 0) then
-                                hskill.damage(
-                                    {
-                                        sourceUnit = options.sourceUnit,
-                                        targetUnit = eu,
-                                        damage = damageEnd,
-                                        damageSrc = options.damageSrc,
-                                        damageType = options.damageType,
-                                        isFixed = options.isFixed,
-                                        effect = options.damageEffect
-                                    }
-                                )
-                            end
-                            if (type(extraInfluence) == "function") then
-                                extraInfluence(eu)
-                            end
-                        end,
-                        true
-                    )
+                    hgroup.loop(g, function(eu)
+                        if (damageEnd > 0) then
+                            hskill.damage(
+                                {
+                                    sourceUnit = options.sourceUnit,
+                                    targetUnit = eu,
+                                    damage = damageEnd,
+                                    damageSrc = options.damageSrc,
+                                    damageType = options.damageType,
+                                    isFixed = options.isFixed,
+                                    effect = options.damageEffect
+                                }
+                            )
+                        end
+                        if (type(extraInfluence) == "function") then
+                            extraInfluence(eu)
+                        end
+                    end)
+                    g = nil
                 end
                 if (leapType == "unit") then
                     hunit.setInvulnerable(arrowUnit, false)
@@ -1719,45 +1701,42 @@ hskill.leapRange = function(options)
         y = options.y
     end
     local g = hgroup.createByXY(x, y, targetRadius, filter)
-    hgroup.loop(
-        g,
-        function(eu)
-            local tmp = {
-                arrowUnit = options.arrowUnit,
-                sourceUnit = options.sourceUnit,
-                speed = options.speed,
-                acceleration = options.acceleration,
-                filter = options.filter,
-                tokenArrow = options.tokenArrow,
-                tokenArrowScale = options.tokenArrowScale,
-                tokenArrowOpacity = options.tokenArrowOpacity,
-                tokenArrowHeight = options.tokenArrowHeight,
-                effectMovement = options.effectMovement,
-                effectEnd = options.effectEnd,
-                damageMovement = options.damageMovement,
-                damageMovementRadius = options.damageMovementRadius,
-                damageMovementRepeat = options.damageMovementRepeat,
-                damageMovementDrag = options.damageMovementDrag,
-                damageEnd = options.damageEnd,
-                damageEndRadius = options.damageEndRadius,
-                damageSrc = options.damageSrc,
-                damageType = options.damageType,
-                isFixed = options.isFixed,
-                damageEffect = options.damageEffect,
-                oneHitOnly = options.oneHitOnly,
-                onEnding = options.onEnding,
-                extraInfluence = options.extraInfluence
-            }
-            if (options.targetUnit ~= nil) then
-                tmp.targetUnit = eu
-            else
-                tmp.x = hunit.x(eu)
-                tmp.y = hunit.y(eu)
-            end
-            hskill.leap(tmp)
-        end,
-        true
-    )
+    hgroup.loop(g, function(eu)
+        local tmp = {
+            arrowUnit = options.arrowUnit,
+            sourceUnit = options.sourceUnit,
+            speed = options.speed,
+            acceleration = options.acceleration,
+            filter = options.filter,
+            tokenArrow = options.tokenArrow,
+            tokenArrowScale = options.tokenArrowScale,
+            tokenArrowOpacity = options.tokenArrowOpacity,
+            tokenArrowHeight = options.tokenArrowHeight,
+            effectMovement = options.effectMovement,
+            effectEnd = options.effectEnd,
+            damageMovement = options.damageMovement,
+            damageMovementRadius = options.damageMovementRadius,
+            damageMovementRepeat = options.damageMovementRepeat,
+            damageMovementDrag = options.damageMovementDrag,
+            damageEnd = options.damageEnd,
+            damageEndRadius = options.damageEndRadius,
+            damageSrc = options.damageSrc,
+            damageType = options.damageType,
+            isFixed = options.isFixed,
+            damageEffect = options.damageEffect,
+            oneHitOnly = options.oneHitOnly,
+            onEnding = options.onEnding,
+            extraInfluence = options.extraInfluence
+        }
+        if (options.targetUnit ~= nil) then
+            tmp.targetUnit = eu
+        else
+            tmp.x = hunit.x(eu)
+            tmp.y = hunit.y(eu)
+        end
+        hskill.leap(tmp)
+    end)
+    g = nil
 end
 
 --[[
@@ -1889,31 +1868,27 @@ hskill.rectangleStrike = function(options)
                 )
                 heffect.bindUnit(options.effect, effUnit, "origin", effUnitDur)
             end
-            hgroup.loop(
-                hgroup.createByXY(txy.x, txy.y, radius, options.filter),
-                function(eu)
-                    if (hgroup.includes(tg, eu) == false) then
-                        hgroup.addUnit(tg, eu)
-                    end
-                end,
-                true
-            )
+            local _g = hgroup.createByXY(txy.x, txy.y, radius, options.filter)
+            hgroup.loop(_g, function(eu)
+                if (hgroup.includes(tg, eu) == false) then
+                    hgroup.addUnit(tg, eu)
+                end
+            end)
+            _g = nil
         end
         if (hgroup.count(tg) > 0) then
-            hskill.damageGroup(
-                {
-                    frequency = 0,
-                    times = 1,
-                    effect = options.damageEffect,
-                    whichGroup = tg,
-                    damage = damage,
-                    sourceUnit = options.sourceUnit,
-                    damageSrc = options.damageSrc,
-                    damageType = options.damageType,
-                    isFixed = options.isFixed,
-                    extraInfluence = options.extraInfluence
-                }
-            )
+            hskill.damageGroup({
+                frequency = 0,
+                times = 1,
+                effect = options.damageEffect,
+                whichGroup = tg,
+                damage = damage,
+                sourceUnit = options.sourceUnit,
+                damageSrc = options.damageSrc,
+                damageType = options.damageType,
+                isFixed = options.isFixed,
+                extraInfluence = options.extraInfluence
+            })
         end
         tg = nil
     else
