@@ -19,8 +19,6 @@ table.random = function(arr)
     local val
     if (#arr > 0) then
         val = arr[math.random(1, #arr)]
-    else
-        print_err()
     end
     return val
 end

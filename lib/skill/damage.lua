@@ -298,6 +298,8 @@ hskill.damage = function(options)
     end
     -- 上面都是先行计算
     if (lastDamage > 0.125 and his.deleted(targetUnit) == false) then
+        -- 着身附魔
+        henchant.append(targetUnit, damageType)
         -- 设置单位正在受伤
         local isBeDamagingTimer = hunit.get(targetUnit, "isBeDamagingTimer", nil)
         if (isBeDamagingTimer ~= nil) then
