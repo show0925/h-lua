@@ -25,15 +25,27 @@ henchant.closeAppend = function()
 end
 
 --- 给目标单位添加附魔属性
----@param targetUnit userdata
----@param enchants string|table
----@param during number
-henchant.append = function(targetUnit, enchants, during)
-    if (henchant.APPEND_OPEN ~= true or targetUnit == nil) then
+---@param options table
+henchant.append = function(options)
+    --[[
+        options = {
+            targetUnit = userdata,
+            sourceUnit = userdata,
+            enchants = {'fire','water'} | "fire,water",
+            during = 5,
+        }
+    ]]
+    local targetUnit = options.targetUnit
+    local sourceUnit = options.sourceUnit
+    local enchants = options.enchants
+    local during = options.during or henchant.APPEND_DURING
+    if (henchant.APPEND_OPEN ~= true or during <= 0) then
         return
     end
-    during = during or henchant.APPEND_DURING
-    if (during <= 0) then
+    if (targetUnit ~= nil and his.deleted(targetUnit) == false) then
+        return
+    end
+    if (sourceUnit ~= nil and his.deleted(sourceUnit) == false) then
         return
     end
     if (type(enchants) == 'table') then
@@ -49,11 +61,22 @@ henchant.append = function(targetUnit, enchants, during)
 end
 
 --- 消除目标单位的附魔属性
----@param targetUnit userdata
----@param enchants string|table
----@param delay number 延时
-henchant.dissipate = function(targetUnit, enchants, delay)
-    if (henchant.APPEND_OPEN ~= true or targetUnit == nil) then
+---@param options table
+henchant.dissipate = function(options)
+    --[[
+        options = {
+            targetUnit = userdata,
+            enchants = {'fire','water'} | "fire,water",
+            delay = 0, --延时
+        }
+    ]]
+    local targetUnit = options.targetUnit
+    local enchants = options.enchants
+    local delay = options.delay or 0
+    if (henchant.APPEND_OPEN ~= true) then
+        return
+    end
+    if (targetUnit ~= nil and his.deleted(targetUnit) == false) then
         return
     end
     if (type(enchants) == 'table') then
@@ -63,7 +86,6 @@ henchant.dissipate = function(targetUnit, enchants, delay)
         print_err("henchant dissipate -enchants")
         return
     end
-    delay = delay or 0
     if (delay <= 0) then
         hattribute.set(targetUnit, during, {
             append_enchant = "-" .. enchants
