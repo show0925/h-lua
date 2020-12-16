@@ -81,6 +81,7 @@ require "lib.leaderBoard"
 require "lib.multiBoard"
 require "lib.quest"
 require "lib.matcher"
+require "lib.shop"
 -- 别称
 httg = htextTag
 hattr = hattribute
