@@ -104,8 +104,8 @@ Contains a variety of rich attribute systems, built-in up to dozens of custom ev
 
 ```
 <?
-#include "[YOUR PATH]/h-lua/slk/helper.lua"
-#include "[YOUR MAP PATH]/slk/init.jass"
+#include "[YOUR PATH]/h-lua/h-lua.jass"
+#include "[YOUR MAP PATH]/slk/init.ljass" //need start lua，see demo helloworld.w3x
 ?>
 ```
 > You need to feel in your init.ljass Import your entry file and execute the Lua file (the h-lua framework does not automatically perform this behavior now)

@@ -87,7 +87,8 @@ require "lib.leaderBoard"
 require "lib.multiBoard"
 require "lib.quest"
 require "lib.matcher"
--- alias
+require "lib.shop"
+-- 别称 alias
 httg = htextTag
 hattr = hattribute
 

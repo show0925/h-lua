@@ -105,8 +105,8 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依�
 
 ```
 <?
-#include "[YOUR PATH]/h-lua/slk/helper.lua"
-#include "[YOUR MAP PATH]/slk/init.ljass"
+#include "[YOUR PATH]/h-lua/h-lua.jass"
+#include "[YOUR MAP PATH]/slk/init.ljass" //你需要在自己的文件里启用lua，可参考helloworld演示图
 ?>
 ```
 > （不建议路径存在有中文）
