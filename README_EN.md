@@ -64,6 +64,7 @@ Contains a variety of rich attribute systems, built-in up to dozens of custom ev
     │   ├── player.lua
     │   ├── quest.lua
     │   ├── rect.lua
+    │   ├── shop.lua
     │   ├── sound.lua
     │   ├── textTag.lua
     │   ├── texture.lua

@@ -65,6 +65,7 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依�
     │   ├── player.lua - 玩家
     │   ├── quest.lua - 任务
     │   ├── rect.lua - 区域
+    │   ├── shop.lua - 商店模块
     │   ├── sound.lua - 声音模块
     │   ├── textTag.lua - 漂浮字
     │   ├── texture.lua - 遮罩、贴图
