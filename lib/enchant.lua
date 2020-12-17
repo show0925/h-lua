@@ -31,17 +31,21 @@ end
 
 --- 设置单位附着附魔特效
 ---@param whichEnchant string CONST_ENCHANT 对应的附魔
----@param attach table 特效绑定的多个位置，如 {'origin', 'head'}
----@param effect string 具体特效字符串，如 'Abilities\\Spells\\Other\\BreathOfFire\\BreathOfFireDamage.mdl'
-henchant.setAppendAttachEffect = function(whichEnchant, attach, effect)
-    if (type(whichEnchant) ~= 'string' or type(attach) ~= 'table' or type(effect) ~= 'string') then
+---@param effects table|nil 特效绑定的多个位置，如 {{attach = 'origin',effect = 'Abilities\\Spells\\Other\\BreathOfFire\\BreathOfFireDamage.mdl'}}
+---@param rgb table|nil 三原色变色，如 {255,255,255}
+henchant.setAppendAttachEffect = function(whichEnchant, effects, rgb)
+    if (type(whichEnchant) ~= 'string') then
         return
     end
-    heffect.del(henchant.ENV_APPEND_EFFECT[whichEnchant].object)
+    if (effects ~= nil and type(effects) ~= 'table') then
+        return
+    end
+    if (rgb ~= nil and type(rgb) ~= 'table') then
+        return
+    end
     henchant.ENV_APPEND_EFFECT[whichEnchant] = {
-        object = nil,
-        attach = attach,
-        effect = effect,
+        effects = effects,
+        rgb = rgb,
     }
 end
 
