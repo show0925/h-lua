@@ -282,7 +282,7 @@ hring.insert = function(whichUnit, id)
                 if (status ~= -1) then
                     ring.group = g
                 else
-                    if (hring.ACTIVE_EFFECT[ringId][u] ~= nil) then
+                    if (hring.ACTIVE_EFFECT[ringId] ~= nil and hring.ACTIVE_EFFECT[ringId][u] ~= nil) then
                         hring.ACTIVE_EFFECT[ringId][u].count = hring.ACTIVE_EFFECT[ringId][u].count - 1
                         if (hring.ACTIVE_EFFECT[ringId][u].count == 0) then
                             heffect.del(hring.ACTIVE_EFFECT[ringId][u].effect)
