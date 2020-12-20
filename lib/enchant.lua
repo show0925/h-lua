@@ -95,6 +95,10 @@ henchant.append = function(options)
         enchants = string.explode(',', enchants)
     end
     -- 整合
+    -- 特效调节
+    if (henchant.ENV_APPEND_EFFECT[whichEnchant] ~= nil) then
+        
+    end
     -- 判断环境
 
     hattribute.set(targetUnit, during, {
