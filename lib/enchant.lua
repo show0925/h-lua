@@ -94,10 +94,13 @@ henchant.append = function(options)
     if (type(enchants) == 'string') then
         enchants = string.explode(',', enchants)
     end
+    if (type(enchants) ~= 'table' or #enchants <= 0) then
+        return
+    end
     -- 整合
     -- 特效调节
     if (henchant.ENV_APPEND_EFFECT[whichEnchant] ~= nil) then
-        
+
     end
     -- 判断环境
 
