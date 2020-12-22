@@ -85,10 +85,10 @@ henchant.append = function(options)
     if (henchant.STATUS ~= true) then
         return
     end
-    if (targetUnit ~= nil and his.deleted(targetUnit) == false) then
+    if (targetUnit == nil or his.deleted(targetUnit)) then
         return
     end
-    if (sourceUnit ~= nil and his.deleted(sourceUnit) == false) then
+    if (sourceUnit == nil or his.deleted(sourceUnit)) then
         return
     end
     if (type(enchants) == 'string') then
@@ -97,11 +97,12 @@ henchant.append = function(options)
     if (type(enchants) ~= 'table' or #enchants <= 0) then
         return
     end
+    print_r(enchants)
     -- 整合
     -- 先获取目标单位当前的附魔
     local curAppendEnchant = hattribute.get(targetUnit, 'append_enchant')
     -- 特效调节
-    if (henchant.ENV_APPEND_EFFECT[whichEnchant] ~= nil) then
+    if (henchant.ENV_APPEND_EFFECT[targetUnit] ~= nil) then
 
     end
     -- 判断环境

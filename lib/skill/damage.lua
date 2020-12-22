@@ -73,7 +73,15 @@ hskill.damage = function(options)
     local damageType = options.damageType
     if (damageType == nil) then
         if (damageSrc == CONST_DAMAGE_SRC.attack and sourceUnit ~= nil) then
-            damageType = hattr.get(sourceUnit, "attack_enchant")
+            damageType = {}
+            local ac = hattr.get(sourceUnit, "attack_enchant")
+            for _, v in ipairs(CONST_ENCHANT) do
+                if (ac[v.value] > 0) then
+                    for _ = 1, ac[v.value], 1 do
+                        table.insert(damageType, v.value)
+                    end
+                end
+            end
         end
     end
     --常规伤害判定

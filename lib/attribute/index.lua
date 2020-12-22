@@ -256,6 +256,8 @@ hattribute.init = function(whichUnit)
     for _, v in ipairs(CONST_ENCHANT) do
         attribute["e_" .. v.value] = 0.0
         attribute["e_" .. v.value .. '_oppose'] = 0.0
+        attribute.attack_enchant[v.value] = 0
+        attribute.append_enchant[v.value] = 0
     end
     -- 初始化物编slk数据
     if (uSlk.cool1) then
@@ -339,7 +341,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     if (valType == "string") then
         -- string类型只有+-=
         if (opr == "+") then
-            -- 添加
             local valArr = string.explode(",", val)
             params[attr] = table.merge(params[attr], valArr)
             if (during > 0) then
@@ -352,7 +353,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 )
             end
         elseif (opr == "-") then
-            -- 减少
             local valArr = string.explode(",", val)
             for _, v in ipairs(valArr) do
                 if (table.includes(v, params[attr])) then
@@ -369,7 +369,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 )
             end
         elseif (opr == "=") then
-            -- 设定
             local old = table.clone(params[attr])
             params[attr] = string.explode(",", val)
             if (during > 0) then
@@ -382,10 +381,46 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 )
             end
         end
+    elseif (valType == "enchant" and type(val) == 'string') then
+        -- enchant类型是附魔独特的，只支持数组串string('+fire,water'),会计数，只有+-没有别的
+        local valArr = val
+        if (type(valArr) == 'string') then
+            valArr = string.explode(",", valArr)
+        end
+        if (opr == "+") then
+            for _, k in ipairs(valArr) do
+                if (params[attr][k] ~= nil) then
+                    params[attr][k] = params[attr][k] + 1
+                end
+            end
+            if (during > 0) then
+                htime.setTimeout(
+                    during,
+                    function(t)
+                        htime.delTimer(t)
+                        hattribute.setHandle(whichUnit, attr, "-", val, 0)
+                    end
+                )
+            end
+        elseif (opr == "-") then
+            for _, k in ipairs(valArr) do
+                if (params[attr][k] ~= nil) then
+                    params[attr][k] = params[attr][k] - 1
+                end
+            end
+            if (during > 0) then
+                htime.setTimeout(
+                    during,
+                    function(t)
+                        htime.delTimer(t)
+                        hattribute.setHandle(whichUnit, attr, "+", val, 0)
+                    end
+                )
+            end
+        end
     elseif (valType == "table") then
         -- table类型只有+-没有别的
         if (opr == "+") then
-            -- 添加
             local hkey = string.attrBuffKey(val)
             table.insert(params[attr], { hash = hkey, table = val })
             if (during > 0) then
@@ -398,7 +433,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 )
             end
         elseif (opr == "-") then
-            -- 减少
             local hkey = string.attrBuffKey(val)
             local hasKey = false
             for k, v in ipairs(params[attr]) do
