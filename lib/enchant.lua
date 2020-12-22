@@ -98,6 +98,8 @@ henchant.append = function(options)
         return
     end
     -- 整合
+    -- 先获取目标单位当前的附魔
+    local curAppendEnchant = hattribute.get(targetUnit, 'append_enchant')
     -- 特效调节
     if (henchant.ENV_APPEND_EFFECT[whichEnchant] ~= nil) then
 

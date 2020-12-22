@@ -1,5 +1,14 @@
 ---@class hattribute 属性系统
 hattribute = {
+    DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认认定这个技能为物品栏
+    VAL_TYPE = {
+        ENCHANT = { 'attack_enchant', 'append_enchant' },
+        PLAYER = { "gold_ratio", "lumber_ratio", "exp_ratio", "sell_ratio" },
+        INTEGER = {
+            "life", "mana", "move", "attack_white", "attack_green", "attack_range", "sight", "defend",
+            "str_white", "agi_white", "int_white", "str_green", "agi_green", "int_green", "punish"
+        },
+    },
     max_move_speed = 522,
     max_life = 999999999,
     max_mana = 999999999,
@@ -23,8 +32,21 @@ hattribute = {
             mana_back = 0.05 -- 每点力量提升0.05生命恢复（默认例子）
         }
     },
-    DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认认定这个技能为物品栏
 }
+
+--- 判断是否某种类型的数值设定
+---@param field string attribute
+---@param valType table VAL_TYPE.?
+---@return boolean
+hattribute.isValType = function(field, valType)
+    if (field == nil or valType == nil) then
+        return false
+    end
+    if (table.includes(field, valType)) then
+        return true
+    end
+    return false
+end
 
 --- 为单位添加N个同样的生命魔法技能 1级设0 2级设负 负减法（搜[卡血牌bug]，了解原理）
 ---@private
@@ -311,6 +333,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     if (params == nil) then
         return
     end
+    if (hattribute.isValType(attr, hattribute.VAL_TYPE.ENCHANT)) then
+        valType = "enchant"
+    end
     if (valType == "string") then
         -- string类型只有+-=
         if (opr == "+") then
@@ -396,29 +421,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             end
         end
     elseif (valType == "number") then
-        -- number
-        local intAttr = {
-            "life",
-            "mana",
-            "move",
-            "attack_white",
-            "attack_green",
-            "attack_range",
-            "sight",
-            "defend",
-            "str_white",
-            "agi_white",
-            "int_white",
-            "str_green",
-            "agi_green",
-            "int_green",
-            "punish"
-        }
-        local isInt = false
-        if (table.includes(attr, intAttr)) then
-            isInt = true
-        end
-        --
         local diff = 0
         if (opr == "+") then
             diff = val
@@ -438,7 +440,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             diff = diff + accumuDiff
         end
         --部分属性取整处理，否则失真
-        if (isInt and diff ~= 0) then
+        if (hattribute.isValType(attr, hattribute.VAL_TYPE.INTEGER) and diff ~= 0) then
             local di, df = math.modf(math.abs(diff))
             if (isAccumuDiff) then
                 if (diff >= 0) then
@@ -838,7 +840,7 @@ hattribute.caleAttribute = function(damageSrc, isAdd, whichUnit, attr, times)
         local v = arr.value
         local typev = type(v)
         local tempDiff
-        if (k == "attack_enchant" or k == "append_enchant") then
+        if (hattribute.isEnchant(k)) then
             local opt = "+"
             if (isAdd == false) then
                 opt = "-"
@@ -888,12 +890,7 @@ hattribute.caleAttribute = function(damageSrc, isAdd, whichUnit, attr, times)
                 [opt] = tempTable
             }
         end
-        if (table.includes(k, {
-            "gold_ratio",
-            "lumber_ratio",
-            "exp_ratio",
-            "sell_ratio"
-        })) then
+        if (hattribute.isValType(k, hattribute.VAL_TYPE.PLAYER)) then
             table.insert(diffPlayer, { k, tonumber(tempDiff) })
         else
             diff[k] = tempDiff
