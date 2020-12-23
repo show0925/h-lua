@@ -10,7 +10,7 @@ henchant = {
     -- 附魔环境附着特效
     ENV_APPEND_EFFECT = {},
     -- 附魔环境反应
-    ENV_RESPONSE = {},
+    ENV_REACTION = {},
 }
 
 --- 设置附魔的底层固有加成
@@ -50,18 +50,18 @@ henchant.setAppendAttachEffect = function(whichEnchant, effects, rgb)
 end
 
 --- 设置环境附魔反应
----@alias setResponse fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位"}):void
+---@alias setReaction fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位"}):void
 ---@param onEnchant string CONST_ENCHANT [运行时]单位附着的新的附魔
 ---@param toEnchant string CONST_ENCHANT [运行时]单位已有的目标附着附魔
----@param response setResponse  | "function(evtData) end" 新->旧 [运行时]化学反应，反应后该两个类型的附魔都将消失
-henchant.setEnvResponse = function(onEnchant, toEnchant, response)
-    if (type(onEnchant) ~= 'string' or type(toEnchant) ~= 'string' or type(response) ~= 'function') then
+---@param reaction setReaction  | "function(evtData) end" 新->旧 [运行时]化学反应，反应后该两个类型的附魔都将消失
+henchant.setEnvReaction = function(onEnchant, toEnchant, reaction)
+    if (type(onEnchant) ~= 'string' or type(toEnchant) ~= 'string' or type(reaction) ~= 'function') then
         return
     end
-    if (henchant.ENV_RESPONSE[onEnchant] == nil) then
-        henchant.ENV_RESPONSE[onEnchant] = {}
+    if (henchant.ENV_REACTION[onEnchant] == nil) then
+        henchant.ENV_REACTION[onEnchant] = {}
     end
-    henchant.ENV_RESPONSE[onEnchant][toEnchant] = response
+    henchant.ENV_REACTION[onEnchant][toEnchant] = reaction
 end
 
 --- 给目标单位添加附魔属性
@@ -99,17 +99,49 @@ henchant.append = function(options)
     end
     print_r(enchants)
     -- 整合
-    -- 先获取目标单位当前的附魔
-    local curAppendEnchant = hattribute.get(targetUnit, 'append_enchant')
-    -- 特效调节
-    if (henchant.ENV_APPEND_EFFECT[targetUnit] ~= nil) then
-
+    local curEnchant = hattribute.get(targetUnit, 'append_enchant') -- 目标单位当前的附魔
+    local addEnchant = {}  -- 增添的附魔
+    local subEnchant = {}  -- 消逝的附魔
+    for _, e in ipairs(enchants) do
+        local hasReaction = false -- 判断反应结果
+        if (henchant.ENV_REACTION[e] ~= nil) then
+            for _, con in ipairs(CONST_ENCHANT) do
+                -- 判断所有种类的附魔，如果之前有附魔过
+                if (curEnchant[con.value] > 0) then
+                    if (henchant.ENV_REACTION[e][con.value] ~= nil) then
+                        -- 如果有反应式
+                        henchant.ENV_REACTION[e][con.value]({
+                            type = con.value,
+                            level = curEnchant[con.value],
+                            sourceUnit = sourceUnit,
+                            targetUnit = targetUnit,
+                        })
+                        for _ = 1, curEnchant[con.value], 1 do
+                            table.insert(subEnchant, con.value)
+                        end
+                        hasReaction = true
+                    end
+                end
+            end
+        end
+        -- 如果有对应的反应，那么删除增添的附魔和身上的附魔状态
+        -- 如果没有反应，那么增加一个着身附魔
+        if (hasReaction == true) then
+            -- 这里不需要删除新附魔，什么都不做就行了，消失了
+        else
+            table.insert(addEnchant, e)
+        end
     end
-    -- 判断环境
-
-    hattribute.set(targetUnit, during, {
-        append_enchant = "+" .. enchants
-    })
+    if (#addEnchant > 0) then
+        hattribute.set(targetUnit, during, {
+            append_enchant = "+" .. string.implode(',', addEnchant)
+        })
+    end
+    if (#subEnchant > 0) then
+        hattribute.set(targetUnit, during, {
+            append_enchant = "-" .. string.implode(',', subEnchant)
+        })
+    end
 end
 
 henchant.env = function(options)
