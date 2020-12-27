@@ -220,7 +220,9 @@ slkHelper.item.synthesis = function(formula)
             end
         elseif (type(v) == 'table') then
             profit = v[1]
-            fragment = table.remove(v, 1)
+            for vi = 2, table.len(v), 1 do
+                table.insert(fragment, v[vi])
+            end
         end
         --
         local fmStr = {}

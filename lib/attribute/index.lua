@@ -874,7 +874,7 @@ hattribute.caleAttribute = function(damageSrc, isAdd, whichUnit, attr, times)
         local v = arr.value
         local typev = type(v)
         local tempDiff
-        if (hattribute.isEnchant(k)) then
+        if (hattribute.isValType(k, hattribute.VAL_TYPE.ENCHANT)) then
             local opt = "+"
             if (isAdd == false) then
                 opt = "-"
