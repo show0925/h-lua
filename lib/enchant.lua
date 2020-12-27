@@ -32,7 +32,7 @@ end
 --- 设置单位附着附魔特效
 ---@param whichEnchant string CONST_ENCHANT 对应的附魔
 ---@param effects table|nil 特效绑定的多个位置，如 {{attach = 'origin',effect = 'Abilities\\Spells\\Other\\BreathOfFire\\BreathOfFireDamage.mdl'}}
----@param rgb table|nil 三原色变色，如 {255,255,255}
+---@param rgb table|nil 单位三原色变色，如 {255,255,255}
 henchant.setAppendAttachEffect = function(whichEnchant, effects, rgb)
     if (type(whichEnchant) ~= 'string') then
         return
@@ -50,7 +50,7 @@ henchant.setAppendAttachEffect = function(whichEnchant, effects, rgb)
 end
 
 --- 设置环境附魔反应
----@alias setReaction fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位"}):void
+---@alias setReaction fun(evtData: {type:"附魔触发类型",level:"附魔触发等级",sourceUnit:"来自单位",targetUnit:"目标单位"}):void
 ---@param onEnchant string CONST_ENCHANT [运行时]单位附着的新的附魔
 ---@param toEnchant string CONST_ENCHANT [运行时]单位已有的目标附着附魔
 ---@param reaction setReaction  | "function(evtData) end" 新->旧 [运行时]化学反应，反应后该两个类型的附魔都将消失
