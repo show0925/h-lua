@@ -545,11 +545,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 if (futureVal < 0) then
                     cj.SetUnitMoveSpeed(whichUnit, 0)
                 else
-                    if (hcamera.getModel(hunit.getOwner(whichUnit)) == "zoomin") then
-                        cj.SetUnitMoveSpeed(whichUnit, math.floor(futureVal * 0.5))
-                    else
-                        cj.SetUnitMoveSpeed(whichUnit, math.floor(futureVal))
-                    end
+                    cj.SetUnitMoveSpeed(whichUnit, math.floor(futureVal))
                 end
             elseif (attr == "attack_white") then
                 -- 白字攻击
@@ -576,9 +572,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                     futureVal = hattribute.min_attack_range
                 elseif (futureVal > hattribute.max_attack_range) then
                     futureVal = hattribute.max_attack_range
-                end
-                if (hcamera.getModel(hunit.getOwner(whichUnit)) == "zoomin") then
-                    futureVal = futureVal * 0.5
                 end
                 cj.SetUnitAcquireRange(whichUnit, futureVal * 1.1)
             elseif (attr == "sight") then

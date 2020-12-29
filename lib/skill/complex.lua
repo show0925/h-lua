@@ -994,11 +994,6 @@ hskill.crackFly = function(options)
         return
     end
     hunit.set(options.targetUnit, "isCrackFly", true)
-    --镜头放大模式下，距离缩小一半
-    if (hcamera.getModel(hunit.getOwner(options.targetUnit)) == "zoomin") then
-        distance = distance * 0.5
-        high = high * 0.5
-    end
     local tempObj = {
         odds = 99999,
         targetUnit = options.targetUnit,

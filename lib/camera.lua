@@ -8,6 +8,7 @@ hcamera.reset = function(whichPlayer, during)
         cj.ResetToGameCamera(during)
     end
 end
+
 --- 应用镜头
 ---@param whichPlayer userdata
 ---@param during number
@@ -17,6 +18,7 @@ hcamera.apply = function(whichPlayer, during, camerasetup)
         cj.CameraSetupApplyForceDuration(camerasetup, true, during)
     end
 end
+
 --- 移动到XY
 ---@param whichPlayer userdata
 ---@param during number
@@ -27,6 +29,7 @@ hcamera.toXY = function(whichPlayer, during, x, y)
         cj.PanCameraToTimed(x, y, during)
     end
 end
+
 --- 移动到点
 ---@param whichPlayer userdata
 ---@param during number
@@ -34,6 +37,7 @@ end
 hcamera.toLoc = function(whichPlayer, during, loc)
     hcamera.toXY(whichPlayer, during, cj.GetLocationX(loc), cj.GetLocationY(loc))
 end
+
 --- 移动到单位位置
 ---@param whichPlayer userdata
 ---@param during number
@@ -46,6 +50,7 @@ hcamera.toUnit = function(whichPlayer, during, whichUnit)
         cj.PanCameraToTimed(hunit.x(whichUnit), hunit.y(whichUnit), during)
     end
 end
+
 --- 锁定镜头
 ---@param whichPlayer userdata
 ---@param whichUnit userdata
@@ -58,6 +63,7 @@ hcamera.lock = function(whichPlayer, whichUnit)
         end
     end
 end
+
 --- 更改镜头距离
 ---@param whichPlayer userdata
 ---@param diffDistance number
@@ -129,61 +135,5 @@ hcamera.shock = function(whichPlayer, whichType, during, scale)
                 end
             end
         )
-    end
-end
-
---- 获取镜头模式
----@param whichPlayer userdata 玩家
-hcamera.getModel = function(whichPlayer)
-    return hplayer.get(whichPlayer, 'cameraModel', 'normal')
-end
---- 设置镜头模式
---[[
- bean = {
-    model = "normal" | "lock",
-    whichPlayer = player, -- 锁定单位的玩家
-    lockUnit = unit, -- 锁定单位的绑定单位,与玩家对应
- }
-]]
-hcamera.setModel = function(bean)
-    if (bean.model == nil) then
-        return
-    end
-    if (bean.model == "normal") then
-        hcamera.reset(bean.whichPlayer, 0)
-    elseif (bean.model == "lock") then
-        if (bean.lockUnit == nil or bean.whichPlayer == nil) then
-            return
-        end
-        htime.setInterval(
-            0.1,
-            function()
-                hcamera.lock(bean.whichPlayer, bean.lockUnit)
-            end
-        )
-    elseif (bean.model == "zoomin") then
-        -- hattr.max_move_speed = hattr.max_move_speed * 2
-        htime.setInterval(
-            0.1,
-            function()
-                hcamera.distance(bean.whichPlayer, 825)
-            end
-        )
-    elseif (bean.model == "zoomout") then
-        htime.setInterval(
-            0.1,
-            function()
-                hcamera.distance(bean.whichPlayer, 3000)
-            end
-        )
-    else
-        return
-    end
-    if (bean.whichPlayer ~= nil) then
-        hplayer.set(bean.whichPlayer, 'cameraModel', bean.model)
-    else
-        for i = 1, bj_MAX_PLAYERS, 1 do
-            hplayer.set(hplayer.players[i], 'cameraModel', bean.model)
-        end
     end
 end
