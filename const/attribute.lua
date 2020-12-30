@@ -155,7 +155,7 @@ CONST_ATTR_KEYS = {
 for _, v in ipairs(CONST_ENCHANT) do
     CONST_ATTR[v.value] = v.label -- fire = "火"
     CONST_ATTR["e_" .. v.value] = v.label .. '强化' -- e_fire = "火强化"
-    CONST_ATTR["e_" .. v.value .. '_oppose'] = v.label .. '抗性' -- e_fire = "火抗性"
+    CONST_ATTR["e_" .. v.value .. '_oppose'] = v.label .. '抗性' -- e_fire_oppose = "火抗性"
     table.insert(CONST_ATTR_KEYS, v.value)
     table.insert(CONST_ATTR_KEYS, "e_" .. v.value)
     table.insert(CONST_ATTR_KEYS, "e_" .. v.value .. '_oppose')

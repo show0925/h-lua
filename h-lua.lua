@@ -10,6 +10,8 @@ require "foundation.blizzard_b"
 -- 加载const
 require "const.enchant"
 require "const.attribute"
+require "const.attributeXtras"
+require "const.breakArmorType"
 require "const.damageSource"
 require "const.damageType"
 require "const.hero"

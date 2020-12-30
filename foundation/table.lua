@@ -67,17 +67,17 @@ end
 ---@param arr table
 ---@return boolean
 table.includes = function(val, arr)
-    local isin = false
+    local isIn = false
     if (val == nil or #arr <= 0) then
-        return isin
+        return isIn
     end
     for _, v in ipairs(arr) do
         if (v == val) then
-            isin = true
+            isIn = true
             break
         end
     end
-    return isin
+    return isIn
 end
 
 --- 删除数组一次某个值(qty次,默认删除全部)
