@@ -40,14 +40,14 @@ slkHelper.itemUbertip = function(v)
     end
     if (v._ring ~= nil) then
         if (v._ring.attr ~= nil and v._ring.radius ~= nil and (type(v._ring.target) == 'table' and #v._ring.target > 0)) then
-            local txt = "光环：[" .. v._ring.radius .. 'px]['
+            local txt = "光环：[" .. v._ring.radius .. 'px]'
             ----目标(物品太长不显示)
             --local labels = {}
             --for _, t in ipairs(v._ring.target) do
             --    table.insert(labels, CONST_TARGET_LABEL[t])
             --end
-            --txt = txt .. string.implode(',', labels)
-            txt = txt .. "]|n"
+            --txt = txt .. '[' .. string.implode(',', labels) .. ']'
+            txt = txt .. "|n"
             table.insert(d, hColor.mixed(txt .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
         end
     end
