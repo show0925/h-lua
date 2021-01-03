@@ -47,9 +47,11 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
     table.insert(hRuntime.buff[handleUnit][groupKey].log, uk)
     htime.setTimeout(during, function(curTimer)
         htime.delTimer(curTimer)
-        rollback()
-        hRuntime.buff[handleUnit][groupKey][uk] = nil
-        table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
+        if (false == his.deleted(handleUnit) and hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
+            rollback()
+            hRuntime.buff[handleUnit][groupKey][uk] = nil
+            table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
+        end
     end)
     return string.implode('|', { groupKey, hbuff.uniqueKey() })
 end
@@ -83,9 +85,11 @@ hbuff.delete = function(handleUnit, buffKey)
                 hRuntime.buff[handleUnit][groupKey] = nil
             else
                 -- 删除uk指向buff
-                hRuntime.buff[handleUnit][groupKey][uk]() --rollback
-                hRuntime.buff[handleUnit][groupKey][uk] = nil
-                table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
+                if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
+                    hRuntime.buff[handleUnit][groupKey][uk]() --rollback
+                    hRuntime.buff[handleUnit][groupKey][uk] = nil
+                    table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
+                end
             end
         end
     end
