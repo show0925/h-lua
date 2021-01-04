@@ -8,8 +8,14 @@ hbuff = {
         ATTR_PLUS = 'A+',
         ATTR_MINUS = 'A-',
         ATTR_EQUAL = 'A=',
-        ENCHANT_PLUS = 'E+',
-        ENCHANT_MINUS = 'E-',
+        ENCHANT_PLUS = {
+            attack_enchant = 'EA+',
+            append_enchant = 'EP+',
+        },
+        ENCHANT_MINUS = {
+            attack_enchant = 'EA-',
+            append_enchant = 'EP-',
+        },
     }
 }
 

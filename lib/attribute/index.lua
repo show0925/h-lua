@@ -407,34 +407,56 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             valArr = string.explode(",", valArr)
         end
         if (opr == "+") then
-            for _, k in ipairs(valArr) do
-                if (params[attr][k] ~= nil) then
-                    params[attr][k] = params[attr][k] + 1
-                end
-            end
             if (during > 0) then
-                htime.setTimeout(
-                    during,
-                    function(t)
-                        htime.delTimer(t)
-                        hattribute.setHandle(whichUnit, attr, "-", val, 0)
+                buffKey = hbuff.create(
+                    during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ENCHANT_PLUS[attr],
+                    function()
+                        for _, k in ipairs(valArr) do
+                            if (params[attr][k] ~= nil) then
+                                params[attr][k] = params[attr][k] + 1
+                            end
+                        end
+                    end,
+                    function()
+                        for _, k in ipairs(valArr) do
+                            if (params[attr][k] ~= nil) then
+                                params[attr][k] = params[attr][k] - 1
+                            end
+                        end
                     end
                 )
+            else
+                for _, k in ipairs(valArr) do
+                    if (params[attr][k] ~= nil) then
+                        params[attr][k] = params[attr][k] + 1
+                    end
+                end
             end
         elseif (opr == "-") then
-            for _, k in ipairs(valArr) do
-                if (params[attr][k] ~= nil) then
-                    params[attr][k] = params[attr][k] - 1
-                end
-            end
             if (during > 0) then
-                htime.setTimeout(
-                    during,
-                    function(t)
-                        htime.delTimer(t)
-                        hattribute.setHandle(whichUnit, attr, "+", val, 0)
+                buffKey = hbuff.create(
+                    during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ENCHANT_MINUS[attr],
+                    function()
+                        for _, k in ipairs(valArr) do
+                            if (params[attr][k] ~= nil) then
+                                params[attr][k] = params[attr][k] - 1
+                            end
+                        end
+                    end,
+                    function()
+                        for _, k in ipairs(valArr) do
+                            if (params[attr][k] ~= nil) then
+                                params[attr][k] = params[attr][k] + 1
+                            end
+                        end
                     end
                 )
+            else
+                for _, k in ipairs(valArr) do
+                    if (params[attr][k] ~= nil) then
+                        params[attr][k] = params[attr][k] - 1
+                    end
+                end
             end
         end
     elseif (valType == "table") then
