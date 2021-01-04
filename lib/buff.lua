@@ -4,6 +4,13 @@
 hbuff = {
     UNIQUE_KEY = 0,
     DEFAULT_BUFF_KEY = '_h_lua',
+    DEFAULT_GROUP_KEYS = {
+        ATTR_PLUS = 'A+',
+        ATTR_MINUS = 'A-',
+        ATTR_EQUAL = 'A=',
+        ENCHANT_PLUS = 'E+',
+        ENCHANT_MINUS = 'E-',
+    }
 }
 
 ---@private
@@ -16,9 +23,9 @@ hbuff.uniqueKey = function()
 end
 
 --- 创建一个buff概念物
---- 成功创建时会返回一个值，用于删除buff
+--- 成功创建时会返回一个key，用于删除buff
 --- 失败会返回nil
----@param during number
+---@param during number > 0
 ---@param handleUnit userdata
 ---@param groupKey string|'global' buff集合key，用于自主分类和搜索
 ---@param purpose function 目的期望的操作
@@ -26,6 +33,10 @@ end
 ---@return string|nil
 hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
     if (handleUnit == nil or purpose == nil or rollback == nil) then
+        return
+    end
+    during = during or 0
+    if (during <= 0) then
         return
     end
     if (his.deleted(handleUnit)) then

@@ -312,7 +312,7 @@ end
 -- 设定属性
 --[[
     白字攻击 绿字攻击
-    攻速 视野 射程
+    攻速 视野 警示范围
     力敏智 力敏智(绿)
     护甲 魔抗
     生命 魔法 +恢复
@@ -329,6 +329,7 @@ end
     during = 0.0 大于0生效；小于等于0时无限持续时间
 ]]
 --- @private
+--- @return nil|string buffKey
 hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     local valType = type(val)
     local params = hattr.get(whichUnit)
@@ -338,47 +339,65 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     if (hattribute.isValType(attr, hattribute.VAL_TYPE.ENCHANT)) then
         valType = "enchant"
     end
+    local buffKey = nil
     if (valType == "string") then
         -- string类型只有+-=
         if (opr == "+") then
             local valArr = string.explode(",", val)
-            params[attr] = table.merge(params[attr], valArr)
             if (during > 0) then
-                htime.setTimeout(
-                    during,
-                    function(t)
-                        htime.delTimer(t)
-                        hattribute.setHandle(whichUnit, attr, "-", val, 0)
+                buffKey = hbuff.create(
+                    during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ATTR_PLUS,
+                    function()
+                        params[attr] = table.merge(params[attr], valArr)
+                    end,
+                    function()
+                        for _, v in ipairs(valArr) do
+                            if (table.includes(v, params[attr])) then
+                                table.delete(v, params[attr], 1)
+                            end
+                        end
                     end
                 )
+            else
+                params[attr] = table.merge(params[attr], valArr)
             end
         elseif (opr == "-") then
             local valArr = string.explode(",", val)
-            for _, v in ipairs(valArr) do
-                if (table.includes(v, params[attr])) then
-                    table.delete(v, params[attr], 1)
-                end
-            end
             if (during > 0) then
-                htime.setTimeout(
-                    during,
-                    function(t)
-                        htime.delTimer(t)
-                        hattribute.setHandle(whichUnit, attr, "+", val, 0)
+                buffKey = hbuff.create(
+                    during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ATTR_MINUS,
+                    function()
+                        for _, v in ipairs(valArr) do
+                            if (table.includes(v, params[attr])) then
+                                table.delete(v, params[attr], 1)
+                            end
+                        end
+                    end,
+                    function()
+                        params[attr] = table.merge(params[attr], valArr)
                     end
                 )
+            else
+                for _, v in ipairs(valArr) do
+                    if (table.includes(v, params[attr])) then
+                        table.delete(v, params[attr], 1)
+                    end
+                end
             end
         elseif (opr == "=") then
             local old = table.clone(params[attr])
-            params[attr] = string.explode(",", val)
             if (during > 0) then
-                htime.setTimeout(
-                    during,
-                    function(t)
-                        htime.delTimer(t)
-                        hattribute.setHandle(whichUnit, attr, "=", string.implode(",", old), 0)
+                buffKey = hbuff.create(
+                    during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ATTR_EQUAL,
+                    function()
+                        params[attr] = string.explode(",", val)
+                    end,
+                    function()
+                        params[attr] = old
                     end
                 )
+            else
+                params[attr] = string.explode(",", val)
             end
         end
     elseif (valType == "enchant" and type(val) == 'string') then
@@ -752,12 +771,14 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             end
         end
     end
+    return buffKey
 end
 
 --- 设置单位属性
 ---@param whichUnit userdata
 ---@param during number 0表示无限
 ---@param data any
+---@return nil|table buffKeys，返回buff keys，如果一个buff都没有，返回nil
 hattribute.set = function(whichUnit, during, data)
     if (whichUnit == nil) then
         -- 例如有时造成伤害之前把单位删除就捕捉不到这个伤害来源了
@@ -774,9 +795,11 @@ hattribute.set = function(whichUnit, during, data)
         print_err("data must be table")
         return
     end
+    local buffKeys = {}
     for _, arr in ipairs(table.obj2arr(data, CONST_ATTR_KEYS)) do
         local attr = arr.key
         local v = arr.value
+        local buffKey = nil
         if (attribute[attr] ~= nil) then
             if (type(v) == "string") then
                 local opr = string.sub(v, 1, 1)
@@ -785,7 +808,7 @@ hattribute.set = function(whichUnit, during, data)
                 if (val == nil) then
                     val = v
                 end
-                hattribute.setHandle(whichUnit, attr, opr, val, during)
+                buffKey = hattribute.setHandle(whichUnit, attr, opr, val, during)
             elseif (type(v) == "table") then
                 -- table型，如 xtras
                 if (v.add ~= nil and type(v.add) == "table") then
@@ -800,7 +823,7 @@ hattribute.set = function(whichUnit, during, data)
                             print_stack()
                             break
                         end
-                        hattribute.setHandle(whichUnit, attr, "+", set, during)
+                        buffKey = hattribute.setHandle(whichUnit, attr, "+", set, during)
                     end
                 elseif (v.sub ~= nil and type(v.sub) == "table") then
                     for _, set in ipairs(v.sub) do
@@ -814,11 +837,17 @@ hattribute.set = function(whichUnit, during, data)
                             print_stack()
                             break
                         end
-                        hattribute.setHandle(whichUnit, attr, "-", set, during)
+                        buffKey = hattribute.setHandle(whichUnit, attr, "-", set, during)
                     end
                 end
             end
         end
+        if (buffKey ~= nil) then
+            table.insert(buffKeys, buffKey)
+        end
+    end
+    if (#buffKeys > 0) then
+        return buffKeys
     end
 end
 
