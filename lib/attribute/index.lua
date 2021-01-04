@@ -463,15 +463,17 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
         -- table类型只有+-没有别的
         if (opr == "+") then
             local hkey = string.attrBuffKey(val)
-            table.insert(params[attr], { hash = hkey, table = val })
             if (during > 0) then
-                htime.setTimeout(
-                    during,
-                    function(t)
-                        htime.delTimer(t)
+                buffKey = hbuff.create(during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ATTR_PLUS,
+                    function()
+                        table.insert(params[attr], { hash = hkey, table = val })
+                    end,
+                    function()
                         hattribute.setHandle(whichUnit, attr, "-", val, 0)
                     end
                 )
+            else
+                table.insert(params[attr], { hash = hkey, table = val })
             end
         elseif (opr == "-") then
             local hkey = string.attrBuffKey(val)
@@ -485,10 +487,10 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             end
             if (hasKey == true) then
                 if (during > 0) then
-                    htime.setTimeout(
-                        during,
-                        function(t)
-                            htime.delTimer(t)
+                    buffKey = hbuff.create(during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ATTR_MINUS,
+                        function()
+                        end,
+                        function()
                             hattribute.setHandle(whichUnit, attr, "+", val, 0)
                         end
                     )
@@ -539,15 +541,21 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
         if (diff ~= 0) then
             local currentVal = params[attr]
             local futureVal = params[attr] + diff
-            params[attr] = futureVal
             if (during > 0) then
-                htime.setTimeout(
-                    during,
-                    function(t)
-                        htime.delTimer(t)
+                local groupKey = hbuff.DEFAULT_GROUP_KEYS.ATTR_PLUS
+                if (diff < 0) then
+                    groupKey = hbuff.DEFAULT_GROUP_KEYS.ATTR_MINUS
+                end
+                buffKey = hbuff.create(during, whichUnit, groupKey,
+                    function()
+                        params[attr] = futureVal
+                    end,
+                    function()
                         hattribute.setHandle(whichUnit, attr, "-", diff, 0)
                     end
                 )
+            else
+                params[attr] = futureVal
             end
             -- ability
             local tempVal = 0
