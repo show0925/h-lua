@@ -34,16 +34,15 @@ hskill.get = function(handle, key, defaultVal)
 end
 
 --- 获取原生SLK数据集
----@param abilId string|number
+---@param abilityId string|number
 ---@return table|nil
-hskill.getSlk = function(abilId)
-    if (abilId == nil) then
+hskill.getSlk = function(abilityId)
+    if (abilityId == nil) then
         return
     end
     local slk
-    local abilityId = abilId
-    if (type(abilId) == "number") then
-        abilityId = string.id2char(abilId)
+    if (type(abilityId) == "number") then
+        abilityId = string.id2char(abilityId)
     end
     if (slk.ability[abilityId] ~= nil) then
         slk = slk.ability[abilityId]
@@ -71,13 +70,13 @@ hskill.getHSlk = function(idOrName)
 end
 
 --- 获取属性加成,需要注册
----@param abilId string|number
+---@param abilityId string|number
 ---@return table|nil
-hskill.getAttribute = function(abilId)
-    if (type(abilId) == "number") then
-        abilId = string.id2char(abilId)
+hskill.getAttribute = function(abilityId)
+    if (type(abilityId) == "number") then
+        abilityId = string.id2char(abilityId)
     end
-    local slk = hslk.i2v.ability[abilId]
+    local slk = hslk.i2v.ability[abilityId]
     if (slk ~= nil) then
         return slk._attr
     else
@@ -97,15 +96,15 @@ end
 
 --- 附加单位获得技能后的属性
 ---@protected
-hskill.addProperty = function(whichUnit, abilId)
-    hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, true, whichUnit, hskill.getAttribute(abilId), 1)
-    hring.insert(whichUnit, abilId)
+hskill.addProperty = function(whichUnit, abilityId)
+    hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, true, whichUnit, hskill.getAttribute(abilityId), 1)
+    hring.insert(whichUnit, abilityId)
 end
 --- 削减单位获得技能后的属性
 ---@protected
-hskill.subProperty = function(whichUnit, abilId)
-    hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, false, whichUnit, hskill.getAttribute(abilId), 1)
-    hring.remove(whichUnit, abilId)
+hskill.subProperty = function(whichUnit, abilityId)
+    hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, false, whichUnit, hskill.getAttribute(abilityId), 1)
+    hring.remove(whichUnit, abilityId)
 end
 
 --- 添加技能
