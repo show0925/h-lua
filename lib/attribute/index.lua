@@ -196,7 +196,6 @@ hattribute.init = function(whichUnit)
         move = cj.GetUnitDefaultMoveSpeed(whichUnit),
         defend = 0,
         attack_speed = 0.0,
-        attack_speed_space = 1.50,
         attack_white = 0.0,
         attack_green = 0.0,
         attack_range = 100,
@@ -896,6 +895,7 @@ hattribute.get = function(whichUnit, attr)
         attribute = hunit.get(whichUnit, 'attribute')
     end
     attribute.attack = hunit.getDmgPlus(whichUnit) + attribute.attack_white or 0 + attribute.attack_green or 0
+    attribute.attack_speed_space = math.round(hunit.getAttackSpeedSpace(whichUnit) / (1 + attribute.attack_speed * 0.01))
     attribute.str = attribute.str_white or 0 + attribute.str_green or 0
     attribute.agi = attribute.agi_white or 0 + attribute.agi_green or 0
     attribute.int = attribute.int_white or 0 + attribute.int_green or 0
