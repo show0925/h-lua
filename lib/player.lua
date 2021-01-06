@@ -629,10 +629,18 @@ end
 --- 设置玩家实时金钱
 ---@param whichPlayer userdata
 ---@param gold number
-hplayer.setGold = function(whichPlayer, gold)
+---@param u userdata|nil 可设置一个单位用于事件回调
+hplayer.setGold = function(whichPlayer, gold, u)
     if (whichPlayer == nil) then
         return
     end
+    -- 触发英雄资源变动
+    hevent.triggerEvent("global", CONST_EVENT.playerResourceChange, {
+        triggerPlayer = whichPlayer,
+        triggerUnit = u,
+        type = 'gold',
+        value = gold - hplayer.getGold(whichPlayer),
+    })
     local exceedLumber = 0
     -- 满 100W 调用自动换算（至于换不换算，看玩家有没有开转换）
     if (gold > 1000000) then
@@ -651,26 +659,23 @@ end
 --- 增加玩家金钱
 ---@param whichPlayer userdata
 ---@param gold number
----@param u userdata If u then show textTag
+---@param u userdata|nil 可设置一个单位用于事件回调
 hplayer.addGold = function(whichPlayer, gold, u)
     if (whichPlayer == nil) then
         return
     end
     gold = cj.R2I(gold * hplayer.getGoldRatio(whichPlayer) / 100)
-    hplayer.setGold(whichPlayer, hplayer.getGold(whichPlayer) + gold)
-    if (u ~= nil) then
-        htextTag.style(htextTag.create2Unit(u, "+" .. gold .. " Gold", 6, "ffcc00", 1, 1.70, 60.00), "toggle", 0, 0.20)
-        hsound.sound2Unit(cg.gg_snd_ReceiveGold, 100, u)
-    end
+    hplayer.setGold(whichPlayer, hplayer.getGold(whichPlayer) + gold, u)
 end
 --- 减少玩家金钱
 ---@param whichPlayer userdata
 ---@param gold number
-hplayer.subGold = function(whichPlayer, gold)
+---@param u userdata|nil 可设置一个单位用于事件回调
+hplayer.subGold = function(whichPlayer, gold, u)
     if (whichPlayer == nil) then
         return
     end
-    hplayer.setGold(whichPlayer, hplayer.getGold(whichPlayer) - gold)
+    hplayer.setGold(whichPlayer, hplayer.getGold(whichPlayer) - gold, u)
 end
 
 --- 获取玩家实时木头
@@ -682,39 +687,39 @@ end
 --- 设置玩家实时木头
 ---@param whichPlayer userdata
 ---@param lumber number
-hplayer.setLumber = function(whichPlayer, lumber)
+---@param u userdata|nil 可设置一个单位用于事件回调
+hplayer.setLumber = function(whichPlayer, lumber, u)
     if (whichPlayer == nil) then
         return
     end
+    -- 触发英雄资源变动
+    hevent.triggerEvent('global', CONST_EVENT.playerResourceChange, {
+        triggerPlayer = whichPlayer,
+        triggerUnit = u,
+        type = 'lumber',
+        value = lumber - hplayer.getLumber(whichPlayer),
+    })
     hplayer.setPlayerState(whichPlayer, PLAYER_STATE_RESOURCE_LUMBER, lumber)
     hplayer.adjustLumber(whichPlayer)
 end
 --- 增加玩家木头
 ---@param whichPlayer userdata
 ---@param gold number
----@param u userdata If u then show textTag
+---@param u userdata|nil 可设置一个单位用于事件回调
 hplayer.addLumber = function(whichPlayer, lumber, u)
     if (whichPlayer == nil) then
         return
     end
     lumber = cj.R2I(lumber * hplayer.getLumberRatio(whichPlayer) / 100)
-    hplayer.setLumber(whichPlayer, hplayer.getLumber(whichPlayer) + lumber)
-    if (u ~= nil) then
-        htextTag.style(
-            htextTag.create2Unit(u, "+" .. lumber .. " Lumber", 7, "80ff80", 1, 1.70, 60.00),
-            "toggle",
-            0,
-            0.20
-        )
-        hsound.sound2Unit(cg.gg_snd_BundleOfLumber, 100, u)
-    end
+    hplayer.setLumber(whichPlayer, hplayer.getLumber(whichPlayer) + lumber, u)
 end
 --- 减少玩家木头
 ---@param whichPlayer userdata
 ---@param lumber number
-hplayer.subLumber = function(whichPlayer, lumber)
+---@param u userdata|nil 可设置一个单位用于事件回调
+hplayer.subLumber = function(whichPlayer, lumber, u)
     if (whichPlayer == nil) then
         return
     end
-    hplayer.setLumber(whichPlayer, hplayer.getLumber(whichPlayer) - lumber)
+    hplayer.setLumber(whichPlayer, hplayer.getLumber(whichPlayer) - lumber, u)
 end

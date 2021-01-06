@@ -1023,6 +1023,14 @@ hevent.onPlayerLeave = function(callFunc)
     return hevent.registerEvent("global", CONST_EVENT.playerLeave, callFunc)
 end
 
+--- 玩家资源变动
+---@alias onPlayerResourceChange fun(evtData: {triggerPlayer:"触发玩家",triggerUnit:"触发单位",type:"资源类型",value:"变化值"}):void
+---@param callFunc onPlayerResourceChange | "function(evtData) end"
+---@return any
+hevent.onPlayerResourceChange = function(callFunc)
+    return hevent.registerEvent("global", CONST_EVENT.playerResourceChange, callFunc)
+end
+
 --- 任意单位经过hero方法被玩家所挑选为英雄时(注意这是全局事件)
 ---@alias onPickHero fun(evtData: {triggerPlayer:"触发玩家",triggerUnit:"触发单位"}):void
 ---@param callFunc onPickHero | "function(evtData) end"
