@@ -765,6 +765,15 @@ hevent.onReborn = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.reborn, callFunc)
 end
 
+--- 获得经验时
+---@alias onExp fun(evtData: {triggerUnit:"触发单位",value:"获取了多少经验值"}):void
+---@param whichUnit userdata
+---@param callFunc onLevelUp | "function(evtData) end"
+---@return any
+hevent.onExp = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.exp, callFunc)
+end
+
 --- 提升等级时
 ---@alias onLevelUp fun(evtData: {triggerUnit:"触发单位",value:"获取提升了多少级"}):void
 ---@param whichUnit userdata

@@ -52,6 +52,14 @@ hunit.getAvatar = function(uOrId)
     return s.Art
 end
 
+--- 获取单位的原始攻击间隔
+---@param uOrId userdata|string|number
+---@return number
+hunit.getAttackSpeedSpace = function(uOrId)
+    local s = hunit.getSlk(uOrId)
+    return math.round(s.cool1)
+end
+
 --- 获取单位的浮动攻击
 --- 这是根据slk计算的浮动攻击，每次获取到的值可能不一样
 ---@param uOrId userdata|string|number
@@ -178,7 +186,8 @@ hunit.addExp = function(u, val, showEffect)
     end
     val = cj.R2I(val * hplayer.getExpRatio(hunit.getOwner(u)) / 100)
     cj.AddHeroXP(u, val, showEffect)
-    htextTag.style(htextTag.create2Unit(u, "+" .. val .. " Exp", 7, "c4c4ff", 1, 1.70, 60.00), "toggle", 0, 0.20)
+    -- @触发事件
+    hevent.triggerEvent(u, CONST_EVENT.exp, { triggerUnit = u, value = val })
 end
 
 --- 设置单位的生命周期
