@@ -25,7 +25,6 @@ haward.forUnit = function(whichUnit, exp, gold, lumber)
     if (realExp >= 1 and his.hero(whichUnit)) then
         hunit.addExp(whichUnit, realExp, true)
     end
-    local floatStr = ""
     local ttgColorLen = 0
     if (realGold >= 1) then
         hplayer.addGold(p, realGold, whichUnit)
@@ -33,29 +32,22 @@ haward.forUnit = function(whichUnit, exp, gold, lumber)
     if (realLumber >= 1) then
         hplayer.addLumber(p, realLumber, whichUnit)
     end
-    if (floatStr ~= "") then
-        local ttg = htextTag.create2Unit(whichUnit, floatStr, 5, "", 1, 1.70, 60.00)
-        cj.SetTextTagPos(
-            ttg,
-            hunit.x(whichUnit) - (string.len(floatStr) - ttgColorLen) * 7 * 0.5,
-            hunit.y(whichUnit),
-            50
-        )
-        htextTag.style(ttg, "toggle", 0, 0.25)
-    end
 end
+
 --- 奖励单位经验
 ---@param whichUnit userdata
 ---@param exp number
 haward.forUnitExp = function(whichUnit, exp)
     return haward.forUnit(whichUnit, exp, 0, 0)
 end
+
 --- 奖励单位黄金
 ---@param whichUnit userdata
 ---@param gold number
 haward.forUnitGold = function(whichUnit, gold)
     return haward.forUnit(whichUnit, 0, gold, 0)
 end
+
 --- 奖励单位木头
 ---@param whichUnit userdata
 ---@param lumber number
@@ -104,18 +96,21 @@ haward.forGroup = function(whichUnit, exp, gold, lumber)
     end)
     g = nil
 end
+
 --- 平分奖励英雄组（经验）
 ---@param whichUnit userdata
 ---@param exp number
 haward.forGroupExp = function(whichUnit, exp)
     haward.forGroup(whichUnit, exp, 0, 0)
 end
+
 --- 平分奖励英雄组（黄金）
 ---@param whichUnit userdata
 ---@param gold number
 haward.forGroupGold = function(whichUnit, gold)
     haward.forGroup(whichUnit, 0, gold, 0)
 end
+
 --- 平分奖励英雄组（木头）
 ---@param whichUnit userdata
 ---@param lumber number
@@ -143,11 +138,13 @@ haward.forPlayer = function(gold, lumber)
         end
     end
 end
+
 --- 平分奖励玩家组（黄金）
 ---@param gold number
 haward.forPlayerGold = function(gold)
     haward.forPlayer(gold, 0)
 end
+
 --- 平分奖励玩家组（木头）
 ---@param lumber number
 haward.forPlayerLumber = function(lumber)
