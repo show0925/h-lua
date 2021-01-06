@@ -22,7 +22,7 @@ slkHelper.attrIsPercent = function(key)
     if (table.includes(key, {
         "attack_speed", "avoid", "aim",
         "hemophagia", "hemophagia_skill",
-        "luck", "invincible",
+        "invincible",
         "knocking_odds", "knocking_extent",
         "damage_extent", "damage_decrease", "damage_rebound",
         "cure",
