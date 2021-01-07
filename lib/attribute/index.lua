@@ -2,7 +2,6 @@
 hattribute = {
     DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认认定这个技能为物品栏
     VAL_TYPE = {
-        ENCHANT = { 'attack_enchant', 'append_enchant' },
         PLAYER = { "gold_ratio", "lumber_ratio", "exp_ratio", "sell_ratio" },
         INTEGER = {
             "life", "mana", "move", "attack_white", "attack_green", "attack_range", "sight", "defend",
@@ -33,6 +32,12 @@ hattribute = {
         }
     },
 }
+
+-- 处理部分设置
+for _, con in ipairs(CONST_ENCHANT) do
+    table.insert(hattribute.VAL_TYPE.INTEGER, "e_" .. con.value .. "_attack")
+    table.insert(hattribute.VAL_TYPE.INTEGER, "e_" .. con.value .. "_append")
+end
 
 --- 判断是否某种类型的数值设定
 ---@param field string attribute
@@ -245,19 +250,12 @@ hattribute.init = function(whichUnit)
         crack_fly_oppose = 0.0,
         --
         xtras = {},
-        --
-        attack_enchant = {},
-        append_enchant = {},
     }
     for _, v in ipairs(CONST_ENCHANT) do
         attribute["e_" .. v.value] = 0.0
         attribute["e_" .. v.value .. '_oppose'] = 0.0
-        attribute.attack_enchant[v.value] = 0
-        attribute.append_enchant[v.value] = 0
-    end
-    -- 初始化物编slk数据
-    if (uSlk.cool1) then
-        attribute.attack_speed_space = math.round(uSlk.cool1)
+        attribute["e_" .. v.value .. '_attack'] = 0
+        attribute["e_" .. v.value .. '_append'] = 0
     end
     if (uSlk.rangeN1) then
         attribute.attack_range = math.floor(uSlk.rangeN1)
@@ -332,9 +330,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     if (params == nil) then
         return
     end
-    if (hattribute.isValType(attr, hattribute.VAL_TYPE.ENCHANT)) then
-        valType = "enchant"
-    end
     local buffKey = nil
     if (valType == "string") then
         -- string类型只有+-=
@@ -342,7 +337,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             local valArr = string.explode(",", val)
             if (during > 0) then
                 buffKey = hbuff.create(
-                    during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ATTR_PLUS,
+                    during, whichUnit, 'attr.' .. attr .. '+',
                     function()
                         params[attr] = table.merge(params[attr], valArr)
                     end,
@@ -361,7 +356,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             local valArr = string.explode(",", val)
             if (during > 0) then
                 buffKey = hbuff.create(
-                    during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ATTR_MINUS,
+                    during, whichUnit, 'attr.' .. attr .. '-',
                     function()
                         for _, v in ipairs(valArr) do
                             if (table.includes(v, params[attr])) then
@@ -384,7 +379,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             local old = table.clone(params[attr])
             if (during > 0) then
                 buffKey = hbuff.create(
-                    during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ATTR_EQUAL,
+                    during, whichUnit, 'attr.' .. attr .. '=',
                     function()
                         params[attr] = string.explode(",", val)
                     end,
@@ -396,71 +391,12 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 params[attr] = string.explode(",", val)
             end
         end
-    elseif (valType == "enchant" and type(val) == 'string') then
-        -- enchant类型是附魔独特的，只支持数组串string('+fire,water'),会计数，只有+-没有别的
-        local valArr = val
-        if (type(valArr) == 'string') then
-            valArr = string.explode(",", valArr)
-        end
-        if (opr == "+") then
-            if (during > 0) then
-                buffKey = hbuff.create(
-                    during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ENCHANT_PLUS[attr],
-                    function()
-                        for _, k in ipairs(valArr) do
-                            if (params[attr][k] ~= nil) then
-                                params[attr][k] = params[attr][k] + 1
-                            end
-                        end
-                    end,
-                    function()
-                        for _, k in ipairs(valArr) do
-                            if (params[attr][k] ~= nil) then
-                                params[attr][k] = params[attr][k] - 1
-                            end
-                        end
-                    end
-                )
-            else
-                for _, k in ipairs(valArr) do
-                    if (params[attr][k] ~= nil) then
-                        params[attr][k] = params[attr][k] + 1
-                    end
-                end
-            end
-        elseif (opr == "-") then
-            if (during > 0) then
-                buffKey = hbuff.create(
-                    during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ENCHANT_MINUS[attr],
-                    function()
-                        for _, k in ipairs(valArr) do
-                            if (params[attr][k] ~= nil) then
-                                params[attr][k] = params[attr][k] - 1
-                            end
-                        end
-                    end,
-                    function()
-                        for _, k in ipairs(valArr) do
-                            if (params[attr][k] ~= nil) then
-                                params[attr][k] = params[attr][k] + 1
-                            end
-                        end
-                    end
-                )
-            else
-                for _, k in ipairs(valArr) do
-                    if (params[attr][k] ~= nil) then
-                        params[attr][k] = params[attr][k] - 1
-                    end
-                end
-            end
-        end
     elseif (valType == "table") then
         -- table类型只有+-没有别的
         if (opr == "+") then
             local hkey = string.attrBuffKey(val)
             if (during > 0) then
-                buffKey = hbuff.create(during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ATTR_PLUS,
+                buffKey = hbuff.create(during, whichUnit, 'attr.' .. attr .. '+',
                     function()
                         table.insert(params[attr], { hash = hkey, table = val })
                     end,
@@ -483,7 +419,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             end
             if (hasKey == true) then
                 if (during > 0) then
-                    buffKey = hbuff.create(during, whichUnit, hbuff.DEFAULT_GROUP_KEYS.ATTR_MINUS,
+                    buffKey = hbuff.create(during, whichUnit, 'attr.' .. attr .. '-',
                         function()
                         end,
                         function()
@@ -538,9 +474,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             local currentVal = params[attr]
             local futureVal = params[attr] + diff
             if (during > 0) then
-                local groupKey = hbuff.DEFAULT_GROUP_KEYS.ATTR_PLUS
+                local groupKey = 'attr.' .. attr .. '+'
                 if (diff < 0) then
-                    groupKey = hbuff.DEFAULT_GROUP_KEYS.ATTR_MINUS
+                    groupKey = 'attr.' .. attr .. '-'
                 end
                 buffKey = hbuff.create(during, whichUnit, groupKey,
                     function()
@@ -895,7 +831,7 @@ hattribute.get = function(whichUnit, attr)
         attribute = hunit.get(whichUnit, 'attribute')
     end
     attribute.attack = hunit.getDmgPlus(whichUnit) + attribute.attack_white or 0 + attribute.attack_green or 0
-    attribute.attack_speed_space = math.round(hunit.getAttackSpeedSpace(whichUnit) / (1 + attribute.attack_speed * 0.01))
+    attribute.attack_speed_space = math.round(hunit.getAttackSpeedSpace(whichUnit) / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
     attribute.str = attribute.str_white or 0 + attribute.str_green or 0
     attribute.agi = attribute.agi_white or 0 + attribute.agi_green or 0
     attribute.int = attribute.int_white or 0 + attribute.int_green or 0
@@ -923,24 +859,7 @@ hattribute.caleAttribute = function(damageSrc, isAdd, whichUnit, attr, times)
         local v = arr.value
         local typev = type(v)
         local tempDiff
-        if (hattribute.isValType(k, hattribute.VAL_TYPE.ENCHANT)) then
-            local opt = "+"
-            if (isAdd == false) then
-                opt = "-"
-            end
-            local nv
-            if (typev == "string") then
-                opt = string.sub(v, 1, 1) or "+"
-                nv = string.sub(v, 2)
-            elseif (typev == "table") then
-                nv = string.implode(",", v)
-            end
-            local nvs = {}
-            for _ = 1, times do
-                table.insert(nvs, nv)
-            end
-            tempDiff = opt .. string.implode(",", nvs)
-        elseif (typev == "string") then
+        if (typev == "string") then
             local opt = string.sub(v, 1, 1)
             local nv = times * tonumber(string.sub(v, 2))
             if (isAdd == false) then

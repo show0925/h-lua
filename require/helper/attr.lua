@@ -40,6 +40,18 @@ slkHelper.attrIsPercent = function(key)
     return false
 end
 
+--- 键值是否层级数据
+---@private
+slkHelper.attrIsLevel = function(key)
+    local a = string.find(key, "_attack")
+    local p = string.find(key, "_append")
+    local n = string.find(key, "e_")
+    if ((a ~= nil or p ~= nil) and n == 1) then
+        return true
+    end
+    return false
+end
+
 --- 属性系统说明构成
 ---@private
 slkHelper.attrDesc = function(attr, sep, indent)
@@ -60,22 +72,11 @@ slkHelper.attrDesc = function(attr, sep, indent)
         if (slkHelper.attrIsPercent(k) == true) then
             v = v .. "%"
         end
+        if (slkHelper.attrIsLevel(k) == true) then
+            v = v .. "层"
+        end
         --
-        if (k == "attack_enchant") then
-            local tempStr = (CONST_ATTR[k] or "") .. "："
-            local opt = string.sub(v, 1, 1) or "+"
-            if (type(v) == "string") then
-                v = string.sub(v, 2)
-                v = string.explode(",", v)
-            end
-            local av = {}
-            for _, vv in ipairs(v) do
-                table.insert(av, CONST_ATTR[vv] or "")
-            end
-            tempStr = tempStr .. opt .. string.implode(",", av)
-            av = nil
-            table.insert(str, tempStr)
-        elseif (k == "xtras") then
+        if (k == "xtras") then
             table.insert(strTable, (CONST_ATTR[k] or "") .. "：")
             local tempStr = {}
             for _, vv in ipairs(v) do

@@ -4,28 +4,15 @@
 hbuff = {
     UNIQUE_KEY = 0,
     DEFAULT_BUFF_KEY = '_h_lua',
-    DEFAULT_GROUP_KEYS = {
-        ATTR_PLUS = 'A+',
-        ATTR_MINUS = 'A-',
-        ATTR_EQUAL = 'A=',
-        ENCHANT_PLUS = {
-            attack_enchant = 'EA+',
-            append_enchant = 'EP+',
-        },
-        ENCHANT_MINUS = {
-            attack_enchant = 'EA-',
-            append_enchant = 'EP-',
-        },
-    }
 }
 
 ---@private
 hbuff.uniqueKey = function()
-    hbuff.uniqueKey = hbuff.uniqueKey + 1
-    if (hbuff.uniqueKey >= 1000000) then
-        hbuff.uniqueKey = 1
+    hbuff.UNIQUE_KEY = hbuff.UNIQUE_KEY + 1
+    if (hbuff.UNIQUE_KEY >= 1000000) then
+        hbuff.UNIQUE_KEY = 1
     end
-    return hbuff.uniqueKey
+    return hbuff.UNIQUE_KEY
 end
 
 --- 创建一个buff概念物

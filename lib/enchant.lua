@@ -50,7 +50,7 @@ henchant.setAppendAttachEffect = function(whichEnchant, effects, rgb)
 end
 
 --- 设置环境附魔反应
----@alias setReaction fun(evtData: {type:"附魔触发类型",sourceUnit:"来自单位",targetUnit:"目标单位"}):void
+---@alias setReaction fun(evtData: {type:"附魔触发类型",level:"反应等级",sourceUnit:"来自单位",targetUnit:"目标单位"}):void
 ---@param onEnchant string CONST_ENCHANT [运行时]单位附着的新的附魔
 ---@param toEnchant string CONST_ENCHANT [运行时]单位已有的目标附着附魔
 ---@param reaction setReaction  | "function(evtData) end" 新->旧 [运行时]化学反应，反应后该两个类型的附魔都将消失
@@ -97,24 +97,27 @@ henchant.append = function(options)
     if (type(enchants) ~= 'table' or #enchants <= 0) then
         return
     end
-    print_r(enchants)
     -- 整合
-    local finalEnchant = hattribute.get(targetUnit, 'append_enchant') -- 目标单位当前的附魔
+    local newEnchant = {}
     for _, e in ipairs(enchants) do
         local hasReaction = false -- 判断反应结果
         if (henchant.ENV_REACTION[e] ~= nil) then
             for _, con in ipairs(CONST_ENCHANT) do
                 -- 判断所有种类的附魔，如果之前有附魔过
-                if (finalEnchant[con.value] > 0) then
+                local appendKey = 'e_' .. con.value .. '_append'
+                local level = hattribute.get(targetUnit, appendKey)
+                if (level > 0) then
                     if (henchant.ENV_REACTION[e][con.value] ~= nil) then
                         -- 如果有反应式
                         henchant.ENV_REACTION[e][con.value]({
-                            type = con.value,
+                            type = { e, con.value },
+                            level = level,
                             sourceUnit = sourceUnit,
                             targetUnit = targetUnit,
                         })
-                        finalEnchant[con.value] = finalEnchant[con.value] - 1
                         hasReaction = true
+                        hbuff.delete(targetUnit, 'attr.' .. appendKey .. '+')
+                        print(hattribute.get(targetUnit, appendKey))
                     end
                 end
             end
@@ -124,33 +127,21 @@ henchant.append = function(options)
         if (hasReaction == true) then
             -- 这里不需要删除新附魔，什么都不做就行了，消失了
         else
-            finalEnchant[e] = finalEnchant[e] + 1
-        end
-    end
-    print_r(finalEnchant)
-    local params = hattr.get(targetUnit)
-    hbuff.create(
-        during, targetUnit, hbuff.DEFAULT_GROUP_KEYS.ENCHANT_PLUS.append_enchant,
-        function()
-        end,
-        function()
-            for _, k in ipairs(valArr) do
-                if (params[attr][k] ~= nil) then
-                    params[attr][k] = params[attr][k] - 1
-                end
+            if (newEnchant[e] == nil) then
+                newEnchant[e] = 0
             end
+            newEnchant[e] = newEnchant[e] + 1
         end
-    )
-
-    if (#addEnchant > 0) then
-        hattribute.set(targetUnit, during, {
-            append_enchant = "+" .. string.implode(',', addEnchant)
-        })
     end
-    if (#subEnchant > 0) then
-        hattribute.set(targetUnit, during, {
-            append_enchant = "-" .. string.implode(',', subEnchant)
-        })
+    print_r(enchants)
+    print_r(newEnchant)
+    for _, con in ipairs(CONST_ENCHANT) do
+        if (newEnchant[con.value] ~= nil and newEnchant[con.value] > 0) then
+            local appendKey = 'e_' .. con.value .. '_append'
+            hattribute.set(targetUnit, during, {
+                [appendKey] = "+" .. newEnchant[con.value]
+            })
+        end
     end
 end
 

@@ -71,15 +71,23 @@ hskill.damage = function(options)
     end
     local damageSrc = options.damageSrc
     local damageType = options.damageType
+    -- 攻击者的攻击里各种类型的占比
+    local damageTypeRatio = {}
     if (damageType == nil) then
         if (damageSrc == CONST_DAMAGE_SRC.attack and sourceUnit ~= nil) then
             damageType = {}
-            local ac = hattr.get(sourceUnit, "attack_enchant")
-            for _, v in ipairs(CONST_ENCHANT) do
-                if (ac[v.value] > 0) then
-                    for _ = 1, ac[v.value], 1 do
-                        table.insert(damageType, v.value)
+            for _, con in ipairs(CONST_ENCHANT) do
+                if (sourceUnitAttr['e_' .. con.value .. '_attack'] > 0) then
+                    for _ = 1, sourceUnitAttr['e_' .. con.value .. '_attack'], 1 do
+                        table.insert(damageType, con.value)
                     end
+                end
+            end
+            for _, con in ipairs(CONST_ENCHANT) do
+                if (sourceUnitAttr['e_' .. con.value .. '_attack'] > 0) then
+                    damageTypeRatio[con.value] = sourceUnitAttr['e_' .. con.value .. '_attack'] / #damageType
+                else
+                    damageTypeRatio[con.value] = 0
                 end
             end
         end
@@ -124,15 +132,6 @@ hskill.damage = function(options)
         if (table.includes(CONST_BREAK_ARMOR_TYPE.invincible.value, breakArmorType) == false) then
             return
         end
-    end
-    -- 攻击者的攻击里各种类型的占比
-    local dmgRatio = 1 / #damageType
-    local typeRatio = {}
-    for _, d in ipairs(damageType) do
-        if (typeRatio[d] == nil) then
-            typeRatio[d] = 0
-        end
-        typeRatio[d] = typeRatio[d] + dmgRatio
     end
     -- 计算硬直抵抗
     punishEffectRatio = 0.99
@@ -242,21 +241,23 @@ hskill.damage = function(options)
         local tempNatural = {}
         for _, enchant in ipairs(CONST_ENCHANT) do
             local ev = enchant.value
-            tempNatural[ev] = henchant.INTRINSIC_ADDITION + (sourceUnitAttr["e_" .. ev] or 0) - targetUnitAttr["e_" .. ev .. "_oppose"]
-            if (tempNatural[ev] < -100) then
-                tempNatural[ev] = -100
-            end
-            if (table.includes(ev, damageType) and tempNatural[ev] ~= 0) then
-                if (isFixed == false) then
-                    lastDamagePercent = lastDamagePercent + typeRatio[ev] * tempNatural[ev] * 0.01
+            if (damageTypeRatio[ev] ~= nil and damageTypeRatio[ev] > 0) then
+                tempNatural[ev] = henchant.INTRINSIC_ADDITION + (sourceUnitAttr["e_" .. ev] or 0) - targetUnitAttr["e_" .. ev .. "_oppose"]
+                if (tempNatural[ev] < -100) then
+                    tempNatural[ev] = -100
                 end
-                damageString = damageString .. enchant.label
-                damageStringColor = enchant.color
+                if (tempNatural[ev] ~= 0) then
+                    if (isFixed == false) then
+                        lastDamagePercent = lastDamagePercent + damageTypeRatio[ev] * tempNatural[ev] * 0.01
+                    end
+                    damageString = damageString .. enchant.label
+                    damageStringColor = enchant.color
+                end
             end
         end
         if (isFixed == false) then
-            -- 计算护甲
-            if (targetUnitAttr.defend ~= 0 and typeRatio[CONST_DAMAGE_TYPE.physical] ~= nil) then
+            -- 计算护甲（新版护甲不涉及伤害类型）
+            if (targetUnitAttr.defend ~= 0) then
                 local defendPercent = 0
                 if (targetUnitAttr.defend > 0) then
                     defendPercent = targetUnitAttr.defend / (targetUnitAttr.defend + 200)
@@ -264,7 +265,6 @@ hskill.damage = function(options)
                     local dfd = math.abs(targetUnitAttr.defend)
                     defendPercent = -dfd / (dfd * 0.33 + 100)
                 end
-                defendPercent = defendPercent * typeRatio[CONST_DAMAGE_TYPE.physical]
                 lastDamagePercent = lastDamagePercent - defendPercent
             end
             -- 计算伤害增幅

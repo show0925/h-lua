@@ -83,12 +83,31 @@ CONST_ATTR = {
     lumber_ratio = "木头获得率",
     exp_ratio = "经验获得率",
     sell_ratio = "售卖比率",
-    -- enchant
-    attack_enchant = "攻击附魔",
-    append_enchant = "身上附魔",
 }
 
-CONST_ATTR_KEYS = {
+CONST_ATTR_KEYS = {}
+
+-- 附魔文本和key
+for _, v in ipairs(CONST_ENCHANT) do
+    CONST_ATTR[v.value] = v.label -- fire = "火"
+    CONST_ATTR["e_" .. v.value] = v.label .. '强化' -- e_fire = "火强化"
+    CONST_ATTR["e_" .. v.value .. '_oppose'] = v.label .. '抗性' -- e_fire_oppose = "火抗性"
+    CONST_ATTR["e_" .. v.value .. '_attack'] = v.label .. '攻击附魔' -- e_fire_attack = "火攻击附魔"
+    CONST_ATTR["e_" .. v.value .. '_append'] = v.label .. '附魔状态' -- e_fire_append = "火附魔状态"
+end
+
+for _, v in ipairs(CONST_ENCHANT) do
+    table.insert(CONST_ATTR_KEYS, "e_" .. v.value .. '_attack')
+end
+for _, v in ipairs(CONST_ENCHANT) do
+    table.insert(CONST_ATTR_KEYS, "e_" .. v.value .. '_append')
+end
+for _, v in ipairs(CONST_ENCHANT) do
+    table.insert(CONST_ATTR_KEYS, "e_" .. v.value)
+    table.insert(CONST_ATTR_KEYS, "e_" .. v.value .. '_oppose')
+end
+
+local otherKeys = {
     "attack_speed",
     "attack_speed_space",
     "attack_white",
@@ -142,15 +161,8 @@ CONST_ATTR_KEYS = {
     "lumber_ratio",
     "exp_ratio",
     "sell_ratio",
-    "attack_enchant",
-    "append_enchant",
 }
 
-for _, v in ipairs(CONST_ENCHANT) do
-    CONST_ATTR[v.value] = v.label -- fire = "火"
-    CONST_ATTR["e_" .. v.value] = v.label .. '强化' -- e_fire = "火强化"
-    CONST_ATTR["e_" .. v.value .. '_oppose'] = v.label .. '抗性' -- e_fire_oppose = "火抗性"
-    table.insert(CONST_ATTR_KEYS, v.value)
-    table.insert(CONST_ATTR_KEYS, "e_" .. v.value)
-    table.insert(CONST_ATTR_KEYS, "e_" .. v.value .. '_oppose')
+for _, v in ipairs(otherKeys) do
+    table.insert(CONST_ATTR_KEYS, v)
 end
