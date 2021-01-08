@@ -31,21 +31,14 @@ end
 --- 设置单位附着附魔特效
 ---@param whichEnchant string CONST_ENCHANT 对应的附魔
 ---@param effects table|nil 特效绑定的多个位置，如 {{attach = 'origin',effect = 'Abilities\\Spells\\Other\\BreathOfFire\\BreathOfFireDamage.mdl'}}
----@param rgb table|nil 单位三原色变色，如 {255,255,255}
-henchant.setAppendAttachEffect = function(whichEnchant, effects, rgb)
+henchant.setAppendAttachEffect = function(whichEnchant, effects)
     if (type(whichEnchant) ~= 'string') then
         return
     end
     if (effects ~= nil and type(effects) ~= 'table') then
         return
     end
-    if (rgb ~= nil and type(rgb) ~= 'table') then
-        return
-    end
-    henchant.ENV_APPEND_EFFECT[whichEnchant] = {
-        effects = effects,
-        rgb = rgb,
-    }
+    henchant.ENV_APPEND_EFFECT[whichEnchant] = effects
 end
 
 --- 设置环境附魔反应
@@ -142,7 +135,28 @@ henchant.append = function(options)
         end
     end
     -- 重置特效
-
+    if (#newEnchants > 0) then
+        for _, e in ipairs(newEnchants) do
+            local prevEffs = hunit.get(targetUnit, 'enchantEffects')
+            if (prevEffs == nil) then
+                hunit.set(targetUnit, 'enchantEffects', {})
+                prevEffs = hunit.get(targetUnit, 'enchantEffects')
+            else
+                for i = #prevEffs, 1, -1 do
+                    heffect.del(prevEffs[i])
+                    table.remove(prevEffs, i)
+                end
+            end
+            if (henchant.ENV_APPEND_EFFECT[e] ~= nil) then
+                for _, o in ipairs(henchant.ENV_APPEND_EFFECT[e]) do
+                    local e2 = heffect.bindUnit(o.effect, targetUnit, o.attach, during)
+                    if (e2 ~= nil) then
+                        table.insert(prevEffs, heffect.bindUnit(o.effect, targetUnit, o.attach, during))
+                    end
+                end
+            end
+        end
+    end
     newEnchant = nil
     newEnchants = nil
 end
