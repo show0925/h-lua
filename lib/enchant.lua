@@ -1,16 +1,15 @@
 -- 附魔
 henchant = {
-    -- 固有加成（10%）
-    -- 附魔属性存在时的固有加成，如火攻击对无火抵抗的自带10%伤害
-    INTRINSIC_ADDITION = 10, --(%)
-    -- 是否开启着身附魔后果
-    STATUS = false,
-    -- 开启着身附魔后,默认附身时间(秒)
-    APPEND_DURING = 5.0,
-    -- 附魔环境附着特效
-    ENV_APPEND_EFFECT = {},
-    -- 附魔环境反应
-    ENV_REACTION = {},
+    ---@private
+    INTRINSIC_ADDITION = 10, -- (%)附魔属性存在时的固有加成如火攻击对无火抵抗的自带百分之10伤害
+    ---@private
+    STATUS = false, -- 是否开启着身附魔后果
+    ---@private
+    APPEND_DURING = 5.0, -- 开启着身附魔后默认附身时间(秒)
+    ---@private
+    ENV_APPEND_EFFECT = {}, -- 附魔环境特效配置
+    ---@private
+    ENV_REACTION = {}, -- 附魔环境反应
 }
 
 --- 设置附魔的底层固有加成
@@ -23,7 +22,7 @@ end
 
 --- 设置着身附魔
 ---@param status boolean 开关附魔
-henchant.setAppend = function(status)
+henchant.enableAppend = function(status)
     if (type(status) == 'boolean') then
         henchant.STATUS = status
     end
@@ -118,7 +117,6 @@ henchant.append = function(options)
                         })
                         hasReaction = true
                         hbuff.delete(targetUnit, 'attr.' .. appendKey .. '+')
-                        print(hattribute.get(targetUnit, appendKey))
                     end
                 end
             end
@@ -144,7 +142,7 @@ henchant.append = function(options)
         end
     end
     -- 重置特效
-    
+
     newEnchant = nil
     newEnchants = nil
 end

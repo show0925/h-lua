@@ -34,6 +34,11 @@ slkHelper.attrIsPercent = function(key)
     end
     local s = string.find(key, "_oppose")
     local n = string.find(key, "e_")
+    local a = string.find(key, "_attack")
+    local p = string.find(key, "_append")
+    if (a ~= nil or p ~= nil) then
+        return false
+    end
     if (s ~= nil or n == 1) then
         return true
     end

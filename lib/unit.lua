@@ -287,23 +287,25 @@ hunit.setInvulnerable = function(u, flag)
 end
 
 --- 设置单位的动画速度[比例尺1.00]
----@param u userdata
+---@param whichUnit userdata
 ---@param speed number 0.00-1.00
 ---@param during number
-hunit.setAnimateSpeed = function(u, speed, during)
-    if (hRuntime.unit[u] == nil) then
-        hRuntime.unit[u] = {}
+hunit.setAnimateSpeed = function(whichUnit, speed, during)
+    if (whichUnit == nil or his.deleted(whichUnit)) then
+        return
     end
-    cj.SetUnitTimeScale(u, speed)
     during = during or 0
+    local prevSpeed = hunit.get(whichUnit, 'animateSpeed', 1.00)
+    speed = speed or prevSpeed
+    cj.SetUnitTimeScale(whichUnit, speed)
+    hunit.set(whichUnit, 'animateSpeed', speed)
     if (during > 0) then
-        local prevSpeed = hRuntime.unit[u].animateSpeed or 1.00
-        hRuntime.unit[u].animateSpeed = speed
         htime.setTimeout(
             during,
             function(t)
                 htime.delTimer(t)
                 cj.SetUnitTimeScale(u, prevSpeed)
+                hunit.set(whichUnit, 'animateSpeed', prevSpeed)
             end
         )
     end
@@ -314,15 +316,45 @@ end
 ---@param red number 0-255
 ---@param green number 0-255
 ---@param blue number 0-255
----@param opacity number 0.0-1.0
-hunit.setRGB = function(whichUnit, red, green, blue, opacity)
-    cj.SetUnitVertexColor(
-        whichUnit,
-        red,
-        green,
-        blue,
-        255 * opacity
-    )
+---@param opacity number 不透明度 0.0-1.0
+---@param during number 持续时间
+hunit.setRGB = function(whichUnit, red, green, blue, opacity, during)
+    if (whichUnit == nil or his.deleted(whichUnit)) then
+        return
+    end
+    during = during or 0
+    local uSlk = hunit.getSlk(whichUnit)
+    local rgba = hunit.get(whichUnit, 'rgba')
+    if (rgba == nil) then
+        rgba = { { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0, 0 } }
+        hunit.set(whichUnit, 'rgba', rgba)
+    end
+    red = math.max(0, math.min(255, red))
+    green = math.max(0, math.min(255, green))
+    blue = math.max(0, math.min(255, blue))
+    opacity = math.max(0, math.min(1, opacity))
+    cj.SetUnitVertexColor(whichUnit, red, green, blue, 255 * opacity)
+    table.insert(rgba, { red, green, blue, opacity, -during })
+    if (during > 0) then
+        htime.setTimeout(during, function(t)
+            htime.delTimer(t)
+            for i = #rgba, 1, -1 do
+                if (rgba[i][1] == red and rgba[i][2] == green and rgba[i][3] == blue and rgba[i][4] == opacity and rgba[i][5] == -during) then
+                    table.remove(rgba, i)
+                    break
+                end
+            end
+            local last = rgba[#rgba]
+            cj.SetUnitVertexColor(whichUnit, last[1], last[2], last[3], 255 * last[4])
+        end)
+    end
+end
+
+--- 重置单位的三原色
+--- 指最后一次记忆的颜色，非物编颜色
+---@param whichUnit userdata
+hunit.resetRGB = function(whichUnit)
+    hunit.setRGB(whichUnit, nil, nil, nil, nil)
 end
 
 --- 获取单位当前归属玩家
@@ -459,7 +491,10 @@ hunit.create = function(options)
             height = 高度，0，可选
             timeScale = 动作时间比例，1~，可选
             modelScale = 模型缩放比例，1~，可选
-            opacity = 透明，0.0～1.0，可选,0不可见
+            red = 红色，0～255，可选
+            green = 绿色，0～255，可选
+            blue = 蓝色，0～255，可选
+            opacity = 不透明度，0.0～1.0，可选,0不可见
             qty = 1, --数量，可选，可选
             life = nil, --生命周期，到期死亡，可选
             during = nil, --持续时间，到期删除，可选
@@ -556,10 +591,9 @@ hunit.create = function(options)
             options.modelScale = math.round(options.modelScale)
             cj.SetUnitScale(u, options.modelScale, options.modelScale, options.modelScale)
         end
-        -- 透明比例
-        if (options.opacity ~= nil and options.opacity <= 1 and options.opacity >= 0) then
-            options.opacity = math.round(options.opacity)
-            cj.SetUnitVertexColor(u, 255, 255, 255, 255 * options.opacity)
+        -- RBGA
+        if (options.red ~= nil or options.green ~= nil or options.blue ~= nil or options.opacity ~= nil) then
+            hunit.setRGB(u, options.red, options.green, options.blue, options.opacity)
         end
         if (options.attackX ~= nil and options.attackY ~= nil) then
             cj.IssuePointOrder(u, "attack", options.attackX, options.attackY)

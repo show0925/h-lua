@@ -28,7 +28,7 @@ end
 ---@param msg string
 ---@param size number
 ---@param color string hex 6位颜色代码 http://www.atool.org/colorpicker.php
----@param opacity number 为0则不可见(0.0~1.0)
+---@param opacity number 不透明度，为0则不可见(0.0~1.0)
 ---@param during number 设置during为0则永久显示
 ---@return userdata
 htextTag.create = function(msg, size, color, opacity, during)
@@ -76,7 +76,7 @@ end
 ---@param msg string
 ---@param size number
 ---@param color string hex 6位颜色代码 http://www.atool.org/colorpicker.php
----@param opacity number 为0则不可见(0.0~1.0)
+---@param opacity number 不透明度，为0则不可见(0.0~1.0)
 ---@param during number 设置during为0则永久显示
 ---@param zOffset number z轴高度偏移量
 ---@return userdata
@@ -90,7 +90,7 @@ end
 ---@param msg string
 ---@param size number
 ---@param color string hex 6位颜色代码 http://www.atool.org/colorpicker.php
----@param opacity number 为0则不可见(0.0~1.0)
+---@param opacity number 不透明度，为0则不可见(0.0~1.0)
 ---@param during number 设置during为0则永久显示
 ---@param zOffset number z轴高度偏移量
 ---@return userdata
@@ -102,7 +102,7 @@ end
 ---@param msg string
 ---@param size number
 ---@param color string hex 6位颜色代码 http://www.atool.org/colorpicker.php
----@param opacity number 为0则不可见(0.0~1.0)
+---@param opacity number 不透明度，为0则不可见(0.0~1.0)
 ---@param during number 设置during为0则永久显示
 ---@param zOffset number z轴高度偏移量
 ---@return userdata
@@ -114,7 +114,7 @@ end
 ---@param msg string
 ---@param size number
 ---@param color string hex 6位颜色代码 http://www.atool.org/colorpicker.php
----@param opacity number 为0则不可见(0.0~1.0)
+---@param opacity number 不透明度，为0则不可见(0.0~1.0)
 ---@param during number 设置during为0则永久显示
 ---@param zOffset number z轴高度偏移量
 ---@return userdata

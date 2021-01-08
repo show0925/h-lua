@@ -95,13 +95,13 @@ hskill.pause = function(whichUnit, during, pauseColor)
         end
     end
     if (pauseColor == "black") then
-        hunit.setRGB(whichUnit, 30, 30, 30, 0)
+        hunit.setRGB(whichUnit, 30, 30, 30)
     elseif (pauseColor == "blue") then
-        hunit.setRGB(whichUnit, 30, 30, 200, 0)
+        hunit.setRGB(whichUnit, 30, 30, 200)
     elseif (pauseColor == "red") then
-        hunit.setRGB(whichUnit, 200, 30, 30, 0)
+        hunit.setRGB(whichUnit, 200, 30, 30)
     elseif (pauseColor == "green") then
-        hunit.setRGB(whichUnit, 30, 200, 30, 0)
+        hunit.setRGB(whichUnit, 30, 200, 30)
     end
     cj.SetUnitTimeScale(whichUnit, 0.00)
     cj.PauseUnit(whichUnit, true)
@@ -114,7 +114,7 @@ hskill.pause = function(whichUnit, during, pauseColor)
                 htime.delTimer(t)
                 cj.PauseUnit(whichUnit, false)
                 if (string.len(pauseColor) ~= nil) then
-                    cj.SetUnitVertexColorBJ(whichUnit, 100, 100, 100, 0)
+                    hunit.resetRGB(whichUnit)
                 end
                 cj.SetUnitTimeScale(whichUnit, 1)
             end

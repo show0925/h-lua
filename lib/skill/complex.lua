@@ -1416,7 +1416,7 @@ hskill.leap = function(options)
     cj.SetUnitPathing(arrowUnit, false)
     if (leapType == "unit") then
         hunit.setInvulnerable(arrowUnit, true)
-        cj.SetUnitVertexColor(arrowUnit, 255, 255, 255, 255 * tokenArrowOpacity)
+        hunit.setRGB(arrowUnit, nil, nil, nil, tokenArrowOpacity)
     end
     --开始冲鸭
     htime.setInterval(
@@ -1435,7 +1435,7 @@ hskill.leap = function(options)
                 if (leapType == "unit") then
                     hunit.setInvulnerable(arrowUnit, false)
                     cj.SetUnitPathing(arrowUnit, true)
-                    cj.SetUnitVertexColor(arrowUnit, 255, 255, 255, 255)
+                    hunit.resetRGB(arrowUnit)
                 else
                     hunit.kill(arrowUnit, 0)
                 end
@@ -1564,7 +1564,7 @@ hskill.leap = function(options)
                 if (leapType == "unit") then
                     hunit.setInvulnerable(arrowUnit, false)
                     cj.SetUnitPathing(arrowUnit, true)
-                    cj.SetUnitVertexColor(arrowUnit, 255, 255, 255, 255)
+                    hunit.resetRGB(arrowUnit)
                     hunit.portal(arrowUnit, txy.x, txy.y)
                 else
                     hunit.kill(arrowUnit, 0)
@@ -1856,7 +1856,7 @@ hskill.rectangleStrike = function(options)
                         y = txy.y,
                         facing = options.deg,
                         modelScale = effectScale,
-                        opacity = 1.00,
+                        opacity = 1.0,
                         qty = 1,
                         during = effUnitDur
                     }
@@ -1909,7 +1909,7 @@ hskill.rectangleStrike = function(options)
                             y = txy.y,
                             facing = options.deg,
                             modelScale = effectScale,
-                            opacity = 1.00,
+                            opacity = 1.0,
                             qty = 1,
                             during = effUnitDur
                         }
