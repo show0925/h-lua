@@ -99,6 +99,7 @@ henchant.append = function(options)
     end
     -- 整合
     local newEnchant = {}
+    local newEnchants = {}
     for _, e in ipairs(enchants) do
         local hasReaction = false -- 判断反应结果
         if (henchant.ENV_REACTION[e] ~= nil) then
@@ -129,22 +130,21 @@ henchant.append = function(options)
         else
             if (newEnchant[e] == nil) then
                 newEnchant[e] = 0
+                table.insert(newEnchants, e)
             end
             newEnchant[e] = newEnchant[e] + 1
         end
     end
-    print_r(enchants)
-    print_r(newEnchant)
-    for _, con in ipairs(CONST_ENCHANT) do
-        if (newEnchant[con.value] ~= nil and newEnchant[con.value] > 0) then
-            local appendKey = 'e_' .. con.value .. '_append'
+    for _, e in ipairs(newEnchants) do
+        if (newEnchant[e] ~= nil and newEnchant[e] > 0) then
+            local appendKey = 'e_' .. e .. '_append'
             hattribute.set(targetUnit, during, {
-                [appendKey] = "+" .. newEnchant[con.value]
+                [appendKey] = "+" .. newEnchant[e]
             })
         end
     end
-end
-
-henchant.env = function(options)
-
+    -- 重置特效
+    
+    newEnchant = nil
+    newEnchants = nil
 end

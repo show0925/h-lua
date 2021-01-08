@@ -8,14 +8,7 @@ hattribute = {
             "str_white", "agi_white", "int_white", "str_green", "agi_green", "int_green", "punish"
         },
     },
-    max_move_speed = 522,
-    max_life = 999999999,
-    max_mana = 999999999,
-    min_life = 1,
-    min_mana = 1,
-    max_attack_range = 9999,
-    min_attack_range = 0,
-    threeBuff = {
+    THREE_BUFF = {
         -- 每一点三围对属性的影响，默认会写一些，可以通过 hattr.setThreeBuff 方法来改变系统构成
         -- 需要注意的是三围只能影响common内的大部分参数，natural及effect是无效的
         primary = 1, -- 每点主属性提升1点白字攻击（默认例子，这是模拟原生平衡性常数，需要设置平衡性常数为0）
@@ -129,7 +122,7 @@ end
 ---@param buff table
 hattribute.setThreeBuff = function(buff)
     if (type(buff) == "table") then
-        hattribute.threeBuff = buff
+        hattribute.THREE_BUFF = buff
     end
 end
 
@@ -331,105 +324,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
         return
     end
     local buffKey = nil
-    if (valType == "string") then
-        -- string类型只有+-=
-        if (opr == "+") then
-            local valArr = string.explode(",", val)
-            if (during > 0) then
-                buffKey = hbuff.create(
-                    during, whichUnit, 'attr.' .. attr .. '+',
-                    function()
-                        params[attr] = table.merge(params[attr], valArr)
-                    end,
-                    function()
-                        for _, v in ipairs(valArr) do
-                            if (table.includes(v, params[attr])) then
-                                table.delete(v, params[attr], 1)
-                            end
-                        end
-                    end
-                )
-            else
-                params[attr] = table.merge(params[attr], valArr)
-            end
-        elseif (opr == "-") then
-            local valArr = string.explode(",", val)
-            if (during > 0) then
-                buffKey = hbuff.create(
-                    during, whichUnit, 'attr.' .. attr .. '-',
-                    function()
-                        for _, v in ipairs(valArr) do
-                            if (table.includes(v, params[attr])) then
-                                table.delete(v, params[attr], 1)
-                            end
-                        end
-                    end,
-                    function()
-                        params[attr] = table.merge(params[attr], valArr)
-                    end
-                )
-            else
-                for _, v in ipairs(valArr) do
-                    if (table.includes(v, params[attr])) then
-                        table.delete(v, params[attr], 1)
-                    end
-                end
-            end
-        elseif (opr == "=") then
-            local old = table.clone(params[attr])
-            if (during > 0) then
-                buffKey = hbuff.create(
-                    during, whichUnit, 'attr.' .. attr .. '=',
-                    function()
-                        params[attr] = string.explode(",", val)
-                    end,
-                    function()
-                        params[attr] = old
-                    end
-                )
-            else
-                params[attr] = string.explode(",", val)
-            end
-        end
-    elseif (valType == "table") then
-        -- table类型只有+-没有别的
-        if (opr == "+") then
-            local hkey = string.attrBuffKey(val)
-            if (during > 0) then
-                buffKey = hbuff.create(during, whichUnit, 'attr.' .. attr .. '+',
-                    function()
-                        table.insert(params[attr], { hash = hkey, table = val })
-                    end,
-                    function()
-                        hattribute.setHandle(whichUnit, attr, "-", val, 0)
-                    end
-                )
-            else
-                table.insert(params[attr], { hash = hkey, table = val })
-            end
-        elseif (opr == "-") then
-            local hkey = string.attrBuffKey(val)
-            local hasKey = false
-            for k, v in ipairs(params[attr]) do
-                if (v.hash == hkey) then
-                    table.remove(params[attr], k)
-                    hasKey = true
-                    break
-                end
-            end
-            if (hasKey == true) then
-                if (during > 0) then
-                    buffKey = hbuff.create(during, whichUnit, 'attr.' .. attr .. '-',
-                        function()
-                        end,
-                        function()
-                            hattribute.setHandle(whichUnit, attr, "+", val, 0)
-                        end
-                    )
-                end
-            end
-        end
-    elseif (valType == "number") then
+    if (valType == "number") then
         local diff = 0
         if (opr == "+") then
             diff = val
@@ -494,17 +389,17 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             local level = 0
             if (attr == "life" or attr == "mana") then
                 -- 生命 | 魔法
-                if (futureVal >= hattribute["max_" .. attr]) then
-                    if (currentVal >= hattribute["max_" .. attr]) then
+                if (futureVal >= 999999999) then
+                    if (currentVal >= 999999999) then
                         diff = 0
                     else
-                        diff = hattribute["max_" .. attr] - currentVal
+                        diff = 999999999 - currentVal
                     end
-                elseif (futureVal <= hattribute["min_" .. attr]) then
-                    if (currentVal <= hattribute["min_" .. attr]) then
+                elseif (futureVal <= 1) then
+                    if (currentVal <= 1) then
                         diff = 0
                     else
-                        diff = hattribute["min_" .. attr] - currentVal
+                        diff = 1 - currentVal
                     end
                 end
                 tempVal = math.floor(math.abs(diff))
@@ -526,7 +421,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 if (futureVal < 0) then
                     cj.SetUnitMoveSpeed(whichUnit, 0)
                 else
-                    cj.SetUnitMoveSpeed(whichUnit, math.floor(futureVal))
+                    cj.SetUnitMoveSpeed(whichUnit, math.max(math.floor(futureVal), 522))
                 end
             elseif (attr == "attack_white") then
                 -- 白字攻击
@@ -549,10 +444,10 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 end
             elseif (attr == "attack_range") then
                 -- 攻击范围(仅仅是自动警示范围)
-                if (futureVal < hattribute.min_attack_range) then
-                    futureVal = hattribute.min_attack_range
-                elseif (futureVal > hattribute.max_attack_range) then
-                    futureVal = hattribute.max_attack_range
+                if (futureVal < 0) then
+                    futureVal = 0
+                elseif (futureVal > 9999) then
+                    futureVal = 9999
                 end
                 cj.SetUnitAcquireRange(whichUnit, futureVal * 1.1)
             elseif (attr == "sight") then
@@ -660,13 +555,13 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 end
                 local subAttr = string.gsub(attr, "_green", "")
                 -- 主属性影响(<= 0自动忽略)
-                if (hattribute.threeBuff.primary > 0) then
+                if (hattribute.THREE_BUFF.primary > 0) then
                     if (string.upper(subAttr) == hhero.getPrimary(whichUnit)) then
-                        hattribute.set(whichUnit, 0, { attack_white = "+" .. diff * hattribute.threeBuff.primary })
+                        hattribute.set(whichUnit, 0, { attack_white = "+" .. diff * hattribute.THREE_BUFF.primary })
                     end
                 end
                 -- 三围影响
-                local three = table.obj2arr(hattribute.threeBuff[subAttr], CONST_ATTR_KEYS)
+                local three = table.obj2arr(hattribute.THREE_BUFF[subAttr], CONST_ATTR_KEYS)
                 for _, d in ipairs(three) do
                     local tempV = diff * d.value
                     if (tempV < 0) then
@@ -686,13 +581,13 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 end
                 local subAttr = string.gsub(attr, "_white", "")
                 -- 主属性影响(<= 0自动忽略)
-                if (hattribute.threeBuff.primary > 0) then
+                if (hattribute.THREE_BUFF.primary > 0) then
                     if (string.upper(subAttr) == hhero.getPrimary(whichUnit)) then
-                        hattribute.set(whichUnit, 0, { attack_white = "+" .. diff * hattribute.threeBuff.primary })
+                        hattribute.set(whichUnit, 0, { attack_white = "+" .. diff * hattribute.THREE_BUFF.primary })
                     end
                 end
                 -- 三围影响
-                local three = table.obj2arr(hattribute.threeBuff[subAttr], CONST_ATTR_KEYS)
+                local three = table.obj2arr(hattribute.THREE_BUFF[subAttr], CONST_ATTR_KEYS)
                 for _, d in ipairs(three) do
                     local tempV = diff * d.value
                     if (tempV < 0) then
@@ -730,6 +625,100 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         punish_current = punish
                     })
                 end
+            end
+        end
+    elseif (valType == "table") then
+        -- table类型只有+-没有别的
+        if (opr == "+") then
+            local hkey = string.attrBuffKey(val)
+            if (during > 0) then
+                buffKey = hbuff.create(during, whichUnit, 'attr.' .. attr .. '+',
+                    function()
+                        table.insert(params[attr], { hash = hkey, table = val })
+                    end,
+                    function()
+                        hattribute.setHandle(whichUnit, attr, "-", val, 0)
+                    end
+                )
+            else
+                table.insert(params[attr], { hash = hkey, table = val })
+            end
+        elseif (opr == "-") then
+            local hkey = string.attrBuffKey(val)
+            local hasKey = false
+            for k, v in ipairs(params[attr]) do
+                if (v.hash == hkey) then
+                    table.remove(params[attr], k)
+                    hasKey = true
+                    break
+                end
+            end
+            if (hasKey == true) then
+                if (during > 0) then
+                    buffKey = hbuff.create(during, whichUnit, 'attr.' .. attr .. '-',
+                        function()
+                        end,
+                        function()
+                            hattribute.setHandle(whichUnit, attr, "+", val, 0)
+                        end
+                    )
+                end
+            end
+        end
+    elseif (valType == "string") then
+        -- string类型只有+-=
+        if (opr == "+") then
+            local valArr = string.explode(",", val)
+            if (during > 0) then
+                buffKey = hbuff.create(
+                    during, whichUnit, 'attr.' .. attr .. '+',
+                    function()
+                        params[attr] = table.merge(params[attr], valArr)
+                    end,
+                    function()
+                        hattribute.setHandle(whichUnit, attr, "-", val, 0)
+                    end
+                )
+            else
+                params[attr] = table.merge(params[attr], valArr)
+            end
+        elseif (opr == "-") then
+            local valArr = string.explode(",", val)
+            if (during > 0) then
+                buffKey = hbuff.create(
+                    during, whichUnit, 'attr.' .. attr .. '-',
+                    function()
+                        for _, v in ipairs(valArr) do
+                            if (table.includes(v, params[attr])) then
+                                table.delete(v, params[attr], 1)
+                            end
+                        end
+                    end,
+                    function()
+                        hattribute.setHandle(whichUnit, attr, "+", val, 0)
+                    end
+                )
+            else
+                for _, v in ipairs(valArr) do
+                    if (table.includes(v, params[attr])) then
+                        table.delete(v, params[attr], 1)
+                    end
+                end
+            end
+        elseif (opr == "=") then
+            local old = table.clone(params[attr])
+            if (during > 0) then
+                buffKey = hbuff.create(
+                    during, whichUnit, 'attr.' .. attr .. '=',
+                    function()
+                        params[attr] = string.explode(",", val)
+                    end,
+                    function()
+                        hattribute.setHandle(whichUnit, attr, "=", string.implode(",", old), 0)
+                    end
+                )
+            else
+                params[attr] = string.explode(",", val)
             end
         end
     end
