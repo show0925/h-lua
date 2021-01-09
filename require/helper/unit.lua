@@ -454,6 +454,9 @@ slkHelper.unit = {
         obj.weapTp1 = v.weapTp1 --攻击类型
         obj.dmgplus1 = v.dmgplus1 or 10 -- 基础攻击
         obj.showUI1 = v.showUI1 or 1 -- 显示攻击按钮
+        obj.hideHeroMinimap = v.hideHeroMinimap or 0 -- 隐藏英雄小地图
+        obj.hideHeroBar = v.hideHeroBar or 0  -- 隐藏英雄栏图标
+        obj.hideHeroDeathMsg = v.hideHeroDeathMsg or 0 -- 隐藏英雄栏死亡信息
         obj.STR = v.STR
         obj.AGI = v.AGI
         obj.INT = v.INT
@@ -596,6 +599,9 @@ slkHelper.unit = {
             obj.INTplus = v.INTplus
             obj.Awakentip = "唤醒：" .. Name
             obj.Revivetip = "复活：" .. Name
+            obj.hideHeroMinimap = v.hideHeroMinimap or 1 -- 隐藏英雄小地图
+            obj.hideHeroBar = v.hideHeroBar or 1  -- 隐藏英雄栏图标
+            obj.hideHeroDeathMsg = v.hideHeroDeathMsg or 1 -- 隐藏英雄栏死亡信息
         else
             --- 如果是工人型信使
             obj = slk.unit.ogru:new("slk_courier_" .. Name)
