@@ -49,7 +49,7 @@ hskill.damage = function(options)
     if (his.deleted(targetUnit)) then
         return
     end
-    if (his.deleted(sourceUnit)) then
+    if (sourceUnit ~= nil and his.deleted(sourceUnit)) then
         return
     end
     if (options.damageSrc == nil) then

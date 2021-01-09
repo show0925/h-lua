@@ -68,11 +68,11 @@ end
     分裂
     options = {
         targetUnit = unit, --目标单位，必须
+        sourceUnit = nil, --来源单位，可选
         odds = 100, --几率，必须
         damage = 0, --原始伤害，必须
         percent = 0, --几率比例，必须
         radius = 0, --分裂半径范围，必须
-        sourceUnit = nil, --来源单位，可选
         effect = nil, --特效，可选
         damageSrc = CONST_DAMAGE_SRC.skill --伤害的种类（可选）
         damageType = {} --伤害的类型,注意是table（可选）
@@ -98,54 +98,51 @@ hskill.split = function(options)
         return
     end
     if (math.random(1, 100) <= odds) then
-        local g = hgroup.createByUnit(
-            targetUnit,
-            radius,
-            function(filterUnit)
-                local flag = true
-                if (his.dead(filterUnit)) then
-                    flag = false
-                end
-                if (his.enemy(filterUnit, targetUnit)) then
-                    flag = false
-                end
-                if (his.structure(filterUnit)) then
-                    flag = false
-                end
-                return flag
+        local g = hgroup.createByUnit(targetUnit, radius, function(filterUnit)
+            local flag = true
+            if (his.dead(filterUnit)) then
+                flag = false
             end
-        )
+            if (his.enemy(filterUnit, targetUnit)) then
+                flag = false
+            end
+            if (his.structure(filterUnit)) then
+                flag = false
+            end
+            if (his.unit(filterUnit, targetUnit)) then
+                flag = false
+            end
+            return flag
+        end)
         local splitDamage = damage * percent * 0.01
         hgroup.loop(g, function(eu)
-            if (eu ~= targetUnit) then
-                hskill.damage(
-                    {
-                        sourceUnit = options.sourceUnit,
-                        targetUnit = eu,
-                        damage = splitDamage,
-                        damageString = "分裂",
-                        damageStringColor = "ff6347",
-                        damageSrc = options.damageSrc,
-                        damageType = options.damageType,
-                        isFixed = options.isFixed,
-                        effect = options.effect
-                    }
-                )
-            end
+            hskill.damage({
+                sourceUnit = options.sourceUnit,
+                targetUnit = eu,
+                damage = splitDamage,
+                damageString = "分裂",
+                damageStringColor = "ffdead",
+                damageSrc = options.damageSrc,
+                damageType = options.damageType,
+                isFixed = options.isFixed,
+                effect = options.effect
+            })
         end)
         g = nil
         -- @触发分裂事件
-        hevent.triggerEvent(
-            sourceUnit,
-            CONST_EVENT.split,
-            {
-                triggerUnit = options.sourceUnit,
-                targetUnit = targetUnit,
-                damage = splitDamage,
-                radius = radius,
-                percent = percent
-            }
-        )
+        if (options.sourceUnit) then
+            hevent.triggerEvent(
+                options.sourceUnit,
+                CONST_EVENT.split,
+                {
+                    triggerUnit = options.sourceUnit,
+                    targetUnit = targetUnit,
+                    damage = splitDamage,
+                    radius = radius,
+                    percent = percent
+                }
+            )
+        end
         -- @触发被分裂事件
         hevent.triggerEvent(
             targetUnit,

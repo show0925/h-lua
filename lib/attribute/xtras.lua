@@ -33,20 +33,6 @@ hattribute.xtrasSupportVals = {
     "gold", "lumber",
 }
 
-hattribute.xtrasDefaultDamageSrc = {
-    { CONST_DAMAGE_SRC.attack, {
-        CONST_EVENT.attack, CONST_EVENT.beAttack,
-    } },
-    { CONST_DAMAGE_SRC.skill, {
-        CONST_EVENT.skill, CONST_EVENT.beSkill,
-        CONST_EVENT.skillEffect, CONST_EVENT.skillCast,
-    } },
-    { CONST_DAMAGE_SRC.item, {
-        CONST_EVENT.item, CONST_EVENT.beItem,
-        CONST_EVENT.itemUsed,
-    } }
-}
-
 --- 快速取单位xtras的数据
 ---@param whichUnit userdata
 ---@param eventKey string
@@ -164,13 +150,6 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
         return
     end
     -- 分析默认伤害来源
-    local defaultDamageSrc = CONST_DAMAGE_SRC.unknown
-    for _, xdds in ipairs(hattribute.xtrasDefaultDamageSrc) do
-        if (table.includes(eventKey, xdds[2])) then
-            defaultDamageSrc = xdds[1]
-            break
-        end
-    end
     for _, x in ipairs(xtras) do
         local actions = string.explode('.', x.action)
         if (#actions == 3) then
@@ -251,7 +230,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                     elseif (actionType == 'spec') then
                         -- 特殊效果
                         if ((x.odds or 0) > 0) then
-                            local damageSrc = x.damageSrc or defaultDamageSrc
+                            local damageSrc = x.damageSrc or CONST_DAMAGE_SRC.unknown
                             local damageType = x.damageType or { CONST_DAMAGE_TYPE.common }
                             if (val >= 0) then
                                 if (actionField == "knocking") then
