@@ -72,7 +72,6 @@ hskill.damage = function(options)
     local damageSrc = options.damageSrc
     local damageType = options.damageType
     -- 攻击者的攻击里各种类型的占比
-    local damageTypeRatio = {}
     if (damageType == nil) then
         if (damageSrc == CONST_DAMAGE_SRC.attack and sourceUnit ~= nil) then
             damageType = {}
@@ -83,18 +82,19 @@ hskill.damage = function(options)
                     end
                 end
             end
-            for _, con in ipairs(CONST_ENCHANT) do
-                if (sourceUnitAttr['e_' .. con.value .. '_attack'] > 0) then
-                    damageTypeRatio[con.value] = sourceUnitAttr['e_' .. con.value .. '_attack'] / #damageType
-                else
-                    damageTypeRatio[con.value] = 0
-                end
-            end
         end
     end
     --常规伤害判定
     if (damageType == nil or #damageType <= 0) then
         damageType = { CONST_DAMAGE_TYPE.common } -- common是个通常设置，实际上并无特定效果
+    end
+    local damageTypeRatioPiece = 1 / #damageType
+    local damageTypeRatio = {}
+    for _, dt in ipairs(damageType) do
+        if (damageTypeRatio[dt] == nil) then
+            damageTypeRatio[dt] = 0
+        end
+        damageTypeRatio[dt] = damageTypeRatio[dt] + damageTypeRatioPiece
     end
     -- 最终伤害
     local lastDamage = 0
