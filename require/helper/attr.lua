@@ -1,6 +1,9 @@
 --- 属性系统目标文本修正
-slkHelper.attrTargetLabel = function(target, actionType, actionField)
-    if (actionType == 'spec' and table.includes(actionField, { 'split', 'bomb', 'lightning_chain' })) then
+slkHelper.attrTargetLabel = function(target, actionType, actionField, isValue)
+    if (actionType == 'spec'
+        and isValue ~= true
+        and table.includes(actionField, { 'split', 'bomb', 'lightning_chain' })
+    ) then
         if (target == '己') then
             target = '友军'
         else
@@ -84,7 +87,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
         if (k == "xtras") then
             table.insert(strTable, (CONST_ATTR[k] or "") .. "：")
             local tempStr = {}
-            for _, vv in ipairs(v) do
+            for vvi, vv in ipairs(v) do
                 local on = vv["on"]
                 local actions = string.explode('.', vv["action"] or '')
                 if (CONST_EVENT_LABELS[on] ~= nil and table.len(actions) == 3) then
@@ -104,7 +107,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
                     --
                     if (odds > 0 and percent ~= nil and val ~= nil) then
                         -- 拼凑文本
-                        local temp2 = "　- " .. CONST_EVENT_LABELS[on] .. '时,'
+                        local temp2 = ' ' .. vvi .. '.' .. CONST_EVENT_LABELS[on] .. '时,'
                         temp2 = temp2 .. "有"
                         temp2 = temp2 .. odds .. "%几率"
                         if (during > 0) then
@@ -141,7 +144,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
                                     and CONST_EVENT_TARGET_LABELS[on][valAttr[1]]
                                 ) then
                                     local au = CONST_EVENT_TARGET_LABELS[on][valAttr[1]]
-                                    au = slkHelper.attrTargetLabel(au, actionType, actionField)
+                                    au = slkHelper.attrTargetLabel(au, actionType, actionField, true)
                                     local aa = valAttr[2]
                                     if (aa == 'level') then
                                         valLabel = percent .. unitLabel .. au .. "当前等级"
