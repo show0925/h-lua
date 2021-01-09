@@ -40,14 +40,10 @@ hskill.getSlk = function(abilityId)
     if (abilityId == nil) then
         return
     end
-    local slk
     if (type(abilityId) == "number") then
         abilityId = string.id2char(abilityId)
     end
-    if (slk.ability[abilityId] ~= nil) then
-        slk = slk.ability[abilityId]
-    end
-    return slk
+    return slk.ability[abilityId]
 end
 
 --- 获取HSLK数据集
