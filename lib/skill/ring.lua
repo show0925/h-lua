@@ -28,7 +28,7 @@ end
 ---@return string
 hring.n2i = function(name)
     if (hslk.n2v.ring[name]) then
-        return hslk.n2v.ring[name]._id or nil
+        return hslk.n2v.ring[name]._id
     end
     return nil
 end

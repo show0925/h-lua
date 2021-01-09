@@ -84,8 +84,8 @@ end
 ---@param name string
 ---@return string
 hskill.n2i = function(name)
-    if (hslk.n2v.ability[name]) then
-        return hslk.n2v.ability[name]._id or nil
+    if (hslk.n2v.ability[name] ~= nil) then
+        return hslk.n2v.ability[name]._id
     end
     return nil
 end

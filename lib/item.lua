@@ -157,7 +157,7 @@ end
 ---@return string
 hitem.n2i = function(name)
     if (hslk.n2v.item[name]) then
-        return hslk.n2v.item[name]._id or nil
+        return hslk.n2v.item[name]._id
     end
     return nil
 end

@@ -140,7 +140,7 @@ end
 
 slkHelper.unit = {
     --- 创建一个单位
-    --- 设置的CUSTOM_DATA数据会自动传到数据中
+    --- 设置的_hslk数据会自动传到数据中
     ---@public
     ---@param v table
     normal = function(v)
@@ -288,7 +288,7 @@ slkHelper.unit = {
         return id
     end,
     --- 创建一个英雄
-    --- 设置的CUSTOM_DATA数据会自动传到数据中
+    --- 设置的_hslk数据会自动传到数据中
     ---@public
     ---@param v table
     hero = function(v)
@@ -475,7 +475,7 @@ slkHelper.unit = {
         return id
     end,
     --- 创建一个商店
-    --- 设置的CUSTOM_DATA数据会自动传到数据中
+    --- 设置的_hslk数据会自动传到数据中
     ---@public
     ---@param v table
     shop = function(v)
@@ -512,7 +512,7 @@ slkHelper.unit = {
         return id
     end,
     --- 创建一个信使
-    --- 设置的CUSTOM_DATA数据会自动传到数据中
+    --- 设置的_hslk数据会自动传到数据中
     ---@public
     ---@param v table
     courier = function(v)
@@ -729,7 +729,7 @@ slkHelper.unit = {
         return id
     end,
     --- 创建一个酒馆模版
-    --- 设置的CUSTOM_DATA数据会自动传到数据中
+    --- 设置的_hslk数据会自动传到数据中
     ---@public
     ---@param v table
     tavern = function(v)

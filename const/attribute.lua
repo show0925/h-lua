@@ -89,7 +89,6 @@ CONST_ATTR_KEYS = {}
 
 -- 附魔文本和key
 for _, v in ipairs(CONST_ENCHANT) do
-    CONST_ATTR[v.value] = v.label -- fire = "火"
     CONST_ATTR["e_" .. v.value] = v.label .. '强化' -- e_fire = "火强化"
     CONST_ATTR["e_" .. v.value .. '_oppose'] = v.label .. '抗性' -- e_fire_oppose = "火抗性"
     CONST_ATTR["e_" .. v.value .. '_attack'] = v.label .. '攻击附魔' -- e_fire_attack = "火攻击附魔"
