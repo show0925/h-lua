@@ -107,7 +107,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
                     --
                     if (odds > 0 and percent ~= nil and val ~= nil) then
                         -- 拼凑文本
-                        local temp2 = ' ' .. vvi .. '.' .. CONST_EVENT_LABELS[on] .. '时,'
+                        local temp2 = '　' .. vvi .. '.' .. CONST_EVENT_LABELS[on] .. '时,'
                         temp2 = temp2 .. "有"
                         temp2 = temp2 .. odds .. "%几率"
                         if (during > 0) then
@@ -117,6 +117,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
                         -- 拼凑值
                         local valLabel
                         local unitLabel = "%"
+                        local isNegative = false
                         if (type(percent) == 'table') then
                             unitLabel = ''
                         elseif (percent % 100 == 0) then
@@ -131,18 +132,20 @@ slkHelper.attrDesc = function(attr, sep, indent)
                             elseif (unitLabel == '') then
                                 valLabel = '随机' .. math.round(percent[1] * math.abs(val)) .. '~' .. math.round(percent[2] * 0.01 * math.abs(val))
                             end
+                            isNegative = val < 0
                         elseif (type(val) == 'string') then
                             if (unitLabel == '') then
                                 percent = '随机' .. percent[1] .. '%~' .. percent[2] .. '%'
+                            end
+                            isNegative = (string.sub(val, 1, 1) == '-')
+                            if (isNegative) then
+                                val = string.sub(val, 2)
                             end
                             if (val == 'damage') then
                                 valLabel = percent .. unitLabel .. "当前伤害"
                             else
                                 local valAttr = string.explode('.', val)
-                                if (table.len(valAttr) == 2
-                                    and CONST_EVENT_TARGET_LABELS[on]
-                                    and CONST_EVENT_TARGET_LABELS[on][valAttr[1]]
-                                ) then
+                                if (table.len(valAttr) == 2 and CONST_EVENT_TARGET_LABELS[on] and CONST_EVENT_TARGET_LABELS[on][valAttr[1]]) then
                                     local au = CONST_EVENT_TARGET_LABELS[on][valAttr[1]]
                                     au = slkHelper.attrTargetLabel(au, actionType, actionField, true)
                                     local aa = valAttr[2]
@@ -166,10 +169,10 @@ slkHelper.attrDesc = function(attr, sep, indent)
                         target = slkHelper.attrTargetLabel(target, actionType, actionField)
                         if (valLabel ~= nil) then
                             if (actionType == 'attr') then
-                                if (val > 0) then
-                                    temp2 = temp2 .. "提升" .. target
-                                elseif (val < 0) then
+                                if (isNegative) then
                                     temp2 = temp2 .. "减少" .. target
+                                else
+                                    temp2 = temp2 .. "提升" .. target
                                 end
                                 temp2 = temp2 .. valLabel .. "的" .. actionFieldLabel
                             elseif (actionType == 'spec') then

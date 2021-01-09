@@ -165,10 +165,15 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                     if (type(x.val) == 'number') then
                         val = math.round(x.val)
                     elseif (type(x.val) == 'string') then
-                        if (x.val == 'damage') then
-                            val = evtData.damage or -1
+                        local xVal = x.val
+                        local isNegative = (string.sub(xVal, 1, 1) == '-')
+                        if (isNegative) then
+                            xVal = string.sub(xVal, 2)
+                        end
+                        if (xVal == 'damage') then
+                            val = evtData.damage or 0
                         else
-                            local valAttr = string.explode('.', x.val)
+                            local valAttr = string.explode('.', xVal)
                             if (#valAttr == 2) then
                                 local au = evtData[valAttr[1]]
                                 local aa = valAttr[2]
@@ -185,6 +190,9 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                 end
                             end
                         end
+                        if (isNegative) then
+                            val = -val
+                        end
                     end
                     -- 处理百分比
                     if (type(percent) == 'table') then
@@ -196,7 +204,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                     val = math.round(val * percent * 0.01)
                     if (actionType == 'attr') then
                         -- 属性改动
-                        if (val ~= 0 and x.during > 0 and math.random(1, 1000) <= x.odds * 10) then
+                        if (val ~= 0 and (x.during or 0) > 0 and math.random(1, 1000) <= (x.odds or 0) * 10) then
                             -- 判断是否buff/debuff(判断基准就是判断val是否大于/小于0)
                             -- buff时，要计算目标单位的buff阻碍（如:可以设计一个boss造成强化阻碍，影响玩家的被动加成）
                             -- debuff时，要计算目标单位的debuff抵抗（如:可以设计一个物品抵抗debuff，减少影响）
