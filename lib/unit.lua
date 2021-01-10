@@ -329,10 +329,10 @@ hunit.setRGB = function(whichUnit, red, green, blue, opacity, during)
         rgba = { { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0, 0 } }
         hunit.set(whichUnit, 'rgba', rgba)
     end
-    red = math.max(0, math.min(255, red))
-    green = math.max(0, math.min(255, green))
-    blue = math.max(0, math.min(255, blue))
-    opacity = math.max(0, math.min(1, opacity))
+    red = math.max(0, math.min(255, red or rgba[#rgba][1]))
+    green = math.max(0, math.min(255, green or rgba[#rgba][2]))
+    blue = math.max(0, math.min(255, blue or rgba[#rgba][3]))
+    opacity = math.max(0, math.min(1, opacity or rgba[#rgba][4]))
     cj.SetUnitVertexColor(whichUnit, red, green, blue, 255 * opacity)
     table.insert(rgba, { red, green, blue, opacity, -during })
     if (during > 0) then
