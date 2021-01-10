@@ -379,6 +379,7 @@ slkHelper.unit = {
         obj.stockRegen = v.stockRegen or 0 -- 进货周期
         obj.stockMax = v.stockMax or 1 -- 最大库存
         obj.collision = v.collision or 32 --接触体积
+        obj.propWin = v.propWin or 60 --转向角度
         obj.def = v.def -- 护甲
         obj.sight = v.sight -- 白天视野
         obj.nsight = v.nsight -- 夜晚视野
