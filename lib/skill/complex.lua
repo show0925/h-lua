@@ -950,7 +950,7 @@ end
         sourceUnit = [unit], --伤害来源单位（可选）
         odds = 100, --几率（可选,默认100）
         distance = 0, --击退距离，可选，默认0
-        high = 100, --击飞高度，可选，默认100
+        height = 100, --击飞高度，可选，默认100
         during = 0.5, --击飞过程持续时间，可选，默认0.5秒
         effect = nil, --特效（可选）
         damageSrc = CONST_DAMAGE_SRC, --伤害的种类（可选）
@@ -981,7 +981,7 @@ hskill.crackFly = function(options)
         end
     end
     local distance = options.distance or 0
-    local high = options.high or 100
+    local height = options.height or 100
     local during = options.during or 0.5
     if (during < 0.5) then
         during = 0.5
@@ -1028,7 +1028,7 @@ hskill.crackFly = function(options)
             targetUnit = options.targetUnit,
             odds = odds,
             damage = damage,
-            high = high,
+            height = height,
             distance = distance
         }
     )
@@ -1041,7 +1041,7 @@ hskill.crackFly = function(options)
             sourceUnit = options.sourceUnit,
             odds = odds,
             damage = damage,
-            high = high,
+            height = height,
             distance = distance
         }
     )
@@ -1083,7 +1083,7 @@ hskill.crackFly = function(options)
             cost = cost + timerSetTime
             if (cost < during * 0.35) then
                 dist = distance / (during * 0.5 / timerSetTime)
-                z = high / (during * 0.35 / timerSetTime)
+                z = height / (during * 0.35 / timerSetTime)
                 if (dist > 0) then
                     local pxy = math.polarProjection(
                         hunit.x(options.targetUnit),
@@ -1101,7 +1101,7 @@ hskill.crackFly = function(options)
                 end
             else
                 dist = distance / (during * 0.5 / timerSetTime)
-                z = high / (during * 0.65 / timerSetTime)
+                z = height / (during * 0.65 / timerSetTime)
                 if (dist > 0) then
                     local pxy = math.polarProjection(
                         hunit.x(options.targetUnit),
