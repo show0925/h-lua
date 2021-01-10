@@ -33,6 +33,26 @@ hattribute.xtrasSupportVals = {
     "gold", "lumber",
 }
 
+--- 是否允许死亡单位通过xtras效果验证
+---@private
+---@param targetUnit userdata 执行单位
+---@param type string attr|spec
+---@param field string any
+---@return boolean
+hattribute.xtrasPassAlive = function(targetUnit, type, field)
+    if (his.alive(targetUnit)) then
+        return true
+    end
+    if (type == 'attr') then
+        return false
+    elseif (type == 'spec') then
+        if (field == 'split' or field == 'bomb') then
+            return true
+        end
+    end
+    return false
+end
+
 --- 快速取单位xtras的数据
 ---@param whichUnit userdata
 ---@param eventKey string
@@ -156,7 +176,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
             local target = actions[1]
             local actionType = actions[2]
             if (table.includes(actionType, { 'attr', 'spec' }) ~= false and evtData[target] ~= nil and hunit.getName(evtData[target]) ~= nil) then
-                if (his.alive(evtData[target]) and his.deleted(evtData[target]) == false) then
+                if (his.deleted(evtData[target]) == false and hattribute.xtrasPassAlive(evtData[target], actions[2], actions[3])) then
                     local targetUnit = evtData[target]
                     local actionField = actions[3]
                     local val = 0
