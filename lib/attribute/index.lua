@@ -421,7 +421,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 if (futureVal < 0) then
                     cj.SetUnitMoveSpeed(whichUnit, 0)
                 else
-                    cj.SetUnitMoveSpeed(whichUnit, math.max(math.floor(futureVal), 522))
+                    cj.SetUnitMoveSpeed(whichUnit, math.min(math.floor(futureVal), 522))
                 end
             elseif (attr == "attack_white") then
                 -- 白字攻击

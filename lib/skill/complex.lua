@@ -640,13 +640,7 @@ hskill.fetter = function(options)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
         heffect.bindUnit(options.effect, u, "origin", during)
     end
-    hattr.set(
-        u,
-        during,
-        {
-            move = "-522"
-        }
-    )
+    hattr.set(u, during, { move = "-522" })
     if (damage > 0) then
         hskill.damage(
             {
@@ -998,13 +992,7 @@ hskill.crackFly = function(options)
     }
     hskill.unarm(tempObj)
     hskill.silent(tempObj)
-    hattr.set(
-        options.targetUnit,
-        during,
-        {
-            move = "-9999"
-        }
-    )
+    hattr.set(options.targetUnit, during, { move = "-9999" })
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
         heffect.bindUnit(options.effect, options.targetUnit, "origin", during)
     end
