@@ -101,7 +101,9 @@ henchant.append = function(options)
                 local level = hattribute.get(targetUnit, appendKey)
                 if (level > 0) then
                     if (henchant.ENV_REACTION[e][con.value] ~= nil) then
-                        -- 如果有反应式
+                        -- 如果有反应式，先消除旧附魔元素
+                        hbuff.delete(targetUnit, 'attr.' .. appendKey .. '+')
+                        -- 反应
                         henchant.ENV_REACTION[e][con.value]({
                             type = { e, con.value },
                             level = level,
@@ -109,7 +111,6 @@ henchant.append = function(options)
                             targetUnit = targetUnit,
                         })
                         hasReaction = true
-                        hbuff.delete(targetUnit, 'attr.' .. appendKey .. '+')
                     end
                 end
             end
