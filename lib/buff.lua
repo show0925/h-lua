@@ -30,7 +30,7 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
     end
     during = during or 0
     if (during <= 0) then
-        return
+        during = -1
     end
     if (his.deleted(handleUnit)) then
         return
@@ -49,14 +49,16 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
     local uk = hbuff.uniqueKey()
     hRuntime.buff[handleUnit][groupKey][uk] = rollback
     table.insert(hRuntime.buff[handleUnit][groupKey].log, uk)
-    htime.setTimeout(during, function(curTimer)
-        htime.delTimer(curTimer)
-        if (false == his.deleted(handleUnit) and hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
-            rollback()
-            hRuntime.buff[handleUnit][groupKey][uk] = nil
-            table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
-        end
-    end)
+    if (during > 0) then
+        htime.setTimeout(during, function(curTimer)
+            htime.delTimer(curTimer)
+            if (false == his.deleted(handleUnit) and hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
+                rollback()
+                hRuntime.buff[handleUnit][groupKey][uk] = nil
+                table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
+            end
+        end)
+    end
     return string.implode('|', { groupKey, hbuff.uniqueKey() })
 end
 
