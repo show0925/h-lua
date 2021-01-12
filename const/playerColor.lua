@@ -11,5 +11,6 @@ CONST_PLAYER_COLOR = {
     LIGHT_GRAY = cj.ConvertPlayerColor(8),
     LIGHT_BLUE = cj.ConvertPlayerColor(9),
     AQUA = cj.ConvertPlayerColor(10),
-    BROWN = cj.ConvertPlayerColor(11)
+    BROWN = cj.ConvertPlayerColor(11),
+    BLACK = cj.ConvertPlayerColor(12),
 }

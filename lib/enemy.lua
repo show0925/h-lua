@@ -1,115 +1,95 @@
 ---@class henemy 敌人模块
 henemy = {
-    -- 充当敌人的玩家
-    players = {},
+    -- 配置项
+    conf = {
+        --[[{
+            name 敌人队伍的名称，默认敌军
+            color 敌人队伍的颜色 参考CONST_PLAYER_COLOR
+            playerIndexes 归于此敌人的玩家索引 1-12
+            isShareSight 是否与玩家共享视野
+        }]]
+    },
     --- 充当敌人的玩家调用次数，初始 0
-    numbers = {},
+    count = {},
     --- 充当敌人的玩家调用次数上限，达到就全体归0
-    numberLimit = 100,
-    --- 敌军名称
-    name = "敌军",
-    --- 敌人颜色
-    color = cj.ConvertPlayerColor(12),
-    --- 是否与玩家共享视野
-    shareSight = false,
+    countLimit = 100,
 }
 
---- 设置敌人的名称
----@param name string
-henemy.setName = function(name)
-    henemy.name = name
-end
-
---- 获取敌人的名称
----@return string
-henemy.getName = function()
-    return henemy.name
-end
-
---- 设置敌人的颜色
----@param color userdata cj.ConvertPlayerColor(1~12)
-henemy.setColor = function(color)
-    henemy.color = color
-end
-
---- 获取敌人的颜色
----@return userdata
-henemy.getColor = function()
-    return henemy.color
-end
-
---- 设置敌人是否共享视野
----@param b boolean
-henemy.setShareSight = function(b)
-    henemy.shareSight = b
-end
-
---- 获取敌人是否共享视野
----@return boolean
-henemy.isShareSight = function()
-    if (type(henemy.shareSight) == 'boolean') then
-        return henemy.shareSight
+--- 配置敌人
+--- 此方法只能设置一次，不能多次设置覆盖，多次设置代表多个敌军势力
+---@param name string 敌人势力队伍的名称，默认敌军N
+---@param color string 敌人势力队伍的颜色,参考CONST_PLAYER_COLOR
+---@param playerIndexes table 归于此敌人的玩家索引 1-12，如{1,2,3}
+---@param isShareSight boolean 是否与玩家共享视野
+---@return number 返回队伍序号，从1开始累加
+henemy.set = function(name, color, playerIndexes, isShareSight)
+    color = color or CONST_PLAYER_COLOR.BLACK
+    playerIndexes = playerIndexes or {}
+    if (type(isShareSight) ~= 'boolean') then
+        isShareSight = false
     end
-    return false
+    table.insert(henemy.conf, {
+        name = name,
+        color = color,
+        playerIndexes = playerIndexes,
+        isShareSight = isShareSight,
+    })
+    if (#playerIndexes > 0) then
+        for _, pIdx in ipairs(playerIndexes) do
+            henemy.count[pIdx] = 0
+            cj.SetPlayerName(cj.Player(pIdx - 1), name)
+            cj.SetPlayerColor(cj.Player(pIdx - 1), color)
+        end
+    end
+    return #henemy.conf
 end
 
---- 将某个玩家位置设定为敌人，同时将他名字设定为全局的emptyName，颜色调节为黑色ConvertPlayerColor(12)
----@param whichPlayer userdata
-henemy.setPlayer = function(whichPlayer)
-    if (table.includes(whichPlayer, henemy.players)) then
-        return
-    end
-    table.insert(henemy.players, whichPlayer)
-    local index = hplayer.index(whichPlayer)
-    if (henemy.numbers[#henemy.players] == nil) then
-        henemy.numbers[#henemy.players] = 0
-    end
-    cj.SetPlayerName(whichPlayer, henemy.name)
-    cj.SetPlayerColor(whichPlayer, henemy.getColor())
-end
-
---- 将一组玩家位置设定为敌人
----@param playerArray table
-henemy.setPlayers = function(playerArray)
-    if (#playerArray < 1) then
-        return
-    end
-    for _, whichPlayer in ipairs(playerArray) do
-        henemy.setPlayer(whichPlayer)
-    end
-end
-
---- 最优化自动获取一个敌人玩家
+--- 根据队伍号最优化自动获取一个敌人玩家,默认第一个队伍
 ---@param createQty number 可设定创建单位数，更精准调用，默认权重 1
 ---@return userdata 敌人玩家
-henemy.getPlayer = function(createQty)
-    local p
+henemy.getPlayer = function(createQty, teamNo)
+    teamNo = teamNo or 1
+    if (henemy.conf[teamNo] == nil) then
+        return
+    end
     if (createQty == nil) then
         createQty = 1
     else
         createQty = math.floor(createQty)
     end
-    local tagI = 0
-    for i = 1, #henemy.players, 1 do
-        if (tagI == 0) then
-            tagI = i
-        elseif (henemy.numbers[i] < henemy.numbers[tagI]) then
-            tagI = i
+    local ti = 0
+    for _, pIdx in ipairs(henemy.conf[teamNo].playerIndexes) do
+        if (ti == 0) then
+            ti = pIdx
+        elseif (henemy.count[pIdx] < henemy.count[ti]) then
+            ti = pIdx
         end
     end
-    henemy.numbers[tagI] = henemy.numbers[tagI] + createQty
-    if (henemy.numbers[tagI] > henemy.numberLimit) then
-        for i = 1, #henemy.players, 1 do
-            henemy.numbers[i] = 0
+    henemy.count[ti] = henemy.count[ti] + createQty
+    if (henemy.count[ti] > henemy.countLimit) then
+        for _, pIdx in ipairs(henemy.conf[teamNo].playerIndexes) do
+            henemy.count[pIdx] = 0
         end
     end
-    return henemy.players[tagI]
+    return hplayer.players[ti]
+end
+
+--- 设置敌人是否共享视野
+---@param teamNo number
+---@return boolean
+henemy.isShareSight = function(teamNo)
+    teamNo = teamNo or 1
+    if (henemy.conf[teamNo] == nil) then
+        return false
+    end
+    return henemy.conf[teamNo].isShareSight
 end
 
 --[[
     创建敌人单位/单位组
     @return 最后创建单位/单位组
     {
+        teamNo = 1, -- 敌军队伍序号，默认1
         unitId = nil, --类型id,如'H001'
         x = nil, --创建坐标X，可选
         y = nil, --创建坐标Y，可选
@@ -141,7 +121,10 @@ end
     }
 ]]
 henemy.create = function(options)
-    options.whichPlayer = henemy.getPlayer(options.qty or 1)
-    options.isShareSight = henemy.isShareSight()
+    if (#henemy.conf <= 0) then
+        return
+    end
+    options.whichPlayer = henemy.getPlayer(options.qty or 1, options.teamNo)
+    options.isShareSight = henemy.isShareSight(options.teamNo)
     return hunit.create(options)
 end
