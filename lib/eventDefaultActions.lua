@@ -815,19 +815,10 @@ hevent_default_actions = {
             end
             itId = string.id2char(itId)
             local u = cj.GetTriggerUnit()
+            local orderTargetUnit = cj.GetOrderTargetUnit()
             local charges = cj.GetItemCharges(it)
             if (cj.GetUnitCurrentOrder(u) == 852001) then
                 -- dropitem:852001
-                --触发丢弃物品事件，因为物品过后会被删除，所以先执行触发
-                hevent.triggerEvent(
-                    u,
-                    CONST_EVENT.itemDrop,
-                    {
-                        triggerUnit = u,
-                        triggerItem = it,
-                        targetUnit = cj.GetOrderTargetUnit(),
-                    }
-                )
                 hitem.subProperty(u, itId, charges)
                 hitem.setPositionType(it, hitem.POSITION_TYPE.COORDINATE)
                 htime.setTimeout(0.05, function(t)
@@ -839,17 +830,22 @@ hevent_default_actions = {
                             local x = cj.GetItemX(it)
                             local y = cj.GetItemY(it)
                             hitem.del(it, 0)
-                            hitem.create(
-                                {
-                                    itemId = hs._shadow_id,
-                                    x = x,
-                                    y = y,
-                                    charges = charges,
-                                    during = 0
-                                }
-                            )
+                            -- 影子物品替换
+                            it = hitem.create({
+                                itemId = hs._shadow_id,
+                                x = x,
+                                y = y,
+                                charges = charges,
+                                during = 0
+                            })
                         end
                     end
+                    --触发丢弃物品事件
+                    hevent.triggerEvent(u, CONST_EVENT.itemDrop, {
+                        triggerUnit = u,
+                        triggerItem = it,
+                        targetUnit = orderTargetUnit,
+                    })
                 end)
             end
         end),
