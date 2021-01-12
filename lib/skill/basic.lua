@@ -83,6 +83,16 @@ hskill.pause = function(whichUnit, during, pauseColor)
     if (during < 0) then
         during = 0.01 -- 假如没有设置时间，默认打断效果
     end
+    local rgba = nil
+    if (pauseColor == "black") then
+        rgba = { 30, 30, 30 }
+    elseif (pauseColor == "blue") then
+        rgba = { 30, 30, 220 }
+    elseif (pauseColor == "red") then
+        rgba = { 220, 30, 30 }
+    elseif (pauseColor == "green") then
+        rgba = { 30, 220, 30 }
+    end
     local prevTimer = hskill.get(whichUnit, "pauseTimer")
     local prevTimeRemaining = 0
     if (prevTimer ~= nil) then
@@ -94,14 +104,9 @@ hskill.pause = function(whichUnit, during, pauseColor)
             prevTimeRemaining = 0
         end
     end
-    if (pauseColor == "black") then
-        hunit.setRGB(whichUnit, 30, 30, 30)
-    elseif (pauseColor == "blue") then
-        hunit.setRGB(whichUnit, 30, 30, 200)
-    elseif (pauseColor == "red") then
-        hunit.setRGB(whichUnit, 200, 30, 30)
-    elseif (pauseColor == "green") then
-        hunit.setRGB(whichUnit, 30, 200, 30)
+    local colorBuff = nil
+    if (rgba) then
+        colorBuff = hunit.setRGBA(whichUnit, rgba[1], rgba[2], rgba[3])
     end
     cj.SetUnitTimeScale(whichUnit, 0.00)
     cj.PauseUnit(whichUnit, true)
@@ -113,8 +118,8 @@ hskill.pause = function(whichUnit, during, pauseColor)
             function(t)
                 htime.delTimer(t)
                 cj.PauseUnit(whichUnit, false)
-                if (string.len(pauseColor) ~= nil) then
-                    hunit.resetRGB(whichUnit)
+                if (colorBuff ~= nil) then
+                    hunit.delRGBA(whichUnit, colorBuff)
                 end
                 cj.SetUnitTimeScale(whichUnit, 1)
             end

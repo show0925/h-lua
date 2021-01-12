@@ -47,7 +47,7 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
         hRuntime.buff[handleUnit][groupKey].log = {}
     end
     local uk = hbuff.uniqueKey()
-    hRuntime.buff[handleUnit][groupKey][uk] = rollback
+    hRuntime.buff[handleUnit][groupKey][uk] = { purpose = purpose, rollback = rollback }
     table.insert(hRuntime.buff[handleUnit][groupKey].log, uk)
     if (during > 0) then
         htime.setTimeout(during, function(curTimer)
@@ -59,7 +59,33 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
             end
         end)
     end
-    return string.implode('|', { groupKey, hbuff.uniqueKey() })
+    return string.implode('|', { groupKey, uk })
+end
+
+--- 使一个buff强制执行一次purpose
+--- buff被删除时会回到原来的状态
+---@param handleUnit userdata
+---@param buffKey string 由 groupKey|uniqueKey 组成,如果没有uniqueKey则清空所有groupKey下的buff
+hbuff.purpose = function(handleUnit, buffKey)
+    if (handleUnit == nil or buffKey == nil) then
+        return
+    end
+    if (his.deleted(handleUnit)) then
+        return
+    end
+    local ebk = string.explode('|', buffKey)
+    local groupKey = ebk[1] or nil
+    local uk = math.floor(ebk[2] or 0)
+    if (groupKey == nil or uk == 0) then
+        return
+    end
+    if (hRuntime.buff[handleUnit] ~= nil) then
+        if (hRuntime.buff[handleUnit][groupKey] ~= nil) then
+            if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
+                hRuntime.buff[handleUnit][groupKey][uk].purpose()
+            end
+        end
+    end
 end
 
 --- 删除一个buff
@@ -85,14 +111,15 @@ hbuff.delete = function(handleUnit, buffKey)
                 -- 删除group下所有buff
                 for _, _uk in ipairs(hRuntime.buff[handleUnit].log) do
                     if (hRuntime.buff[handleUnit][groupKey][_uk] ~= nil) then
-                        hRuntime.buff[handleUnit][groupKey][_uk]() --rollback
+                        hRuntime.buff[handleUnit][groupKey][_uk].rollback() --rollback
                     end
                 end
                 hRuntime.buff[handleUnit][groupKey] = nil
             else
                 -- 删除uk指向buff
+                uk = math.floor(uk)
                 if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
-                    hRuntime.buff[handleUnit][groupKey][uk]() --rollback
+                    hRuntime.buff[handleUnit][groupKey][uk].rollback() --rollback
                     hRuntime.buff[handleUnit][groupKey][uk] = nil
                     table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
                 end

@@ -318,7 +318,7 @@ end
 ---@param blue number 0-255
 ---@param opacity number 不透明度 0.0-1.0
 ---@param during number 持续时间
-hunit.setRGB = function(whichUnit, red, green, blue, opacity, during)
+hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
     if (whichUnit == nil or his.deleted(whichUnit)) then
         return
     end
@@ -326,35 +326,39 @@ hunit.setRGB = function(whichUnit, red, green, blue, opacity, during)
     local uSlk = hunit.getSlk(whichUnit)
     local rgba = hunit.get(whichUnit, 'rgba')
     if (rgba == nil) then
-        rgba = { { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0, 0 } }
+        rgba = { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0 }
         hunit.set(whichUnit, 'rgba', rgba)
     end
-    red = math.max(0, math.min(255, red or rgba[#rgba][1]))
-    green = math.max(0, math.min(255, green or rgba[#rgba][2]))
-    blue = math.max(0, math.min(255, blue or rgba[#rgba][3]))
-    opacity = math.max(0, math.min(1, opacity or rgba[#rgba][4]))
-    cj.SetUnitVertexColor(whichUnit, red, green, blue, 255 * opacity)
-    table.insert(rgba, { red, green, blue, opacity, -during })
-    if (during > 0) then
-        htime.setTimeout(during, function(t)
-            htime.delTimer(t)
-            for i = #rgba, 1, -1 do
-                if (rgba[i][1] == red and rgba[i][2] == green and rgba[i][3] == blue and rgba[i][4] == opacity and rgba[i][5] == -during) then
-                    table.remove(rgba, i)
-                    break
-                end
+    red = math.max(0, math.min(255, red or rgba[1]))
+    green = math.max(0, math.min(255, green or rgba[2]))
+    blue = math.max(0, math.min(255, blue or rgba[3]))
+    opacity = math.max(0, math.min(1, opacity or rgba[4]))
+    return hbuff.create(during, whichUnit, 'rgba',
+        function()
+            cj.SetUnitVertexColor(whichUnit, red, green, blue, 255 * opacity)
+            hunit.set(whichUnit, 'rgba', { red, green, blue, opacity })
+        end,
+        function()
+            if (hRuntime.buff[whichUnit].rgba.log and #hRuntime.buff[whichUnit].rgba.log > 1) then
+                local uk = hRuntime.buff[whichUnit].rgba.log[#hRuntime.buff[whichUnit].rgba.log - 1]
+                hbuff.purpose(whichUnit, string.implode('|', { 'rgba', uk }))
+            else
+                cj.SetUnitVertexColor(whichUnit, math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 255)
             end
-            local last = rgba[#rgba]
-            cj.SetUnitVertexColor(whichUnit, last[1], last[2], last[3], 255 * last[4])
-        end)
-    end
+        end
+    )
+end
+
+--- 根据buffKey删除单位的一次的变色
+---@param whichUnit userdata
+hunit.delRGBA = function(whichUnit, buffKey)
+    hbuff.delete(whichUnit, buffKey)
 end
 
 --- 重置单位的三原色
---- 指最后一次记忆的颜色，非物编颜色
 ---@param whichUnit userdata
-hunit.resetRGB = function(whichUnit)
-    hunit.setRGB(whichUnit, nil, nil, nil, nil)
+hunit.resetRGBA = function(whichUnit)
+    hbuff.delete(whichUnit, 'rgba')
 end
 
 --- 获取单位当前归属玩家
@@ -593,7 +597,7 @@ hunit.create = function(options)
         end
         -- RBGA
         if (options.red ~= nil or options.green ~= nil or options.blue ~= nil or options.opacity ~= nil) then
-            hunit.setRGB(u, options.red, options.green, options.blue, options.opacity)
+            hunit.setRGBA(u, options.red, options.green, options.blue, options.opacity)
         end
         if (options.attackX ~= nil and options.attackY ~= nil) then
             cj.IssuePointOrder(u, "attack", options.attackX, options.attackY)

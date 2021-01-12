@@ -1352,6 +1352,7 @@ hskill.leap = function(options)
     local tokenArrowOpacity = options.tokenArrowOpacity or 1.00
     local tokenArrowHeight = options.tokenArrowHeight or 0
     local oneHitOnly = options.oneHitOnly or false
+    local colorBuff = nil
     --这里要注意：targetUnit比xy优先
     local leapType
     local initFacing = 0
@@ -1401,7 +1402,7 @@ hskill.leap = function(options)
     cj.SetUnitPathing(arrowUnit, false)
     if (leapType == "unit") then
         hunit.setInvulnerable(arrowUnit, true)
-        hunit.setRGB(arrowUnit, nil, nil, nil, tokenArrowOpacity)
+        colorBuff = hunit.setRGBA(arrowUnit, nil, nil, nil, tokenArrowOpacity)
     end
     --开始冲鸭
     htime.setInterval(
@@ -1420,7 +1421,9 @@ hskill.leap = function(options)
                 if (leapType == "unit") then
                     hunit.setInvulnerable(arrowUnit, false)
                     cj.SetUnitPathing(arrowUnit, true)
-                    hunit.resetRGB(arrowUnit)
+                    if (colorBuff) then
+                        hunit.delRGBA(arrowUnit, colorBuff)
+                    end
                 else
                     hunit.kill(arrowUnit, 0)
                 end
@@ -1509,17 +1512,15 @@ hskill.leap = function(options)
                 end
                 if (damageEndRadius == 0 and options.targetUnit ~= nil) then
                     if (damageEnd > 0) then
-                        hskill.damage(
-                            {
-                                sourceUnit = options.sourceUnit,
-                                targetUnit = options.targetUnit,
-                                damage = damageEnd,
-                                damageSrc = options.damageSrc,
-                                damageType = options.damageType,
-                                isFixed = options.isFixed,
-                                effect = options.damageEffect
-                            }
-                        )
+                        hskill.damage({
+                            sourceUnit = options.sourceUnit,
+                            targetUnit = options.targetUnit,
+                            damage = damageEnd,
+                            damageSrc = options.damageSrc,
+                            damageType = options.damageType,
+                            isFixed = options.isFixed,
+                            effect = options.damageEffect
+                        })
                     end
                     if (type(extraInfluence) == "function") then
                         extraInfluence(options.targetUnit)
@@ -1528,17 +1529,15 @@ hskill.leap = function(options)
                     local g = hgroup.createByUnit(arrowUnit, damageEndRadius, filter)
                     hgroup.loop(g, function(eu)
                         if (damageEnd > 0) then
-                            hskill.damage(
-                                {
-                                    sourceUnit = options.sourceUnit,
-                                    targetUnit = eu,
-                                    damage = damageEnd,
-                                    damageSrc = options.damageSrc,
-                                    damageType = options.damageType,
-                                    isFixed = options.isFixed,
-                                    effect = options.damageEffect
-                                }
-                            )
+                            hskill.damage({
+                                sourceUnit = options.sourceUnit,
+                                targetUnit = eu,
+                                damage = damageEnd,
+                                damageSrc = options.damageSrc,
+                                damageType = options.damageType,
+                                isFixed = options.isFixed,
+                                effect = options.damageEffect
+                            })
                         end
                         if (type(extraInfluence) == "function") then
                             extraInfluence(eu)
@@ -1549,7 +1548,9 @@ hskill.leap = function(options)
                 if (leapType == "unit") then
                     hunit.setInvulnerable(arrowUnit, false)
                     cj.SetUnitPathing(arrowUnit, true)
-                    hunit.resetRGB(arrowUnit)
+                    if (colorBuff ~= nil) then
+                        hunit.delRGBA(arrowUnit, colorBuff)
+                    end
                     hunit.portal(arrowUnit, txy.x, txy.y)
                 else
                     hunit.kill(arrowUnit, 0)
