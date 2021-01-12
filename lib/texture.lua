@@ -53,6 +53,9 @@ end
 ---@param green number 0-255
 ---@param blue number 0-255
 htexture.mark = function(path, during, whichPlayer, red, green, blue)
+    if (path == nil) then
+        return
+    end
     red = red or 255
     green = green or 255
     blue = blue or 255
