@@ -68,6 +68,7 @@ CONST_ATTR = {
     bomb = "爆破",
     lightning_chain = "闪电链",
     crack_fly = "击飞",
+    paw = "冲击",
     --
     odds = "几率",
     percent = "比例",

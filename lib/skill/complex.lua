@@ -1375,19 +1375,17 @@ hskill.leap = function(options)
     end
     if (arrowUnit == nil) then
         local cxy = math.polarProjection(hunit.x(prevUnit), hunit.y(prevUnit), 100, initFacing)
-        arrowUnit = hunit.create(
-            {
-                register = false,
-                whichPlayer = hunit.getOwner(sourceUnit),
-                unitId = hskill.SKILL_LEAP,
-                x = cxy.x,
-                y = cxy.y,
-                facing = initFacing,
-                modelScale = tokenArrowScale,
-                opacity = tokenArrowOpacity,
-                qty = 1
-            }
-        )
+        arrowUnit = hunit.create({
+            register = false,
+            whichPlayer = hunit.getOwner(sourceUnit),
+            unitId = hskill.SKILL_LEAP,
+            x = cxy.x,
+            y = cxy.y,
+            facing = initFacing,
+            modelScale = tokenArrowScale,
+            opacity = tokenArrowOpacity,
+            qty = 1
+        })
         if (tokenArrowHeight > 0) then
             hunit.setFlyHeight(arrowUnit, tokenArrowHeight, 9999)
         end

@@ -176,17 +176,18 @@ slkHelper.attrDesc = function(attr, sep, indent)
                                 end
                                 temp2 = temp2 .. valLabel .. "的" .. actionFieldLabel
                             elseif (actionType == 'spec') then
+                                actionFieldLabel = vv["alias"] or actionFieldLabel
                                 if (actionField == "knocking") then
                                     temp2 = temp2
-                                        .. "对" .. target .. "造成" .. valLabel .. "的" .. actionFieldLabel .. "伤害"
+                                        .. "对" .. target .. "造成" .. valLabel .. "的" .. actionFieldLabel .. "的伤害"
                                 elseif (actionField == "split") then
                                     temp2 = temp2
                                         .. actionFieldLabel .. "攻击" .. radius .. "范围的"
-                                        .. target .. ",造成" .. valLabel .. "伤害"
+                                        .. target .. ",造成" .. valLabel .. "的伤害"
                                 elseif (actionField == "bomb") then
                                     temp2 = temp2
                                         .. actionFieldLabel .. radius .. "范围的" .. target
-                                        .. ",造成" .. valLabel .. "伤害"
+                                        .. ",造成" .. valLabel .. "的伤害"
                                 elseif (table.includes(actionField, { "swim", "silent", "unarm", "fetter" })) then
                                     temp2 = temp2
                                         .. actionFieldLabel .. "目标" .. during .. "秒"
@@ -197,7 +198,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
                                 elseif (actionField == "lightning_chain") then
                                     temp2 = temp2
                                         .. "对最多" .. qty .. "个目标"
-                                        .. "发动" .. valLabel .. "伤害的" .. actionFieldLabel
+                                        .. "发动" .. valLabel .. "的伤害的" .. actionFieldLabel
                                     if (rate > 0) then
                                         temp2 = temp2 .. ",每次跳跃渐强" .. rate .. "%"
                                     elseif (rate < 0) then
@@ -206,7 +207,11 @@ slkHelper.attrDesc = function(attr, sep, indent)
                                 elseif (actionField == "crack_fly") then
                                     temp2 = temp2
                                         .. actionFieldLabel .. "目标达" .. height .. "高度并击退" .. distance .. "距离"
-                                        .. ",同时造成" .. valLabel .. "伤害"
+                                        .. ",同时造成" .. valLabel .. "的伤害"
+                                elseif (actionField == "paw") then
+                                    temp2 = temp2
+                                        .. "向前方击出" .. qty .. "道" .. actionFieldLabel
+                                        .. ",对直线" .. radius .. "范围的" .. target .. "造成" .. valLabel .. "的伤害"
                                 end
                             end
                             table.insert(tempStr, indent .. temp2)

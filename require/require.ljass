@@ -7,6 +7,7 @@
 #include "./../const/target.lua"
 #include "./../const/hSlkKeys.lua"
 #include "./../const/abilityTarget.lua"
+#include "./../const/damageType.lua"
 #include "./../foundation/json.lua"
 #include "./../foundation/table.lua"
 #include "./../foundation/string.lua"

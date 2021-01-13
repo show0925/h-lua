@@ -46,7 +46,7 @@ hattribute.xtrasPassAlive = function(targetUnit, type, field)
     if (type == 'attr') then
         return false
     elseif (type == 'spec') then
-        if (field == 'split' or field == 'bomb') then
+        if (field == 'split' or field == 'bomb' or field == 'paw') then
             return true
         end
     end
@@ -126,25 +126,26 @@ end
 ---         height 高度 (* 只有击飞有效)
 --- 惯用例子：
 --- hattr.set(unit, 0, {
---        xtras = {
---            add = {
---                { on = CONST_EVENT.attack, action = "triggerUnit.attr.attack_speed", odds = 20.0, val = 1.5, during = 3.0, effect = nil },
---                { on = CONST_EVENT.attack, action = "attackUnit.attr.attack_speed", odds = 20.0, val = 1.5, during = 3.0, effect = nil },
---                { on = CONST_EVENT.skill, action = "castUnit.attr.attack_green", odds = 20.0, val = 2, during = 3.0, effect = nil },
---                { on = CONST_EVENT.item, action = "useUnit.attr.int_white", odds = 20.0, val = 2, during = 3.0, effect = nil },
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.knocking", odds = 100, percent = 100, effect = nil },
---                { on = CONST_EVENT.skill, action = "targetUnit.spec.violence", odds = 100, percent = 100, effect = nil },
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.split", odds = 100, percent = {30,50}, radius = 250 },
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.swim",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.broken",odds = 0.0, val = 0.0, effect = nil},
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.silent",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.unarm",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.fetter",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
---                { on = CONST_EVENT.attack, action = "targetUnit.spec.bomb",odds = 0.0, radius = 0.0, val = 0.0, effect = nil},
---                { on = CONST_EVENT.damage, action = "targetUnit.spec.lightning_chain", odds = 50, val = 100, qty = 0, rate = 0.0 },
---                { on = CONST_EVENT.beDamage, action = "sourceUnit.spec.crack_fly", odds = 50, val = 100, distance = 300, height = 200, during = 0.5 },
---            }
---        },
+--    xtras = {
+--      add = {
+--        { on = CONST_EVENT.attack, action = "triggerUnit.attr.attack_speed", odds = 20.0, val = 1.5, during = 3.0, effect = nil },
+--        { on = CONST_EVENT.attack, action = "attackUnit.attr.attack_speed", odds = 20.0, val = 1.5, during = 3.0, effect = nil },
+--        { on = CONST_EVENT.skill, action = "castUnit.attr.attack_green", odds = 20.0, val = 2, during = 3.0, effect = nil },
+--        { on = CONST_EVENT.item, action = "useUnit.attr.int_white", odds = 20.0, val = 2, during = 3.0, effect = nil },
+--        { on = CONST_EVENT.attack, action = "targetUnit.spec.knocking", odds = 100, percent = 100, effect = nil },
+--        { on = CONST_EVENT.skill, action = "targetUnit.spec.violence", odds = 100, percent = 100, effect = nil },
+--        { on = CONST_EVENT.attack, action = "targetUnit.spec.split", odds = 100, percent = {30,50}, radius = 250 },
+--        { on = CONST_EVENT.attack, action = "targetUnit.spec.swim",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
+--        { on = CONST_EVENT.attack, action = "targetUnit.spec.broken",odds = 0.0, val = 0.0, effect = nil},
+--        { on = CONST_EVENT.attack, action = "targetUnit.spec.silent",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
+--        { on = CONST_EVENT.attack, action = "targetUnit.spec.unarm",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
+--        { on = CONST_EVENT.attack, action = "targetUnit.spec.fetter",odds = 0.0, val = 0.0, during = 0.0, effect = nil},
+--        { on = CONST_EVENT.attack, action = "targetUnit.spec.bomb",odds = 0.0, radius = 0.0, val = 0.0, effect = nil},
+--        { on = CONST_EVENT.damage, action = "targetUnit.spec.lightning_chain", odds = 50, val = 100, qty = 0, rate = 0.0 },
+--        { on = CONST_EVENT.beDamage, action = "sourceUnit.spec.crack_fly", odds = 50, val = 100, distance = 300, height = 200, during = 0.5 },
+--        { on = CONST_EVENT.attack, action = "sourceUnit.spec.paw", odds = 50, val = 'damage', effect = 'Abilities\\Weapons\\GargoyleMissile\\GargoyleMissile.mdl', radius = 50, odds = 50, speed = 10, deg = 30, distance = 500, qty = 3 },
+--      }
+--    },
 --  })
 ---@private
 hattribute.xtras = function(triggerUnit, eventKey, evtData)
@@ -328,87 +329,107 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                     })
                                 elseif (actionField == "unarm") then
                                     --缴械
-                                    hskill.unarm(
-                                        {
-                                            targetUnit = targetUnit,
-                                            odds = x.odds,
-                                            damage = val,
-                                            during = x.during,
-                                            sourceUnit = triggerUnit,
-                                            effect = x.effect,
-                                            damageType = damageType,
-                                            damageSrc = damageSrc,
-                                            isFixed = true,
-                                        }
-                                    )
+                                    hskill.unarm({
+                                        targetUnit = targetUnit,
+                                        odds = x.odds,
+                                        damage = val,
+                                        during = x.during,
+                                        sourceUnit = triggerUnit,
+                                        effect = x.effect,
+                                        damageType = damageType,
+                                        damageSrc = damageSrc,
+                                        isFixed = true,
+                                    })
                                 elseif (actionField == "fetter") then
                                     --缚足
-                                    hskill.fetter(
-                                        {
-                                            targetUnit = targetUnit,
-                                            odds = x.odds,
-                                            damage = val,
-                                            during = x.during,
-                                            sourceUnit = triggerUnit,
-                                            effect = x.effect,
-                                            damageType = damageType,
-                                            damageSrc = damageSrc,
-                                            isFixed = true,
-                                        }
-                                    )
+                                    hskill.fetter({
+                                        targetUnit = targetUnit,
+                                        odds = x.odds,
+                                        damage = val,
+                                        during = x.during,
+                                        sourceUnit = triggerUnit,
+                                        effect = x.effect,
+                                        damageType = damageType,
+                                        damageSrc = damageSrc,
+                                        isFixed = true,
+                                    })
                                 elseif (actionField == "bomb") then
                                     --爆破
-                                    hskill.bomb(
-                                        {
-                                            odds = x.odds,
-                                            damage = val,
-                                            radius = x.radius,
-                                            targetUnit = targetUnit,
-                                            sourceUnit = triggerUnit,
-                                            effect = x.effect,
-                                            effectEnum = x.effectEnum,
-                                            damageType = damageType,
-                                            damageSrc = damageSrc,
-                                            isFixed = true,
-                                        }
-                                    )
+                                    hskill.bomb({
+                                        odds = x.odds,
+                                        damage = val,
+                                        radius = x.radius,
+                                        targetUnit = targetUnit,
+                                        sourceUnit = triggerUnit,
+                                        effect = x.effect,
+                                        effectEnum = x.effectEnum,
+                                        damageType = damageType,
+                                        damageSrc = damageSrc,
+                                        isFixed = true,
+                                    })
                                 elseif (actionField == "lightning_chain") then
                                     --闪电链
-                                    hskill.lightningChain(
-                                        {
-                                            odds = x.odds,
-                                            damage = val,
-                                            lightningType = x.lightning_type,
-                                            qty = x.qty,
-                                            rate = x.rate,
-                                            radius = x.radius or 500,
-                                            effect = x.effect,
-                                            isRepeat = false,
-                                            targetUnit = targetUnit,
-                                            prevUnit = triggerUnit,
-                                            sourceUnit = triggerUnit,
-                                            damageType = damageType,
-                                            damageSrc = damageSrc,
-                                            isFixed = true,
-                                        }
-                                    )
+                                    hskill.lightningChain({
+                                        odds = x.odds,
+                                        damage = val,
+                                        lightningType = x.lightning_type,
+                                        qty = x.qty,
+                                        rate = x.rate,
+                                        radius = x.radius or 500,
+                                        effect = x.effect,
+                                        isRepeat = false,
+                                        targetUnit = targetUnit,
+                                        prevUnit = triggerUnit,
+                                        sourceUnit = triggerUnit,
+                                        damageType = damageType,
+                                        damageSrc = damageSrc,
+                                        isFixed = true,
+                                    })
                                 elseif (actionField == "crack_fly") then
                                     --击飞
-                                    hskill.crackFly(
-                                        {
-                                            odds = x.odds,
-                                            damage = val,
-                                            targetUnit = targetUnit,
-                                            sourceUnit = triggerUnit,
-                                            distance = x.distance,
+                                    hskill.crackFly({
+                                        odds = x.odds,
+                                        damage = val,
+                                        targetUnit = targetUnit,
+                                        sourceUnit = triggerUnit,
+                                        distance = x.distance,
+                                        height = x.height,
+                                        during = x.during,
+                                        effect = x.effect,
+                                        damageType = damageType,
+                                        damageSrc = damageSrc,
+                                        isFixed = true,
+                                    })
+                                elseif (actionField == "paw") then
+                                    --支线冲击效果，只支持token箭矢对坐标形式
+                                    if (math.random(1, 1000) <= x.odds * 10) then
+                                        local pxy = math.polarProjection(
+                                            hunit.x(triggerUnit), hunit.y(triggerUnit),
+                                            x.distance or 300,
+                                            math.getDegBetweenUnit(triggerUnit, targetUnit)
+                                        )
+                                        hskill.leapPaw({
+                                            tokenArrow = x.effect,
                                             height = x.height,
-                                            during = x.during,
-                                            effect = x.effect,
+                                            qty = x.qty or 1,
+                                            deg = x.deg or 15,
+                                            speed = x.speed or 8,
+                                            acceleration = x.acceleration or 0,
+                                            damageMovementRadius = x.radius or 50,
+                                            tokenArrowHeight = 20,
+                                            damageMovement = val,
+                                            damageMovementRepeat = false,
                                             damageType = damageType,
                                             damageSrc = damageSrc,
+                                            sourceUnit = triggerUnit,
+                                            x = pxy.x,
+                                            y = pxy.y,
                                             isFixed = true,
-                                        }
-                                    )
+                                            filter = function(filterUnit)
+                                                return (his.enemy(filterUnit, triggerUnit) and his.alive(filterUnit) and (false == his.structure(filterUnit)))
+                                            end
+                                        })
+                                    end
                                 end
                             end
                         end
