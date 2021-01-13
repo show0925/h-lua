@@ -17,7 +17,7 @@ hattribute.xtrasSupportEvents = {
     CONST_EVENT.crackFly, CONST_EVENT.beCrackFly,
     CONST_EVENT.rebound, CONST_EVENT.beRebound,
     CONST_EVENT.knocking, CONST_EVENT.beKnocking,
-    CONST_EVENT.spilt, CONST_EVENT.beSpilt,
+    CONST_EVENT.split, CONST_EVENT.beSplit,
     CONST_EVENT.hemophagia, CONST_EVENT.beHemophagia, CONST_EVENT.skillHemophagia, CONST_EVENT.beSkillHemophagia,
     CONST_EVENT.punish, CONST_EVENT.dead, CONST_EVENT.kill, CONST_EVENT.reborn, CONST_EVENT.levelUp,
     CONST_EVENT.moveStart, CONST_EVENT.moving, CONST_EVENT.moveStop, CONST_EVENT.holdOn, CONST_EVENT.stop,

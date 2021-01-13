@@ -75,9 +75,9 @@ func main() {
 	allCodes := ""
 	for _, iniItem := range split {
 		if len(iniItem) > 0 {
-			itemSpilt := strings.Split(iniItem, "=")
-			itemKey := itemSpilt[0]
-			iniRawData[itemKey] = itemSpilt[1]
+			itemSplit := strings.Split(iniItem, "=")
+			itemKey := itemSplit[0]
+			iniRawData[itemKey] = itemSplit[1]
 		}
 	}
 	iniPaths = php2go.Explode(",", iniRawData["paths"])

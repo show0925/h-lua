@@ -676,21 +676,21 @@ hevent.onBeKnocking = function(whichUnit, callFunc)
 end
 
 --- 分裂时
----@alias onSpilt fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位",damage:"伤害",radius:"分裂半径范围",percent:"增幅百分比"}):void
+---@alias onSplit fun(evtData: {triggerUnit:"触发单位",targetUnit:"目标单位",damage:"伤害",radius:"分裂半径范围",percent:"增幅百分比"}):void
 ---@param whichUnit userdata
----@param callFunc onSpilt | "function(evtData) end"
+---@param callFunc onSplit | "function(evtData) end"
 ---@return any
-hevent.onSpilt = function(whichUnit, callFunc)
-    return hevent.registerEvent(whichUnit, CONST_EVENT.spilt, callFunc)
+hevent.onSplit = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.split, callFunc)
 end
 
 --- 承受分裂时
----@alias onBeSpilt fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",damage:"伤害",radius:"分裂半径范围",percent:"增幅百分比"}):void
+---@alias onBeSplit fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",damage:"伤害",radius:"分裂半径范围",percent:"增幅百分比"}):void
 ---@param whichUnit userdata
----@param callFunc onBeSpilt | "function(evtData) end"
+---@param callFunc onBeSplit | "function(evtData) end"
 ---@return any
-hevent.onBeSpilt = function(whichUnit, callFunc)
-    return hevent.registerEvent(whichUnit, CONST_EVENT.beSpilt, callFunc)
+hevent.onBeSplit = function(whichUnit, callFunc)
+    return hevent.registerEvent(whichUnit, CONST_EVENT.beSplit, callFunc)
 end
 
 --- 吸血时

@@ -146,7 +146,7 @@ hskill.split = function(options)
         -- @触发被分裂事件
         hevent.triggerEvent(
             targetUnit,
-            CONST_EVENT.beSpilt,
+            CONST_EVENT.beSplit,
             {
                 triggerUnit = targetUnit,
                 sourceUnit = options.sourceUnit,
