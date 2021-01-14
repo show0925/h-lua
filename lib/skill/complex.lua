@@ -1290,11 +1290,13 @@ end
         y, --冲击的y坐标（可选的，对点冲击，与某目标无关）
         speed = 10, --冲击的速度（可选的，默认10，0.02秒的移动距离,大概1秒500px)
         acceleration = 0, --冲击加速度（可选的，每个周期都会增加0.02秒一次)
+        height = 0, --飞跃高度（可选的，默认0)
+        shake = 0, --摇摆振幅角度[-90~+90]（可选的，默认0)
         filter = [function], --必须有
         tokenArrow = nil, --前冲的特效（arrowUnit=nil时认为必须！自身冲击就是bind，否则为马甲本身，如冲击波的波）
         tokenArrowScale = 1.00, --前冲的特效作为马甲冲击时的模型缩放
         tokenArrowOpacity = 1.00, --前冲的特效作为马甲冲击时的模型透明度[0-1]
-        tokenArrowHeight = 0.00, --前冲的特效作为马甲冲击时的离地高度
+        tokenArrowHeight = 0.00, --前冲的特效作为马甲冲击时的初始离地高度
         effectMovement = nil, --移动过程，每个间距的特效（可选的，采用的0秒删除法，请使用explode类型的特效）
         effectEnd = nil, --到达最后位置时的特效（可选的，采用的0秒删除法，请使用explode类型的特效）
         damageMovement = 0, --移动过程中的伤害（可选的，默认为0）
@@ -1330,6 +1332,13 @@ hskill.leap = function(options)
     end
     local frequency = 0.02
     local acceleration = options.acceleration or 0
+    local height = options.height or 0
+    local shake = options.shake or 0
+    if (shake > 90) then
+        shake = 90 -- 最大偏振角度
+    elseif (shake < -90) then
+        shake = -90 -- 最小偏振角度
+    end
     local speed = options.speed or 10
     if (speed > 150) then
         speed = 150 -- 最大速度
@@ -1352,7 +1361,8 @@ hskill.leap = function(options)
     local tokenArrowOpacity = options.tokenArrowOpacity or 1.00
     local tokenArrowHeight = options.tokenArrowHeight or 0
     local oneHitOnly = options.oneHitOnly or false
-    local colorBuff = nil
+    local colorBuff
+    local distanceOrigin
     --这里要注意：targetUnit比xy优先
     local leapType
     local initFacing = 0
@@ -1363,8 +1373,10 @@ hskill.leap = function(options)
     end
     if (options.targetUnit ~= nil) then
         initFacing = math.getDegBetweenUnit(prevUnit, options.targetUnit)
+        distanceOrigin = math.getDistanceBetweenUnit(prevUnit, options.targetUnit)
     elseif (options.x ~= nil and options.y ~= nil) then
         initFacing = math.getDegBetweenXY(hunit.x(prevUnit), hunit.y(prevUnit), options.x, options.y)
+        distanceOrigin = math.getDistanceBetweenXY(hunit.x(prevUnit), hunit.y(prevUnit), options.x, options.y)
     else
         print_err("leapType: -unknow")
         return
@@ -1390,17 +1402,87 @@ hskill.leap = function(options)
             hunit.setFlyHeight(arrowUnit, tokenArrowHeight, 9999)
         end
     end
+    local heightOrigin = cj.GetUnitFlyHeight(arrowUnit)
     cj.SetUnitFacing(arrowUnit, initFacing)
     --绑定一个无限的effect
     local tempEffectArrow
     if (tokenArrow ~= nil) then
         tempEffectArrow = heffect.bindUnit(tokenArrow, arrowUnit, "origin", -1)
     end
-    --无敌加无路径
+    -- 无敌加无路径
     cj.SetUnitPathing(arrowUnit, false)
     if (leapType == "unit") then
         hunit.setInvulnerable(arrowUnit, true)
         colorBuff = hunit.setRGBA(arrowUnit, nil, nil, nil, tokenArrowOpacity)
+    end
+    -- 结束！
+    local ending = function(endX, endY)
+        if (tempEffectArrow ~= nil) then
+            heffect.del(tempEffectArrow)
+        end
+        if (repeatGroup ~= nil) then
+            repeatGroup = nil
+        end
+        if (tokenArrowHeight > 0) then
+            hunit.setFlyHeight(arrowUnit, tokenArrowHeight, 9999)
+        else
+            hunit.setFlyHeight(arrowUnit, heightOrigin, 9999)
+        end
+        if (his.alive(arrowUnit)) then
+            if (options.effectEnd ~= nil) then
+                heffect.toXY(options.effectEnd, endX, endY, 0)
+            end
+            if (damageEndRadius == 0 and options.targetUnit ~= nil) then
+                if (damageEnd > 0) then
+                    hskill.damage({
+                        sourceUnit = options.sourceUnit,
+                        targetUnit = options.targetUnit,
+                        damage = damageEnd,
+                        damageSrc = options.damageSrc,
+                        damageType = options.damageType,
+                        isFixed = options.isFixed,
+                        effect = options.damageEffect
+                    })
+                end
+                if (type(extraInfluence) == "function") then
+                    extraInfluence(options.targetUnit)
+                end
+            elseif (damageEndRadius > 0) then
+                local g = hgroup.createByUnit(arrowUnit, damageEndRadius, filter)
+                hgroup.loop(g, function(eu)
+                    if (damageEnd > 0) then
+                        hskill.damage({
+                            sourceUnit = options.sourceUnit,
+                            targetUnit = eu,
+                            damage = damageEnd,
+                            damageSrc = options.damageSrc,
+                            damageType = options.damageType,
+                            isFixed = options.isFixed,
+                            effect = options.damageEffect
+                        })
+                    end
+                    if (type(extraInfluence) == "function") then
+                        extraInfluence(eu)
+                    end
+                end)
+                g = nil
+            end
+        end
+        if (leapType == "unit") then
+            hunit.setInvulnerable(arrowUnit, false)
+            cj.SetUnitPathing(arrowUnit, true)
+            if (colorBuff) then
+                hunit.delRGBA(arrowUnit, colorBuff)
+            end
+            if (his.alive(arrowUnit)) then
+                hunit.portal(arrowUnit, endX, endY)
+            end
+        else
+            hunit.kill(arrowUnit, 0)
+        end
+        if (type(options.onEnding) == "function") then
+            options.onEnding(endX, endY)
+        end
     end
     --开始冲鸭
     htime.setInterval(
@@ -1410,24 +1492,7 @@ hskill.leap = function(options)
             local ay = hunit.y(arrowUnit)
             if (his.dead(sourceUnit)) then
                 htime.delTimer(t)
-                if (tempEffectArrow ~= nil) then
-                    heffect.del(tempEffectArrow)
-                end
-                if (repeatGroup ~= nil) then
-                    repeatGroup = nil
-                end
-                if (leapType == "unit") then
-                    hunit.setInvulnerable(arrowUnit, false)
-                    cj.SetUnitPathing(arrowUnit, true)
-                    if (colorBuff) then
-                        hunit.delRGBA(arrowUnit, colorBuff)
-                    end
-                else
-                    hunit.kill(arrowUnit, 0)
-                end
-                if (type(options.onEnding) == "function") then
-                    options.onEnding(ax, ay)
-                end
+                ending(ax, ay)
                 return
             end
             local tx = 0
@@ -1439,7 +1504,12 @@ hskill.leap = function(options)
                 tx = options.x
                 ty = options.y
             end
-            local fac = math.getDegBetweenXY(ax, ay, tx, ty)
+            local sh = 0
+            if (shake ~= 0) then
+                local d = math.getDistanceBetweenXY(hunit.x(arrowUnit), hunit.y(arrowUnit), tx, ty)
+                sh = shake * d / distanceOrigin
+            end
+            local fac = math.getDegBetweenXY(ax, ay, tx, ty) + sh
             local txy = math.polarProjection(ax, ay, speed, fac)
             if (acceleration ~= 0) then
                 speed = speed + acceleration
@@ -1497,65 +1567,14 @@ hskill.leap = function(options)
                 end
             end
             local distance = math.getDistanceBetweenXY(hunit.x(arrowUnit), hunit.y(arrowUnit), tx, ty)
+            if (height > 0 and distance < distanceOrigin) then
+                local ddh = 0.5 - distance / distanceOrigin
+                ddh = (heightOrigin + height) * (1 - math.abs(ddh) * 2)
+                hunit.setFlyHeight(arrowUnit, ddh, 9999)
+            end
             if (distance <= speed or speed <= 0 or his.dead(arrowUnit) == true) then
                 htime.delTimer(t)
-                if (tempEffectArrow ~= nil) then
-                    heffect.del(tempEffectArrow)
-                end
-                if (repeatGroup ~= nil) then
-                    repeatGroup = nil
-                end
-                if (options.effectEnd ~= nil) then
-                    heffect.toXY(options.effectEnd, txy.x, txy.y, 0)
-                end
-                if (damageEndRadius == 0 and options.targetUnit ~= nil) then
-                    if (damageEnd > 0) then
-                        hskill.damage({
-                            sourceUnit = options.sourceUnit,
-                            targetUnit = options.targetUnit,
-                            damage = damageEnd,
-                            damageSrc = options.damageSrc,
-                            damageType = options.damageType,
-                            isFixed = options.isFixed,
-                            effect = options.damageEffect
-                        })
-                    end
-                    if (type(extraInfluence) == "function") then
-                        extraInfluence(options.targetUnit)
-                    end
-                elseif (damageEndRadius > 0) then
-                    local g = hgroup.createByUnit(arrowUnit, damageEndRadius, filter)
-                    hgroup.loop(g, function(eu)
-                        if (damageEnd > 0) then
-                            hskill.damage({
-                                sourceUnit = options.sourceUnit,
-                                targetUnit = eu,
-                                damage = damageEnd,
-                                damageSrc = options.damageSrc,
-                                damageType = options.damageType,
-                                isFixed = options.isFixed,
-                                effect = options.damageEffect
-                            })
-                        end
-                        if (type(extraInfluence) == "function") then
-                            extraInfluence(eu)
-                        end
-                    end)
-                    g = nil
-                end
-                if (leapType == "unit") then
-                    hunit.setInvulnerable(arrowUnit, false)
-                    cj.SetUnitPathing(arrowUnit, true)
-                    if (colorBuff ~= nil) then
-                        hunit.delRGBA(arrowUnit, colorBuff)
-                    end
-                    hunit.portal(arrowUnit, txy.x, txy.y)
-                else
-                    hunit.kill(arrowUnit, 0)
-                end
-                if (type(options.onEnding) == "function") then
-                    options.onEnding(txy.x, txy.y)
-                end
+                ending(txy.x, txy.y)
             end
         end
     )
@@ -1621,6 +1640,8 @@ hskill.leapPaw = function(options)
                 y = txy.y,
                 speed = options.speed,
                 acceleration = options.acceleration,
+                height = options.height,
+                shake = options.shake,
                 filter = options.filter,
                 tokenArrow = options.tokenArrow,
                 tokenArrowScale = options.tokenArrowScale,
@@ -1690,6 +1711,8 @@ hskill.leapRange = function(options)
             sourceUnit = options.sourceUnit,
             speed = options.speed,
             acceleration = options.acceleration,
+            height = options.height,
+            shake = options.shake,
             filter = options.filter,
             tokenArrow = options.tokenArrow,
             tokenArrowScale = options.tokenArrowScale,

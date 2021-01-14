@@ -410,13 +410,14 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                         )
                                         hskill.leapPaw({
                                             tokenArrow = x.effect,
-                                            height = x.height,
                                             qty = x.qty or 1,
                                             deg = x.deg or 15,
                                             speed = x.speed or 8,
+                                            height = x.height or 0,
+                                            shake = x.shake or 0,
                                             acceleration = x.acceleration or 0,
                                             damageMovementRadius = x.radius or 50,
-                                            tokenArrowHeight = 20,
+                                            tokenArrowHeight = x.tokenArrowHeight or 0,
                                             damageMovement = val,
                                             damageMovementRepeat = false,
                                             damageType = damageType,
