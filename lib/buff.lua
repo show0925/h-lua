@@ -52,10 +52,17 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
     if (during > 0) then
         htime.setTimeout(during, function(curTimer)
             htime.delTimer(curTimer)
-            if (false == his.deleted(handleUnit) and hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
-                rollback()
-                hRuntime.buff[handleUnit][groupKey][uk] = nil
-                table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
+            if (his.deleted(handleUnit)) then
+                return
+            end
+            if (hRuntime.buff[handleUnit] ~= nil and hRuntime.buff[handleUnit][groupKey] ~= nil) then
+                if (hRuntime.buff[handleUnit][groupKey].log ~= nil) then
+                    table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
+                end
+                if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
+                    rollback()
+                    hRuntime.buff[handleUnit][groupKey][uk] = nil
+                end
             end
         end)
     end
