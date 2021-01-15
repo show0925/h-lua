@@ -5,17 +5,18 @@ end
 
 --- 自启动调试
 if (HLUA_DEBUG == true) then
-    ydruntime = require "jass.runtime"
-    ydruntime.console = true
-    ydruntime.debugger = 4279
-    ydruntime.error_handle = function(msg)
+    ydRuntime = require "jass.runtime"
+    ydRuntime.console = true
+    ydRuntime.sleep = false
+    ydRuntime.debugger = 4279
+    ydRuntime.error_handle = function(msg)
         print("========lua-err========")
         print(tostring(msg))
         print_stack()
         print("=========================")
     end
-    yddebug = require "jass.debug"
-    console = require "jass.console"
+    ydDebug = require "jass.debug"
+    ydConsole = require "jass.console"
 end
 
 ---
@@ -67,9 +68,7 @@ print_mb = function(...)
     if (HLUA_DEBUG == false) then
         return
     end
-    for _, str in ipairs({ ... }) do
-        console.write(str)
-    end
+    ydConsole.write(...)
 end
 
 --- 错误调试
