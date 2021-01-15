@@ -1291,8 +1291,10 @@ end
         speed = 10, --冲击的速度（可选的，默认10，0.02秒的移动距离,大概1秒500px)
         acceleration = 0, --冲击加速度（可选的，每个周期都会增加0.02秒一次)
         height = 0, --飞跃高度（可选的，默认0)
-        shake = 0, --摇摆振幅角度[-90~+90]（可选的，默认0)
+        shake = 0, --摇摆振幅角度[-90~+90|random]（可选的，默认0)
         filter = [function], --必须有
+        tokenX, --强制设定token初始创建的x坐标（可选的，同时设定tokenY时才有效）
+        tokenY, --强制设定token初始创建的y坐标（可选的，同时设定tokenX时才有效）
         tokenArrow = nil, --前冲的特效（arrowUnit=nil时认为必须！自身冲击就是bind，否则为马甲本身，如冲击波的波）
         tokenArrowScale = 1.00, --前冲的特效作为马甲冲击时的模型缩放
         tokenArrowOpacity = 1.00, --前冲的特效作为马甲冲击时的模型透明度[0-1]
@@ -1334,10 +1336,12 @@ hskill.leap = function(options)
     local acceleration = options.acceleration or 0
     local height = options.height or 0
     local shake = options.shake or 0
-    if (shake > 90) then
-        shake = 90 -- 最大偏振角度
-    elseif (shake < -90) then
-        shake = -90 -- 最小偏振角度
+    if (type(shake) == 'number') then
+        if (shake > 90) then
+            shake = 90 -- 最大偏振角度
+        elseif (shake < -90) then
+            shake = -90 -- 最小偏振角度
+        end
     end
     local speed = options.speed or 10
     if (speed > 150) then
@@ -1386,7 +1390,12 @@ hskill.leap = function(options)
         repeatGroup = {}
     end
     if (arrowUnit == nil) then
-        local cxy = math.polarProjection(hunit.x(prevUnit), hunit.y(prevUnit), 100, initFacing)
+        local cxy
+        if (options.tokenX and options.tokenY) then
+            cxy = { x = options.tokenX, y = options.tokenY }
+        else
+            cxy = math.polarProjection(hunit.x(prevUnit), hunit.y(prevUnit), 100, initFacing)
+        end
         arrowUnit = hunit.create({
             register = false,
             whichPlayer = hunit.getOwner(sourceUnit),
@@ -1398,6 +1407,7 @@ hskill.leap = function(options)
             opacity = tokenArrowOpacity,
             qty = 1
         })
+        cxy = nil
         if (tokenArrowHeight > 0) then
             hunit.setFlyHeight(arrowUnit, tokenArrowHeight, 9999)
         end
@@ -1506,6 +1516,9 @@ hskill.leap = function(options)
             end
             local sh = 0
             if (shake ~= 0) then
+                if (shake == 'random') then
+                    shake = math.random(-90, 90)
+                end
                 local d = math.getDistanceBetweenXY(hunit.x(arrowUnit), hunit.y(arrowUnit), tx, ty)
                 sh = shake * d / distanceOrigin
             end
@@ -1643,6 +1656,8 @@ hskill.leapPaw = function(options)
                 height = options.height,
                 shake = options.shake,
                 filter = options.filter,
+                tokenX = options.tokenX,
+                tokenY = options.tokenY,
                 tokenArrow = options.tokenArrow,
                 tokenArrowScale = options.tokenArrowScale,
                 tokenArrowOpacity = options.tokenArrowOpacity,
@@ -1714,6 +1729,8 @@ hskill.leapRange = function(options)
             height = options.height,
             shake = options.shake,
             filter = options.filter,
+            tokenX = options.tokenX,
+            tokenY = options.tokenY,
             tokenArrow = options.tokenArrow,
             tokenArrowScale = options.tokenArrowScale,
             tokenArrowOpacity = options.tokenArrowOpacity,
