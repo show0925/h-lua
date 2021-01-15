@@ -1557,17 +1557,15 @@ hskill.leap = function(options)
                             hgroup.addUnit(repeatGroup, eu)
                         end
                         if (damageMovement > 0) then
-                            hskill.damage(
-                                {
-                                    sourceUnit = sourceUnit,
-                                    targetUnit = eu,
-                                    damage = damageMovement,
-                                    damageSrc = options.damageSrc,
-                                    damageType = options.damageType,
-                                    isFixed = options.isFixed,
-                                    effect = options.damageEffect
-                                }
-                            )
+                            hskill.damage({
+                                sourceUnit = sourceUnit,
+                                targetUnit = eu,
+                                damage = damageMovement,
+                                damageSrc = options.damageSrc,
+                                damageType = options.damageType,
+                                isFixed = options.isFixed,
+                                effect = options.damageEffect
+                            })
                         end
                         if (damageMovementDrag == true) then
                             hunit.portal(eu, txy.x, txy.y)
