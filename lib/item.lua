@@ -1068,7 +1068,7 @@ hitem.copy = function(origin, target)
     end
 end
 
---- 令一个单位把物品仍在地上
+--- 令一个单位把物品扔在地上
 ---@param origin userdata
 ---@param slot nil|number 物品位置
 hitem.drop = function(origin, slot)
@@ -1077,30 +1077,26 @@ hitem.drop = function(origin, slot)
     end
     if (slot == nil) then
         for i = 0, 5, 1 do
-            local it = cj.nitItemInSlot(origin, i)
+            local it = cj.UnitItemInSlot(origin, i)
             if (it ~= nil) then
-                hitem.create(
-                    {
-                        itemId = hitem.getId(it),
-                        charges = hitem.getCharges(it),
-                        x = hunit.x(origin),
-                        x = hunit.y(origin)
-                    }
-                )
-                htime.del(it, 0)
-            end
-        end
-    else
-        local it = cj.nitItemInSlot(origin, slot)
-        if (it ~= nil) then
-            hitem.create(
-                {
+                hitem.create({
                     itemId = hitem.getId(it),
                     charges = hitem.getCharges(it),
                     x = hunit.x(origin),
                     x = hunit.y(origin)
-                }
-            )
+                })
+                htime.del(it, 0)
+            end
+        end
+    else
+        local it = cj.UnitItemInSlot(origin, slot)
+        if (it ~= nil) then
+            hitem.create({
+                itemId = hitem.getId(it),
+                charges = hitem.getCharges(it),
+                x = hunit.x(origin),
+                x = hunit.y(origin)
+            })
             htime.del(it, 0)
         end
     end
