@@ -1,6 +1,6 @@
 --- debug标志位
 if (HLUA_DEBUG == nil) then
-    HLUA_DEBUG = true --这句会在打包是变为false，当然变量名要与HLUA_DEBUG一致
+    HLUA_DEBUG = false --默认不开启调试
 end
 
 --- 自启动调试
