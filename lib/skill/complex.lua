@@ -602,7 +602,7 @@ hskill.unarm = function(options)
 end
 
 --[[
-    缚足
+    定身
     options = {
         targetUnit = unit, --目标单位，必须
         during = 0, --持续时间，必须
@@ -636,7 +636,7 @@ hskill.fetter = function(options)
         during = during * (1 - oppose * 0.01)
         damage = damage * (1 - oppose * 0.01)
     end
-    htextTag.style(htextTag.create2Unit(u, "缚足", 6.00, "ffa500", 10, 1.00, 10.00), "scale", 0, 0.2)
+    htextTag.style(htextTag.create2Unit(u, "定身", 6.00, "ffa500", 10, 1.00, 10.00), "scale", 0, 0.2)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
         heffect.bindUnit(options.effect, u, "origin", during)
     end
@@ -647,14 +647,14 @@ hskill.fetter = function(options)
                 sourceUnit = sourceUnit,
                 targetUnit = u,
                 damage = damage,
-                damageString = "缚足",
+                damageString = "定身",
                 damageSrc = options.damageSrc,
                 damageType = options.damageType,
                 isFixed = options.isFixed,
             }
         )
     end
-    -- @触发缚足事件
+    -- @触发定身事件
     hevent.triggerEvent(
         sourceUnit,
         CONST_EVENT.fetter,
@@ -666,7 +666,7 @@ hskill.fetter = function(options)
             during = during
         }
     )
-    -- @触发被缚足事件
+    -- @触发被定身事件
     hevent.triggerEvent(
         u,
         CONST_EVENT.beFetter,

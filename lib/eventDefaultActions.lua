@@ -912,16 +912,16 @@ hevent_default_actions = {
             local it = cj.GetManipulatedItem()
             local itId = hitem.getId(it)
             local perishable = hitem.getIsPerishable(itId)
+            --检测是否有匹配使用
+            local triggerData = hunit.get(u, "item-use-" .. itId, {})
+            hunit.set(u, "item-use-" .. itId, nil)
+            hitem.used(u, it, triggerData)
             --检测是否使用后自动消失，如果不是，次数补回1
             if (perishable == false) then
                 hitem.setCharges(it, hitem.getCharges(it) + 1)
             else
                 hitem.subProperty(u, itId, 1)
             end
-            --检测是否有匹配使用
-            local triggerData = hunit.get(u, "item-use-" .. itId, {})
-            hunit.set(u, "item-use-" .. itId, nil)
-            hitem.used(u, it, triggerData)
             --消失的清理cache
             if (perishable == true and hitem.getCharges(it) <= 0) then
                 hitem.del(it)

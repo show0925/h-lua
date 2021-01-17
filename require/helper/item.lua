@@ -337,6 +337,9 @@ slkHelper.item.normal = function(v)
     v.goldcost = v.goldcost or 0
     v.lumbercost = v.lumbercost or 0
     v.uses = v.uses or 1
+    if (_overlie < v.uses) then
+        _overlie = v.uses
+    end
     lv = math.floor((v.goldcost + v.lumbercost) / 500)
     if (lv < 1) then
         lv = 1
