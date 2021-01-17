@@ -95,7 +95,7 @@ end
 --- | - [效果参数] 如attr时，可以填attack_speed改攻速，而effect时可以填knocking触发暴击
 --- | - [其他参数] 其他的参数有常规通用的也有固定搭配，请看说明：
 ---         odds 触发几率>0(%)
----         during 持续时间>0，这个时间在不同场景意义不同(*attr有效、spec里的眩晕、沉默、缴械、缚足、击飞有效)
+---         during 持续时间>0，这个时间在不同场景意义不同(*attr有效、spec里的眩晕、沉默、缴械、定身、击飞有效)
 ---         effect 特效字符串，主特效
 ---         effectEnum 特效字符串，选取单位的 (* 爆破有效)
 ---
@@ -112,7 +112,7 @@ end
 ---                以点分隔，上例会自动获取evtData里面的"targetUnit"单位的拥有者,并使用玩家属性作为数据
 ---                第二个属性是gold|lumber时自动切换
 ---
----         percent 程度>0(%) 对val的补充，默认100%,可大于100% (*attr有效、spec里的眩晕、沉默、缴械、缚足、击飞有效)
+---         percent 程度>0(%) 对val的补充，默认100%,可大于100% (*attr有效、spec里的眩晕、沉默、缴械、定身、击飞有效)
 ---             也可填限定特殊的数据，详情如下：
 ---             1、数字型，如 100, 50
 -----           2、范围型如一个table {10, 90} 表示随机 10%~90%
@@ -341,7 +341,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                         isFixed = true,
                                     })
                                 elseif (actionField == "fetter") then
-                                    --缚足
+                                    --定身
                                     hskill.fetter({
                                         targetUnit = targetUnit,
                                         odds = x.odds,

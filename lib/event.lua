@@ -567,8 +567,8 @@ hevent.onBeUnarm = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.beUnarm, callFunc)
 end
 
---- 缚足成功
----@alias onFetter fun(evtData: {triggerUnit:"触发单位",targetUnit:"被缚足单位",odds:"几率百分比",during:"持续时间（秒）",damage:"伤害"}):void
+--- 定身成功
+---@alias onFetter fun(evtData: {triggerUnit:"触发单位",targetUnit:"被定身单位",odds:"几率百分比",during:"持续时间（秒）",damage:"伤害"}):void
 ---@param whichUnit userdata
 ---@param callFunc onFetter | "function(evtData) end"
 ---@return any
@@ -576,7 +576,7 @@ hevent.onFetter = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.fetter, callFunc)
 end
 
---- 被缚足
+--- 被定身
 ---@alias onBeFetter fun(evtData: {triggerUnit:"触发单位",sourceUnit:"来源单位",odds:"几率百分比",during:"持续时间（秒）",damage:"伤害"}):void
 ---@param whichUnit userdata
 ---@param callFunc onBeFetter | "function(evtData) end"
