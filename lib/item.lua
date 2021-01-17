@@ -243,6 +243,42 @@ hitem.getHSlk = function(itOrIdOrName)
     return nil
 end
 
+--- 判断一个物品是否影子物品的明面物品
+---@param itOrIdOrName userdata|string|number
+---@return boolean
+hitem.isShadowFront = function(itOrIdOrName)
+    local hs = hitem.getHSlk(itOrIdOrName)
+    if (hs == nil) then
+        return false
+    end
+    return (hs._shadow_id ~= nil and hs._type == "normal")
+end
+
+--- 判断一个物品是否影子物品的暗面物品
+---@param itOrIdOrName userdata|string|number
+---@return boolean
+hitem.isShadowBack = function(itOrIdOrName)
+    local hs = hitem.getHSlk(itOrIdOrName)
+    if (hs == nil) then
+        return false
+    end
+    return (hs._shadow_id ~= nil and hs._type == "shadow")
+end
+
+--- 获取一个物品的影子ID
+---@param itOrIdOrName userdata|string|number
+---@return string
+hitem.shadowID = function(itOrIdOrName)
+    local hs = hitem.getHSlk(itOrIdOrName)
+    if (hs == nil) then
+        print_err("hitem.shadowID")
+    end
+    if (hs._shadow_id == nil) then
+        print_err("hitem.shadowID not shadow item")
+    end
+    return hs._shadow_id
+end
+
 -- 获取物品的图标路径
 ---@param itOrId userdata|string|number
 ---@return string

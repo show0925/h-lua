@@ -613,8 +613,8 @@ hevent_default_actions = {
                 end
                 local id = hitem.getId(it)
                 local name = hitem.getName(it)
-                local hs = hslk.i2v.item[id]
-                if (hs ~= nil and hs._type == "shadow") then
+                if (hitem.isShadow(id)) then
+                    local hs = hitem.getHSlk(id)
                     id = hslk.i2v.item[hs._shadow_id]._id
                 end
                 local charges = hitem.getCharges(it)
@@ -793,18 +793,26 @@ hevent_default_actions = {
                 -- 排除掉runtime内已创建给unit的物品
                 return
             end
-            itId = string.id2char(itId)
             local u = cj.GetTriggerUnit()
-            local charges = cj.GetItemCharges(it)
-            hitem.del(it, 0)
-            it = hitem.create(
-                {
-                    itemId = itId,
+            if (hitem.isShadowBack(itId)) then
+                -- 置换shadow
+                hitem.del(it, 0)
+                local charges = cj.GetItemCharges(it)
+                it = hitem.create({
+                    itemId = hitem.shadowID(itId),
                     whichUnit = u,
                     charges = charges,
-                    during = 0
-                }
-            )
+                    during = 0,
+                })
+            else
+                -- 设置物品位置状态
+                hitem.setPositionType(it, hitem.POSITION_TYPE.UNIT)
+            end
+            -- 触发获得物品
+            hevent.triggerEvent(u, CONST_EVENT.itemGet, {
+                triggerUnit = u,
+                triggerItem = it
+            })
         end),
         drop = cj.Condition(function()
             local it = cj.GetManipulatedItem()
@@ -826,7 +834,7 @@ hevent_default_actions = {
                     local n = cj.GetItemName(it)
                     if (n ~= nil) then
                         local hs = hitem.getHSlk(it)
-                        if (hs ~= nil and hs._type ~= "shadow" and hs._shadow_id ~= nil) then
+                        if (hitem.isShadowFront(it)) then
                             local x = cj.GetItemX(it)
                             local y = cj.GetItemY(it)
                             hitem.del(it, 0)
