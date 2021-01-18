@@ -228,11 +228,11 @@ hrect.lock = function(bean)
         elseif (bean.type == "circle") then
             tempGroup = hgroup.createByXY(x, y, math.min(w / 2, h / 2))
         end
-        hgroup.loop(tempGroup, function(u)
+        hgroup.forEach(tempGroup, function(u)
             hgroup.addUnit(lockGroup, u)
         end)
         tempGroup = nil
-        hgroup.loop(lockGroup, function(u)
+        hgroup.forEach(lockGroup, function(u)
             local distance = 0.000
             local deg = 0
             local xx = hunit.x(u)

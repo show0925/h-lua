@@ -115,7 +115,7 @@ hskill.split = function(options)
             return flag
         end)
         local splitDamage = damage * percent * 0.01
-        hgroup.loop(g, function(eu)
+        hgroup.forEach(g, function(eu)
             hskill.damage({
                 sourceUnit = options.sourceUnit,
                 targetUnit = eu,
@@ -727,7 +727,7 @@ hskill.bomb = function(options)
         print_err("lost bomb target")
         return
     end
-    hgroup.loop(whichGroup, function(eu)
+    hgroup.forEach(whichGroup, function(eu)
         --计算抵抗
         local oppose = hattr.get(eu, "bomb_oppose")
         local tempOdds = odds - oppose --(%)
@@ -1168,7 +1168,7 @@ hskill.rangeSwim = function(options)
     if (hgroup.count(g) <= 0) then
         return
     end
-    hgroup.loop(g, function(eu)
+    hgroup.forEach(g, function(eu)
         hskill.swim(
             {
                 odds = odds,
@@ -1262,7 +1262,7 @@ hskill.whirlwind = function(options)
             if (hgroup.count(g) <= 0) then
                 return
             end
-            hgroup.loop(g, function(eu)
+            hgroup.forEach(g, function(eu)
                 hskill.damage(
                     {
                         sourceUnit = options.sourceUnit,
@@ -1459,7 +1459,7 @@ hskill.leap = function(options)
                 end
             elseif (damageEndRadius > 0) then
                 local g = hgroup.createByUnit(arrowUnit, damageEndRadius, filter)
-                hgroup.loop(g, function(eu)
+                hgroup.forEach(g, function(eu)
                     if (damageEnd > 0) then
                         hskill.damage({
                             sourceUnit = options.sourceUnit,
@@ -1552,7 +1552,7 @@ hskill.leap = function(options)
                     if (oneHitOnly == true) then
                         hunit.kill(arrowUnit, 0)
                     end
-                    hgroup.loop(g, function(eu)
+                    hgroup.forEach(g, function(eu)
                         if (damageMovementRepeat ~= true and repeatGroup ~= nil) then
                             hgroup.addUnit(repeatGroup, eu)
                         end
@@ -1718,7 +1718,7 @@ hskill.leapRange = function(options)
         y = options.y
     end
     local g = hgroup.createByXY(x, y, targetRadius, filter)
-    hgroup.loop(g, function(eu)
+    hgroup.forEach(g, function(eu)
         local tmp = {
             arrowUnit = options.arrowUnit,
             sourceUnit = options.sourceUnit,
@@ -1890,7 +1890,7 @@ hskill.rectangleStrike = function(options)
                 heffect.bindUnit(options.effect, effUnit, "origin", effUnitDur)
             end
             local _g = hgroup.createByXY(txy.x, txy.y, radius, options.filter)
-            hgroup.loop(_g, function(eu)
+            hgroup.forEach(_g, function(eu)
                 if (hgroup.includes(tg, eu) == false) then
                     hgroup.addUnit(tg, eu)
                 end

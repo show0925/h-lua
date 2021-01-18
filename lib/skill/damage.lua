@@ -752,7 +752,7 @@ hskill.damageRange = function(options)
         if (hgroup.count(g) <= 0) then
             return
         end
-        hgroup.loop(g, function(eu)
+        hgroup.forEach(g, function(eu)
             hskill.damage(
                 {
                     sourceUnit = options.sourceUnit,
@@ -786,7 +786,7 @@ hskill.damageRange = function(options)
                 if (hgroup.count(g) <= 0) then
                     return
                 end
-                hgroup.loop(g, function(eu)
+                hgroup.forEach(g, function(eu)
                     hskill.damage(
                         {
                             sourceUnit = options.sourceUnit,
@@ -836,7 +836,7 @@ hskill.damageGroup = function(options)
         return
     end
     if (times <= 1) then
-        hgroup.loop(options.whichGroup, function(eu)
+        hgroup.forEach(options.whichGroup, function(eu)
             hskill.damage(
                 {
                     sourceUnit = options.sourceUnit,
@@ -862,7 +862,7 @@ hskill.damageGroup = function(options)
                     htime.delTimer(t)
                     return
                 end
-                hgroup.loop(options.whichGroup, function(eu)
+                hgroup.forEach(options.whichGroup, function(eu)
                     hskill.damage(
                         {
                             sourceUnit = options.sourceUnit,
