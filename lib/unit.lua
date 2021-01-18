@@ -339,8 +339,8 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
             hunit.set(whichUnit, 'rgba', { red, green, blue, opacity })
         end,
         function()
-            if (hRuntime.buff[whichUnit].rgba.log and #hRuntime.buff[whichUnit].rgba.log > 1) then
-                local uk = hRuntime.buff[whichUnit].rgba.log[#hRuntime.buff[whichUnit].rgba.log - 1]
+            if (hRuntime.buff[whichUnit].rgba._idx and #hRuntime.buff[whichUnit].rgba._idx > 1) then
+                local uk = hRuntime.buff[whichUnit].rgba._idx[#hRuntime.buff[whichUnit].rgba._idx - 1]
                 hbuff.purpose(whichUnit, string.implode('|', { 'rgba', uk }))
             else
                 cj.SetUnitVertexColor(whichUnit, math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 255)

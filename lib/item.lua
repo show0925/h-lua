@@ -38,7 +38,7 @@ hitem = {
 -- 单位嵌入到物品到框架系统
 ---@protected
 hitem.embed = function(u)
-    if (hRuntime.unit[u] == nil) then
+    if (u == nil or hRuntime.unit[u] == nil) then
         -- 未注册unit直接跳过
         return
     end
@@ -190,36 +190,6 @@ hitem.getName = function(itOrId)
         end
     end
     return ''
-end
-
--- 获取物品位置类型
----@param it userdata
----@return string|nil
-hitem.getPositionType = function(it)
-    if (hRuntime.item[it] == nil) then
-        return
-    end
-    return hRuntime.item[it].positionType
-end
-
--- 设置物品位置类型
----@param it userdata
----@param type string
-hitem.setPositionType = function(it, type)
-    if (it == nil or cj.GetItemName(it) == nil) then
-        return
-    end
-    if (type == nil) then
-        table.delete(it, hRuntime.itemPickPool)
-        return
-    end
-    if (hRuntime.item[it] ~= nil) then
-        hRuntime.item[it].positionType = type
-        --如果位置是在坐标轴上，将物品加入拾取池
-        if (type == hitem.POSITION_TYPE.COORDINATE) then
-            table.insert(hRuntime.itemPickPool, it)
-        end
-    end
 end
 
 --- 数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
@@ -922,71 +892,83 @@ end
 
 --[[
     创建物品
-    bean = {
+    options = {
         itemId = 'I001', --物品ID
         charges = 1, --物品可使用次数（可选，默认为1）
         whichUnit = nil, --哪个单位（可选）
-        whichUnitPosition = nil, --哪个单位的位置（可选，填单位）
         x = nil, --哪个坐标X（可选）
         y = nil, --哪个坐标Y（可选）
-        whichLoc = nil, --哪个点（可选，不推荐）
         during = 0, --持续时间（可选，创建给单位要注意powerUp物品的问题）
     }
     !单位模式下，during持续时间是无效的
 ]]
-hitem.create = function(bean)
-    if (bean.itemId == nil) then
+hitem.create = function(options)
+    if (options.itemId == nil) then
         print_err("hitem create -it-id")
         return
     end
-    if (bean.charges == nil) then
-        bean.charges = 1
+    if (options.charges == nil) then
+        options.charges = 1
     end
-    if (bean.charges < 1) then
+    if (options.charges < 1) then
         return
     end
-    local charges = bean.charges
-    local during = bean.during or 0
-    -- 优先级 坐标 > 单位 > 点
+    local charges = options.charges
+    local during = options.during or 0
+    -- 优先级 坐标 > 单位
     local x, y
-    local itemId = bean.itemId
-    local posType
-    if (bean.x ~= nil and bean.y ~= nil) then
-        x = bean.x
-        y = bean.y
-        posType = hitem.POSITION_TYPE.COORDINATE
-    elseif (bean.whichUnitPosition ~= nil) then
-        x = hunit.x(bean.whichUnit)
-        y = hunit.y(bean.whichUnit)
-        posType = hitem.POSITION_TYPE.COORDINATE
-    elseif (bean.whichUnit ~= nil) then
-        x = hunit.x(bean.whichUnit)
-        y = hunit.y(bean.whichUnit)
-        posType = hitem.POSITION_TYPE.UNIT
-    elseif (bean.whichLoc ~= nil) then
-        x = cj.GetLocationX(bean.whichLoc)
-        y = cj.GetLocationY(bean.whichLoc)
-        posType = hitem.POSITION_TYPE.COORDINATE
+    local itemId = options.itemId
+    if (options.x ~= nil and options.y ~= nil) then
+        x = options.x
+        y = options.y
+    elseif (options.whichUnit ~= nil) then
+        x = hunit.x(options.whichUnit)
+        y = hunit.y(options.whichUnit)
     else
-        print_err("hitem create -site")
+        print_err("hitem create -position")
         return
+    end
+    if (type(itemId) == "string") then
+        itemId = string.char2id(itemId)
     end
     local it
-    if (type(itemId) == "string") then
-        it = cj.CreateItem(string.char2id(itemId), x, y)
-    else
+    -- 如果不是创建给单位，又或者单位已经不存在了，直接返回
+    if (options.whichUnit == nil or his.deleted(options.whichUnit) or his.dead(options.whichUnit)) then
+        -- 如果是shadow物品的明面物品，转成暗面物品再创建
+        if (hitem.isShadowFront(itemId)) then
+            itemId = hitem.shadowID(itemId)
+        end
+        -- 掉在地上
         it = cj.CreateItem(itemId, x, y)
+        cj.SetItemCharges(it, charges)
+        return
     end
+    -- 单位流程
+    it = cj.CreateItem(itemId, x, y)
     cj.SetItemCharges(it, charges)
+    -- 如果是powerUp类型，直接给予单位，后续流程交予[hevent_default_actions.item.pickup]事件
+    -- 因为shadow物品的暗面物品一定是powerup，所以无需额外处理
+    if (hitem.getIsPowerUp(itemId)) then
+        cj.UnitAddItem(options.whichUnit, it)
+        return
+    end
+    -- 没有满格,单位直接获得，后续流程交予[hevent_default_actions.item.pickup]事件
+    if (hitem.getEmptySlot(itemId) > 0) then
+        cj.UnitAddItem(options.whichUnit, it)
+        return
+    end
+    -- 2、满格了，如果是shadow的明面物品；转shadow再给与单位，后续流程交予[hevent_default_actions.item.pickup]事件
+    -- 3、满格了，如果是一般物品；掉在地上（也就是什么都不做）
+
     if (posType == hitem.POSITION_TYPE.UNIT) then
         hRuntime.item[it] = {}
         hitem.setPositionType(it, posType)
-        hitem.detector(bean.whichUnit, it)
+        hitem.detector(options.whichUnit, it)
     else
-        if (type(bean.autoShadow) ~= 'boolean') then
-            bean.autoShadow = true
+        if (type(options.autoShadow) ~= 'boolean') then
+            options.autoShadow = true
         end
-        if (bean.autoShadow == true) then
+        if (options.autoShadow == true) then
             -- 默认如果可能的话，自动协助将真实物品转为影子物品(*小心死循环)
             local hs = hitem.getHSlk(it)
             if (hs ~= nil and hs._type ~= "shadow" and hs._shadow_id ~= nil) then

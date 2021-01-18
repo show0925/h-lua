@@ -43,12 +43,12 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
     if (hRuntime.buff[handleUnit][groupKey] == nil) then
         hRuntime.buff[handleUnit][groupKey] = {}
     end
-    if (hRuntime.buff[handleUnit][groupKey].log == nil) then
-        hRuntime.buff[handleUnit][groupKey].log = {}
+    if (hRuntime.buff[handleUnit][groupKey]._idx == nil) then
+        hRuntime.buff[handleUnit][groupKey]._idx = {}
     end
     local uk = hbuff.uniqueKey()
     hRuntime.buff[handleUnit][groupKey][uk] = { purpose = purpose, rollback = rollback }
-    table.insert(hRuntime.buff[handleUnit][groupKey].log, uk)
+    table.insert(hRuntime.buff[handleUnit][groupKey]._idx, uk)
     if (during > 0) then
         htime.setTimeout(during, function(curTimer)
             htime.delTimer(curTimer)
@@ -56,8 +56,8 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
                 return
             end
             if (hRuntime.buff[handleUnit] ~= nil and hRuntime.buff[handleUnit][groupKey] ~= nil) then
-                if (hRuntime.buff[handleUnit][groupKey].log ~= nil) then
-                    table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
+                if (hRuntime.buff[handleUnit][groupKey]._idx ~= nil) then
+                    table.delete(uk, hRuntime.buff[handleUnit][groupKey]._idx)
                 end
                 if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
                     rollback()
@@ -113,10 +113,10 @@ hbuff.delete = function(handleUnit, buffKey)
         return
     end
     if (hRuntime.buff[handleUnit] ~= nil) then
-        if (hRuntime.buff[handleUnit].log ~= nil) then
+        if (hRuntime.buff[handleUnit]._idx ~= nil) then
             if (uk == nil) then
                 -- 删除group下所有buff
-                for _, _uk in ipairs(hRuntime.buff[handleUnit].log) do
+                for _, _uk in ipairs(hRuntime.buff[handleUnit]._idx) do
                     if (hRuntime.buff[handleUnit][groupKey][_uk] ~= nil) then
                         hRuntime.buff[handleUnit][groupKey][_uk].rollback() --rollback
                     end
@@ -128,7 +128,7 @@ hbuff.delete = function(handleUnit, buffKey)
                 if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
                     hRuntime.buff[handleUnit][groupKey][uk].rollback() --rollback
                     hRuntime.buff[handleUnit][groupKey][uk] = nil
-                    table.delete(uk, hRuntime.buff[handleUnit][groupKey].log)
+                    table.delete(uk, hRuntime.buff[handleUnit][groupKey]._idx)
                 end
             end
         end

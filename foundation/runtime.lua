@@ -102,7 +102,7 @@ hRuntime = {
         punish = {}
     },
     item = {},
-    itemPickPool = {},
+    itemPool = {},
     leaderBoard = {},
     multiBoard = {},
     dialog = {},
