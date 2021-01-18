@@ -66,20 +66,6 @@ hitem.embed = function(u)
     end
 end
 
---- 令单位的物品在runtime内存中释放
----@protected
-hitem.clearUnitCache = function(whichUnit)
-    if (hRuntime.unit[whichUnit] ~= nil) then
-        for i = 0, 5, 1 do
-            local it = cj.UnitItemInSlot(whichUnit, i)
-            if (it ~= nil) then
-                hRuntime.clear(it)
-            end
-            it = nil
-        end
-    end
-end
-
 --- match done
 ---@param whichUnit userdata
 ---@param whichItem userdata
@@ -134,17 +120,15 @@ end
 hitem.del = function(it, delay)
     delay = delay or 0
     if (delay <= 0 and it ~= nil) then
-        hitem.setPositionType(it, nil)
+        hitemPool.clear(it)
         cj.SetWidgetLife(it, 1.00)
         cj.RemoveItem(it)
-        hRuntime.clear(it)
     else
         htime.setTimeout(
             delay,
             function(t)
                 htime.delTimer(t)
-                hitem.setPositionType(it, nil)
-                hRuntime.clear(it)
+                hitemPool.clear(it)
                 cj.SetWidgetLife(it, 1.00)
                 cj.RemoveItem(it)
             end
@@ -747,7 +731,7 @@ hitem.detector = function(whichUnit, originItem)
                 during = 0
             })
         else
-            hitem.setPositionType(originItem, hitem.POSITION_TYPE.COORDINATE)
+            --
         end
         -- 触发超重事件
         hevent.triggerEvent(
@@ -831,7 +815,6 @@ hitem.detector = function(whichUnit, originItem)
             return
         elseif (hitem.getEmptySlot(whichUnit) > 0) then
             -- 检查身上是否还有空格子，有就给单位
-            hitem.setPositionType(getItem, hitem.POSITION_TYPE.UNIT)
             cj.UnitAddItem(whichUnit, getItem)
             -- 触发获得物品
             hevent.triggerEvent(
@@ -876,7 +859,6 @@ hitem.detector = function(whichUnit, originItem)
                     during = 0
                 }
             )
-            hitem.setPositionType(extraIt, hitem.POSITION_TYPE.COORDINATE)
             -- 触发满格事件
             hevent.triggerEvent(
                 whichUnit,
@@ -898,9 +880,8 @@ end
         whichUnit = nil, --哪个单位（可选）
         x = nil, --哪个坐标X（可选）
         y = nil, --哪个坐标Y（可选）
-        during = 0, --持续时间（可选，创建给单位要注意powerUp物品的问题）
+        during = 0, --持续时间（可选，如果有whichUnit，此项无效）
     }
-    !单位模式下，during持续时间是无效的
 ]]
 hitem.create = function(options)
     if (options.itemId == nil) then
@@ -941,59 +922,39 @@ hitem.create = function(options)
         -- 掉在地上
         it = cj.CreateItem(itemId, x, y)
         cj.SetItemCharges(it, charges)
-        return
-    end
-    -- 单位流程
-    it = cj.CreateItem(itemId, x, y)
-    cj.SetItemCharges(it, charges)
-    -- 如果是powerUp类型，直接给予单位，后续流程交予[hevent_default_actions.item.pickup]事件
-    -- 因为shadow物品的暗面物品一定是powerup，所以无需额外处理
-    if (hitem.getIsPowerUp(itemId)) then
-        cj.UnitAddItem(options.whichUnit, it)
-        return
-    end
-    -- 没有满格,单位直接获得，后续流程交予[hevent_default_actions.item.pickup]事件
-    if (hitem.getEmptySlot(itemId) > 0) then
-        cj.UnitAddItem(options.whichUnit, it)
-        return
-    end
-    -- 2、满格了，如果是shadow的明面物品；转shadow再给与单位，后续流程交予[hevent_default_actions.item.pickup]事件
-    -- 3、满格了，如果是一般物品；掉在地上（也就是什么都不做）
-
-    if (posType == hitem.POSITION_TYPE.UNIT) then
-        hRuntime.item[it] = {}
-        hitem.setPositionType(it, posType)
-        hitem.detector(options.whichUnit, it)
-    else
-        if (type(options.autoShadow) ~= 'boolean') then
-            options.autoShadow = true
-        end
-        if (options.autoShadow == true) then
-            -- 默认如果可能的话，自动协助将真实物品转为影子物品(*小心死循环)
-            local hs = hitem.getHSlk(it)
-            if (hs ~= nil and hs._type ~= "shadow" and hs._shadow_id ~= nil) then
-                x = cj.GetItemX(it)
-                y = cj.GetItemY(it)
+        hitemPool.insert("pick", it)
+        if (options.whichUnit ~= nil and during > 0) then
+            htime.setTimeout(during, function(t)
+                htime.delTimer(t)
                 hitem.del(it, 0)
-                it = cj.CreateItem(string.char2id(hs._shadow_id), x, y)
-                cj.SetItemCharges(it, charges)
-            end
+            end)
         end
-        hRuntime.item[it] = {}
-        hitem.setPositionType(it, posType)
-        if (during > 0) then
-            htime.setTimeout(
-                during,
-                function(t)
-                    htime.delTimer(t)
-                    hitem.del(it, 0)
-                end
-            )
+    else
+        -- 单位流程
+        it = cj.CreateItem(itemId, x, y)
+        if (hitem.getIsPowerUp(itemId)) then
+            -- 如果是powerUp类型，直接给予单位，后续流程交予[hevent_default_actions.item.pickup]事件
+            -- 因为shadow物品的暗面物品一定是powerup，所以无需额外处理
+            cj.SetItemCharges(it, charges)
+            cj.UnitAddItem(options.whichUnit, it)
+        elseif (hitem.getEmptySlot(itemId) > 0) then
+            -- 没有满格,单位直接获得，后续流程交予[hevent_default_actions.item.pickup]事件
+            cj.SetItemCharges(it, charges)
+            cj.UnitAddItem(options.whichUnit, it)
+        elseif (hitem.isShadowFront(itemId)) then
+            -- 满格了，如果是shadow的明面物品；转shadow再给与单位，后续流程交予[hevent_default_actions.item.pickup]事件
+            itemId = hitem.shadowID(itemId)
+            hitem.del(it)
+            -- 掉在地上
+            it = cj.CreateItem(itemId, x, y)
+            cj.SetItemCharges(it, charges)
+            hitemPool.insert("pick", it)
+        else
+            -- 满格了，如果是一般物品；掉在地上
+            cj.SetItemCharges(it, charges)
+            hitemPool.insert("pick", it)
         end
     end
-    itemId = nil
-    x = nil
-    y = nil
     return it
 end
 
@@ -1127,20 +1088,20 @@ end
 ---@param w number
 ---@param h number
 hitem.pickRect = function(u, x, y, w, h)
-    for k = #hRuntime.itemPickPool, 1, -1 do
-        local xi = cj.GetItemX(hRuntime.itemPickPool[k])
-        local yi = cj.GetItemY(hRuntime.itemPickPool[k])
+    hitemPool.forEach("pick", function(enumItem)
         if (hitem.getEmptySlot(u) > 0) then
+            local xi = cj.GetItemX(enumItem)
+            local yi = cj.GetItemY(enumItem)
             local d = math.getDistanceBetweenXY(x, y, xi, yi)
             local deg = math.getDegBetweenXY(x, y, xi, yi)
             local distance = math.getMaxDistanceInRect(w, h, deg)
             if (d <= distance) then
-                hitem.pick(hRuntime.itemPickPool[k], u)
+                hitem.pick(enumItem, u)
             end
         else
             break
         end
-    end
+    end)
 end
 
 -- 一键拾取圆(x,y)半径(r)
@@ -1149,14 +1110,18 @@ end
 ---@param y number
 ---@param r number
 hitem.pickRound = function(u, x, y, r)
-    for k = #hRuntime.itemPickPool, 1, -1 do
-        local xi = cj.GetItemX(hRuntime.itemPickPool[k])
-        local yi = cj.GetItemY(hRuntime.itemPickPool[k])
-        local d = math.getDistanceBetweenXY(x, y, xi, yi)
-        if (d <= r and hitem.getEmptySlot(u) > 0) then
-            hitem.pick(hRuntime.itemPickPool[k], u)
-        else
-            break
+    hitemPool.forEach("pick", function(enumItem)
+        if (hitem.getEmptySlot(u) > 0) then
+            local xi = cj.GetItemX(enumItem)
+            local yi = cj.GetItemY(enumItem)
+            local d = math.getDistanceBetweenXY(x, y, xi, yi)
+            if (d <= r) then
+                hitem.pick(enumItem, u)
+            else
+                print("break")
+                break
+            end
+            print("pickRound.forEach")
         end
-    end
+    end)
 end

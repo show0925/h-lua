@@ -1,5 +1,8 @@
 -- 物品池
-hitemPool = {}
+hitemPool = {
+    name = {},
+    data = {}
+}
 
 ---@private
 hitemPool.poolName = function(poolName)
@@ -14,11 +17,12 @@ hitemPool.insert = function(poolName, whichItem)
         return
     end
     poolName = hitemPool.poolName(poolName)
-    if (hRuntime.itemPool[poolName] == nil) then
-        hRuntime.itemPool[poolName] = {}
+    if (hitemPool.data[poolName] == nil) then
+        hitemPool.data[poolName] = {}
+        table.insert(hitemPool.name, poolName)
     end
-    if (false == table.includes(whichItem, hRuntime.itemPool[poolName])) then
-        table.insert(hRuntime.itemPool[poolName], whichItem)
+    if (false == table.includes(whichItem, hitemPool.data[poolName])) then
+        table.insert(hitemPool.data[poolName], whichItem)
     end
 end
 
@@ -30,11 +34,25 @@ hitemPool.delete = function(poolName, whichItem)
         return
     end
     poolName = hitemPool.poolName(poolName)
-    if (hRuntime.itemPool[poolName] == nil) then
+    if (hitemPool.data[poolName] == nil) then
         return
     end
-    if (table.includes(whichItem, hRuntime.itemPool[poolName])) then
-        table.delete(hRuntime.itemPool[poolName], whichItem, 1)
+    table.delete(hitemPool.data[poolName], whichItem, 1)
+end
+
+--- 将物品从所有物品池删除
+---@param whichItem userdata
+hitemPool.clear = function(whichItem)
+    if (whichItem == nil) then
+        return
+    end
+    if (#hitemPool.name <= 0) then
+        return
+    end
+    for _, poolName in ipairs(hitemPool.name) do
+        if (hitemPool.data[poolName] ~= nil and #hitemPool.data[poolName] > 0) then
+            table.delete(hitemPool.data[poolName], whichItem)
+        end
     end
 end
 
@@ -47,11 +65,11 @@ hitemPool.forEach = function(poolName, action)
         return
     end
     poolName = hitemPool.poolName(poolName)
-    if (hRuntime.itemPool[poolName] == nil) then
+    if (hitemPool.data[poolName] == nil) then
         return
     end
     if (type(action) == "function") then
-        for idx, it in ipairs(hRuntime.itemPool[poolName]) do
+        for idx, it in ipairs(hitemPool.data[poolName]) do
             action(it, idx)
         end
     end

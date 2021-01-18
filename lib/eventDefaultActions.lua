@@ -789,10 +789,6 @@ hevent_default_actions = {
                 --过滤hlua白字攻击物品
                 return
             end
-            if (hRuntime.item[it] ~= nil and hRuntime.item[it].positionType == hitem.POSITION_TYPE.UNIT) then
-                -- 排除掉runtime内已创建给unit的物品
-                return
-            end
             local u = cj.GetTriggerUnit()
             if (hitem.isShadowBack(itId)) then
                 -- 置换shadow
@@ -806,7 +802,6 @@ hevent_default_actions = {
                 })
             else
                 -- 设置物品位置状态
-                hitem.setPositionType(it, hitem.POSITION_TYPE.UNIT)
             end
             -- 触发获得物品
             hevent.triggerEvent(u, CONST_EVENT.itemGet, {
@@ -828,7 +823,6 @@ hevent_default_actions = {
             if (cj.GetUnitCurrentOrder(u) == 852001) then
                 -- dropitem:852001
                 hitem.subProperty(u, itId, charges)
-                hitem.setPositionType(it, hitem.POSITION_TYPE.COORDINATE)
                 htime.setTimeout(0.05, function(t)
                     htime.delTimer(t)
                     local n = cj.GetItemName(it)
@@ -870,7 +864,6 @@ hevent_default_actions = {
             local lumbercost = hitem.getLumberCost(it)
             local soldGold = 0
             local soldLumber = 0
-            hRuntime.clear(it)
             if (goldcost ~= 0 or lumbercost ~= 0) then
                 local p = hunit.getOwner(u)
                 local sellRatio = hplayer.getSellRatio(u)

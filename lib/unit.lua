@@ -742,7 +742,6 @@ end
 ---@param delay number
 hunit.del = function(targetUnit, delay)
     if (delay == nil or delay <= 0) then
-        hitem.clearUnitCache(targetUnit)
         hRuntime.clear(targetUnit)
         cj.RemoveUnit(targetUnit)
     else
@@ -750,7 +749,6 @@ hunit.del = function(targetUnit, delay)
             delay,
             function(t)
                 htime.delTimer(t)
-                hitem.clearUnitCache(targetUnit)
                 hRuntime.clear(targetUnit)
                 cj.RemoveUnit(targetUnit)
             end

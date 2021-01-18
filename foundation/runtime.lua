@@ -101,7 +101,6 @@ hRuntime = {
         mana_back = {},
         punish = {}
     },
-    item = {},
     itemPool = {},
     leaderBoard = {},
     multiBoard = {},
@@ -172,9 +171,6 @@ hRuntime.clear = function(handle)
         if (table.includes(handle, hRuntime.skill.unarmUnits)) then
             table.delete(handle, hRuntime.skill.unarmUnits)
         end
-    end
-    if (hRuntime.item[handle] ~= nil) then
-        hRuntime.item[handle] = nil
     end
     if (hRuntime.leaderBoard[handle] ~= nil) then
         hRuntime.leaderBoard[handle] = nil
