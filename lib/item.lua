@@ -1051,32 +1051,20 @@ end
 ---@param origin userdata
 ---@param slot nil|number 物品位置
 hitem.drop = function(origin, slot)
-    if (origin == nil) then
+    if (origin == nil or his.deleted(origin) or his.dead(origin)) then
         return
     end
     if (slot == nil) then
         for i = 0, 5, 1 do
             local it = cj.UnitItemInSlot(origin, i)
             if (it ~= nil) then
-                hitem.create({
-                    itemId = hitem.getId(it),
-                    charges = hitem.getCharges(it),
-                    x = hunit.x(origin),
-                    x = hunit.y(origin)
-                })
-                htime.del(it, 0)
+                cj.UnitDropItemPoint(origin, it, hunit.x(origin), hunit.y(origin))
             end
         end
     else
         local it = cj.UnitItemInSlot(origin, slot)
         if (it ~= nil) then
-            hitem.create({
-                itemId = hitem.getId(it),
-                charges = hitem.getCharges(it),
-                x = hunit.x(origin),
-                x = hunit.y(origin)
-            })
-            htime.del(it, 0)
+            cj.UnitDropItemPoint(origin, it, hunit.x(origin), hunit.y(origin))
         end
     end
 end
