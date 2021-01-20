@@ -441,7 +441,7 @@ end
 ---@return table 物品数据数组 {...{id=<string>,charges=<number>,name=<string>}}
 hitem.synthesis = function(whichUnit, items)
     if (true) then
-        print(items)
+        print("synthesis")
         return {}
     end
     if (whichUnit == nil) then

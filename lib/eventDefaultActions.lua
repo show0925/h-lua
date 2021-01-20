@@ -780,26 +780,6 @@ hevent_default_actions = {
         end)
     },
     item = {
-        pickupFinalGet = function(u, it)
-            if (u == nil or it == nil) then
-                return
-            end
-            local itId = hitem.getId(it)
-            local charges = hitem.getCharges(it)
-            -- 触发获得物品
-            hevent.triggerEvent(u, CONST_EVENT.itemGet, { triggerUnit = u, triggerItem = it })
-            -- 计算属性
-            hitem.addProperty(u, itId, charges)
-            -- 如果是自动使用的，用一波
-            if (hitem.getIsPowerUp(itId)) then
-                hitem.used(u, it)
-                if (hitem.getIsPerishable(itId)) then
-                    hitem.del(it, 0)
-                end
-            end
-            -- 检查合成
-            hitem.synthesis(u)
-        end,
         pickup = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = cj.GetItemTypeId(it)
@@ -807,6 +787,7 @@ hevent_default_actions = {
                 --过滤hlua白字攻击物品
                 return
             end
+            itId = string.id2char(itId)
             local u = cj.GetTriggerUnit()
             local charges = hitem.getCharges(it)
             -- 如果是hslk物品，得到技术升级
@@ -824,7 +805,7 @@ hevent_default_actions = {
                         itId = hitem.shadowID(itId)
                     end
                     hitem.del(it)
-                    it = cj.CreateItem(itId, hunit.x(u), hunit.y(u))
+                    it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
                     cj.SetItemCharges(it, charges)
                     -- 触发超重事件
                     hevent.triggerEvent(u, CONST_EVENT.itemOverWeight, {
@@ -834,32 +815,33 @@ hevent_default_actions = {
                     })
                     return
                 end
-                -- 判断是否powerUp
-                if (hitem.getIsPowerUp(itId)) then
-                    -- 如果是影子物品
-                    if (hitem.isShadowBack(itId)) then
-                        itId = hitem.shadowID(itId)
-                        hitem.del(it)
-                        it = cj.CreateItem(itId, hunit.x(u), hunit.y(u))
-                        cj.SetItemCharges(it, charges)
-                        if (hitem.getEmptySlot(u) < 0) then
-                            cj.UnitAddItem(u, it)
-                            hevent_default_actions.item.pickupFinalGet(u, it)
-                            return
-                        end
-                        hitemPool.insert("h-lua-pick", it)
+                -- 如果是影子物品
+                if (hitem.isShadowBack(itId)) then
+                    itId = hitem.shadowID(itId)
+                    hitem.del(it)
+                    it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
+                    cj.SetItemCharges(it, charges)
+                    if (hitem.getEmptySlot(u) <= 0) then
                         hitem.synthesis(u, it) -- 看看有没有合成，可能这个实体物品有合成可以收到物品栏
-                        return
-                    else
-                        hevent_default_actions.item.pickupFinalGet(u, it)
+                        --hitemPool.insert("h-lua-pick", it)
                         return
                     end
-                else
-                    hevent_default_actions.item.pickupFinalGet(u, it)
-                    return
+                    cj.UnitAddItem(u, it)
                 end
             end
-            hevent_default_actions.item.pickupFinalGet(u, it)
+            -- 触发获得物品
+            hevent.triggerEvent(u, CONST_EVENT.itemGet, { triggerUnit = u, triggerItem = it })
+            -- 计算属性
+            hitem.addProperty(u, itId, charges)
+            -- 如果是自动使用的，用一波
+            if (hitem.getIsPowerUp(itId)) then
+                hitem.used(u, it)
+                if (hitem.getIsPerishable(itId)) then
+                    hitem.del(it, 0)
+                end
+            end
+            -- 检查合成
+            hitem.synthesis(u)
         end),
         drop = cj.Condition(function()
             local it = cj.GetManipulatedItem()
