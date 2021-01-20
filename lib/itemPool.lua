@@ -70,7 +70,10 @@ hitemPool.forEach = function(poolName, action)
     end
     if (type(action) == "function") then
         for idx, it in ipairs(hitemPool.data[poolName]) do
-            action(it, idx)
+            local res = action(it, idx)
+            if (type(res) == 'boolean' and res == false) then
+                break
+            end
         end
     end
 end

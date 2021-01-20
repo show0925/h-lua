@@ -12,7 +12,10 @@ hgroup.forEach = function(whichGroup, action)
         if (type(action) == "function") then
             for idx, eu in ipairs(whichGroup) do
                 if (his.deleted(eu) == false) then
-                    action(eu, idx)
+                    local res = action(eu, idx)
+                    if (type(res) == 'boolean' and res == false) then
+                        break
+                    end
                 else
                     table.remove(whichGroup, idx)
                     idx = idx - 1

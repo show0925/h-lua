@@ -85,7 +85,10 @@ hplayer.forEach = function(action)
     end
     if (type(action) == "function") then
         for idx = 1, hplayer.qty_max, 1 do
-            action(hplayer.players[idx], idx)
+            local res = action(hplayer.players[idx], idx)
+            if (type(res) == 'boolean' and res == false) then
+                break
+            end
         end
     end
 end
