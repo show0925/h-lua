@@ -19,7 +19,7 @@ hLuaF9 = function(allow)
         })
     end
     -- apm提示
-    if (table.includes(allow, 'all') or table.includes(allow, 'apm') then
+    if (table.includes(allow, 'all') or table.includes(allow, 'apm')) then
         hquest.create({
             side = "right",
             title = "查看你的APM数值",
@@ -66,7 +66,7 @@ hLuaF9 = function(allow)
         })
     end
     -- 自动转换黄金为木头提示
-    if (table.includes(allow, 'all') or table.includes(allow, 'apc') then
+    if (table.includes(allow, 'all') or table.includes(allow, 'apc')) then
         hquest.create({
             side = "right",
             title = "设定自动转金为木",
