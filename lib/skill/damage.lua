@@ -129,7 +129,7 @@ hskill.damage = function(options)
     end
     -- 计算单位是否无敌（无敌属性为百分比计算，被动触发抵挡一次）
     if (his.invincible(targetUnit) == true or math.random(1, 100) < targetUnitAttr.invincible) then
-        if (table.includes(CONST_BREAK_ARMOR_TYPE.invincible.value, breakArmorType) == false) then
+        if (table.includes(breakArmorType, CONST_BREAK_ARMOR_TYPE.invincible.value) == false) then
             return
         end
     end
@@ -145,21 +145,21 @@ hskill.damage = function(options)
         -- 判断无视装甲类型
         if (breakArmorType ~= nil and #breakArmorType > 0) then
             damageString = damageString .. "无视"
-            if (table.includes(CONST_BREAK_ARMOR_TYPE.defend.value, breakArmorType)) then
+            if (table.includes(breakArmorType, CONST_BREAK_ARMOR_TYPE.defend.value)) then
                 if (targetUnitAttr.defend > 0) then
                     targetUnitAttr.defend = 0
                 end
                 damageString = damageString .. CONST_BREAK_ARMOR_TYPE.defend.label
                 damageStringColor = "f97373"
             end
-            if (table.includes(CONST_BREAK_ARMOR_TYPE.avoid.value, breakArmorType)) then
+            if (table.includes(breakArmorType, CONST_BREAK_ARMOR_TYPE.avoid.value)) then
                 if (targetUnitAttr.avoid > 0) then
                     targetUnitAttr.avoid = 0
                 end
                 damageString = damageString .. CONST_BREAK_ARMOR_TYPE.avoid.label
                 damageStringColor = "76a5af"
             end
-            if (table.includes(CONST_BREAK_ARMOR_TYPE.invincible.value, breakArmorType)) then
+            if (table.includes(breakArmorType, CONST_BREAK_ARMOR_TYPE.invincible.value)) then
                 if (targetUnitAttr.avoid > 0) then
                     targetUnitAttr.avoid = 0
                 end

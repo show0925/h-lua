@@ -21,7 +21,7 @@ hitemPool.insert = function(poolName, whichItem)
         hitemPool.data[poolName] = {}
         table.insert(hitemPool.name, poolName)
     end
-    if (false == table.includes(whichItem, hitemPool.data[poolName])) then
+    if (false == table.includes(hitemPool.data[poolName], whichItem)) then
         table.insert(hitemPool.data[poolName], whichItem)
     end
 end

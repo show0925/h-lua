@@ -456,7 +456,7 @@ hitem.synthesis = function(whichUnit, items)
     hitem.forEach(whichUnit, function(slotItem)
         if (slotItem ~= nil) then
             local itId = hitem.getId(slotItem)
-            if (table.includes(itId, itemKinds) == false) then
+            if (table.includes(itemKinds, itId) == false) then
                 table.insert(itemKinds, itId)
             end
             if (itemQuantity[itId] == nil) then
@@ -468,7 +468,7 @@ hitem.synthesis = function(whichUnit, items)
     if (#items > 0) then
         for _, it in ipairs(items) do
             local itId = hitem.getId(it)
-            if (table.includes(itId, itemKinds) == false) then
+            if (table.includes(itemKinds, itId) == false) then
                 table.insert(itemKinds, itId)
             end
             if (itemQuantity[itId] == nil) then
@@ -504,10 +504,10 @@ hitem.synthesis = function(whichUnit, items)
                                     itemQuantity[frag[1]] = itemQuantity[frag[1]] - frag[2]
                                     if (itemQuantity[frag[1]] == 0) then
                                         itemQuantity[frag[1]] = nil
-                                        table.delete(frag[1], itemKinds)
+                                        table.delete(itemKinds, frag[1])
                                     end
                                 end
-                                if (table.includes(profitId, itemKinds) == false) then
+                                if (table.includes(itemKinds, profitId) == false) then
                                     table.insert(itemKinds, profitId)
                                 end
                                 if (itemQuantity[profitId] == nil) then
@@ -895,6 +895,9 @@ end
 ---@param w number
 ---@param h number
 hitem.pickRect = function(u, x, y, w, h)
+    if (u == nil or his.deleted(u) or his.dead(u) or hitem.getEmptySlot(u) <= 0) then
+        return
+    end
     hitemPool.forEach("pick", function(enumItem)
         if (hitem.getEmptySlot(u) > 0) then
             local xi = cj.GetItemX(enumItem)
@@ -905,8 +908,6 @@ hitem.pickRect = function(u, x, y, w, h)
             if (d <= distance) then
                 hitem.pick(enumItem, u)
             end
-        else
-            break
         end
     end)
 end
@@ -917,6 +918,9 @@ end
 ---@param y number
 ---@param r number
 hitem.pickRound = function(u, x, y, r)
+    if (u == nil or his.deleted(u) or his.dead(u) or hitem.getEmptySlot(u) <= 0) then
+        return
+    end
     hitemPool.forEach("pick", function(enumItem)
         if (hitem.getEmptySlot(u) > 0) then
             local xi = cj.GetItemX(enumItem)
@@ -924,11 +928,7 @@ hitem.pickRound = function(u, x, y, r)
             local d = math.getDistanceBetweenXY(x, y, xi, yi)
             if (d <= r) then
                 hitem.pick(enumItem, u)
-            else
-                print("break")
-                break
             end
-            print("pickRound.forEach")
         end
     end)
 end

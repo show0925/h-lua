@@ -40,7 +40,7 @@ hgroup.includes = function(whichGroup, whichUnit)
     if (whichGroup == nil or whichUnit == nil) then
         return false
     end
-    return table.includes(whichUnit, whichGroup)
+    return table.includes(whichGroup, whichUnit)
 end
 
 --- 判断单位组是否为空
@@ -66,7 +66,7 @@ end
 ---@param whichUnit userdata
 hgroup.removeUnit = function(whichGroup, whichUnit)
     if (hgroup.includes(whichGroup, whichUnit) == true) then
-        table.delete(whichUnit, whichGroup)
+        table.delete(whichGroup, whichUnit)
     end
 end
 

@@ -63,10 +63,10 @@ table.merge = function(...)
 end
 
 --- 在数组内
----@param val any
 ---@param arr table
+---@param val any
 ---@return boolean
-table.includes = function(val, arr)
+table.includes = function(arr, val)
     local isIn = false
     if (val == nil or #arr <= 0) then
         return isIn
@@ -81,10 +81,10 @@ table.includes = function(val, arr)
 end
 
 --- 删除数组一次某个值(qty次,默认删除全部)
----@param val any
 ---@param arr table
+---@param val any
 ---@param qty number
-table.delete = function(val, arr, qty)
+table.delete = function(arr, val, qty)
     qty = qty or -1
     local q = 0
     for k, v in ipairs(arr) do

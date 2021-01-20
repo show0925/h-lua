@@ -57,7 +57,7 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
             end
             if (hRuntime.buff[handleUnit] ~= nil and hRuntime.buff[handleUnit][groupKey] ~= nil) then
                 if (hRuntime.buff[handleUnit][groupKey]._idx ~= nil) then
-                    table.delete(uk, hRuntime.buff[handleUnit][groupKey]._idx)
+                    table.delete(hRuntime.buff[handleUnit][groupKey]._idx, uk)
                 end
                 if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
                     rollback()
@@ -128,7 +128,7 @@ hbuff.delete = function(handleUnit, buffKey)
                 if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
                     hRuntime.buff[handleUnit][groupKey][uk].rollback() --rollback
                     hRuntime.buff[handleUnit][groupKey][uk] = nil
-                    table.delete(uk, hRuntime.buff[handleUnit][groupKey]._idx)
+                    table.delete(hRuntime.buff[handleUnit][groupKey]._idx, uk)
                 end
             end
         end

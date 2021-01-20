@@ -430,7 +430,7 @@ hskill.silent = function(options)
         heffect.bindUnit(options.effect, u, "origin", during)
     end
     hskill.set(u, "silentLevel", level)
-    if (table.includes(u, hRuntime.skill.silentUnits) == false) then
+    if (table.includes(hRuntime.skill.silentUnits, u) == false) then
         table.insert(hRuntime.skill.silentUnits, u)
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "head", -1)
         hskill.set(u, "silentEffect", eff)
@@ -480,8 +480,8 @@ hskill.silent = function(options)
             hskill.set(u, "silentLevel", hskill.get(u, "silentLevel", 0) - 1)
             if (hskill.get(u, "silentLevel") <= 0) then
                 heffect.del(hskill.get(u, "silentEffect"))
-                if (table.includes(u, hRuntime.skill.silentUnits)) then
-                    table.delete(u, hRuntime.skill.silentUnits)
+                if (table.includes(hRuntime.skill.silentUnits, u)) then
+                    table.delete(hRuntime.skill.silentUnits, u)
                 end
                 hunit.set(u, "isSilent", false)
             end
@@ -542,7 +542,7 @@ hskill.unarm = function(options)
         heffect.bindUnit(options.effect, u, "origin", during)
     end
     hskill.set(u, "unarmLevel", level)
-    if (table.includes(u, hRuntime.skill.unarmUnits) == false) then
+    if (table.includes(hRuntime.skill.unarmUnits, u) == false) then
         table.insert(hRuntime.skill.unarmUnits, u)
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "weapon", -1)
         hskill.set(u, "unarmEffect", eff)
@@ -592,8 +592,8 @@ hskill.unarm = function(options)
             hskill.set(u, "unarmLevel", hskill.get(u, "unarmLevel", 0) - 1)
             if (hskill.get(u, "unarmLevel") <= 0) then
                 heffect.del(hskill.get(u, "unarmEffect"))
-                if (table.includes(u, hRuntime.skill.unarmUnits)) then
-                    table.delete(u, hRuntime.skill.unarmUnits)
+                if (table.includes(hRuntime.skill.unarmUnits, u)) then
+                    table.delete(hRuntime.skill.unarmUnits, u)
                 end
                 hunit.set(u, "isUnArm", false)
             end

@@ -153,7 +153,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
         return
     end
     -- 排除不支持的事件
-    if (table.includes(eventKey, hattribute.xtrasSupportEvents) == false) then
+    if (table.includes(hattribute.xtrasSupportEvents, eventKey) == false) then
         return
     end
     -- 排除非单位
@@ -176,7 +176,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
         if (#actions == 3) then
             local target = actions[1]
             local actionType = actions[2]
-            if (table.includes(actionType, { 'attr', 'spec' }) ~= false and evtData[target] ~= nil and hunit.getName(evtData[target]) ~= nil) then
+            if (table.includes({ 'attr', 'spec' }, actionType) ~= false and evtData[target] ~= nil and hunit.getName(evtData[target]) ~= nil) then
                 if (his.deleted(evtData[target]) == false and hattribute.xtrasPassAlive(evtData[target], actions[2], actions[3])) then
                     local targetUnit = evtData[target]
                     local actionField = actions[3]
@@ -198,7 +198,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                             if (#valAttr == 2) then
                                 local au = evtData[valAttr[1]]
                                 local aa = valAttr[2]
-                                if (au and table.includes(aa, hattribute.xtrasSupportVals)) then
+                                if (au and table.includes(hattribute.xtrasSupportVals, aa)) then
                                     if (aa == 'level') then
                                         val = hhero.getCurLevel(au)
                                     elseif (aa == 'gold') then

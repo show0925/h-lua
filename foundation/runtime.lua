@@ -66,7 +66,7 @@ hRuntime = {
                     profit = profitId,
                     index = profitIndex,
                 })
-                if (table.includes(f[2], hslk.synthesis.fragmentNeeds) == false) then
+                if (table.includes(hslk.synthesis.fragmentNeeds, f[2]) == false) then
                     table.insert(hslk.synthesis.fragmentNeeds, f[2])
                 end
             end
@@ -154,8 +154,8 @@ hRuntime.clear = function(handle)
     if (hRuntime.unit[handle] ~= nil) then
         hRuntime.unit[handle] = nil
     end
-    if (table.includes(handle, hRuntime.group)) then
-        table.delete(handle, hRuntime.group)
+    if (table.includes(hRuntime.group, handle)) then
+        table.delete(hRuntime.group, handle)
     end
     if (hRuntime.hero[handle] ~= nil) then
         hRuntime.hero[handle] = nil
@@ -165,11 +165,11 @@ hRuntime.clear = function(handle)
     end
     if (hRuntime.skill[handle] ~= nil) then
         hRuntime.skill[handle] = nil
-        if (table.includes(handle, hRuntime.skill.silentUnits)) then
-            table.delete(handle, hRuntime.skill.silentUnits)
+        if (table.includes(hRuntime.skill.silentUnits, handle)) then
+            table.delete(hRuntime.skill.silentUnits, handle)
         end
-        if (table.includes(handle, hRuntime.skill.unarmUnits)) then
-            table.delete(handle, hRuntime.skill.unarmUnits)
+        if (table.includes(hRuntime.skill.unarmUnits, handle)) then
+            table.delete(hRuntime.skill.unarmUnits, handle)
         end
     end
     if (hRuntime.leaderBoard[handle] ~= nil) then

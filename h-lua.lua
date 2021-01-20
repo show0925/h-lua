@@ -46,6 +46,8 @@ require "foundation.hslk"
 require "foundation.f9"
 -- 加载echo
 require "foundation.echo"
+-- 加载Mapping
+require "foundation.Mapping"
 
 -- 加载Dzapi库
 -- 需要编辑器支持网易平台的DZAPI
@@ -85,6 +87,7 @@ require "lib.enchant"
 require "lib.attribute.index"
 require "lib.attribute.xtras"
 require "lib.item"
+require "lib.itemPool"
 require "lib.dialog"
 require "lib.leaderBoard"
 require "lib.multiBoard"

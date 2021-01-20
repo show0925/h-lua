@@ -190,7 +190,7 @@ cj.TriggerAddAction(
     hRuntime.skill.silentTrigger,
     function()
         local u1 = cj.GetTriggerUnit()
-        if (table.includes(u1, hRuntime.skill.silentUnits)) then
+        if (table.includes(hRuntime.skill.silentUnits, u1)) then
             cj.IssueImmediateOrder(u1, "stop")
         end
     end
@@ -201,7 +201,7 @@ cj.TriggerAddAction(
     hRuntime.skill.unarmTrigger,
     function()
         local u1 = cj.GetAttacker()
-        if (table.includes(u1, hRuntime.skill.unarmUnits) == true) then
+        if (table.includes(hRuntime.skill.unarmUnits, u1) == true) then
             cj.IssueImmediateOrder(u1, "stop")
         end
     end

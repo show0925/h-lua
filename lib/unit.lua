@@ -253,13 +253,13 @@ end
 ---@param u userdata
 ---@return boolean
 hunit.isOpenPunish = function(u)
-    return table.includes(u, hRuntime.attributeGroup.punish)
+    return table.includes(hRuntime.attributeGroup.punish, u)
 end
 
 --- 单位启用硬直（系统默认不启用）
 ---@param u userdata
 hunit.openPunish = function(u)
-    if (table.includes(u, hRuntime.attributeGroup.punish) == false) then
+    if (table.includes(hRuntime.attributeGroup.punish, u) == false) then
         table.insert(hRuntime.attributeGroup.punish, u)
     end
 end
@@ -267,8 +267,8 @@ end
 --- 单位停用硬直（系统默认不启用）
 ---@param u userdata
 hunit.closePunish = function(u)
-    if (table.includes(u, hRuntime.attributeGroup.punish)) then
-        table.delete(u, hRuntime.attributeGroup.punish)
+    if (table.includes(hRuntime.attributeGroup.punish, u)) then
+        table.delete(hRuntime.attributeGroup.punish, u)
     end
 end
 

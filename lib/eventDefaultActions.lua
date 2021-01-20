@@ -97,23 +97,21 @@ hevent_default_actions = {
                 local qty = 0
                 while (true) do
                     local one = table.random(hhero.selectorPool)
-                    table.delete(one, hhero.selectorPool)
+                    table.delete(hhero.selectorPool, one)
                     local u = one
                     if (type(one) == 'string') then
-                        u = hunit.create(
-                            {
-                                whichPlayer = p,
-                                unitId = one,
-                                x = hhero.bornX,
-                                y = hhero.bornY
-                            }
-                        )
+                        u = hunit.create({
+                            whichPlayer = p,
+                            unitId = one,
+                            x = hhero.bornX,
+                            y = hhero.bornY
+                        })
                         hRuntime.hero[u] = {
                             selector = hRuntime.hero[one],
                         }
                         cj.RemoveUnitFromStock(hRuntime.hero[one], string.char2id(one))
                     else
-                        table.delete(one, hhero.selectorClearPool)
+                        table.delete(hhero.selectorClearPool, one)
                         hunit.setInvulnerable(u, false)
                         cj.SetUnitOwner(u, p, true)
                         hunit.portal(u, hhero.bornX, hhero.bornY)
@@ -805,7 +803,7 @@ hevent_default_actions = {
         pickup = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = cj.GetItemTypeId(it)
-            if (table.includes(itId, hslk.attr.item_attack_white.items)) then
+            if (table.includes(hslk.attr.item_attack_white.items, itId)) then
                 --过滤hlua白字攻击物品
                 return
             end
@@ -866,7 +864,7 @@ hevent_default_actions = {
         drop = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = cj.GetItemTypeId(it)
-            if (table.includes(itId, hslk.attr.item_attack_white.items)) then
+            if (table.includes(hslk.attr.item_attack_white.items, itId)) then
                 --过滤hlua白字攻击物品
                 return
             end

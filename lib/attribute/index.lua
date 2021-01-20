@@ -40,7 +40,7 @@ hattribute.isValType = function(field, valType)
     if (field == nil or valType == nil) then
         return false
     end
-    if (table.includes(field, valType)) then
+    if (table.includes(valType, field)) then
         return true
     end
     return false
@@ -464,7 +464,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         for _, v in ipairs(sight_gradient) do
                             if (tempVal >= v) then
                                 tempVal = math.floor(tempVal - v)
-                                table.delete(v, sight_gradient)
+                                table.delete(sight_gradient, v)
                                 if (futureVal > 0) then
                                     cj.UnitAddAbility(whichUnit, hslk.attr.sight.add[v])
                                 else
@@ -479,7 +479,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         end
                     end
                 end
-            elseif (table.includes(attr, { "attack_green", "attack_speed", "defend" })) then
+            elseif (table.includes({ "attack_green", "attack_speed", "defend" }, attr)) then
                 -- 绿字攻击 攻击速度 护甲
                 if (futureVal < -99999999) then
                     futureVal = -99999999
@@ -516,7 +516,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         max = math.floor(max / 10)
                     end
                 end
-            elseif (his.hero(whichUnit) and table.includes(attr, { "str_green", "agi_green", "int_green" })) then
+            elseif (his.hero(whichUnit) and table.includes({ "str_green", "agi_green", "int_green" }, attr)) then
                 -- 绿字力量 绿字敏捷 绿字智力
                 if (futureVal < -99999999) then
                     futureVal = -99999999
@@ -570,7 +570,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         hattribute.set(whichUnit, 0, { [d.key] = "+" .. tempV })
                     end
                 end
-            elseif (his.hero(whichUnit) and table.includes(attr, { "str_white", "agi_white", "int_white" })) then
+            elseif (his.hero(whichUnit) and table.includes({ "str_white", "agi_white", "int_white" }, attr)) then
                 -- 白字力量 敏捷 智力
                 if (attr == "str_white") then
                     cj.SetHeroStr(whichUnit, math.floor(futureVal), true)
@@ -598,10 +598,10 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 end
             elseif (attr == "life_back" or attr == "mana_back") then
                 -- 生命,魔法恢复
-                if (math.abs(futureVal) > 0.02 and table.includes(whichUnit, hRuntime.attributeGroup[attr]) == false) then
+                if (math.abs(futureVal) > 0.02 and table.includes(hRuntime.attributeGroup[attr], whichUnit) == false) then
                     table.insert(hRuntime.attributeGroup[attr], whichUnit)
                 elseif (math.abs(futureVal) < 0.02) then
-                    table.delete(whichUnit, hRuntime.attributeGroup[attr])
+                    table.delete(hRuntime.attributeGroup[attr], whichUnit)
                 end
             elseif (attr == "punish" and hunit.isOpenPunish(whichUnit)) then
                 -- 硬直
@@ -689,8 +689,8 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                     during, whichUnit, 'attr.' .. attr .. '-',
                     function()
                         for _, v in ipairs(valArr) do
-                            if (table.includes(v, params[attr])) then
-                                table.delete(v, params[attr], 1)
+                            if (table.includes(params[attr], v)) then
+                                table.delete(params[attr], v, 1)
                             end
                         end
                     end,
@@ -700,8 +700,8 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 )
             else
                 for _, v in ipairs(valArr) do
-                    if (table.includes(v, params[attr])) then
-                        table.delete(v, params[attr], 1)
+                    if (table.includes(params[attr], v)) then
+                        table.delete(params[attr], v, 1)
                     end
                 end
             end
