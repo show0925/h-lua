@@ -584,8 +584,8 @@ hitem.synthesis = function(whichUnit, items)
                 end
                 if (sIt.id ~= nil and sIt.id == subId) then
                     if (sIt.charges > itemStat.sub.kv[subId]) then
-                        itemStat.sub.kv[subId] = 0
                         sIt.charges = sIt.charges - itemStat.sub.kv[subId]
+                        itemStat.sub.kv[subId] = 0
                     elseif (sIt.charges == itemStat.sub.kv[subId]) then
                         itemStat.sub.kv[subId] = 0
                         sIt.id = nil
