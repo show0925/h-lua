@@ -300,12 +300,15 @@ hitem.getIsSellAble = function(itOrId)
     return s.sellable == "1"
 end
 
---- 获取物品的最大叠加数(默认是1个,此系统以使用次数作为数量使用)
+--- 获取物品的最大叠加数(默认是1个,本框架以使用次数作为数量使用)
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getOverlie = function(itOrId)
     local s = hitem.getHSlk(itOrId)
-    return s._overlie or 1
+    if (s ~= nil) then
+        return s._overlie or 1
+    end
+    return 1
 end
 
 --- 获取物品的重量（默认为0）
@@ -445,16 +448,25 @@ hitem.synthesis = function(whichUnit, items)
     if (whichUnit == nil) then
         return
     end
+    items = items or {}
+    if (type(items) == 'userdata') then
+        items = { items }
+    end
     -- 叠加流程
-    for i = 0, 4, 1 do
-        local it1 = cj.UnitItemInSlot(whichUnit, i)
+    local overlying = {}
+    hitem.forEach(whichUnit, function(enumItem)
+        table.insert(overlying, enumItem)
+    end)
+    overlying = table.merge(overlying, items)
+    for i = 1, (#overlying - 1), 1 do
+        local it1 = overlying[i]
         if (it1 ~= nil) then
             local id1 = hitem.getId(it1)
             local charges1 = hitem.getCharges(it1)
             local overlie = hitem.getOverlie(id1)
             if (charges1 < overlie) then
-                for j = i + 1, 5, 1 do
-                    local it2 = cj.UnitItemInSlot(whichUnit, j)
+                for j = i + 1, #overlying, 1 do
+                    local it2 = overlying[j]
                     if (it2 == nil) then
                         break
                     end
@@ -473,7 +485,11 @@ hitem.synthesis = function(whichUnit, items)
                         if (charges2 > 0) then
                             cj.SetItemCharges(it2, charges2)
                         else
+                            if (j > 6) then
+                                table.delete(items, it2, 1)
+                            end
                             hitem.del(it2)
+                            overlying[j] = nil
                         end
                         if (charges1 >= overlie) then
                             break
@@ -484,10 +500,6 @@ hitem.synthesis = function(whichUnit, items)
         end
     end
     -- 合成流程
-    items = items or {}
-    if (type(items) == 'userdata') then
-        items = { items }
-    end
     local itemKind = {}
     local itemSlot = {}
     local itemStat = {
