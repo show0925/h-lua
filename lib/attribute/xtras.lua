@@ -70,8 +70,8 @@ hattribute.getXtras = function(whichUnit, eventKey)
     end
     local xtrasInEvent = {}
     for _, x in ipairs(xtras) do
-        if (eventKey == x.table.on) then
-            table.insert(xtrasInEvent, x.table)
+        if (eventKey == x._t.on) then
+            table.insert(xtrasInEvent, x._t)
         end
     end
     return xtrasInEvent

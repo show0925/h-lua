@@ -274,26 +274,16 @@ hattribute.init = function(whichUnit)
 end
 
 --- @private
-hattribute.getAccumuDiff = function(whichUnit, attr)
-    local diff = hunit.get(whichUnit, 'attributeDiff', {})
+hattribute.getDecimalTemporaryStorage = function(whichUnit, attr)
+    local diff = hunit.get(whichUnit, 'decimalTemporaryStorage', {})
     return diff[attr] or 0
 end
 
 --- @private
-hattribute.setAccumuDiff = function(whichUnit, attr, value)
-    local diff = hunit.get(whichUnit, 'attributeDiff', {})
+hattribute.setDecimalTemporaryStorage = function(whichUnit, attr, value)
+    local diff = hunit.get(whichUnit, 'decimalTemporaryStorage', {})
     diff[attr] = math.round(value)
-    hunit.set(whichUnit, 'attributeDiff', diff)
-end
-
---- @private
-hattribute.addAccumuDiff = function(whichUnit, attr, value)
-    hattribute.setAccumuDiff(whichUnit, attr, hattribute.getAccumuDiff(whichUnit, attr) + value)
-end
-
---- @private
-hattribute.subAccumuDiff = function(whichUnit, attr, value)
-    hattribute.setAccumuDiff(whichUnit, attr, hattribute.getAccumuDiff(whichUnit, attr) - value)
+    hunit.set(whichUnit, 'decimalTemporaryStorage', diff)
 end
 
 -- 设定属性
@@ -323,7 +313,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     if (params == nil) then
         return
     end
-    local buffKey = nil
+    local buffKey
     if (valType == "number") then
         local diff = 0
         if (opr == "+") then
@@ -337,33 +327,24 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
         elseif (opr == "=") then
             diff = val - params[attr]
         end
-        local isAccumuDiff = false
-        local accumuDiff = hattribute.getAccumuDiff(whichUnit, attr)
-        if (diff * accumuDiff > 0) then
-            isAccumuDiff = true
-            diff = diff + accumuDiff
-        end
         --部分属性取整处理，否则失真
         if (hattribute.isValType(attr, hattribute.VAL_TYPE.INTEGER) and diff ~= 0) then
-            local di, df = math.modf(math.abs(diff))
-            if (isAccumuDiff) then
-                if (diff >= 0) then
-                    hattribute.setAccumuDiff(whichUnit, attr, df)
-                else
-                    hattribute.setAccumuDiff(whichUnit, attr, -df)
-                end
-            else
-                if (diff >= 0) then
-                    hattribute.addAccumuDiff(whichUnit, attr, df)
-                else
-                    hattribute.subAccumuDiff(whichUnit, attr, df)
-                end
+            local dts = hattribute.getDecimalTemporaryStorage(whichUnit, attr)
+            local diffI, diffF = math.modf(diff)
+            local dtsI, dtsF = math.modf(dts)
+            diff = diffI + dtsI
+            dts = dtsF + diffF
+            if (dts < 0) then
+                -- 归0补正
+                dts = 1 + dts
+                diff = diff - 1
+            elseif (math.abs(dts) >= 1) then
+                -- 破1退1
+                dtsI, dtsF = math.modf(dts)
+                diff = diffI + dtsI
+                dts = dtsF
             end
-            if (diff >= 0) then
-                diff = di
-            else
-                diff = -di
-            end
+            hattribute.setDecimalTemporaryStorage(whichUnit, attr, dts)
         end
         if (diff ~= 0) then
             local currentVal = params[attr]
@@ -630,24 +611,24 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     elseif (valType == "table") then
         -- table类型只有+-没有别的
         if (opr == "+") then
-            local hkey = string.attrBuffKey(val)
+            local _k = string.attrBuffKey(val)
             if (during > 0) then
                 buffKey = hbuff.create(during, whichUnit, 'attr.' .. attr .. '+',
                     function()
-                        table.insert(params[attr], { hash = hkey, table = val })
+                        table.insert(params[attr], { _k = _k, _t = val })
                     end,
                     function()
                         hattribute.setHandle(whichUnit, attr, "-", val, 0)
                     end
                 )
             else
-                table.insert(params[attr], { hash = hkey, table = val })
+                table.insert(params[attr], { _k = _k, _t = val })
             end
         elseif (opr == "-") then
-            local hkey = string.attrBuffKey(val)
+            local _k = string.attrBuffKey(val)
             local hasKey = false
             for k, v in ipairs(params[attr]) do
-                if (v.hash == hkey) then
+                if (v._k == _k) then
                     table.remove(params[attr], k)
                     hasKey = true
                     break
@@ -750,7 +731,7 @@ hattribute.set = function(whichUnit, during, data)
     for _, arr in ipairs(table.obj2arr(data, CONST_ATTR_KEYS)) do
         local attr = arr.key
         local v = arr.value
-        local buffKey = nil
+        local buffKey
         if (attribute[attr] ~= nil) then
             if (type(v) == "string") then
                 local opr = string.sub(v, 1, 1)
