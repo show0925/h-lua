@@ -13,15 +13,14 @@
     }
 ]]
 hskill.knocking = function(options)
-    if (options.targetUnit == nil) then
-        print_err("knocking: -targetUnit")
-        return
-    end
     local odds = options.odds or 0
     local damage = options.damage or 0
     local percent = options.percent or 0
     if (odds <= 0 or damage <= 0 or percent <= 0) then
         print_err("knocking: -odds -damage -percent")
+        return
+    end
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local targetUnit = options.targetUnit
@@ -79,16 +78,15 @@ end
     }
 ]]
 hskill.split = function(options)
-    if (options.targetUnit == nil) then
-        print_err("split: -targetUnit")
-        return
-    end
     local odds = options.odds or 0
     local damage = options.damage or 0
     local percent = options.percent or 0
     local radius = options.radius or 0
     if (odds <= 0 or damage <= 0 or percent <= 0 or radius <= 0) then
         print_err("split: -odds -damage -percent -radius")
+        return
+    end
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local targetUnit = options.targetUnit
@@ -171,7 +169,7 @@ end
     }
 ]]
 hskill.broken = function(options)
-    if (options.targetUnit == nil) then
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local u = options.targetUnit
@@ -258,10 +256,10 @@ end
     }
 ]]
 hskill.swim = function(options)
-    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.during == nil or options.during <= 0) then
         return
     end
-    if (his.deleted(options.targetUnit)) then
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local u = options.targetUnit
@@ -392,10 +390,10 @@ end
     }
 ]]
 hskill.silent = function(options)
-    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.during == nil or options.during <= 0) then
         return
     end
-    if (his.deleted(options.targetUnit)) then
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local u = options.targetUnit
@@ -504,10 +502,10 @@ end
     }
 ]]
 hskill.unarm = function(options)
-    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.during == nil or options.during <= 0) then
         return
     end
-    if (his.deleted(options.targetUnit)) then
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local u = options.targetUnit
@@ -616,7 +614,10 @@ end
     }
 ]]
 hskill.fetter = function(options)
-    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.during == nil or options.during <= 0) then
+        return
+    end
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local u = options.targetUnit
@@ -706,6 +707,9 @@ hskill.bomb = function(options)
     if (options.whichGroup ~= nil) then
         whichGroup = options.whichGroup
     elseif (options.targetUnit ~= nil) then
+        if (his.deleted(options.targetUnit)) then
+            return
+        end
         whichGroup = hgroup.createByUnit(
             options.targetUnit,
             radius,
@@ -809,6 +813,9 @@ hskill.lightningChain = function(options)
     end
     if (options.targetUnit == nil) then
         print_err("lightningChain -targetUnit")
+        return
+    end
+    if (his.deleted(options.targetUnit)) then
         return
     end
     local odds = options.odds or 100
@@ -956,7 +963,7 @@ hskill.crackFly = function(options)
     if (options.damage == nil or options.damage < 0) then
         return
     end
-    if (options.targetUnit == nil) then
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local odds = options.odds or 100
@@ -1144,6 +1151,9 @@ hskill.rangeSwim = function(options)
         x = options.x
         y = options.y
     elseif (options.targetUnit ~= nil) then
+        if (his.deleted(options.targetUnit)) then
+            return
+        end
         x = hunit.x(options.targetUnit)
         y = hunit.y(options.targetUnit)
     elseif (options.whichLoc ~= nil) then
@@ -1330,6 +1340,9 @@ hskill.leap = function(options)
     end
     if (options.targetUnit == nil and options.x == nil and options.y == nil) then
         print_err("leap: -target")
+        return
+    end
+    if (options.targetUnit ~= nil and his.deleted(options.targetUnit)) then
         return
     end
     local frequency = 0.02
