@@ -624,8 +624,6 @@ hitem.synthesis = function(whichUnit, items)
             end
         end
     end
-    print_r(itemSlot)
-    --hitemPool.insert("h-lua-pick", it)
     -- 处理结果
     for i, sIt in ipairs(itemSlot) do
         local isProfit = table.includes(itemStat.profit, sIt.id)
@@ -666,13 +664,17 @@ hitem.synthesis = function(whichUnit, items)
                 cj.UnitAddItem(whichUnit, newIt)
             end
         else
-            if (sIt.id ~= nil and hitem.getEmptySlot(whichUnit) > 0) then
+            if (sIt.id ~= nil) then
                 local newIt = cj.CreateItem(string.char2id(sIt.id), hunit.x(whichUnit), hunit.y(whichUnit))
                 if (isProfit) then
                     hevent.triggerEvent(whichUnit, CONST_EVENT.itemSynthesis, { triggerUnit = whichUnit, triggerItem = newIt }) -- 触发合成事件
                 end
                 cj.SetItemCharges(newIt, sIt.charges)
-                cj.UnitAddItem(whichUnit, newIt)
+                if (hitem.getEmptySlot(whichUnit) > 0) then
+                    cj.UnitAddItem(whichUnit, newIt)
+                else
+                    hitemPool.insert("h-lua-pick", newIt)
+                end
             end
         end
     end
