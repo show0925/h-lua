@@ -1,10 +1,11 @@
 ---@class hattribute 属性系统
 hattribute = {
-    DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认认定这个技能为物品栏
     VAL_TYPE = {
         PLAYER = { "gold_ratio", "lumber_ratio", "exp_ratio", "sell_ratio" },
         INTEGER = {
-            "life", "mana", "move", "attack_white", "attack_green", "attack_range", "sight", "defend",
+            "life", "mana", "move", "attack_white", "attack_green",
+            "attack_range", "attack_range_acquire",
+            "sight", "defend",
             "str_white", "agi_white", "int_white", "str_green", "agi_green", "int_green", "punish"
         },
     },
@@ -46,136 +47,11 @@ hattribute.isValType = function(field, valType)
     return false
 end
 
---- 为单位添加N个同样的生命魔法技能 1级设0 2级设负 负减法（搜[卡血牌bug]，了解原理）
----@private
-hattribute.setLM = function(u, abilityId, qty)
-    if (qty <= 0) then
-        return
-    end
-    local i = 1
-    while (i <= qty) do
-        cj.UnitAddAbility(u, abilityId)
-        cj.SetUnitAbilityLevel(u, abilityId, 2)
-        cj.UnitRemoveAbility(u, abilityId)
-        i = i + 1
-    end
-end
-
---- 为单位添加N个同样的攻击之书
----@private
-hattribute.setAttackWhite = function(u, itemId, qty)
-    if (u == nil or itemId == nil or qty <= 0) then
-        return
-    end
-    if (his.alive(u) == true) then
-        local i = 1
-        local it
-        local hasSlot = (cj.GetUnitAbilityLevel(u, hattribute.DEFAULT_SKILL_ITEM_SLOT) >= 1)
-        if (hasSlot == false) then
-            cj.UnitAddAbility(u, hattribute.DEFAULT_SKILL_ITEM_SLOT)
-        end
-        while (i <= qty) do
-            it = cj.CreateItem(itemId, 0, 0)
-            cj.UnitAddItem(u, it)
-            cj.SetWidgetLife(it, 10.00)
-            cj.RemoveItem(it)
-            it = nil
-            i = i + 1
-        end
-        if (hasSlot == false) then
-            cj.UnitRemoveAbility(u, hattribute.DEFAULT_SKILL_ITEM_SLOT)
-        end
-    else
-        local per = 3.00
-        local limit = 60.0 / per -- 一般不会超过1分钟复活
-        htime.setInterval(
-            per,
-            function(t)
-                limit = limit - 1
-                if (limit < 0) then
-                    htime.delTimer(t)
-                elseif (his.alive(u) == true) then
-                    htime.delTimer(t)
-                    local i = 1
-                    local it
-                    local hasSlot = (cj.GetUnitAbilityLevel(u, hattribute.DEFAULT_SKILL_ITEM_SLOT) >= 1)
-                    if (hasSlot == false) then
-                        cj.UnitAddAbility(u, hattribute.DEFAULT_SKILL_ITEM_SLOT)
-                    end
-                    while (i <= qty) do
-                        it = cj.CreateItem(itemId, 0, 0)
-                        cj.UnitAddItem(u, it)
-                        cj.SetWidgetLife(it, 10.00)
-                        cj.RemoveItem(it)
-                        i = i + 1
-                    end
-                    if (hasSlot == false) then
-                        cj.UnitRemoveAbility(u, hattribute.DEFAULT_SKILL_ITEM_SLOT)
-                    end
-                end
-            end
-        )
-    end
-end
-
 --- 设置三围的影响
 ---@param buff table
 hattribute.setThreeBuff = function(buff)
     if (type(buff) == "table") then
         hattribute.THREE_BUFF = buff
-    end
-end
-
---- 为单位注册属性系统所需要的基础技能
---- hslk.attr
----@private
-hattribute.regAllAbility = function(whichUnit)
-    for _, v in ipairs(hslk.attr.ablis_gradient) do
-        -- 生命
-        cj.UnitAddAbility(whichUnit, hslk.attr.life.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.life.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.life.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.life.sub[v])
-        -- 魔法
-        cj.UnitAddAbility(whichUnit, hslk.attr.mana.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.mana.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.sub[v])
-        -- 绿字攻击
-        cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.sub[v])
-        -- 绿色属性
-        cj.UnitAddAbility(whichUnit, hslk.attr.str_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.str_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.str_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.str_green.sub[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.agi_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.agi_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.agi_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.agi_green.sub[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.int_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.int_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.int_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.int_green.sub[v])
-        -- 攻击速度
-        cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.sub[v])
-        -- 防御
-        cj.UnitAddAbility(whichUnit, hslk.attr.defend.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.defend.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.defend.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.defend.sub[v])
-    end
-    for _, v in ipairs(hslk.attr.sight_gradient) do
-        -- 视野
-        cj.UnitAddAbility(whichUnit, hslk.attr.sight.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.sight.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.sub[v])
     end
 end
 
@@ -197,6 +73,7 @@ hattribute.init = function(whichUnit)
         attack_white = 0.0,
         attack_green = 0.0,
         attack_range = 100,
+        attack_range_acquire = 100,
         sight = 1800,
         str_green = 0.0,
         agi_green = 0.0,
@@ -253,6 +130,9 @@ hattribute.init = function(whichUnit)
     if (uSlk.rangeN1) then
         attribute.attack_range = math.floor(uSlk.rangeN1)
     end
+    if (uSlk.acquire) then
+        attribute.attack_range_acquire = math.floor(uSlk.acquire)
+    end
     if (uSlk.sight) then
         attribute.sight = math.floor(uSlk.sight)
     end
@@ -271,19 +151,6 @@ hattribute.init = function(whichUnit)
         end
     end
     return true
-end
-
---- @private
-hattribute.getDecimalTemporaryStorage = function(whichUnit, attr)
-    local diff = hunit.get(whichUnit, 'decimalTemporaryStorage', {})
-    return diff[attr] or 0
-end
-
---- @private
-hattribute.setDecimalTemporaryStorage = function(whichUnit, attr, value)
-    local diff = hunit.get(whichUnit, 'decimalTemporaryStorage', {})
-    diff[attr] = math.round(value)
-    hunit.set(whichUnit, 'decimalTemporaryStorage', diff)
 end
 
 -- 设定属性
@@ -329,7 +196,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
         end
         --部分属性取整处理，否则失真
         if (hattribute.isValType(attr, hattribute.VAL_TYPE.INTEGER) and diff ~= 0) then
-            local dts = hattribute.getDecimalTemporaryStorage(whichUnit, attr)
+            local dts = hattributeSetter.getDecimalTemporaryStorage(whichUnit, attr)
             local diffI, diffF = math.modf(diff)
             local dtsI, dtsF = math.modf(dts)
             diff = diffI + dtsI
@@ -344,7 +211,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 diff = diffI + dtsI
                 dts = dtsF
             end
-            hattribute.setDecimalTemporaryStorage(whichUnit, attr, dts)
+            hattributeSetter.setDecimalTemporaryStorage(whichUnit, attr, dts)
         end
         if (diff ~= 0) then
             local currentVal = params[attr]
@@ -390,9 +257,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         level = math.floor(tempVal / max)
                         tempVal = math.floor(tempVal - level * max)
                         if (diff > 0) then
-                            hattribute.setLM(whichUnit, hslk.attr[attr].add[max], level)
+                            hattributeSetter.abilityLifeMana(whichUnit, hslk.attr[attr].add[max], level)
                         else
-                            hattribute.setLM(whichUnit, hslk.attr[attr].sub[max], level)
+                            hattributeSetter.abilityLifeMana(whichUnit, hslk.attr[attr].sub[max], level)
                         end
                         max = math.floor(max / 10)
                     end
@@ -416,15 +283,23 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         level = math.floor(tempVal / max)
                         tempVal = math.floor(tempVal - level * max)
                         if (diff > 0) then
-                            hattribute.setAttackWhite(whichUnit, hslk.attr.item_attack_white.add[max], level)
+                            hattributeSetter.abilityAttackWhite(whichUnit, hslk.attr.item_attack_white.add[max], level)
                         else
-                            hattribute.setAttackWhite(whichUnit, hslk.attr.item_attack_white.sub[max], level)
+                            hattributeSetter.abilityAttackWhite(whichUnit, hslk.attr.item_attack_white.sub[max], level)
                         end
                         max = math.floor(max / 10)
                     end
                 end
             elseif (attr == "attack_range") then
-                -- 攻击范围(仅仅是自动警示范围)
+                -- 攻击范围[JAPI]
+                if (futureVal < 0) then
+                    futureVal = 0
+                elseif (futureVal > 9999) then
+                    futureVal = 9999
+                end
+                hjapi.setUnitAttackRange(whichUnit, futureVal)
+            elseif (attr == "attack_range_acquire") then
+                -- 主动攻击范围
                 if (futureVal < 0) then
                     futureVal = 0
                 elseif (futureVal > 9999) then
@@ -460,6 +335,8 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         end
                     end
                 end
+            elseif ("attack_speed" == attr) then
+                hjapi.setUnitAttackSpeed()
             elseif (table.includes({ "attack_green", "attack_speed", "defend" }, attr)) then
                 -- 绿字攻击 攻击速度 护甲
                 if (futureVal < -99999999) then
