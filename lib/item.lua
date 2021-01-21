@@ -448,28 +448,36 @@ hitem.synthesis = function(whichUnit, items)
     -- 叠加流程
     for i = 0, 4, 1 do
         local it1 = cj.UnitItemInSlot(whichUnit, i)
-        if (it1 == nil) then
-            break
-        end
-        local id1 = hitem.getId(it1)
-        local charges1 = hitem.getCharges(it1)
-        local overlie = hitem.getOverlie(id1)
-        if (charges1 < overlie) then
-            for j = i + 1, 5, 1 do
-                local it2 = cj.UnitItemInSlot(whichUnit, j)
-                if (it2 == nil) then
-                    break
-                end
-                local id2 = hitem.getId(it2)
-                local charges2 = hitem.getCharges(it2)
-                if (id1 == id2) then
-                    local allow = overlie - charges1
-                    if (charges2 <= allow) then
-                        cj.SetItemCharges(it1, charges1 + charges2)
-                        hitem.del(it2)
-                    else
-                        cj.SetItemCharges(it1, overlie)
-                        cj.SetItemCharges(it2, charges2 - allow)
+        if (it1 ~= nil) then
+            local id1 = hitem.getId(it1)
+            local charges1 = hitem.getCharges(it1)
+            local overlie = hitem.getOverlie(id1)
+            if (charges1 < overlie) then
+                for j = i + 1, 5, 1 do
+                    local it2 = cj.UnitItemInSlot(whichUnit, j)
+                    if (it2 == nil) then
+                        break
+                    end
+                    local id2 = hitem.getId(it2)
+                    local charges2 = hitem.getCharges(it2)
+                    if (id1 == id2 and charges2 < overlie) then
+                        local allow = overlie - charges1
+                        if (charges2 <= allow) then
+                            charges1 = charges1 + charges2
+                            charges2 = 0
+                        else
+                            charges1 = overlie
+                            charges2 = charges2 - allow
+                        end
+                        cj.SetItemCharges(it1, charges1)
+                        if (charges2 > 0) then
+                            cj.SetItemCharges(it2, charges2)
+                        else
+                            hitem.del(it2)
+                        end
+                        if (charges1 >= overlie) then
+                            break
+                        end
                     end
                 end
             end
@@ -591,7 +599,6 @@ hitem.synthesis = function(whichUnit, items)
             end
         end
     end
-    print(">>>>>>>>>>>>>>>>>>>>>>")
     if (#itemStat.add.id > 0) then
         for _, addId in ipairs(itemStat.add.id) do
             for _, sIt in ipairs(itemSlot) do
@@ -624,7 +631,29 @@ hitem.synthesis = function(whichUnit, items)
             end
         end
     end
-    -- 处理结果
+    -- 处理结果,先删后加
+    for i = 1, 6, 1 do
+        local sIt = itemSlot[i]
+        local idx = i - 1
+        local it = cj.UnitItemInSlot(whichUnit, idx)
+        if (it ~= nil) then
+            local itId = hitem.getId(it)
+            local charges = hitem.getCharges(it) or 1
+            if (sIt.id == nil) then
+                hitem.subProperty(whichUnit, itId, charges)
+                hitem.del(it, 0)
+            elseif (itId == sIt.id) then
+                local diff = sIt.charges - charges
+                if (diff > 0) then
+                    cj.SetItemCharges(it, charges + diff)
+                    hitem.addProperty(whichUnit, itId, diff)
+                elseif (diff < 0) then
+                    cj.SetItemCharges(it, charges + diff)
+                    hitem.subProperty(whichUnit, itId, math.abs(diff))
+                end
+            end
+        end
+    end
     for i, sIt in ipairs(itemSlot) do
         local isProfit = table.includes(itemStat.profit, sIt.id)
         if (i <= 6) then
@@ -632,20 +661,8 @@ hitem.synthesis = function(whichUnit, items)
             local it = cj.UnitItemInSlot(whichUnit, idx)
             if (it ~= nil) then
                 local itId = hitem.getId(it)
-                local charges = hitem.getCharges(it) or 1
-                if (sIt.id == nil) then
-                    hitem.subProperty(whichUnit, itId, charges)
-                    hitem.del(it, 0)
-                elseif (itId == sIt.id) then
-                    local diff = sIt.charges - charges
-                    if (diff > 0) then
-                        cj.SetItemCharges(it, charges + diff)
-                        hitem.addProperty(whichUnit, itId, diff)
-                    elseif (diff < 0) then
-                        cj.SetItemCharges(it, charges + diff)
-                        hitem.subProperty(whichUnit, itId, math.abs(diff))
-                    end
-                elseif (itId ~= sIt.id) then
+                if (sIt.id ~= nil and itId ~= sIt.id) then
+                    local charges = hitem.getCharges(it) or 1
                     hitem.subProperty(whichUnit, itId, charges)
                     hitem.del(it, 0)
                     local newIt = cj.CreateItem(string.char2id(sIt.id), hunit.x(whichUnit), hunit.y(whichUnit))
@@ -726,7 +743,6 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
         if (profit == nil) then
             return "物品找不到公式，无法拆分"
         end
-        print_mbr(profit)
         for _ = 1, charges, 1 do
             for _, frag in ipairs(profit.fragment) do
                 local flagId = frag[1]
