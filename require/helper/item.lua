@@ -256,7 +256,7 @@ end
 ---@param v table
 slkHelper.item.shadow = function(v)
     slkHelper.count = slkHelper.count + 1
-    local Name = "# " .. v.Name
+    local Name = "　" .. v.Name .. "　"
     local obj = slk.item.rat9:new("itemShadows_" .. v.Name)
     obj.Name = Name
     obj.Description = slkHelper.itemDesc(v)
