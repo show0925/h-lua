@@ -1,10 +1,11 @@
---- debug标志位
-if (HLUA_DEBUG == nil) then
-    HLUA_DEBUG = false --默认不开启调试
+--- 默认debug关闭的，需要请在加载h-lua前设置 HLUA_DEBUG = true
+isDebugging = function()
+    local status = true
+    return status == HLUA_DEBUG
 end
 
 --- 自启动调试
-if (HLUA_DEBUG == true) then
+if (isDebugging()) then
     ydRuntime = require "jass.runtime"
     ydRuntime.console = true
     ydRuntime.sleep = false
@@ -27,7 +28,7 @@ end
 --- print rem("a","b") =1
 --- print rem("a","c") =3
 rem = function(key1, key2)
-    if (HLUA_DEBUG == false) then
+    if (isDebugging() == false) then
         return
     end
     if (type(key1) ~= "string") then
@@ -48,7 +49,7 @@ end
 
 --- 打印栈
 print_stack = function(...)
-    if (HLUA_DEBUG == false) then
+    if (isDebugging() == false) then
         return
     end
     local out = { "[TRACE]" }
@@ -65,7 +66,7 @@ end
 
 --- 打印utf8->ansi编码,此方法可以打印出中文
 print_mb = function(...)
-    if (HLUA_DEBUG == false) then
+    if (isDebugging() == false) then
         return
     end
     ydConsole.write(...)
@@ -73,7 +74,7 @@ end
 
 --- 错误调试
 print_err = function(val)
-    if (HLUA_DEBUG == false) then
+    if (isDebugging() == false) then
         return
     end
     print("========h-lua-err========")
@@ -88,7 +89,7 @@ end
 
 --- 打印对象table
 print_r = function(t, printMethod, showDetail)
-    if (HLUA_DEBUG == false) then
+    if (isDebugging() == false) then
         return
     end
     local print_r_cache = {}

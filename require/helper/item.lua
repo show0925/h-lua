@@ -127,7 +127,7 @@ slkHelper.itemCooldownID = function(v)
         oob.EfctID1 = ""
         oob.Dur1 = 0.01
         oob.HeroDur1 = 0.01
-        oob.Rng1 = v.Rng1
+        oob.Rng1 = v.Rng1 or 600
         oob.Area1 = 0
         oob.DataA1 = 0
         oob.DataB1 = 0
@@ -337,6 +337,9 @@ slkHelper.item.normal = function(v)
     v.goldcost = v.goldcost or 0
     v.lumbercost = v.lumbercost or 0
     v.uses = v.uses or 1
+    if (_overlie < v.uses) then
+        _overlie = v.uses
+    end
     lv = math.floor((v.goldcost + v.lumbercost) / 500)
     if (lv < 1) then
         lv = 1

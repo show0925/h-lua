@@ -4,7 +4,10 @@
 --- DateTime: 2020/9/5 10:16
 --- slk匹配器，方便处理slk的数据
 ---
---- 通用配置格式：
+--- 通用配置格式： evtData: {
+---                 triggerUnit:"触发单位",triggerItem:"触发物品",triggerSkill:"施放技能ID字符串",targetUnit:"获取目标单位",
+---                 targetX:"获取施放目标点X",targetY:"获取施放目标点Y",targetZ:"获取施放目标点Z"
+---            }
 --- conf = {
 ---     {"匹配的物品名1", function(evtData) end},
 ---     {"匹配的物品名2", function(evtData) end},
