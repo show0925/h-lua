@@ -823,9 +823,10 @@ hevent_default_actions = {
                     cj.SetItemCharges(it, charges)
                     if (hitem.getEmptySlot(u) <= 0) then
                         hitem.synthesis(u, it) -- 看看有没有合成，可能这个实体物品有合成可以收到物品栏
-                        return
+                    else
+                        cj.UnitAddItem(u, it)
                     end
-                    cj.UnitAddItem(u, it)
+                    return
                 end
             end
             -- 触发获得物品
