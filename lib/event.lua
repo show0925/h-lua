@@ -56,7 +56,7 @@ hevent.pool = function(handle, conditionAction, regEvent)
         hevent.POOL[key] = {}
     end
     local poolIndex = #hevent.POOL[key]
-    if (poolIndex <= 0 or hevent.POOL[key][poolIndex].count >= hevent.POOL_RED_LINE) then
+    if (poolIndex <= 0 or hevent.POOL[key][poolIndex] == -1 or hevent.POOL[key][poolIndex].count >= hevent.POOL_RED_LINE) then
         local tgr = cj.CreateTrigger()
         table.insert(hevent.POOL[key], {
             stock = 0,
