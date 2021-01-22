@@ -96,7 +96,7 @@ his.alive = function(whichUnit)
     return cj.GetUnitState(whichUnit, UNIT_STATE_LIFE) > 0
 end
 
---- 是否已被删除
+--- 单位是否已被删除
 ---@param whichUnit userdata
 ---@return boolean
 his.deleted = function(whichUnit)
@@ -380,6 +380,13 @@ end
 ---@return boolean
 his.borderCamera = function(x, y)
     return his.borderRect(his.MAP_CAMERA_AREA, x, y)
+end
+
+--- 物品是否已被销毁
+---@param whichItem userdata
+---@return boolean
+his.destroy = function(whichItem)
+    return cj.GetItemTypeId(whichItem) == 0
 end
 
 --- 是否身上有某种物品
