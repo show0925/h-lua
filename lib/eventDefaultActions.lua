@@ -783,7 +783,7 @@ hevent_default_actions = {
         pickup = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = cj.GetItemTypeId(it)
-            if (table.includes(hslk.attr.item_attack_white.items, itId)) then
+            if (table.includes(hslk.attr.item_attack_white.items, itId) or his.destroy(it)) then
                 --过滤hlua白字攻击物品
                 return
             end
@@ -831,17 +831,20 @@ hevent_default_actions = {
             end
             -- 触发获得物品
             hevent.triggerEvent(u, CONST_EVENT.itemGet, { triggerUnit = u, triggerItem = it })
-            -- 计算属性
-            hitem.addProperty(u, itId, charges)
-            -- 如果是自动使用的，用一波
-            if (hitem.getIsPowerUp(itId)) then
-                hitem.used(u, it)
-                if (hitem.getIsPerishable(itId)) then
-                    hitem.del(it, 0)
+            if (false == his.destroy(it)) then
+                -- 如果是自动使用的，用一波
+                if (hitem.getIsPowerUp(itId)) then
+                    hitem.used(u, it)
+                    if (hitem.getIsPerishable(itId)) then
+                        hitem.del(it, 0)
+                        return
+                    end
                 end
+                -- 计算属性
+                hitem.addProperty(u, itId, charges)
+                -- 检查合成
+                hitem.synthesis(u)
             end
-            -- 检查合成
-            hitem.synthesis(u)
         end),
         drop = cj.Condition(function()
             local it = cj.GetManipulatedItem()
