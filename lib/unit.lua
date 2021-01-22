@@ -52,30 +52,20 @@ hunit.getAvatar = function(uOrId)
     return s.Art
 end
 
---- 获取单位的原始攻击间隔
----@param uOrId userdata|string|number
----@return number
-hunit.getAttackSpeedSpace = function(uOrId)
-    local s = hunit.getSlk(uOrId)
-    return math.round(s.cool1)
-end
-
---- 获取单位的浮动攻击
+--- 获取单位的攻击浮动
 --- 这是根据slk计算的浮动攻击，每次获取到的值可能不一样
 ---@param uOrId userdata|string|number
 ---@return number
-hunit.getDmgPlus = function(uOrId)
+hunit.getAttackSides = function(uOrId)
     local s = hunit.getSlk(uOrId)
-    local dmgplus1 = s.dmgplus1 or 0
     local sides1 = s.sides1 or 1
     local dice1 = s.dice1 or 0
-    dmgplus1 = math.floor(dmgplus1)
     sides1 = math.floor(sides1)
     dice1 = math.floor(dice1)
     if (sides1 < 1) then
         sides1 = 1
     end
-    return dmgplus1 + dice1 * math.random(1, sides1)
+    return dice1 * math.random(1, sides1)
 end
 
 --- 获取单位的最大生命值

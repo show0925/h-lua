@@ -21,21 +21,28 @@ end
 ---@private
 hattributeSetter.regAllAbility = function(whichUnit)
     for _, v in ipairs(hslk.attr.ablis_gradient) do
-        -- 生命
-        cj.UnitAddAbility(whichUnit, hslk.attr.life.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.life.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.life.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.life.sub[v])
-        -- 魔法
-        cj.UnitAddAbility(whichUnit, hslk.attr.mana.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.mana.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.sub[v])
-        -- 绿字攻击
-        cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.sub[v])
+        if (false == hjapi.check()) then
+            -- 生命
+            cj.UnitAddAbility(whichUnit, hslk.attr.life.add[v])
+            cj.UnitRemoveAbility(whichUnit, hslk.attr.life.add[v])
+            cj.UnitAddAbility(whichUnit, hslk.attr.life.sub[v])
+            cj.UnitRemoveAbility(whichUnit, hslk.attr.life.sub[v])
+            -- 魔法
+            cj.UnitAddAbility(whichUnit, hslk.attr.mana.add[v])
+            cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.add[v])
+            cj.UnitAddAbility(whichUnit, hslk.attr.mana.sub[v])
+            cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.sub[v])
+            -- 绿字攻击
+            cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.add[v])
+            cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.add[v])
+            cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.sub[v])
+            cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.sub[v])
+            -- 攻击速度
+            cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.add[v])
+            cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.add[v])
+            cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.sub[v])
+            cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.sub[v])
+        end
         -- 绿色属性
         cj.UnitAddAbility(whichUnit, hslk.attr.str_green.add[v])
         cj.UnitRemoveAbility(whichUnit, hslk.attr.str_green.add[v])
@@ -49,13 +56,6 @@ hattributeSetter.regAllAbility = function(whichUnit)
         cj.UnitRemoveAbility(whichUnit, hslk.attr.int_green.add[v])
         cj.UnitAddAbility(whichUnit, hslk.attr.int_green.sub[v])
         cj.UnitRemoveAbility(whichUnit, hslk.attr.int_green.sub[v])
-        -- 攻击速度
-        if (false == hjapi.check()) then
-            cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.add[v])
-            cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.add[v])
-            cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.sub[v])
-            cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.sub[v])
-        end
         -- 防御
         cj.UnitAddAbility(whichUnit, hslk.attr.defend.add[v])
         cj.UnitRemoveAbility(whichUnit, hslk.attr.defend.add[v])
@@ -73,7 +73,7 @@ end
 
 --- 为单位添加N个同样的生命魔法技能 1级设0 2级设负 负减法（搜[卡血牌bug]，了解原理）
 ---@private
-hattributeSetter.abilityLifeMana = function(u, abilityId, qty)
+hattributeSetter.relyLifeMana = function(u, abilityId, qty)
     if (qty <= 0) then
         return
     end
@@ -88,7 +88,7 @@ end
 
 --- 为单位添加N个同样的攻击之书
 ---@private
-hattributeSetter.abilityAttackWhite = function(u, itemId, qty)
+hattributeSetter.relyAttackWhite = function(u, itemId, qty)
     if (u == nil or itemId == nil or qty <= 0) then
         return
     end

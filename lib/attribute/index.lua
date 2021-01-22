@@ -5,7 +5,7 @@ hattribute = {
         INTEGER = {
             "life", "mana", "move", "attack_white", "attack_green",
             "attack_range", "attack_range_acquire",
-            "sight", "defend",
+            "sight", "defend_white", "defend_green",
             "str_white", "agi_white", "int_white", "str_green", "agi_green", "int_green", "punish"
         },
     },
@@ -18,7 +18,7 @@ hattribute = {
             life_back = 0.05 -- 每点力量提升0.05生命恢复（默认例子）
         },
         agi = {
-            defend = 0.01 -- 每点敏捷提升0.01护甲（默认例子）
+            defend_green = 0.01 -- 每点敏捷提升0.01护甲（默认例子）
         },
         int = {
             mana = 6, -- 每点智力提升6魔法（默认例子）
@@ -68,12 +68,14 @@ hattribute.init = function(whichUnit)
         life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE),
         mana = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_MANA),
         move = cj.GetUnitDefaultMoveSpeed(whichUnit),
-        defend = 0,
+        defend_white = 0,
+        defend_green = 0,
         attack_speed = 0.0,
         attack_white = 0.0,
         attack_green = 0.0,
         attack_range = 100,
         attack_range_acquire = 100,
+        attack_speed_space_origin = 0,
         sight = 1800,
         str_green = 0.0,
         agi_green = 0.0,
@@ -127,29 +129,26 @@ hattribute.init = function(whichUnit)
         attribute["e_" .. v.value .. '_attack'] = 0
         attribute["e_" .. v.value .. '_append'] = 0
     end
+    if (uSlk.dmgplus1) then
+        attribute.attack_white = math.floor(uSlk.dmgplus1)
+    end
     if (uSlk.rangeN1) then
         attribute.attack_range = math.floor(uSlk.rangeN1)
     end
     if (uSlk.acquire) then
         attribute.attack_range_acquire = math.floor(uSlk.acquire)
     end
+    if (uSlk.attack_speed_space_origin) then
+        attribute.attack_speed_space_origin = math.round(uSlk.cool1)
+    end
+    if (uSlk.def) then
+        attribute.defend_white = math.round(uSlk.def)
+    end
     if (uSlk.sight) then
         attribute.sight = math.floor(uSlk.sight)
     end
     -- 初始化数据
     hunit.set(whichUnit, 'attribute', attribute)
-    -- 延后处理护甲
-    if (uSlk.def ~= nil) then
-        local def = 0
-        if (uSlk.def) then
-            def = math.round(uSlk.def)
-        end
-        if (def > 0) then
-            hattr.set(whichUnit, 0, { defend = '+' .. def })
-        else
-            hattr.set(whichUnit, 0, { defend = '-' .. def })
-        end
-    end
     return true
 end
 
@@ -238,30 +237,41 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             if (attr == "life" or attr == "mana") then
                 -- 生命 | 魔法
                 if (futureVal >= 999999999) then
+                    futureVal = 999999999
                     if (currentVal >= 999999999) then
                         diff = 0
                     else
                         diff = 999999999 - currentVal
                     end
                 elseif (futureVal <= 1) then
+                    futureVal = 1
                     if (currentVal <= 1) then
                         diff = 0
                     else
                         diff = 1 - currentVal
                     end
                 end
-                tempVal = math.floor(math.abs(diff))
-                local max = 100000000
-                if (tempVal ~= 0) then
-                    while (max >= 1) do
-                        level = math.floor(tempVal / max)
-                        tempVal = math.floor(tempVal - level * max)
-                        if (diff > 0) then
-                            hattributeSetter.abilityLifeMana(whichUnit, hslk.attr[attr].add[max], level)
-                        else
-                            hattributeSetter.abilityLifeMana(whichUnit, hslk.attr[attr].sub[max], level)
+                local method
+                if (attr == "life") then
+                    method = hjapi.setUnitMaxLife
+                elseif (attr == "mana") then
+                    method = hjapi.setUnitMaxMana
+                end
+                if (false == method(whichUnit, futureVal)) then
+                    print("hlua")
+                    tempVal = math.floor(math.abs(diff))
+                    local max = 100000000
+                    if (tempVal ~= 0) then
+                        while (max >= 1) do
+                            level = math.floor(tempVal / max)
+                            tempVal = math.floor(tempVal - level * max)
+                            if (diff > 0) then
+                                hattributeSetter.relyLifeMana(whichUnit, hslk.attr[attr].add[max], level)
+                            else
+                                hattributeSetter.relyLifeMana(whichUnit, hslk.attr[attr].sub[max], level)
+                            end
+                            max = math.floor(max / 10)
                         end
-                        max = math.floor(max / 10)
                     end
                 end
             elseif (attr == "move") then
@@ -271,6 +281,13 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 else
                     cj.SetUnitMoveSpeed(whichUnit, math.min(math.floor(futureVal), 522))
                 end
+            elseif (attr == "attack_speed_space") then
+                if (futureVal > 10.00) then
+                    futureVal = 10.00
+                elseif (futureVal < 0) then
+                    futureVal = 0
+                end
+                hjapi.setUnitAttackSpace(whichUnit, futureVal)
             elseif (attr == "attack_white") then
                 -- 白字攻击
                 local max = 100000000
@@ -283,9 +300,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         level = math.floor(tempVal / max)
                         tempVal = math.floor(tempVal - level * max)
                         if (diff > 0) then
-                            hattributeSetter.abilityAttackWhite(whichUnit, hslk.attr.item_attack_white.add[max], level)
+                            hattributeSetter.relyAttackWhite(whichUnit, hslk.attr.item_attack_white.add[max], level)
                         else
-                            hattributeSetter.abilityAttackWhite(whichUnit, hslk.attr.item_attack_white.sub[max], level)
+                            hattributeSetter.relyAttackWhite(whichUnit, hslk.attr.item_attack_white.sub[max], level)
                         end
                         max = math.floor(max / 10)
                     end
@@ -337,8 +354,8 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 end
             elseif ("attack_speed" == attr) then
                 hjapi.setUnitAttackSpeed()
-            elseif (table.includes({ "attack_green", "attack_speed", "defend" }, attr)) then
-                -- 绿字攻击 攻击速度 护甲
+            elseif (table.includes({ "attack_green", "attack_speed", "defend_green" }, attr)) then
+                -- 绿字攻击 攻击速度 绿字护甲
                 if (futureVal < -99999999) then
                     futureVal = -99999999
                 elseif (futureVal > 99999999) then
@@ -677,8 +694,8 @@ hattribute.get = function(whichUnit, attr)
         end
         attribute = hunit.get(whichUnit, 'attribute')
     end
-    attribute.attack = hunit.getDmgPlus(whichUnit) + attribute.attack_white or 0 + attribute.attack_green or 0
-    attribute.attack_speed_space = math.round(hunit.getAttackSpeedSpace(whichUnit) / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
+    attribute.attack = hunit.getAttackSides(whichUnit) + attribute.attack_white or 0 + attribute.attack_green or 0
+    attribute.attack_speed_space = math.round(attribute.attack_speed_space_origin / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
     attribute.str = (attribute.str_white or 0) + (attribute.str_green or 0)
     attribute.agi = (attribute.agi_white or 0) + (attribute.agi_green or 0)
     attribute.int = (attribute.int_white or 0) + (attribute.int_green or 0)
