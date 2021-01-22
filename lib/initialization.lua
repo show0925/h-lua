@@ -8,10 +8,10 @@
 -- 全局秒钟
 cj.TimerStart(cj.CreateTimer(), 1.00, true, htime.clock)
 
--- 预读 preread
-local preread_u = cj.CreateUnit(hplayer.player_passive, hslk.unit_token, 0, 0, 0)
-hattributeSetter.regAllAbility(preread_u)
-hunit.del(preread_u)
+-- 预读 preReadUnit
+local preReadUnit = cj.CreateUnit(hplayer.player_passive, hslk.unit_token, 0, 0, 0)
+hattributeSetter.relyRegister(preReadUnit)
+hunit.del(preReadUnit)
 
 -- register APM
 hevent.pool('global', hevent_default_actions.player.apm, function(tgr)

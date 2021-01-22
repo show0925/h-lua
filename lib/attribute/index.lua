@@ -75,7 +75,7 @@ hattribute.init = function(whichUnit)
         attack_green = 0.0,
         attack_range = 100,
         attack_range_acquire = 100,
-        attack_speed_space_origin = 0,
+        attack_space_origin = 0,
         sight = 1800,
         str_green = 0.0,
         agi_green = 0.0,
@@ -138,8 +138,8 @@ hattribute.init = function(whichUnit)
     if (uSlk.acquire) then
         attribute.attack_range_acquire = math.floor(uSlk.acquire)
     end
-    if (uSlk.attack_speed_space_origin) then
-        attribute.attack_speed_space_origin = math.round(uSlk.cool1)
+    if (uSlk.attack_space_origin) then
+        attribute.attack_space_origin = math.round(uSlk.cool1)
     end
     if (uSlk.def) then
         attribute.defend_white = math.round(uSlk.def)
@@ -157,7 +157,7 @@ end
     白字攻击 绿字攻击
     攻速 视野 警示范围
     力敏智 力敏智(绿)
-    护甲 魔抗
+    基础护甲 护甲 魔抗
     生命 魔法 +恢复
     硬直
     物暴 术暴 分裂 回避 移动力 力量 敏捷 智力 救助力 吸血 负重 各率
@@ -258,7 +258,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                     method = hjapi.setUnitMaxMana
                 end
                 if (false == method(whichUnit, futureVal)) then
-                    print("hlua")
                     tempVal = math.floor(math.abs(diff))
                     local max = 100000000
                     if (tempVal ~= 0) then
@@ -281,12 +280,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 else
                     cj.SetUnitMoveSpeed(whichUnit, math.min(math.floor(futureVal), 522))
                 end
-            elseif (attr == "attack_speed_space") then
-                if (futureVal > 10.00) then
-                    futureVal = 10.00
-                elseif (futureVal < 0) then
-                    futureVal = 0
-                end
+            elseif (attr == "attack_space") then
                 hjapi.setUnitAttackSpace(whichUnit, futureVal)
             elseif (attr == "attack_white") then
                 -- 白字攻击
@@ -309,11 +303,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 end
             elseif (attr == "attack_range") then
                 -- 攻击范围[JAPI]
-                if (futureVal < 0) then
-                    futureVal = 0
-                elseif (futureVal > 9999) then
-                    futureVal = 9999
-                end
                 hjapi.setUnitAttackRange(whichUnit, futureVal)
             elseif (attr == "attack_range_acquire") then
                 -- 主动攻击范围
@@ -353,8 +342,48 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                     end
                 end
             elseif ("attack_speed" == attr) then
-                hjapi.setUnitAttackSpeed()
-            elseif (table.includes({ "attack_green", "attack_speed", "defend_green" }, attr)) then
+                -- 攻击速度
+                if (false == hjapi.setUnitAttackSpeed(whichUnit, futureVal)) then
+                    if (futureVal < -99999999) then
+                        futureVal = -99999999
+                    elseif (futureVal > 99999999) then
+                        futureVal = 99999999
+                    end
+                    for _, grad in ipairs(hslk.attr.ablis_gradient) do
+                        local ab = hslk.attr[attr].add[grad]
+                        if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+                            cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+                        end
+                        ab = hslk.attr[attr].sub[grad]
+                        if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+                            cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+                        end
+                    end
+                    tempVal = math.floor(math.abs(futureVal))
+                    local max = 100000000
+                    if (tempVal ~= 0) then
+                        while (max >= 1) do
+                            level = math.floor(tempVal / max)
+                            tempVal = math.floor(tempVal - level * max)
+                            if (futureVal > 0) then
+                                if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
+                                    cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
+                                end
+                                cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
+                            else
+                                if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
+                                    cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
+                                end
+                                cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
+                            end
+                            max = math.floor(max / 10)
+                        end
+                    end
+                end
+            elseif ("defend_white" == attr) then
+                -- 白字护甲[JAPI]
+                hjapi.setUnitDefendWhite(whichUnit, futureVal)
+            elseif ("attack_green" == attr or "defend_green" == attr) then
                 -- 绿字攻击 攻击速度 绿字护甲
                 if (futureVal < -99999999) then
                     futureVal = -99999999
@@ -695,7 +724,7 @@ hattribute.get = function(whichUnit, attr)
         attribute = hunit.get(whichUnit, 'attribute')
     end
     attribute.attack = hunit.getAttackSides(whichUnit) + attribute.attack_white or 0 + attribute.attack_green or 0
-    attribute.attack_speed_space = math.round(attribute.attack_speed_space_origin / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
+    attribute.attack_space = math.round(attribute.attack_space_origin / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
     attribute.str = (attribute.str_white or 0) + (attribute.str_green or 0)
     attribute.agi = (attribute.agi_white or 0) + (attribute.agi_green or 0)
     attribute.int = (attribute.int_white or 0) + (attribute.int_green or 0)

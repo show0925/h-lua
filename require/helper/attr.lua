@@ -71,7 +71,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
         local k = arr.key
         local v = arr.value
         -- 附加单位
-        if (k == "attack_speed_space") then
+        if (k == "attack_space") then
             v = v .. "击每秒"
         end
         if (table.includes({ "life_back", "mana_back" }, k)) then

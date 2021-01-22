@@ -35,6 +35,11 @@ end
 ---@param value number
 ---@return boolean
 hjapi.setUnitAttackWhite = function(whichUnit, value)
+    if (value < -99999999) then
+        value = -99999999
+    elseif (value > 99999999) then
+        value = 99999999
+    end
     return hjapi.check({ 'SetUnitState' }, function()
         japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x12), value)
     end)
@@ -45,6 +50,11 @@ end
 ---@param value number
 ---@return boolean
 hjapi.setUnitAttackGreen = function(whichUnit, value)
+    if (value < -99999999) then
+        value = -99999999
+    elseif (value > 99999999) then
+        value = 99999999
+    end
     return hjapi.check({ 'SetUnitState' }, function()
         japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x13), value)
     end)
@@ -55,6 +65,11 @@ end
 ---@param value number
 ---@return boolean
 hjapi.setUnitAttackRange = function(whichUnit, value)
+    if (value < 0) then
+        value = 0
+    elseif (value > 9999) then
+        value = 9999
+    end
     return hjapi.check({ 'SetUnitState' }, function()
         japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x16), value)
     end)
@@ -65,6 +80,11 @@ end
 ---@param value number
 ---@return boolean
 hjapi.setUnitAttackSpeed = function(whichUnit, value)
+    if (value > 400) then
+        value = 400
+    elseif (value < -80) then
+        value = -80
+    end
     return hjapi.check({ 'SetUnitState' }, function()
         japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x51), value)
     end)
@@ -75,6 +95,11 @@ end
 ---@param value number
 ---@return boolean
 hjapi.setUnitAttackSpace = function(whichUnit, value)
+    if (value > 10) then
+        value = 10
+    elseif (value < 0) then
+        value = 0
+    end
     return hjapi.check({ 'SetUnitState' }, function()
         japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x25), value)
     end)
@@ -85,9 +110,14 @@ end
 ---@param value number
 ---@return boolean
 hjapi.setUnitDefendWhite = function(whichUnit, value)
+    if (value < -99999999) then
+        value = -99999999
+    elseif (value > 99999999) then
+        value = 99999999
+    end
     return hjapi.check({ 'SetUnitState' }, function()
-        local defend_green = hattribute.get(whichUnit, 'defend_green') or 0
-        japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x20), value + defend_green)
+        local defend = hattribute.get(whichUnit, 'defend') or 0
+        japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x20), value + defend)
 
     end)
 end
@@ -97,6 +127,11 @@ end
 ---@param value number
 ---@return boolean
 hjapi.setUnitMaxLife = function(whichUnit, value)
+    if (value >= 999999999) then
+        value = 999999999
+    elseif (value < 1) then
+        value = 1
+    end
     return hjapi.check({ 'SetUnitState' }, function()
         local cur = math.max(0, hunit.getCurLife(whichUnit))
         local max = hunit.getMaxLife(whichUnit)
@@ -116,6 +151,11 @@ end
 ---@param value number
 ---@return boolean
 hjapi.setUnitMaxMana = function(whichUnit, value)
+    if (value >= 999999999) then
+        value = 999999999
+    elseif (value < 1) then
+        value = 1
+    end
     return hjapi.check({ 'SetUnitState' }, function()
         local cur = math.max(0, hunit.getCurMana(whichUnit))
         local max = hunit.getMaxMana(whichUnit)
@@ -136,6 +176,11 @@ end
 ---@param cooldown number
 ---@return boolean
 hjapi.setUnitAbilityCooldown = function(whichUnit, abilityID, cooldown)
+    if (cooldown >= 9999) then
+        cooldown = 9999
+    elseif (cooldown < 0) then
+        cooldown = 0
+    end
     return hjapi.check({ 'EXSetAbilityState', 'EXGetUnitAbility' }, function()
         if (type(abilityID) == 'string') then
             abilityID = string.char2id(abilityID)

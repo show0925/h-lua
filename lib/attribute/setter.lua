@@ -19,7 +19,7 @@ end
 --- 为单位注册属性系统所需要的基础技能
 --- hslk.attr
 ---@private
-hattributeSetter.regAllAbility = function(whichUnit)
+hattributeSetter.relyRegister = function(whichUnit)
     for _, v in ipairs(hslk.attr.ablis_gradient) do
         if (false == hjapi.check()) then
             -- 生命
@@ -32,17 +32,17 @@ hattributeSetter.regAllAbility = function(whichUnit)
             cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.add[v])
             cj.UnitAddAbility(whichUnit, hslk.attr.mana.sub[v])
             cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.sub[v])
-            -- 绿字攻击
-            cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.add[v])
-            cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.add[v])
-            cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.sub[v])
-            cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.sub[v])
             -- 攻击速度
             cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.add[v])
             cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.add[v])
             cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.sub[v])
             cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.sub[v])
         end
+        -- 绿字攻击
+        cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.add[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.add[v])
+        cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.sub[v])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.sub[v])
         -- 绿色属性
         cj.UnitAddAbility(whichUnit, hslk.attr.str_green.add[v])
         cj.UnitRemoveAbility(whichUnit, hslk.attr.str_green.add[v])

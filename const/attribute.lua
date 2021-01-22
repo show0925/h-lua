@@ -5,9 +5,9 @@ CONST_ATTR = {
     mana = "魔法",
     move = "移动",
     defend_white = "基础护甲",
-    defend_green = "附加护甲",
+    defend_green = "护甲",
     attack_speed = "攻速",
-    attack_speed_space = "攻击间隔",
+    attack_space = "攻击间隔",
     attack = "攻击力",
     attack_white = "基础攻击",
     attack_green = "附加攻击",
@@ -111,7 +111,7 @@ end
 
 local otherKeys = {
     "attack_speed",
-    "attack_speed_space",
+    "attack_space",
     "attack_white",
     "attack_green",
     "attack_range_acquire",
