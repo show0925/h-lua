@@ -234,24 +234,20 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             -- ability
             local tempVal = 0
             local level = 0
-            if (attr == "life" or attr == "mana") then
-                -- 生命 | 魔法
-                local method
-                if (attr == "life") then
-                    method = hjapi.setUnitMaxLife
-                elseif (attr == "mana") then
-                    method = hjapi.setUnitMaxMana
+            if (attr == "life") then
+                -- 最大生命值
+                if (false == hjapi.setUnitMaxLife(whichUnit, futureVal)) then
+                    hattributeSetter.setUnitMaxLife(whichUnit, currentVal, futureVal)
                 end
-                if (false == method(whichUnit, futureVal)) then
-                    hattributeSetter.hSlkLifeMane(whichUnit, attr, currentVal, futureVal)
+            elseif (attr == "mana") then
+                -- 最大魔法值
+                if (false == hjapi.setUnitMaxMana(whichUnit, futureVal)) then
+                    hattributeSetter.setUnitMaxMana(whichUnit, currentVal, futureVal)
                 end
             elseif (attr == "move") then
                 -- 移动
-                if (futureVal < 0) then
-                    cj.SetUnitMoveSpeed(whichUnit, 0)
-                else
-                    cj.SetUnitMoveSpeed(whichUnit, math.min(math.floor(futureVal), 522))
-                end
+                futureVal = math.min(522, math.max(0, math.floor(futureVal)))
+                cj.SetUnitMoveSpeed(whichUnit, futureVal)
             elseif (attr == "attack_space") then
                 -- 攻击间隔[JAPI]
                 hjapi.setUnitAttackSpace(whichUnit, futureVal)
@@ -356,8 +352,45 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             elseif ("defend_white" == attr) then
                 -- 白字护甲[JAPI]
                 hjapi.setUnitDefendWhite(whichUnit, futureVal)
-            elseif ("attack_green" == attr or "defend_green" == attr) then
-                -- 绿字攻击 攻击速度 绿字护甲
+            elseif ("defend_green" == attr) then
+                -- 绿字护甲
+                if (futureVal < -99999999) then
+                    futureVal = -99999999
+                elseif (futureVal > 99999999) then
+                    futureVal = 99999999
+                end
+                for _, grad in ipairs(hslk.attr.ablis_gradient) do
+                    local ab = hslk.attr[attr].add[grad]
+                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+                    end
+                    ab = hslk.attr[attr].sub[grad]
+                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+                    end
+                end
+                tempVal = math.floor(math.abs(futureVal))
+                local max = 100000000
+                if (tempVal ~= 0) then
+                    while (max >= 1) do
+                        level = math.floor(tempVal / max)
+                        tempVal = math.floor(tempVal - level * max)
+                        if (futureVal > 0) then
+                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
+                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
+                            end
+                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
+                        else
+                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
+                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
+                            end
+                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
+                        end
+                        max = math.floor(max / 10)
+                    end
+                end
+            elseif ("attack_green" == attr) then
+                -- 绿字攻击
                 if (futureVal < -99999999) then
                     futureVal = -99999999
                 elseif (futureVal > 99999999) then
@@ -696,7 +729,8 @@ hattribute.get = function(whichUnit, attr)
         end
         attribute = hunit.get(whichUnit, 'attribute')
     end
-    attribute.attack = hunit.getAttackSides(whichUnit) + attribute.attack_white or 0 + attribute.attack_green or 0
+    attribute.attack = hunit.getAttackSides(whichUnit) + (attribute.attack_white or 0) + (attribute.attack_green or 0)
+    attribute.defend = math.floor((attribute.defend_white or 0) + (attribute.defend_green or 0))
     attribute.attack_space = math.round(attribute.attack_space_origin / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
     attribute.str = (attribute.str_white or 0) + (attribute.str_green or 0)
     attribute.agi = (attribute.agi_white or 0) + (attribute.agi_green or 0)
