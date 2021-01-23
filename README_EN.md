@@ -9,8 +9,10 @@
 
 
 ## Introduction
-h-lua has an excellent demo, which guides you to learn more while being open source. It does not rely on any game platform (such as JAPI, DzAPI) but does not prohibit you from using it (with integrated DzAPI). 
-Contains a variety of rich attribute systems, built-in up to dozens of custom events, you can easily make skills that are usually difficult or even impossible. Powerful item synthesis and splitting, enriching custom skill templates! Avoid writing it yourself! Timers, environments, shots, units, enemies, music, weather, masks, missions, and more.
+h-lua has an excellent demo, which guides you to learn more while being open source.
+Contains a variety of rich attribute systems, built-in up to dozens of custom events, you can easily make skills that are usually difficult or even impossible.
+Powerful item synthesis and splitting, enriching custom skill templates! Avoid writing it yourself! 
+Timers, environments, shots, units, enemies, music, weather, masks, missions, and more.
 
 ## Project structure：
 ```
