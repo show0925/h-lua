@@ -253,34 +253,16 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 hjapi.setUnitAttackSpace(whichUnit, futureVal)
             elseif (attr == "attack_white") then
                 -- 白字攻击
-                local max = 100000000
-                if (futureVal > max or futureVal < -max) then
-                    diff = 0
-                end
-                tempVal = math.floor(math.abs(diff))
-                if (tempVal ~= 0) then
-                    while (max >= 1) do
-                        level = math.floor(tempVal / max)
-                        tempVal = math.floor(tempVal - level * max)
-                        if (diff > 0) then
-                            hattributeSetter.relyAttackWhite(whichUnit, hslk.attr.item_attack_white.add[max], level)
-                        else
-                            hattributeSetter.relyAttackWhite(whichUnit, hslk.attr.item_attack_white.sub[max], level)
-                        end
-                        max = math.floor(max / 10)
-                    end
+                if (false == hjapi.setUnitAttackWhite(whichUnit, futureVal)) then
+                    hattributeSetter.setUnitAttackWhite(whichUnit, futureVal)
                 end
             elseif (attr == "attack_range") then
                 -- 攻击范围[JAPI]
                 hjapi.setUnitAttackRange(whichUnit, futureVal)
             elseif (attr == "attack_range_acquire") then
                 -- 主动攻击范围
-                if (futureVal < 0) then
-                    futureVal = 0
-                elseif (futureVal > 9999) then
-                    futureVal = 9999
-                end
-                cj.SetUnitAcquireRange(whichUnit, futureVal * 1.1)
+                futureVal = math.min(9999, math.max(0, math.floor(futureVal)))
+                cj.SetUnitAcquireRange(whichUnit, futureVal)
             elseif (attr == "sight") then
                 -- 视野
                 for _, gradient in ipairs(hslk.attr.sight_gradient) do
@@ -310,7 +292,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         end
                     end
                 end
-            elseif ("attack_speed" == attr) then
+            elseif (attr == "attack_speed") then
                 -- 攻击速度
                 if (false == hjapi.setUnitAttackSpeed(whichUnit, futureVal)) then
                     if (futureVal < -99999999) then

@@ -143,7 +143,7 @@ hattributeSetter.relyAttackWhite = function(u, itemId, qty)
     end
 end
 
---- hSdk形式的设置最大生命值
+--- hSlk形式的设置最大生命值
 ---@private
 hattributeSetter.setUnitMaxLife = function(whichUnit, currentVal, futureVal)
     local diff = 0
@@ -177,7 +177,7 @@ hattributeSetter.setUnitMaxLife = function(whichUnit, currentVal, futureVal)
     end
 end
 
---- hSdk形式的设置最大魔法值
+--- hSlk形式的设置最大魔法值
 ---@private
 hattributeSetter.setUnitMaxMana = function(whichUnit, currentVal, futureVal)
     local diff = 0
@@ -205,6 +205,29 @@ hattributeSetter.setUnitMaxMana = function(whichUnit, currentVal, futureVal)
                 hattributeSetter.relyLifeMana(whichUnit, hslk.attr.mana.add[max], level)
             else
                 hattributeSetter.relyLifeMana(whichUnit, hslk.attr.mana.sub[max], level)
+            end
+            max = math.floor(max / 10)
+        end
+    end
+end
+
+--- hSlk形式的设置白字攻击
+---@private
+hattributeSetter.setUnitAttackWhite = function(whichUnit, futureVal)
+    local max = 100000000
+    local diff = 0
+    if (futureVal > max or futureVal < -max) then
+        diff = 0
+    end
+    local tempVal = math.floor(math.abs(diff))
+    if (tempVal ~= 0) then
+        while (max >= 1) do
+            local level = math.floor(tempVal / max)
+            tempVal = math.floor(tempVal - level * max)
+            if (diff > 0) then
+                hattributeSetter.relyAttackWhite(whichUnit, hslk.attr.item_attack_white.add[max], level)
+            else
+                hattributeSetter.relyAttackWhite(whichUnit, hslk.attr.item_attack_white.sub[max], level)
             end
             max = math.floor(max / 10)
         end
