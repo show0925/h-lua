@@ -236,21 +236,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             local level = 0
             if (attr == "life" or attr == "mana") then
                 -- 生命 | 魔法
-                if (futureVal >= 999999999) then
-                    futureVal = 999999999
-                    if (currentVal >= 999999999) then
-                        diff = 0
-                    else
-                        diff = 999999999 - currentVal
-                    end
-                elseif (futureVal <= 1) then
-                    futureVal = 1
-                    if (currentVal <= 1) then
-                        diff = 0
-                    else
-                        diff = 1 - currentVal
-                    end
-                end
                 local method
                 if (attr == "life") then
                     method = hjapi.setUnitMaxLife
@@ -258,20 +243,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                     method = hjapi.setUnitMaxMana
                 end
                 if (false == method(whichUnit, futureVal)) then
-                    tempVal = math.floor(math.abs(diff))
-                    local max = 100000000
-                    if (tempVal ~= 0) then
-                        while (max >= 1) do
-                            level = math.floor(tempVal / max)
-                            tempVal = math.floor(tempVal - level * max)
-                            if (diff > 0) then
-                                hattributeSetter.relyLifeMana(whichUnit, hslk.attr[attr].add[max], level)
-                            else
-                                hattributeSetter.relyLifeMana(whichUnit, hslk.attr[attr].sub[max], level)
-                            end
-                            max = math.floor(max / 10)
-                        end
-                    end
+                    hattributeSetter.hSlkLifeMane(whichUnit, attr, currentVal, futureVal)
                 end
             elseif (attr == "move") then
                 -- 移动

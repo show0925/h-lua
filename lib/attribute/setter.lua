@@ -142,3 +142,37 @@ hattributeSetter.relyAttackWhite = function(u, itemId, qty)
         )
     end
 end
+
+--- hSdk形式的设置生命/魔法最大值
+---@private
+hattributeSetter.hSlkLifeMane = function(whichUnit, attr, currentVal, futureVal)
+    local diff = 0
+    local level = 0
+    if (futureVal >= 999999999) then
+        if (currentVal >= 999999999) then
+            diff = 0
+        else
+            diff = 999999999 - currentVal
+        end
+    elseif (futureVal <= 1) then
+        if (currentVal <= 1) then
+            diff = 0
+        else
+            diff = 1 - currentVal
+        end
+    end
+    local tempVal = math.floor(math.abs(diff))
+    local max = 100000000
+    if (tempVal ~= 0) then
+        while (max >= 1) do
+            level = math.floor(tempVal / max)
+            tempVal = math.floor(tempVal - level * max)
+            if (diff > 0) then
+                hattributeSetter.relyLifeMana(whichUnit, hslk.attr[attr].add[max], level)
+            else
+                hattributeSetter.relyLifeMana(whichUnit, hslk.attr[attr].sub[max], level)
+            end
+            max = math.floor(max / 10)
+        end
+    end
+end
