@@ -68,7 +68,7 @@ hattribute.init = function(whichUnit)
         life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE),
         mana = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_MANA),
         move = cj.GetUnitDefaultMoveSpeed(whichUnit),
-        defend_white = 0,
+        defend_white = hjapi.getUnitDefendWhite(whichUnit),
         defend_green = 0,
         attack_speed = 0.0,
         attack_white = 0.0,
@@ -144,9 +144,6 @@ hattribute.init = function(whichUnit)
     if (uSlk.sight) then
         attribute.sight = math.floor(uSlk.sight)
     end
-    hjapi.check({ 'SetUnitState' }, function()
-        attribute.defend_white = math.round(japi.GetUnitState(whichUnit, cj.ConvertUnitState(0x20)))
-    end)
     -- 初始化数据
     hunit.set(whichUnit, 'attribute', attribute)
     return true

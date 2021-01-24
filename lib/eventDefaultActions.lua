@@ -556,15 +556,16 @@ hevent_default_actions = {
                 return
             end
             hhero.setPrevLevel(u, cj.GetHeroLevel(u))
-            hattr.set(u, 0, {
-                str_white = "=" .. cj.GetHeroStr(u, false),
-                agi_white = "=" .. cj.GetHeroAgi(u, false),
-                int_white = "=" .. cj.GetHeroInt(u, false)
-            })
             -- @触发升级事件
             hevent.triggerEvent(u, CONST_EVENT.levelUp, {
                 triggerUnit = u,
                 value = diffLv
+            })
+            -- 重读部分属性（因为有些属性在物编可升级提升）
+            hattr.set(u, 0, {
+                str_white = "=" .. cj.GetHeroStr(u, false),
+                agi_white = "=" .. cj.GetHeroAgi(u, false),
+                int_white = "=" .. cj.GetHeroInt(u, false),
             })
         end)
     },

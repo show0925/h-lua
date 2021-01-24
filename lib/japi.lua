@@ -92,6 +92,16 @@ hjapi.setUnitAttackSpace = function(whichUnit, value)
     end)
 end
 
+--- [JAPI]获取单位的护甲
+---@param whichUnit userdata
+---@return number
+hjapi.getUnitDefendWhite = function(whichUnit)
+    if (japi.GetUnitState ~= nil) then
+        return japi.GetUnitState(whichUnit, cj.ConvertUnitState(0x20))
+    end
+    return 0
+end
+
 --- [JAPI]设置单位的护甲
 ---@param whichUnit userdata
 ---@param value number
