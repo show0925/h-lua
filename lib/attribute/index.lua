@@ -138,7 +138,7 @@ hattribute.init = function(whichUnit)
     if (uSlk.acquire) then
         attribute.attack_range_acquire = math.floor(uSlk.acquire)
     end
-    if (uSlk.attack_space_origin) then
+    if (uSlk.cool1) then
         attribute.attack_space_origin = math.round(uSlk.cool1)
     end
     if (uSlk.sight) then
@@ -244,6 +244,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 cj.SetUnitMoveSpeed(whichUnit, futureVal)
             elseif (attr == "attack_space") then
                 -- 攻击间隔[JAPI*]
+                params.attack_space_origin = futureVal
                 hjapi.setUnitAttackSpace(whichUnit, futureVal)
             elseif (attr == "attack_white") then
                 -- 白字攻击[JAPI+]
