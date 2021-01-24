@@ -314,6 +314,46 @@ hattributeSetter.setUnitAttackSpeed = function(whichUnit, futureVal)
     end
 end
 
+--- hSlk形式的设置绿字护甲
+---@private
+hattributeSetter.setUnitDefendGreen = function(whichUnit, futureVal)
+    if (futureVal < -99999999) then
+        futureVal = -99999999
+    elseif (futureVal > 99999999) then
+        futureVal = 99999999
+    end
+    for _, grad in ipairs(hslk.attr.ablis_gradient) do
+        local ab = hslk.attr.defend.add[grad]
+        if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+            cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+        end
+        ab = hslk.attr.defend.sub[grad]
+        if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+            cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+        end
+    end
+    local tempVal = math.floor(math.abs(futureVal))
+    local max = 100000000
+    if (tempVal ~= 0) then
+        while (max >= 1) do
+            local level = math.floor(tempVal / max)
+            tempVal = math.floor(tempVal - level * max)
+            if (futureVal > 0) then
+                if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr.defend.add[max]) < 1) then
+                    cj.UnitAddAbility(whichUnit, hslk.attr.defend.add[max])
+                end
+                cj.SetUnitAbilityLevel(whichUnit, hslk.attr.defend.add[max], level + 1)
+            else
+                if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr.defend.sub[max]) < 1) then
+                    cj.UnitAddAbility(whichUnit, hslk.attr.defend.sub[max])
+                end
+                cj.SetUnitAbilityLevel(whichUnit, hslk.attr.defend.sub[max], level + 1)
+            end
+            max = math.floor(max / 10)
+        end
+    end
+end
+
 --- hSlk形式的设置视野
 ---@private
 hattributeSetter.setUnitSight = function(whichUnit, futureVal)

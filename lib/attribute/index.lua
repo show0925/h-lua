@@ -278,41 +278,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 hjapi.setUnitDefendWhite(whichUnit, futureVal)
             elseif (attr == "defend_green") then
                 -- 绿字护甲
-                if (futureVal < -99999999) then
-                    futureVal = -99999999
-                elseif (futureVal > 99999999) then
-                    futureVal = 99999999
-                end
-                for _, grad in ipairs(hslk.attr.ablis_gradient) do
-                    local ab = hslk.attr[attr].add[grad]
-                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                    end
-                    ab = hslk.attr[attr].sub[grad]
-                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                    end
-                end
-                tempVal = math.floor(math.abs(futureVal))
-                local max = 100000000
-                if (tempVal ~= 0) then
-                    while (max >= 1) do
-                        level = math.floor(tempVal / max)
-                        tempVal = math.floor(tempVal - level * max)
-                        if (futureVal > 0) then
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
-                            end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
-                        else
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
-                            end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
-                        end
-                        max = math.floor(max / 10)
-                    end
-                end
+                hattributeSetter.setUnitDefendGreen(whichUnit, futureVal)
             elseif (attr == "sight") then
                 -- 视野
                 hattributeSetter.setUnitSight(whichUnit, futureVal)
