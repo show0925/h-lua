@@ -86,7 +86,7 @@ hjapi.setUnitAttackSpeed = function(whichUnit, value)
         value = -80
     end
     return hjapi.check({ 'SetUnitState' }, function()
-        japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x51), value)
+        japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x51), 1 + value * 0.01)
     end)
 end
 

@@ -385,3 +385,71 @@ hattributeSetter.setUnitSight = function(whichUnit, futureVal)
         end
     end
 end
+
+--- hSlk形式的设置白绿三围属性
+---@private
+hattributeSetter.setUnitThree = function(whichUnit, futureVal, attr, diff)
+    if (false == his.hero(whichUnit)) then
+        return
+    end
+    local thumb = string.sub(attr, 1, 3)
+    if (attr == "str_white") then
+        cj.SetHeroStr(whichUnit, math.floor(futureVal), true)
+    elseif (attr == "agi_white") then
+        cj.SetHeroAgi(whichUnit, math.floor(futureVal), true)
+    elseif (attr == "int_white") then
+        cj.SetHeroInt(whichUnit, math.floor(futureVal), true)
+    else
+        if (futureVal < -99999999) then
+            futureVal = -99999999
+        elseif (futureVal > 99999999) then
+            futureVal = 99999999
+        end
+        for _, grad in ipairs(hslk.attr.ablis_gradient) do
+            local ab = hslk.attr[attr].add[grad]
+            if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+                cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+            end
+            ab = hslk.attr[attr].sub[grad]
+            if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+                cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+            end
+        end
+        local tempVal = math.floor(math.abs(futureVal))
+        local max = 100000000
+        if (tempVal ~= 0) then
+            while (max >= 1) do
+                local level = math.floor(tempVal / max)
+                tempVal = math.floor(tempVal - level * max)
+                if (futureVal > 0) then
+                    if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
+                        cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
+                    end
+                    cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
+                else
+                    if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
+                        cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
+                    end
+                    cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
+                end
+                max = math.floor(max / 10)
+            end
+        end
+    end
+    -- 主属性影响(<= 0自动忽略)
+    if (hattribute.THREE_BUFF.primary > 0) then
+        if (string.upper(thumb) == hhero.getPrimary(whichUnit)) then
+            hattribute.set(whichUnit, 0, { attack_white = "+" .. diff * hattribute.THREE_BUFF.primary })
+        end
+    end
+    -- 三围影响
+    local three = table.obj2arr(hattribute.THREE_BUFF[thumb], CONST_ATTR_KEYS)
+    for _, d in ipairs(three) do
+        local tempV = diff * d.value
+        if (tempV < 0) then
+            hattribute.set(whichUnit, 0, { [d.key] = "-" .. math.abs(tempV) })
+        elseif (tempV > 0) then
+            hattribute.set(whichUnit, 0, { [d.key] = "+" .. tempV })
+        end
+    end
+end

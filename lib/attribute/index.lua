@@ -231,9 +231,6 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             else
                 params[attr] = futureVal
             end
-            -- ability
-            local tempVal = 0
-            local level = 0
             if (attr == "life") then
                 -- 最大生命值[JAPI+]
                 if (false == hjapi.setUnitMaxLife(whichUnit, futureVal)) then
@@ -282,86 +279,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             elseif (attr == "sight") then
                 -- 视野
                 hattributeSetter.setUnitSight(whichUnit, futureVal)
-            elseif (his.hero(whichUnit) and table.includes({ "str_green", "agi_green", "int_green" }, attr)) then
-                -- 绿字力量 绿字敏捷 绿字智力
-                if (futureVal < -99999999) then
-                    futureVal = -99999999
-                elseif (futureVal > 99999999) then
-                    futureVal = 99999999
-                end
-                for _, grad in ipairs(hslk.attr.ablis_gradient) do
-                    local ab = hslk.attr[attr].add[grad]
-                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                    end
-                    ab = hslk.attr[attr].sub[grad]
-                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                    end
-                end
-                tempVal = math.floor(math.abs(futureVal))
-                local max = 100000000
-                if (tempVal ~= 0) then
-                    while (max >= 1) do
-                        level = math.floor(tempVal / max)
-                        tempVal = math.floor(tempVal - level * max)
-                        if (futureVal > 0) then
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
-                            end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
-                        else
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
-                            end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
-                        end
-                        max = math.floor(max / 10)
-                    end
-                end
-                local subAttr = string.gsub(attr, "_green", "")
-                -- 主属性影响(<= 0自动忽略)
-                if (hattribute.THREE_BUFF.primary > 0) then
-                    if (string.upper(subAttr) == hhero.getPrimary(whichUnit)) then
-                        hattribute.set(whichUnit, 0, { attack_white = "+" .. diff * hattribute.THREE_BUFF.primary })
-                    end
-                end
-                -- 三围影响
-                local three = table.obj2arr(hattribute.THREE_BUFF[subAttr], CONST_ATTR_KEYS)
-                for _, d in ipairs(three) do
-                    local tempV = diff * d.value
-                    if (tempV < 0) then
-                        hattribute.set(whichUnit, 0, { [d.key] = "-" .. math.abs(tempV) })
-                    elseif (tempV > 0) then
-                        hattribute.set(whichUnit, 0, { [d.key] = "+" .. tempV })
-                    end
-                end
-            elseif (his.hero(whichUnit) and table.includes({ "str_white", "agi_white", "int_white" }, attr)) then
-                -- 白字力量 敏捷 智力
-                if (attr == "str_white") then
-                    cj.SetHeroStr(whichUnit, math.floor(futureVal), true)
-                elseif (attr == "agi_white") then
-                    cj.SetHeroAgi(whichUnit, math.floor(futureVal), true)
-                elseif (attr == "int_white") then
-                    cj.SetHeroInt(whichUnit, math.floor(futureVal), true)
-                end
-                local subAttr = string.gsub(attr, "_white", "")
-                -- 主属性影响(<= 0自动忽略)
-                if (hattribute.THREE_BUFF.primary > 0) then
-                    if (string.upper(subAttr) == hhero.getPrimary(whichUnit)) then
-                        hattribute.set(whichUnit, 0, { attack_white = "+" .. diff * hattribute.THREE_BUFF.primary })
-                    end
-                end
-                -- 三围影响
-                local three = table.obj2arr(hattribute.THREE_BUFF[subAttr], CONST_ATTR_KEYS)
-                for _, d in ipairs(three) do
-                    local tempV = diff * d.value
-                    if (tempV < 0) then
-                        hattribute.set(whichUnit, 0, { [d.key] = "-" .. math.abs(tempV) })
-                    elseif (tempV > 0) then
-                        hattribute.set(whichUnit, 0, { [d.key] = "+" .. tempV })
-                    end
-                end
+            elseif (his.hero(whichUnit) and table.includes({ "str_white", "agi_white", "int_white", "str_green", "agi_green", "int_green" }, attr)) then
+                -- 白/绿字力敏智
+                hattributeSetter.setUnitThree(whichUnit, futureVal, attr, diff)
             elseif (attr == "life_back" or attr == "mana_back") then
                 -- 生命,魔法恢复
                 if (math.abs(futureVal) > 0.02 and table.includes(hRuntime.attributeGroup[attr], whichUnit) == false) then
