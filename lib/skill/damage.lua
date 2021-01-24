@@ -30,7 +30,7 @@ end
         damageSrc = "unknown", --伤害来源请查看 CONST_DAMAGE_SRC
         damageType = { "common" }, --伤害类型请查看 CONST_DAMAGE_TYPE
         breakArmorType = {} --破防(无视防御)类型请查看 CONST_BREAK_ARMOR_TYPE
-        isFixed = false, --是否固定伤害，伤害在固定下(无视类型、护甲、魔抗、自然、增幅、减伤)不计算，而自然虽然不影响伤害，但会有自然效果
+        isFixed = false, --是否固定伤害，伤害在固定下(无视类型、魔抗、自然、增幅、减伤)不计算，而自然虽然不影响伤害，但会有自然效果
     }
 ]]
 hskill.damage = function(options)
@@ -145,13 +145,6 @@ hskill.damage = function(options)
         -- 判断无视装甲类型
         if (breakArmorType ~= nil and #breakArmorType > 0) then
             damageString = damageString .. "无视"
-            if (table.includes(breakArmorType, CONST_BREAK_ARMOR_TYPE.defend.value)) then
-                if (targetUnitAttr.defend > 0) then
-                    targetUnitAttr.defend = 0
-                end
-                damageString = damageString .. CONST_BREAK_ARMOR_TYPE.defend.label
-                damageStringColor = "f97373"
-            end
             if (table.includes(breakArmorType, CONST_BREAK_ARMOR_TYPE.avoid.value)) then
                 if (targetUnitAttr.avoid > 0) then
                     targetUnitAttr.avoid = 0
@@ -186,13 +179,6 @@ hskill.damage = function(options)
                     breakType = breakArmorType
                 }
             )
-        end
-        -- *重要* 地图平衡常数必须设定护甲因子为0，这里为了修正魔兽负护甲依然因子保持0.06的bug
-        -- 当护甲x为负时，最大-20,公式2-(1-a)^abs(x)
-        if (targetUnitAttr.defend < 0 and targetUnitAttr.defend >= -20) then
-            damage = damage / (2 - cj.Pow(0.94, math.abs(targetUnitAttr.defend)))
-        elseif (targetUnitAttr.defend < 0 and targetUnitAttr.defend < -20) then
-            damage = damage / (2 - cj.Pow(0.94, 20))
         end
     end
     -- 开始神奇的伤害计算
@@ -256,17 +242,6 @@ hskill.damage = function(options)
             end
         end
         if (isFixed == false) then
-            -- 计算护甲（新版护甲不涉及伤害类型）
-            if (targetUnitAttr.defend ~= 0) then
-                local defendPercent = 0
-                if (targetUnitAttr.defend > 0) then
-                    defendPercent = targetUnitAttr.defend / (targetUnitAttr.defend + 200)
-                else
-                    local dfd = math.abs(targetUnitAttr.defend)
-                    defendPercent = -dfd / (dfd * 0.33 + 100)
-                end
-                lastDamagePercent = lastDamagePercent - defendPercent
-            end
             -- 计算伤害增幅
             if (lastDamage > 0 and sourceUnit ~= nil and sourceUnitAttr.damage_extent ~= 0) then
                 lastDamagePercent = lastDamagePercent + sourceUnitAttr.damage_extent * 0.01
