@@ -1,10 +1,11 @@
 ---@class hattribute 属性系统
 hattribute = {
-    DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认认定这个技能为物品栏
     VAL_TYPE = {
         PLAYER = { "gold_ratio", "lumber_ratio", "exp_ratio", "sell_ratio" },
         INTEGER = {
-            "life", "mana", "move", "attack_white", "attack_green", "attack_range", "sight", "defend",
+            "life", "mana", "move", "attack_white", "attack_green",
+            "attack_range", "attack_range_acquire",
+            "sight", "defend_white", "defend_green",
             "str_white", "agi_white", "int_white", "str_green", "agi_green", "int_green", "punish"
         },
     },
@@ -17,7 +18,7 @@ hattribute = {
             life_back = 0.05 -- 每点力量提升0.05生命恢复（默认例子）
         },
         agi = {
-            defend = 0.01 -- 每点敏捷提升0.01护甲（默认例子）
+            defend_green = 0.01 -- 每点敏捷提升0.01护甲（默认例子）
         },
         int = {
             mana = 6, -- 每点智力提升6魔法（默认例子）
@@ -40,82 +41,10 @@ hattribute.isValType = function(field, valType)
     if (field == nil or valType == nil) then
         return false
     end
-    if (table.includes(field, valType)) then
+    if (table.includes(valType, field)) then
         return true
     end
     return false
-end
-
---- 为单位添加N个同样的生命魔法技能 1级设0 2级设负 负减法（搜[卡血牌bug]，了解原理）
----@private
-hattribute.setLM = function(u, abilityId, qty)
-    if (qty <= 0) then
-        return
-    end
-    local i = 1
-    while (i <= qty) do
-        cj.UnitAddAbility(u, abilityId)
-        cj.SetUnitAbilityLevel(u, abilityId, 2)
-        cj.UnitRemoveAbility(u, abilityId)
-        i = i + 1
-    end
-end
-
---- 为单位添加N个同样的攻击之书
----@private
-hattribute.setAttackWhite = function(u, itemId, qty)
-    if (u == nil or itemId == nil or qty <= 0) then
-        return
-    end
-    if (his.alive(u) == true) then
-        local i = 1
-        local it
-        local hasSlot = (cj.GetUnitAbilityLevel(u, hattribute.DEFAULT_SKILL_ITEM_SLOT) >= 1)
-        if (hasSlot == false) then
-            cj.UnitAddAbility(u, hattribute.DEFAULT_SKILL_ITEM_SLOT)
-        end
-        while (i <= qty) do
-            it = cj.CreateItem(itemId, 0, 0)
-            cj.UnitAddItem(u, it)
-            cj.SetWidgetLife(it, 10.00)
-            cj.RemoveItem(it)
-            it = nil
-            i = i + 1
-        end
-        if (hasSlot == false) then
-            cj.UnitRemoveAbility(u, hattribute.DEFAULT_SKILL_ITEM_SLOT)
-        end
-    else
-        local per = 3.00
-        local limit = 60.0 / per -- 一般不会超过1分钟复活
-        htime.setInterval(
-            per,
-            function(t)
-                limit = limit - 1
-                if (limit < 0) then
-                    htime.delTimer(t)
-                elseif (his.alive(u) == true) then
-                    htime.delTimer(t)
-                    local i = 1
-                    local it
-                    local hasSlot = (cj.GetUnitAbilityLevel(u, hattribute.DEFAULT_SKILL_ITEM_SLOT) >= 1)
-                    if (hasSlot == false) then
-                        cj.UnitAddAbility(u, hattribute.DEFAULT_SKILL_ITEM_SLOT)
-                    end
-                    while (i <= qty) do
-                        it = cj.CreateItem(itemId, 0, 0)
-                        cj.UnitAddItem(u, it)
-                        cj.SetWidgetLife(it, 10.00)
-                        cj.RemoveItem(it)
-                        i = i + 1
-                    end
-                    if (hasSlot == false) then
-                        cj.UnitRemoveAbility(u, hattribute.DEFAULT_SKILL_ITEM_SLOT)
-                    end
-                end
-            end
-        )
-    end
 end
 
 --- 设置三围的影响
@@ -123,59 +52,6 @@ end
 hattribute.setThreeBuff = function(buff)
     if (type(buff) == "table") then
         hattribute.THREE_BUFF = buff
-    end
-end
-
---- 为单位注册属性系统所需要的基础技能
---- hslk.attr
----@private
-hattribute.regAllAbility = function(whichUnit)
-    for _, v in ipairs(hslk.attr.ablis_gradient) do
-        -- 生命
-        cj.UnitAddAbility(whichUnit, hslk.attr.life.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.life.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.life.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.life.sub[v])
-        -- 魔法
-        cj.UnitAddAbility(whichUnit, hslk.attr.mana.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.mana.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.mana.sub[v])
-        -- 绿字攻击
-        cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_green.sub[v])
-        -- 绿色属性
-        cj.UnitAddAbility(whichUnit, hslk.attr.str_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.str_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.str_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.str_green.sub[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.agi_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.agi_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.agi_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.agi_green.sub[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.int_green.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.int_green.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.int_green.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.int_green.sub[v])
-        -- 攻击速度
-        cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.attack_speed.sub[v])
-        -- 防御
-        cj.UnitAddAbility(whichUnit, hslk.attr.defend.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.defend.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.defend.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.defend.sub[v])
-    end
-    for _, v in ipairs(hslk.attr.sight_gradient) do
-        -- 视野
-        cj.UnitAddAbility(whichUnit, hslk.attr.sight.add[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.add[v])
-        cj.UnitAddAbility(whichUnit, hslk.attr.sight.sub[v])
-        cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.sub[v])
     end
 end
 
@@ -192,11 +68,14 @@ hattribute.init = function(whichUnit)
         life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE),
         mana = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_MANA),
         move = cj.GetUnitDefaultMoveSpeed(whichUnit),
-        defend = 0,
+        defend_white = hjapi.getUnitDefendWhite(whichUnit),
+        defend_green = 0,
         attack_speed = 0.0,
         attack_white = 0.0,
         attack_green = 0.0,
         attack_range = 100,
+        attack_range_acquire = 100,
+        attack_space_origin = 0,
         sight = 1800,
         str_green = 0.0,
         agi_green = 0.0,
@@ -250,61 +129,34 @@ hattribute.init = function(whichUnit)
         attribute["e_" .. v.value .. '_attack'] = 0
         attribute["e_" .. v.value .. '_append'] = 0
     end
+    if (uSlk.dmgplus1) then
+        attribute.attack_white = math.floor(uSlk.dmgplus1)
+    end
     if (uSlk.rangeN1) then
         attribute.attack_range = math.floor(uSlk.rangeN1)
+    end
+    if (uSlk.acquire) then
+        attribute.attack_range_acquire = math.floor(uSlk.acquire)
+    end
+    if (uSlk.cool1) then
+        attribute.attack_space_origin = math.round(uSlk.cool1)
     end
     if (uSlk.sight) then
         attribute.sight = math.floor(uSlk.sight)
     end
     -- 初始化数据
     hunit.set(whichUnit, 'attribute', attribute)
-    -- 延后处理护甲
-    if (uSlk.def ~= nil) then
-        local def = 0
-        if (uSlk.def) then
-            def = math.round(uSlk.def)
-        end
-        if (def > 0) then
-            hattr.set(whichUnit, 0, { defend = '+' .. def })
-        else
-            hattr.set(whichUnit, 0, { defend = '-' .. def })
-        end
-    end
     return true
-end
-
---- @private
-hattribute.getAccumuDiff = function(whichUnit, attr)
-    local diff = hunit.get(whichUnit, 'attributeDiff', {})
-    return diff[attr] or 0
-end
-
---- @private
-hattribute.setAccumuDiff = function(whichUnit, attr, value)
-    local diff = hunit.get(whichUnit, 'attributeDiff', {})
-    diff[attr] = math.round(value)
-    hunit.set(whichUnit, 'attributeDiff', diff)
-end
-
---- @private
-hattribute.addAccumuDiff = function(whichUnit, attr, value)
-    hattribute.setAccumuDiff(whichUnit, attr, hattribute.getAccumuDiff(whichUnit, attr) + value)
-end
-
---- @private
-hattribute.subAccumuDiff = function(whichUnit, attr, value)
-    hattribute.setAccumuDiff(whichUnit, attr, hattribute.getAccumuDiff(whichUnit, attr) - value)
 end
 
 -- 设定属性
 --[[
-    白字攻击 绿字攻击
-    攻速 视野 警示范围
+    白字攻击 绿字攻击 攻击间隔
+    攻速 视野 攻击范围 主动攻击范围
     力敏智 力敏智(绿)
-    护甲 魔抗
+    白字护甲 绿字护甲
     生命 魔法 +恢复
-    硬直
-    物暴 术暴 分裂 回避 移动力 力量 敏捷 智力 救助力 吸血 负重 各率
+    硬直 分裂 回避 移动力 吸血 负重 ?率
     type(data) == table
     data = { 支持 加/减/乘/除/等
         life = '+100',
@@ -323,7 +175,11 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     if (params == nil) then
         return
     end
-    local buffKey = nil
+    -- 属性转接
+    if (attr == 'attack_space') then
+        attr = 'attack_space_origin'
+    end
+    local buffKey
     if (valType == "number") then
         local diff = 0
         if (opr == "+") then
@@ -337,33 +193,24 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
         elseif (opr == "=") then
             diff = val - params[attr]
         end
-        local isAccumuDiff = false
-        local accumuDiff = hattribute.getAccumuDiff(whichUnit, attr)
-        if (diff * accumuDiff > 0) then
-            isAccumuDiff = true
-            diff = diff + accumuDiff
-        end
         --部分属性取整处理，否则失真
         if (hattribute.isValType(attr, hattribute.VAL_TYPE.INTEGER) and diff ~= 0) then
-            local di, df = math.modf(math.abs(diff))
-            if (isAccumuDiff) then
-                if (diff >= 0) then
-                    hattribute.setAccumuDiff(whichUnit, attr, df)
-                else
-                    hattribute.setAccumuDiff(whichUnit, attr, -df)
-                end
-            else
-                if (diff >= 0) then
-                    hattribute.addAccumuDiff(whichUnit, attr, df)
-                else
-                    hattribute.subAccumuDiff(whichUnit, attr, df)
-                end
+            local dts = hattributeSetter.getDecimalTemporaryStorage(whichUnit, attr)
+            local diffI, diffF = math.modf(diff)
+            local dtsI, dtsF = math.modf(dts)
+            diff = diffI + dtsI
+            dts = dtsF + diffF
+            if (dts < 0) then
+                -- 归0补正
+                dts = 1 + dts
+                diff = diff - 1
+            elseif (math.abs(dts) >= 1) then
+                -- 破1退1
+                dtsI, dtsF = math.modf(dts)
+                diff = diffI + dtsI
+                dts = dtsF
             end
-            if (diff >= 0) then
-                diff = di
-            else
-                diff = -di
-            end
+            hattributeSetter.setDecimalTemporaryStorage(whichUnit, attr, dts)
         end
         if (diff ~= 0) then
             local currentVal = params[attr]
@@ -384,270 +231,101 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             else
                 params[attr] = futureVal
             end
-            -- ability
-            local tempVal = 0
-            local level = 0
-            if (attr == "life" or attr == "mana") then
-                -- 生命 | 魔法
-                if (futureVal >= 999999999) then
-                    if (currentVal >= 999999999) then
-                        diff = 0
-                    else
-                        diff = 999999999 - currentVal
-                    end
-                elseif (futureVal <= 1) then
-                    if (currentVal <= 1) then
-                        diff = 0
-                    else
-                        diff = 1 - currentVal
-                    end
+            if (attr == "life") then
+                -- 最大生命值[JAPI+]
+                if (false == hjapi.setUnitMaxLife(whichUnit, futureVal)) then
+                    hattributeSetter.setUnitMaxLife(whichUnit, currentVal, futureVal, diff)
                 end
-                tempVal = math.floor(math.abs(diff))
-                local max = 100000000
-                if (tempVal ~= 0) then
-                    while (max >= 1) do
-                        level = math.floor(tempVal / max)
-                        tempVal = math.floor(tempVal - level * max)
-                        if (diff > 0) then
-                            hattribute.setLM(whichUnit, hslk.attr[attr].add[max], level)
-                        else
-                            hattribute.setLM(whichUnit, hslk.attr[attr].sub[max], level)
-                        end
-                        max = math.floor(max / 10)
-                    end
+            elseif (attr == "mana") then
+                -- 最大魔法值[JAPI+]
+                if (false == hjapi.setUnitMaxMana(whichUnit, futureVal)) then
+                    hattributeSetter.setUnitMaxMana(whichUnit, currentVal, futureVal, diff)
                 end
             elseif (attr == "move") then
                 -- 移动
-                if (futureVal < 0) then
-                    cj.SetUnitMoveSpeed(whichUnit, 0)
-                else
-                    cj.SetUnitMoveSpeed(whichUnit, math.min(math.floor(futureVal), 522))
-                end
+                futureVal = math.min(522, math.max(0, math.floor(futureVal)))
+                cj.SetUnitMoveSpeed(whichUnit, futureVal)
+            elseif (attr == "attack_space_origin") then
+                -- 攻击间隔[JAPI*]
+                hjapi.setUnitAttackSpace(whichUnit, futureVal)
             elseif (attr == "attack_white") then
-                -- 白字攻击
-                local max = 100000000
-                if (futureVal > max or futureVal < -max) then
-                    diff = 0
+                -- 白字攻击[JAPI+]
+                if (false == hjapi.setUnitAttackWhite(whichUnit, futureVal)) then
+                    hattributeSetter.setUnitAttackWhite(whichUnit, futureVal, diff)
                 end
-                tempVal = math.floor(math.abs(diff))
-                if (tempVal ~= 0) then
-                    while (max >= 1) do
-                        level = math.floor(tempVal / max)
-                        tempVal = math.floor(tempVal - level * max)
-                        if (diff > 0) then
-                            hattribute.setAttackWhite(whichUnit, hslk.attr.item_attack_white.add[max], level)
-                        else
-                            hattribute.setAttackWhite(whichUnit, hslk.attr.item_attack_white.sub[max], level)
-                        end
-                        max = math.floor(max / 10)
-                    end
-                end
+            elseif (attr == "attack_green") then
+                -- 绿字攻击
+                hattributeSetter.setUnitAttackGreen(whichUnit, futureVal)
             elseif (attr == "attack_range") then
-                -- 攻击范围(仅仅是自动警示范围)
-                if (futureVal < 0) then
-                    futureVal = 0
-                elseif (futureVal > 9999) then
-                    futureVal = 9999
+                -- 攻击范围[JAPI]
+                hjapi.setUnitAttackRange(whichUnit, futureVal)
+            elseif (attr == "attack_range_acquire") then
+                -- 主动攻击范围
+                futureVal = math.min(9999, math.max(0, math.floor(futureVal)))
+                cj.SetUnitAcquireRange(whichUnit, futureVal)
+            elseif (attr == "attack_speed") then
+                -- 攻击速度[JAPI+]
+                if (false == hjapi.setUnitAttackSpeed(whichUnit, futureVal)) then
+                    hattributeSetter.setUnitAttackSpeed(whichUnit, futureVal)
                 end
-                cj.SetUnitAcquireRange(whichUnit, futureVal * 1.1)
+            elseif (attr == "defend_white") then
+                -- 白字护甲[JAPI*]
+                hjapi.setUnitDefendWhite(whichUnit, futureVal)
+            elseif (attr == "defend_green") then
+                -- 绿字护甲
+                hattributeSetter.setUnitDefendGreen(whichUnit, futureVal)
             elseif (attr == "sight") then
                 -- 视野
-                for _, gradient in ipairs(hslk.attr.sight_gradient) do
-                    cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.add[gradient])
-                    cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.sub[gradient])
-                end
-                tempVal = math.floor(math.abs(futureVal))
-                local sight_gradient = table.clone(hslk.attr.sight_gradient)
-                if (tempVal ~= 0) then
-                    while (true) do
-                        local isFound = false
-                        for _, v in ipairs(sight_gradient) do
-                            if (tempVal >= v) then
-                                tempVal = math.floor(tempVal - v)
-                                table.delete(v, sight_gradient)
-                                if (futureVal > 0) then
-                                    cj.UnitAddAbility(whichUnit, hslk.attr.sight.add[v])
-                                else
-                                    cj.UnitAddAbility(whichUnit, hslk.attr.sight.sub[v])
-                                end
-                                isFound = true
-                                break
-                            end
-                        end
-                        if (isFound == false) then
-                            break
-                        end
-                    end
-                end
-            elseif (table.includes(attr, { "attack_green", "attack_speed", "defend" })) then
-                -- 绿字攻击 攻击速度 护甲
-                if (futureVal < -99999999) then
-                    futureVal = -99999999
-                elseif (futureVal > 99999999) then
-                    futureVal = 99999999
-                end
-                for _, grad in ipairs(hslk.attr.ablis_gradient) do
-                    local ab = hslk.attr[attr].add[grad]
-                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                    end
-                    ab = hslk.attr[attr].sub[grad]
-                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                    end
-                end
-                tempVal = math.floor(math.abs(futureVal))
-                local max = 100000000
-                if (tempVal ~= 0) then
-                    while (max >= 1) do
-                        level = math.floor(tempVal / max)
-                        tempVal = math.floor(tempVal - level * max)
-                        if (futureVal > 0) then
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
-                            end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
-                        else
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
-                            end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
-                        end
-                        max = math.floor(max / 10)
-                    end
-                end
-            elseif (his.hero(whichUnit) and table.includes(attr, { "str_green", "agi_green", "int_green" })) then
-                -- 绿字力量 绿字敏捷 绿字智力
-                if (futureVal < -99999999) then
-                    futureVal = -99999999
-                elseif (futureVal > 99999999) then
-                    futureVal = 99999999
-                end
-                for _, grad in ipairs(hslk.attr.ablis_gradient) do
-                    local ab = hslk.attr[attr].add[grad]
-                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                    end
-                    ab = hslk.attr[attr].sub[grad]
-                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                    end
-                end
-                tempVal = math.floor(math.abs(futureVal))
-                local max = 100000000
-                if (tempVal ~= 0) then
-                    while (max >= 1) do
-                        level = math.floor(tempVal / max)
-                        tempVal = math.floor(tempVal - level * max)
-                        if (futureVal > 0) then
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
-                            end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
-                        else
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
-                            end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
-                        end
-                        max = math.floor(max / 10)
-                    end
-                end
-                local subAttr = string.gsub(attr, "_green", "")
-                -- 主属性影响(<= 0自动忽略)
-                if (hattribute.THREE_BUFF.primary > 0) then
-                    if (string.upper(subAttr) == hhero.getPrimary(whichUnit)) then
-                        hattribute.set(whichUnit, 0, { attack_white = "+" .. diff * hattribute.THREE_BUFF.primary })
-                    end
-                end
-                -- 三围影响
-                local three = table.obj2arr(hattribute.THREE_BUFF[subAttr], CONST_ATTR_KEYS)
-                for _, d in ipairs(three) do
-                    local tempV = diff * d.value
-                    if (tempV < 0) then
-                        hattribute.set(whichUnit, 0, { [d.key] = "-" .. math.abs(tempV) })
-                    elseif (tempV > 0) then
-                        hattribute.set(whichUnit, 0, { [d.key] = "+" .. tempV })
-                    end
-                end
-            elseif (his.hero(whichUnit) and table.includes(attr, { "str_white", "agi_white", "int_white" })) then
-                -- 白字力量 敏捷 智力
-                if (attr == "str_white") then
-                    cj.SetHeroStr(whichUnit, math.floor(futureVal), true)
-                elseif (attr == "agi_white") then
-                    cj.SetHeroAgi(whichUnit, math.floor(futureVal), true)
-                elseif (attr == "int_white") then
-                    cj.SetHeroInt(whichUnit, math.floor(futureVal), true)
-                end
-                local subAttr = string.gsub(attr, "_white", "")
-                -- 主属性影响(<= 0自动忽略)
-                if (hattribute.THREE_BUFF.primary > 0) then
-                    if (string.upper(subAttr) == hhero.getPrimary(whichUnit)) then
-                        hattribute.set(whichUnit, 0, { attack_white = "+" .. diff * hattribute.THREE_BUFF.primary })
-                    end
-                end
-                -- 三围影响
-                local three = table.obj2arr(hattribute.THREE_BUFF[subAttr], CONST_ATTR_KEYS)
-                for _, d in ipairs(three) do
-                    local tempV = diff * d.value
-                    if (tempV < 0) then
-                        hattribute.set(whichUnit, 0, { [d.key] = "-" .. math.abs(tempV) })
-                    elseif (tempV > 0) then
-                        hattribute.set(whichUnit, 0, { [d.key] = "+" .. tempV })
-                    end
-                end
+                hattributeSetter.setUnitSight(whichUnit, futureVal)
+            elseif (his.hero(whichUnit) and table.includes({ "str_white", "agi_white", "int_white", "str_green", "agi_green", "int_green" }, attr)) then
+                -- 白/绿字力敏智
+                hattributeSetter.setUnitThree(whichUnit, futureVal, attr, diff)
             elseif (attr == "life_back" or attr == "mana_back") then
                 -- 生命,魔法恢复
-                if (math.abs(futureVal) > 0.02 and table.includes(whichUnit, hRuntime.attributeGroup[attr]) == false) then
+                if (math.abs(futureVal) > 0.02 and table.includes(hRuntime.attributeGroup[attr], whichUnit) == false) then
                     table.insert(hRuntime.attributeGroup[attr], whichUnit)
                 elseif (math.abs(futureVal) < 0.02) then
-                    table.delete(whichUnit, hRuntime.attributeGroup[attr])
+                    table.delete(hRuntime.attributeGroup[attr], whichUnit)
                 end
             elseif (attr == "punish" and hunit.isOpenPunish(whichUnit)) then
                 -- 硬直
                 if (currentVal > 0) then
                     local punishCurrent = hattribute.get(whichUnit, 'punish_current')
                     if (punishCurrent > futureVal) then
-                        hattribute.set(whichUnit, 0, {
-                            punish_current = futureVal
-                        })
+                        hattribute.set(whichUnit, 0, { punish_current = futureVal })
                     end
                 else
-                    hattribute.set(whichUnit, 0, {
-                        punish_current = futureVal
-                    })
+                    hattribute.set(whichUnit, 0, { punish_current = futureVal })
                 end
             elseif (attr == "punish_current" and hunit.isOpenPunish(whichUnit)) then
                 -- 硬直(current)
                 local punish = hattribute.get(whichUnit, 'punish')
                 if (punish > 0 and (futureVal > punish or futureVal <= 0)) then
-                    hattribute.set(whichUnit, 0, {
-                        punish_current = punish
-                    })
+                    hattribute.set(whichUnit, 0, { punish_current = punish })
                 end
             end
         end
     elseif (valType == "table") then
         -- table类型只有+-没有别的
         if (opr == "+") then
-            local hkey = string.attrBuffKey(val)
+            local _k = string.attrBuffKey(val)
             if (during > 0) then
                 buffKey = hbuff.create(during, whichUnit, 'attr.' .. attr .. '+',
                     function()
-                        table.insert(params[attr], { hash = hkey, table = val })
+                        table.insert(params[attr], { _k = _k, _t = val })
                     end,
                     function()
                         hattribute.setHandle(whichUnit, attr, "-", val, 0)
                     end
                 )
             else
-                table.insert(params[attr], { hash = hkey, table = val })
+                table.insert(params[attr], { _k = _k, _t = val })
             end
         elseif (opr == "-") then
-            local hkey = string.attrBuffKey(val)
+            local _k = string.attrBuffKey(val)
             local hasKey = false
             for k, v in ipairs(params[attr]) do
-                if (v.hash == hkey) then
+                if (v._k == _k) then
                     table.remove(params[attr], k)
                     hasKey = true
                     break
@@ -689,8 +367,8 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                     during, whichUnit, 'attr.' .. attr .. '-',
                     function()
                         for _, v in ipairs(valArr) do
-                            if (table.includes(v, params[attr])) then
-                                table.delete(v, params[attr], 1)
+                            if (table.includes(params[attr], v)) then
+                                table.delete(params[attr], v, 1)
                             end
                         end
                     end,
@@ -700,8 +378,8 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 )
             else
                 for _, v in ipairs(valArr) do
-                    if (table.includes(v, params[attr])) then
-                        table.delete(v, params[attr], 1)
+                    if (table.includes(params[attr], v)) then
+                        table.delete(params[attr], v, 1)
                     end
                 end
             end
@@ -750,7 +428,7 @@ hattribute.set = function(whichUnit, during, data)
     for _, arr in ipairs(table.obj2arr(data, CONST_ATTR_KEYS)) do
         local attr = arr.key
         local v = arr.value
-        local buffKey = nil
+        local buffKey
         if (attribute[attr] ~= nil) then
             if (type(v) == "string") then
                 local opr = string.sub(v, 1, 1)
@@ -819,8 +497,9 @@ hattribute.get = function(whichUnit, attr)
         end
         attribute = hunit.get(whichUnit, 'attribute')
     end
-    attribute.attack = hunit.getDmgPlus(whichUnit) + attribute.attack_white or 0 + attribute.attack_green or 0
-    attribute.attack_speed_space = math.round(hunit.getAttackSpeedSpace(whichUnit) / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
+    attribute.attack = hunit.getAttackSides(whichUnit) + (attribute.attack_white or 0) + (attribute.attack_green or 0)
+    attribute.defend = math.floor((attribute.defend_white or 0) + (attribute.defend_green or 0))
+    attribute.attack_space = math.round(math.max(0, attribute.attack_space_origin) / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
     attribute.str = (attribute.str_white or 0) + (attribute.str_green or 0)
     attribute.agi = (attribute.agi_white or 0) + (attribute.agi_green or 0)
     attribute.int = (attribute.int_white or 0) + (attribute.int_green or 0)

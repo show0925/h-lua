@@ -3,7 +3,7 @@ hLuaF9 = function(allow)
     if (#allow < 1) then
         return
     end
-    if (table.includes('all', allow) or table.includes('hlua', allow)) then
+    if (table.includes(allow, 'all') or table.includes(allow, 'hlua')) then
         hquest.create({
             side = "right",
             title = "h-lua",
@@ -19,7 +19,7 @@ hLuaF9 = function(allow)
         })
     end
     -- apm提示
-    if (table.includes('all', allow) or table.includes('apm', allow)) then
+    if (table.includes(allow, 'all') or table.includes(allow, 'apm')) then
         hquest.create({
             side = "right",
             title = "查看你的APM数值",
@@ -28,7 +28,7 @@ hLuaF9 = function(allow)
         })
     end
     -- 视距提示
-    if (table.includes('all', allow) or table.includes('sight', allow)) then
+    if (table.includes(allow, 'all') or table.includes(allow, 'sight')) then
         hquest.create({
             side = "right",
             title = "调整你的视距",
@@ -41,7 +41,7 @@ hLuaF9 = function(allow)
         })
     end
     -- 特效开关提示
-    if (table.includes('all', allow) or table.includes('eff', allow)) then
+    if (table.includes(allow, 'all') or table.includes(allow, 'eff')) then
         hquest.create({
             side = "right",
             title = "开关特效[单人]",
@@ -53,7 +53,7 @@ hLuaF9 = function(allow)
         })
     end
     -- 英雄选择提示
-    if (table.includes('all', allow) or table.includes('hero', allow)) then
+    if (table.includes(allow, 'all') or table.includes(allow, 'hero')) then
         hquest.create({
             side = "right",
             title = "选择英雄指令",
@@ -66,7 +66,7 @@ hLuaF9 = function(allow)
         })
     end
     -- 自动转换黄金为木头提示
-    if (table.includes('all', allow) or table.includes('apc', allow)) then
+    if (table.includes(allow, 'all') or table.includes(allow, 'apc')) then
         hquest.create({
             side = "right",
             title = "设定自动转金为木",

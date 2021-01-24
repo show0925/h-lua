@@ -20,6 +20,13 @@ if (isDebugging()) then
     ydConsole = require "jass.console"
 end
 
+local hPrint = print
+print = function(...)
+    if (isDebugging()) then
+        hPrint(...)
+    end
+end
+
 ---
 --- 记录运行时间rem方法。只有key1时为记录，有key2时会打印对应记录间的差值，如：
 --- **rem("a") --1**

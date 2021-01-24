@@ -13,15 +13,14 @@
     }
 ]]
 hskill.knocking = function(options)
-    if (options.targetUnit == nil) then
-        print_err("knocking: -targetUnit")
-        return
-    end
     local odds = options.odds or 0
     local damage = options.damage or 0
     local percent = options.percent or 0
     if (odds <= 0 or damage <= 0 or percent <= 0) then
         print_err("knocking: -odds -damage -percent")
+        return
+    end
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local targetUnit = options.targetUnit
@@ -79,16 +78,15 @@ end
     }
 ]]
 hskill.split = function(options)
-    if (options.targetUnit == nil) then
-        print_err("split: -targetUnit")
-        return
-    end
     local odds = options.odds or 0
     local damage = options.damage or 0
     local percent = options.percent or 0
     local radius = options.radius or 0
     if (odds <= 0 or damage <= 0 or percent <= 0 or radius <= 0) then
         print_err("split: -odds -damage -percent -radius")
+        return
+    end
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local targetUnit = options.targetUnit
@@ -115,7 +113,7 @@ hskill.split = function(options)
             return flag
         end)
         local splitDamage = damage * percent * 0.01
-        hgroup.loop(g, function(eu)
+        hgroup.forEach(g, function(eu)
             hskill.damage({
                 sourceUnit = options.sourceUnit,
                 targetUnit = eu,
@@ -171,7 +169,7 @@ end
     }
 ]]
 hskill.broken = function(options)
-    if (options.targetUnit == nil) then
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local u = options.targetUnit
@@ -258,10 +256,10 @@ end
     }
 ]]
 hskill.swim = function(options)
-    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.during == nil or options.during <= 0) then
         return
     end
-    if (his.deleted(options.targetUnit)) then
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local u = options.targetUnit
@@ -392,10 +390,10 @@ end
     }
 ]]
 hskill.silent = function(options)
-    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.during == nil or options.during <= 0) then
         return
     end
-    if (his.deleted(options.targetUnit)) then
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local u = options.targetUnit
@@ -430,7 +428,7 @@ hskill.silent = function(options)
         heffect.bindUnit(options.effect, u, "origin", during)
     end
     hskill.set(u, "silentLevel", level)
-    if (table.includes(u, hRuntime.skill.silentUnits) == false) then
+    if (table.includes(hRuntime.skill.silentUnits, u) == false) then
         table.insert(hRuntime.skill.silentUnits, u)
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "head", -1)
         hskill.set(u, "silentEffect", eff)
@@ -480,8 +478,8 @@ hskill.silent = function(options)
             hskill.set(u, "silentLevel", hskill.get(u, "silentLevel", 0) - 1)
             if (hskill.get(u, "silentLevel") <= 0) then
                 heffect.del(hskill.get(u, "silentEffect"))
-                if (table.includes(u, hRuntime.skill.silentUnits)) then
-                    table.delete(u, hRuntime.skill.silentUnits)
+                if (table.includes(hRuntime.skill.silentUnits, u)) then
+                    table.delete(hRuntime.skill.silentUnits, u)
                 end
                 hunit.set(u, "isSilent", false)
             end
@@ -504,10 +502,10 @@ end
     }
 ]]
 hskill.unarm = function(options)
-    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.during == nil or options.during <= 0) then
         return
     end
-    if (his.deleted(options.targetUnit)) then
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local u = options.targetUnit
@@ -542,7 +540,7 @@ hskill.unarm = function(options)
         heffect.bindUnit(options.effect, u, "origin", during)
     end
     hskill.set(u, "unarmLevel", level)
-    if (table.includes(u, hRuntime.skill.unarmUnits) == false) then
+    if (table.includes(hRuntime.skill.unarmUnits, u) == false) then
         table.insert(hRuntime.skill.unarmUnits, u)
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "weapon", -1)
         hskill.set(u, "unarmEffect", eff)
@@ -592,8 +590,8 @@ hskill.unarm = function(options)
             hskill.set(u, "unarmLevel", hskill.get(u, "unarmLevel", 0) - 1)
             if (hskill.get(u, "unarmLevel") <= 0) then
                 heffect.del(hskill.get(u, "unarmEffect"))
-                if (table.includes(u, hRuntime.skill.unarmUnits)) then
-                    table.delete(u, hRuntime.skill.unarmUnits)
+                if (table.includes(hRuntime.skill.unarmUnits, u)) then
+                    table.delete(hRuntime.skill.unarmUnits, u)
                 end
                 hunit.set(u, "isUnArm", false)
             end
@@ -616,7 +614,10 @@ end
     }
 ]]
 hskill.fetter = function(options)
-    if (options.targetUnit == nil or options.during == nil or options.during <= 0) then
+    if (options.during == nil or options.during <= 0) then
+        return
+    end
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local u = options.targetUnit
@@ -706,6 +707,9 @@ hskill.bomb = function(options)
     if (options.whichGroup ~= nil) then
         whichGroup = options.whichGroup
     elseif (options.targetUnit ~= nil) then
+        if (his.deleted(options.targetUnit)) then
+            return
+        end
         whichGroup = hgroup.createByUnit(
             options.targetUnit,
             radius,
@@ -727,7 +731,7 @@ hskill.bomb = function(options)
         print_err("lost bomb target")
         return
     end
-    hgroup.loop(whichGroup, function(eu)
+    hgroup.forEach(whichGroup, function(eu)
         --计算抵抗
         local oppose = hattr.get(eu, "bomb_oppose")
         local tempOdds = odds - oppose --(%)
@@ -809,6 +813,9 @@ hskill.lightningChain = function(options)
     end
     if (options.targetUnit == nil) then
         print_err("lightningChain -targetUnit")
+        return
+    end
+    if (his.deleted(options.targetUnit)) then
         return
     end
     local odds = options.odds or 100
@@ -956,7 +963,7 @@ hskill.crackFly = function(options)
     if (options.damage == nil or options.damage < 0) then
         return
     end
-    if (options.targetUnit == nil) then
+    if (options.targetUnit == nil or his.deleted(options.targetUnit)) then
         return
     end
     local odds = options.odds or 100
@@ -1144,6 +1151,9 @@ hskill.rangeSwim = function(options)
         x = options.x
         y = options.y
     elseif (options.targetUnit ~= nil) then
+        if (his.deleted(options.targetUnit)) then
+            return
+        end
         x = hunit.x(options.targetUnit)
         y = hunit.y(options.targetUnit)
     elseif (options.whichLoc ~= nil) then
@@ -1168,7 +1178,7 @@ hskill.rangeSwim = function(options)
     if (hgroup.count(g) <= 0) then
         return
     end
-    hgroup.loop(g, function(eu)
+    hgroup.forEach(g, function(eu)
         hskill.swim(
             {
                 odds = odds,
@@ -1262,7 +1272,7 @@ hskill.whirlwind = function(options)
             if (hgroup.count(g) <= 0) then
                 return
             end
-            hgroup.loop(g, function(eu)
+            hgroup.forEach(g, function(eu)
                 hskill.damage(
                     {
                         sourceUnit = options.sourceUnit,
@@ -1330,6 +1340,9 @@ hskill.leap = function(options)
     end
     if (options.targetUnit == nil and options.x == nil and options.y == nil) then
         print_err("leap: -target")
+        return
+    end
+    if (options.targetUnit ~= nil and his.deleted(options.targetUnit)) then
         return
     end
     local frequency = 0.02
@@ -1459,7 +1472,7 @@ hskill.leap = function(options)
                 end
             elseif (damageEndRadius > 0) then
                 local g = hgroup.createByUnit(arrowUnit, damageEndRadius, filter)
-                hgroup.loop(g, function(eu)
+                hgroup.forEach(g, function(eu)
                     if (damageEnd > 0) then
                         hskill.damage({
                             sourceUnit = options.sourceUnit,
@@ -1552,7 +1565,7 @@ hskill.leap = function(options)
                     if (oneHitOnly == true) then
                         hunit.kill(arrowUnit, 0)
                     end
-                    hgroup.loop(g, function(eu)
+                    hgroup.forEach(g, function(eu)
                         if (damageMovementRepeat ~= true and repeatGroup ~= nil) then
                             hgroup.addUnit(repeatGroup, eu)
                         end
@@ -1718,7 +1731,7 @@ hskill.leapRange = function(options)
         y = options.y
     end
     local g = hgroup.createByXY(x, y, targetRadius, filter)
-    hgroup.loop(g, function(eu)
+    hgroup.forEach(g, function(eu)
         local tmp = {
             arrowUnit = options.arrowUnit,
             sourceUnit = options.sourceUnit,
@@ -1890,7 +1903,7 @@ hskill.rectangleStrike = function(options)
                 heffect.bindUnit(options.effect, effUnit, "origin", effUnitDur)
             end
             local _g = hgroup.createByXY(txy.x, txy.y, radius, options.filter)
-            hgroup.loop(_g, function(eu)
+            hgroup.forEach(_g, function(eu)
                 if (hgroup.includes(tg, eu) == false) then
                     hgroup.addUnit(tg, eu)
                 end

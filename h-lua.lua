@@ -2,6 +2,7 @@
 cj = require "jass.common"
 cg = require "jass.globals"
 slk = require "jass.slk"
+japi = require "jass.japi"
 
 -- 加载blizzard
 require "foundation.blizzard_c"
@@ -46,13 +47,17 @@ require "foundation.hslk"
 require "foundation.f9"
 -- 加载echo
 require "foundation.echo"
+-- 加载Mapping
+require "foundation.Mapping"
 
 -- 加载Dzapi库
 -- 需要编辑器支持网易平台的DZAPI
--- 如果在lua中无法找到Dzapi，你需要检查下面的部分：
--- 1. YDWE——配置——魔兽插件——[勾上]LUA引擎——[勾上]Dzapi（不行就做第2步）
--- 2. 打开触发窗口（F4），创建一个不运行的触发（无事件），在条件及动作补充你需要的Dzapi
+-- 如果在lua中无法找到Dzapi，方法有两种：
+-- 1. YDWE——配置——魔兽插件——[勾上]LUA引擎——[勾上]Dzapi（不行就做第2步）；打开触发窗口（F4），创建一个不运行的触发（无事件），在条件及动作补充你需要的Dzapi
+-- 2. 使用h-war-sdk
 require "lib.dzapi"
+-- 加载JAPI库
+require "lib.japi"
 
 -- 加载h-lua库
 require "lib.time"
@@ -82,9 +87,11 @@ require "lib.skill.complex"
 require "lib.skill.ring"
 require "lib.buff"
 require "lib.enchant"
+require "lib.attribute.setter"
 require "lib.attribute.index"
 require "lib.attribute.xtras"
 require "lib.item"
+require "lib.itemPool"
 require "lib.dialog"
 require "lib.leaderBoard"
 require "lib.multiBoard"

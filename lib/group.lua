@@ -1,22 +1,25 @@
 hgroup = {}
 
---- 循环单位组
----@alias GroupLoop fun(enumUnit: userdata):void
+--- 遍历单位组
+---@alias GroupForEach fun(enumUnit: userdata, idx: number):void
 ---@param whichGroup table
----@param actions GroupLoop | "function(enumUnit) end"
-hgroup.loop = function(whichGroup, actions)
+---@param action GroupForEach | "function(enumUnit, idx) end"
+hgroup.forEach = function(whichGroup, action)
     if (whichGroup == nil) then
         return
     end
     if (#whichGroup > 0) then
-        for idx, eu in ipairs(whichGroup) do
-            if (his.deleted(eu) == false) then
-                if (type(actions) == "function") then
-                    actions(eu)
+        if (type(action) == "function") then
+            for idx, eu in ipairs(whichGroup) do
+                if (his.deleted(eu) == false) then
+                    local res = action(eu, idx)
+                    if (type(res) == 'boolean' and res == false) then
+                        break
+                    end
+                else
+                    table.remove(whichGroup, idx)
+                    idx = idx - 1
                 end
-            else
-                table.remove(whichGroup, idx)
-                idx = idx - 1
             end
         end
     end
@@ -40,7 +43,7 @@ hgroup.includes = function(whichGroup, whichUnit)
     if (whichGroup == nil or whichUnit == nil) then
         return false
     end
-    return table.includes(whichUnit, whichGroup)
+    return table.includes(whichGroup, whichUnit)
 end
 
 --- 判断单位组是否为空
@@ -66,7 +69,7 @@ end
 ---@param whichUnit userdata
 hgroup.removeUnit = function(whichGroup, whichUnit)
     if (hgroup.includes(whichGroup, whichUnit) == true) then
-        table.delete(whichUnit, whichGroup)
+        table.delete(whichGroup, whichUnit)
     end
 end
 
@@ -165,7 +168,7 @@ hgroup.getClosest = function(whichGroup, x, y)
     end
     local closeDist = 99999
     local closeUnit
-    hgroup.loop(whichGroup, function(eu)
+    hgroup.forEach(whichGroup, function(eu)
         local dist = math.getDistanceBetweenXY(x, y, hunit.x(eu), hunit.y(eu))
         if (dist < closeDist) then
             closeUnit = eu
@@ -184,7 +187,7 @@ hgroup.portal = function(whichGroup, x, y, eff, isFollow)
     if (whichGroup == nil or x == nil or y == nil) then
         return
     end
-    hgroup.loop(whichGroup, function(eu)
+    hgroup.forEach(whichGroup, function(eu)
         hunit.portal(eu, x, y)
         if (isFollow == true) then
             cj.PanCameraToTimedForPlayer(hunit.getOwner(eu), x, y, 0.00)
@@ -202,7 +205,7 @@ hgroup.animate = function(whichGroup, animate)
     if (whichGroup == nil or animate == nil) then
         return
     end
-    hgroup.loop(whichGroup, function(eu)
+    hgroup.forEach(whichGroup, function(eu)
         if (his.dead(eu) == false) then
             hunit.animate(eu, animate)
         end
@@ -220,7 +223,7 @@ hgroup.clear = function(whichGroup, isDestroy, isDestroyUnit)
         return
     end
     if (isDestroyUnit == true) then
-        hgroup.loop(whichGroup, function(eu)
+        hgroup.forEach(whichGroup, function(eu)
             hunit.del(eu)
         end)
     end

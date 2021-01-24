@@ -76,15 +76,20 @@ hplayer.setPlayerState = function(whichPlayer, whichPlayerState, value)
     hplayer.adjustPlayerState(value - oldValue, whichPlayer, whichPlayerState)
 end
 
---- 循环玩家
----@alias Handler fun(whichPlayer: userdata, playerIndex: number):void
----@param call Handler | "function(whichPlayer, playerIndex) end"
-hplayer.loop = function(call)
-    if (call == nil) then
+--- 遍历玩家
+---@alias Handler fun(enumPlayer: userdata, idx: number):void
+---@param action Handler | "function(enumPlayer, idx) end"
+hplayer.forEach = function(action)
+    if (action == nil) then
         return
     end
-    for i = 1, hplayer.qty_max, 1 do
-        call(hplayer.players[i], i)
+    if (type(action) == "function") then
+        for idx = 1, hplayer.qty_max, 1 do
+            local res = action(hplayer.players[idx], idx)
+            if (type(res) == 'boolean' and res == false) then
+                break
+            end
+        end
     end
 end
 
@@ -222,7 +227,7 @@ hplayer.hideUnit = function(whichPlayer)
             return hunit.getOwner(filterUnit) == whichPlayer
         end
     )
-    hgroup.loop(g, function(enumUnit)
+    hgroup.forEach(g, function(enumUnit)
         cj.ShowUnit(enumUnit, false)
     end)
     g = nil

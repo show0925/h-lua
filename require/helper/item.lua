@@ -235,7 +235,7 @@ slkHelper.item.synthesis = function(formula)
             if (slkHelper.item.synthesisMapping.fragment[fm[1]] == nil) then
                 slkHelper.item.synthesisMapping.fragment[fm[1]] = {}
             end
-            if (table.includes(profit[1], slkHelper.item.synthesisMapping.fragment[fm[1]]) == false) then
+            if (table.includes(slkHelper.item.synthesisMapping.fragment[fm[1]], profit[1]) == false) then
                 table.insert(slkHelper.item.synthesisMapping.fragment[fm[1]], profit[1])
             end
         end
@@ -250,13 +250,13 @@ slkHelper.item.synthesis = function(formula)
 end
 
 --- 创建一件影子物品
---- 不主动使用，由normal设置{useShadow = true}自动调用
+--- 不主动使用，由normal设置{_shadow = true}自动调用
 --- 设置的 _hslk 数据会自动传到数据中
 ---@private
 ---@param v table
 slkHelper.item.shadow = function(v)
     slkHelper.count = slkHelper.count + 1
-    local Name = "# " .. v.Name
+    local Name = "　" .. v.Name .. "　"
     local obj = slk.item.rat9:new("itemShadows_" .. v.Name)
     obj.Name = Name
     obj.Description = slkHelper.itemDesc(v)
@@ -352,13 +352,13 @@ slkHelper.item.normal = function(v)
     v.pawnable = v.pawnable or 1
     v.dropable = v.dropable or 1
     v._weight = v._weight or 0
-    -- 处理useShadow
-    local useShadow = (slkHelper.conf.itemAutoShadow == true and v.powerup == 0)
-    if (type(v.useShadow) == 'boolean') then
-        useShadow = v.useShadow
+    -- 处理 _shadow
+    local _shadow = (slkHelper.conf.itemAutoShadow == true and v.powerup == 0)
+    if (type(v._shadow) == 'boolean') then
+        _shadow = v._shadow
     end
     local shadowData = {}
-    if (useShadow == true) then
+    if (_shadow == true) then
         shadowData = slkHelper.item.shadow(v)
     end
     if (v._ring ~= nil) then

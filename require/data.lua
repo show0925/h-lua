@@ -1097,3 +1097,25 @@ table.insert(
         "int"
     }
 )
+
+obj = slk.ability.Aamk:new("japi_delay")
+obj.EditorSuffix = "#h-lua"
+obj.Name = "属性系统#JAPI延迟"
+obj.Art = ""
+obj.hero = 0
+obj.race = "other"
+obj.item = 1
+obj.levels = 1
+obj["DataA1"] = 0
+obj["DataB1"] = 0
+obj["DataC1"] = 0
+obj["DataD1"] = 1
+table.insert(
+    slkHashData,
+    {
+        HSLK_KEYS.JAPI_DELAY,
+        0,
+        obj:get_id(),
+        "int"
+    }
+)

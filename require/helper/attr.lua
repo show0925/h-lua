@@ -2,7 +2,7 @@
 slkHelper.attrTargetLabel = function(target, actionType, actionField, isValue)
     if (actionType == 'spec'
         and isValue ~= true
-        and table.includes(actionField, { 'split', 'bomb', 'lightning_chain' })
+        and table.includes({ 'split', 'bomb', 'lightning_chain' }, actionField)
     ) then
         if (target == '己') then
             target = '友军'
@@ -22,7 +22,7 @@ end
 --- 键值是否百分比数据
 ---@private
 slkHelper.attrIsPercent = function(key)
-    if (table.includes(key, {
+    if (table.includes({
         "attack_speed", "avoid", "aim",
         "hemophagia", "hemophagia_skill",
         "invincible",
@@ -31,7 +31,7 @@ slkHelper.attrIsPercent = function(key)
         "cure",
         "gold_ratio", "lumber_ratio", "exp_ratio", "sell_ratio",
         "knocking", "split",
-    }))
+    }, key))
     then
         return true
     end
@@ -71,10 +71,10 @@ slkHelper.attrDesc = function(attr, sep, indent)
         local k = arr.key
         local v = arr.value
         -- 附加单位
-        if (k == "attack_speed_space") then
-            v = v .. "击每秒"
+        if (k == "attack_space") then
+            v = v .. "秒"
         end
-        if (table.includes(k, { "life_back", "mana_back" })) then
+        if (table.includes({ "life_back", "mana_back" }, k)) then
             v = v .. "每秒"
         end
         if (slkHelper.attrIsPercent(k) == true) then
@@ -188,7 +188,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
                                     temp2 = temp2
                                         .. actionFieldLabel .. radius .. "范围的" .. target
                                         .. ",造成" .. valLabel .. "的伤害"
-                                elseif (table.includes(actionField, { "swim", "silent", "unarm", "fetter" })) then
+                                elseif (table.includes({ "swim", "silent", "unarm", "fetter" }, actionField)) then
                                     temp2 = temp2
                                         .. actionFieldLabel .. "目标" .. during .. "秒"
                                         .. ",并造成" .. valLabel .. "点伤害"

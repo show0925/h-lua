@@ -97,23 +97,21 @@ hevent_default_actions = {
                 local qty = 0
                 while (true) do
                     local one = table.random(hhero.selectorPool)
-                    table.delete(one, hhero.selectorPool)
+                    table.delete(hhero.selectorPool, one)
                     local u = one
                     if (type(one) == 'string') then
-                        u = hunit.create(
-                            {
-                                whichPlayer = p,
-                                unitId = one,
-                                x = hhero.bornX,
-                                y = hhero.bornY
-                            }
-                        )
+                        u = hunit.create({
+                            whichPlayer = p,
+                            unitId = one,
+                            x = hhero.bornX,
+                            y = hhero.bornY
+                        })
                         hRuntime.hero[u] = {
                             selector = hRuntime.hero[one],
                         }
                         cj.RemoveUnitFromStock(hRuntime.hero[one], string.char2id(one))
                     else
-                        table.delete(one, hhero.selectorClearPool)
+                        table.delete(hhero.selectorClearPool, one)
                         hunit.setInvulnerable(u, false)
                         cj.SetUnitOwner(u, p, true)
                         hunit.portal(u, hhero.bornX, hhero.bornY)
@@ -558,15 +556,16 @@ hevent_default_actions = {
                 return
             end
             hhero.setPrevLevel(u, cj.GetHeroLevel(u))
-            hattr.set(u, 0, {
-                str_white = "=" .. cj.GetHeroStr(u, false),
-                agi_white = "=" .. cj.GetHeroAgi(u, false),
-                int_white = "=" .. cj.GetHeroInt(u, false)
-            })
             -- @触发升级事件
             hevent.triggerEvent(u, CONST_EVENT.levelUp, {
                 triggerUnit = u,
                 value = diffLv
+            })
+            -- 重读部分属性（因为有些属性在物编可升级提升）
+            hattr.set(u, 0, {
+                str_white = "=" .. cj.GetHeroStr(u, false),
+                agi_white = "=" .. cj.GetHeroAgi(u, false),
+                int_white = "=" .. cj.GetHeroInt(u, false),
             })
         end)
     },
@@ -613,8 +612,8 @@ hevent_default_actions = {
                 end
                 local id = hitem.getId(it)
                 local name = hitem.getName(it)
-                local hs = hslk.i2v.item[id]
-                if (hs ~= nil and hs._type == "shadow") then
+                if (hitem.isShadow(id)) then
+                    local hs = hitem.getHSlk(id)
                     id = hslk.i2v.item[hs._shadow_id]._id
                 end
                 local charges = hitem.getCharges(it)
@@ -699,7 +698,7 @@ hevent_default_actions = {
                     return
                 end
                 local items = {}
-                hitem.slotLoop(triggerUnit, function(slotItem)
+                hitem.forEach(triggerUnit, function(slotItem)
                     table.insert(items, slotItem)
                 end)
                 if (#items <= 0) then
@@ -785,31 +784,73 @@ hevent_default_actions = {
         pickup = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = cj.GetItemTypeId(it)
-            if (table.includes(itId, hslk.attr.item_attack_white.items)) then
+            if (table.includes(hslk.attr.item_attack_white.items, itId) or his.destroy(it)) then
                 --过滤hlua白字攻击物品
-                return
-            end
-            if (hRuntime.item[it] ~= nil and hRuntime.item[it].positionType == hitem.POSITION_TYPE.UNIT) then
-                -- 排除掉runtime内已创建给unit的物品
                 return
             end
             itId = string.id2char(itId)
             local u = cj.GetTriggerUnit()
-            local charges = cj.GetItemCharges(it)
-            hitem.del(it, 0)
-            it = hitem.create(
-                {
-                    itemId = itId,
-                    whichUnit = u,
-                    charges = charges,
-                    during = 0
-                }
-            )
+            local charges = hitem.getCharges(it)
+            -- 如果是hslk物品，得到技术升级
+            if (hslk.i2v.item[itId] ~= nil) then
+                -- 判断超重
+                local newWeight = hattr.get(u, "weight_current") + hitem.getWeight(itId)
+                if (newWeight > hattr.get(u, "weight")) then
+                    local exWeight = math.round(newWeight - hattr.get(u, "weight"))
+                    htextTag.style(
+                        htextTag.create2Unit(u, "超重" .. exWeight .. "kg", 8.00, "ffffff", 1, 1.1, 50.00),
+                        "scale", 0, 0.05
+                    )
+                    -- 判断如果是真实物品并且有影子，转为影子物品
+                    if (hitem.isShadowFront(itId)) then
+                        itId = hitem.shadowID(itId)
+                    end
+                    hitem.del(it)
+                    it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
+                    cj.SetItemCharges(it, charges)
+                    -- 触发超重事件
+                    hevent.triggerEvent(u, CONST_EVENT.itemOverWeight, {
+                        triggerUnit = u,
+                        triggerItem = it,
+                        value = exWeight
+                    })
+                    return
+                end
+                -- 如果是影子物品
+                if (hitem.isShadowBack(itId)) then
+                    itId = hitem.shadowID(itId)
+                    hitem.del(it)
+                    it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
+                    cj.SetItemCharges(it, charges)
+                    if (hitem.getEmptySlot(u) <= 0) then
+                        hitem.synthesis(u, it) -- 看看有没有合成，可能这个实体物品有合成可以收到物品栏
+                    else
+                        cj.UnitAddItem(u, it)
+                    end
+                    return
+                end
+            end
+            -- 触发获得物品
+            hevent.triggerEvent(u, CONST_EVENT.itemGet, { triggerUnit = u, triggerItem = it })
+            if (false == his.destroy(it)) then
+                -- 如果是自动使用的，用一波
+                if (hitem.getIsPowerUp(itId)) then
+                    hitem.used(u, it)
+                    if (hitem.getIsPerishable(itId)) then
+                        hitem.del(it, 0)
+                        return
+                    end
+                end
+                -- 计算属性
+                hitem.addProperty(u, itId, charges)
+                -- 检查合成
+                hitem.synthesis(u)
+            end
         end),
         drop = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = cj.GetItemTypeId(it)
-            if (table.includes(itId, hslk.attr.item_attack_white.items)) then
+            if (table.includes(hslk.attr.item_attack_white.items, itId)) then
                 --过滤hlua白字攻击物品
                 return
             end
@@ -820,13 +861,12 @@ hevent_default_actions = {
             if (cj.GetUnitCurrentOrder(u) == 852001) then
                 -- dropitem:852001
                 hitem.subProperty(u, itId, charges)
-                hitem.setPositionType(it, hitem.POSITION_TYPE.COORDINATE)
                 htime.setTimeout(0.05, function(t)
                     htime.delTimer(t)
                     local n = cj.GetItemName(it)
                     if (n ~= nil) then
                         local hs = hitem.getHSlk(it)
-                        if (hs ~= nil and hs._type ~= "shadow" and hs._shadow_id ~= nil) then
+                        if (hitem.isShadowFront(it)) then
                             local x = cj.GetItemX(it)
                             local y = cj.GetItemY(it)
                             hitem.del(it, 0)
@@ -862,7 +902,6 @@ hevent_default_actions = {
             local lumbercost = hitem.getLumberCost(it)
             local soldGold = 0
             local soldLumber = 0
-            hRuntime.clear(it)
             if (goldcost ~= 0 or lumbercost ~= 0) then
                 local p = hunit.getOwner(u)
                 local sellRatio = hplayer.getSellRatio(u)

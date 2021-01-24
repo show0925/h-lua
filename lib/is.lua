@@ -96,7 +96,7 @@ his.alive = function(whichUnit)
     return cj.GetUnitState(whichUnit, UNIT_STATE_LIFE) > 0
 end
 
---- 是否已被删除
+--- 单位是否已被删除
 ---@param whichUnit userdata
 ---@return boolean
 his.deleted = function(whichUnit)
@@ -125,8 +125,8 @@ end
 his.hero = function(whichUnit)
     local uid = hunit.getId(whichUnit)
     return cj.IsUnitType(whichUnit, UNIT_TYPE_HERO)
-        or table.includes(uid, hRuntime.unit_type_ids.hero) == true
-        or table.includes(uid, hRuntime.unit_type_ids.courier_hero) == true
+        or table.includes(hRuntime.unit_type_ids.hero, uid) == true
+        or table.includes(hRuntime.unit_type_ids.courier_hero, uid) == true
 end
 
 --- 是否建筑
@@ -380,6 +380,13 @@ end
 ---@return boolean
 his.borderCamera = function(x, y)
     return his.borderRect(his.MAP_CAMERA_AREA, x, y)
+end
+
+--- 物品是否已被销毁
+---@param whichItem userdata
+---@return boolean
+his.destroy = function(whichItem)
+    return cj.GetItemTypeId(whichItem) == 0
 end
 
 --- 是否身上有某种物品

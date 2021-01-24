@@ -231,7 +231,7 @@ hring.insert = function(whichUnit, id)
                 end
                 -- slk配置的RING属性
                 if (type(hs.attr) == 'table') then
-                    hgroup.loop(ring.group, function(enumUnit)
+                    hgroup.forEach(ring.group, function(enumUnit)
                         if (hgroup.includes(g, enumUnit) == false) then
                             hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, false, enumUnit, hs.attr, 1)
                             if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] ~= nil) then
@@ -255,7 +255,7 @@ hring.insert = function(whichUnit, id)
                             end
                         end
                     end
-                    hgroup.loop(g, function(enumUnit)
+                    hgroup.forEach(g, function(enumUnit)
                         -- slk配置的RING属性
                         if (type(hs.attr) == 'table' and false == hgroup.includes(ring.group, enumUnit)) then
                             hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, true, enumUnit, hs.attr, 1)

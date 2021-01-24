@@ -271,7 +271,7 @@ hhero.buildSelector = function(options)
             hevent.onSelection(hplayer.players[i], 2, function(evtData)
                 local p = evtData.triggerPlayer
                 local whichHero = evtData.triggerUnit
-                if (table.includes(whichHero, hhero.selectorClearPool) == false) then
+                if (table.includes(hhero.selectorClearPool, whichHero) == false) then
                     return
                 end
                 if (hunit.getOwner(whichHero) ~= cj.Player(PLAYER_NEUTRAL_PASSIVE)) then
@@ -282,8 +282,8 @@ hhero.buildSelector = function(options)
                     echo("|cffffff80你已经选够了|r", p)
                     return
                 end
-                table.delete(whichHero, hhero.selectorPool)
-                table.delete(whichHero, hhero.selectorClearPool)
+                table.delete(hhero.selectorPool, whichHero)
+                table.delete(hhero.selectorClearPool, whichHero)
                 hunit.setInvulnerable(whichHero, false)
                 cj.SetUnitOwner(whichHero, p, true)
                 hunit.portal(whichHero, hhero.bornX, hhero.bornY)
@@ -358,7 +358,7 @@ hhero.buildSelector = function(options)
                             }
                         )
                         table.insert(hhero.player_heroes[pIndex], whichHero)
-                        table.delete(string.id2char(soldUid), hhero.selectorPool)
+                        table.delete(hhero.selectorPool, string.id2char(soldUid))
                         local tips = "您选择了 |cffffff80" .. cj.GetUnitName(whichHero) .. "|r"
                         if (#hhero.player_heroes[pIndex] >= hhero.player_allow_qty[pIndex]) then
                             echo(tips .. ",已挑选完毕", p)

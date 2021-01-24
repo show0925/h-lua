@@ -52,30 +52,20 @@ hunit.getAvatar = function(uOrId)
     return s.Art
 end
 
---- 获取单位的原始攻击间隔
----@param uOrId userdata|string|number
----@return number
-hunit.getAttackSpeedSpace = function(uOrId)
-    local s = hunit.getSlk(uOrId)
-    return math.round(s.cool1)
-end
-
---- 获取单位的浮动攻击
+--- 获取单位的攻击浮动
 --- 这是根据slk计算的浮动攻击，每次获取到的值可能不一样
 ---@param uOrId userdata|string|number
 ---@return number
-hunit.getDmgPlus = function(uOrId)
+hunit.getAttackSides = function(uOrId)
     local s = hunit.getSlk(uOrId)
-    local dmgplus1 = s.dmgplus1 or 0
     local sides1 = s.sides1 or 1
     local dice1 = s.dice1 or 0
-    dmgplus1 = math.floor(dmgplus1)
     sides1 = math.floor(sides1)
     dice1 = math.floor(dice1)
     if (sides1 < 1) then
         sides1 = 1
     end
-    return dmgplus1 + dice1 * math.random(1, sides1)
+    return dice1 * math.random(1, sides1)
 end
 
 --- 获取单位的最大生命值
@@ -253,13 +243,13 @@ end
 ---@param u userdata
 ---@return boolean
 hunit.isOpenPunish = function(u)
-    return table.includes(u, hRuntime.attributeGroup.punish)
+    return table.includes(hRuntime.attributeGroup.punish, u)
 end
 
 --- 单位启用硬直（系统默认不启用）
 ---@param u userdata
 hunit.openPunish = function(u)
-    if (table.includes(u, hRuntime.attributeGroup.punish) == false) then
+    if (table.includes(hRuntime.attributeGroup.punish, u) == false) then
         table.insert(hRuntime.attributeGroup.punish, u)
     end
 end
@@ -267,8 +257,8 @@ end
 --- 单位停用硬直（系统默认不启用）
 ---@param u userdata
 hunit.closePunish = function(u)
-    if (table.includes(u, hRuntime.attributeGroup.punish)) then
-        table.delete(u, hRuntime.attributeGroup.punish)
+    if (table.includes(hRuntime.attributeGroup.punish, u)) then
+        table.delete(hRuntime.attributeGroup.punish, u)
     end
 end
 
@@ -339,8 +329,8 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
             hunit.set(whichUnit, 'rgba', { red, green, blue, opacity })
         end,
         function()
-            if (hRuntime.buff[whichUnit].rgba.log and #hRuntime.buff[whichUnit].rgba.log > 1) then
-                local uk = hRuntime.buff[whichUnit].rgba.log[#hRuntime.buff[whichUnit].rgba.log - 1]
+            if (hRuntime.buff[whichUnit].rgba._idx and #hRuntime.buff[whichUnit].rgba._idx > 1) then
+                local uk = hRuntime.buff[whichUnit].rgba._idx[#hRuntime.buff[whichUnit].rgba._idx - 1]
                 hbuff.purpose(whichUnit, string.implode('|', { 'rgba', uk }))
             else
                 cj.SetUnitVertexColor(whichUnit, math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 255)
@@ -742,7 +732,6 @@ end
 ---@param delay number
 hunit.del = function(targetUnit, delay)
     if (delay == nil or delay <= 0) then
-        hitem.clearUnitCache(targetUnit)
         hRuntime.clear(targetUnit)
         cj.RemoveUnit(targetUnit)
     else
@@ -750,7 +739,6 @@ hunit.del = function(targetUnit, delay)
             delay,
             function(t)
                 htime.delTimer(t)
-                hitem.clearUnitCache(targetUnit)
                 hRuntime.clear(targetUnit)
                 cj.RemoveUnit(targetUnit)
             end

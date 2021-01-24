@@ -25,9 +25,9 @@ hattribute.xtrasSupportEvents = {
 
 --- 属性系统，val数据支持的单位属性
 hattribute.xtrasSupportVals = {
-    "life", "mana",
-    "move", "defend",
-    "attack", "attack_white", "attack_green",
+    "life", "mana", "move",
+    "defend", "defend_white", "defend_green",
+    "attack", "attack_white", "attack_green", "attack_range", "attack_range_acquire", "attack_space",
     "str", "agi", "int", "str_green", "agi_green", "int_green", "str_white", "agi_white", "int_white",
     "level",
     "gold", "lumber",
@@ -70,8 +70,8 @@ hattribute.getXtras = function(whichUnit, eventKey)
     end
     local xtrasInEvent = {}
     for _, x in ipairs(xtras) do
-        if (eventKey == x.table.on) then
-            table.insert(xtrasInEvent, x.table)
+        if (eventKey == x._t.on) then
+            table.insert(xtrasInEvent, x._t)
         end
     end
     return xtrasInEvent
@@ -153,7 +153,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
         return
     end
     -- 排除不支持的事件
-    if (table.includes(eventKey, hattribute.xtrasSupportEvents) == false) then
+    if (table.includes(hattribute.xtrasSupportEvents, eventKey) == false) then
         return
     end
     -- 排除非单位
@@ -176,7 +176,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
         if (#actions == 3) then
             local target = actions[1]
             local actionType = actions[2]
-            if (table.includes(actionType, { 'attr', 'spec' }) ~= false and evtData[target] ~= nil and hunit.getName(evtData[target]) ~= nil) then
+            if (table.includes({ 'attr', 'spec' }, actionType) ~= false and evtData[target] ~= nil and hunit.getName(evtData[target]) ~= nil) then
                 if (his.deleted(evtData[target]) == false and hattribute.xtrasPassAlive(evtData[target], actions[2], actions[3])) then
                     local targetUnit = evtData[target]
                     local actionField = actions[3]
@@ -198,7 +198,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                             if (#valAttr == 2) then
                                 local au = evtData[valAttr[1]]
                                 local aa = valAttr[2]
-                                if (au and table.includes(aa, hattribute.xtrasSupportVals)) then
+                                if (au and table.includes(hattribute.xtrasSupportVals, aa)) then
                                     if (aa == 'level') then
                                         val = hhero.getCurLevel(au)
                                     elseif (aa == 'gold') then

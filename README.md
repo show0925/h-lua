@@ -8,7 +8,7 @@
  * QQ：325338043
 
 ## 使用优势？
-h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依赖其他API（如JAPI、DzAPI），并集成少量的DzAPI。
+h-lua拥有优秀的demo，在开源的同时引导您学习的更多
 包含多样丰富的属性系统，内置多达几十种以上的自定义事件,可以轻松做出平时难以甚至不能做出的技能效果。
 强大的物品合成分拆，丰富自定义技能模板！免去自行编写！
 计时器、环境、镜头、单位、敌人、音乐、天气、遮罩、任务等等应有尽有。
@@ -17,10 +17,12 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依�
 ```
     ├── h-lua.lua - 入口文件，你的main文件需要包含它
     ├── const - 静态值
+    │   ├── abilityTarget - 技能目标
     │   ├── attritube - 属性
     │   ├── breakArmorType - 破防类型
-    │   ├── damageSrc - 伤害来源
+    │   ├── damageSource - 伤害来源
     │   ├── damageType - 伤害类型
+    │   ├── enchant - 附魔值
     │   ├── event - 事件
     │   ├── hero - 英雄
     │   ├── hotKey - 热键
@@ -39,6 +41,7 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依�
     │   ├── echo.lua - 游戏荧幕打印
     │   ├── f9.lua - 框架任务
     │   ├── json.lua - json库
+    │   ├── Mapping.lua - 值对库
     │   ├── math.lua - 计算库
     │   ├── md5.lua - MD5
     │   ├── runtime.lua - 运行时数据集
@@ -46,12 +49,15 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多，不依�
     │   └── table.lua - 表库
     ├── lib
     │   ├── skill - 技能包
-    │   ├── attrbute.lua - 基础/拓展/伤害特效/自然/单位关联，万能属性系统，自由、强大
+    │   ├── attrbute - 基础/拓展/伤害特效/自然/单位关联，万能属性系统，自由、强大
     │   ├── award.lua - 奖励模块，用于控制玩家的黄金木头经验
+    │   ├── buff.lua - buff模块，可控状态管理
     │   ├── camera.lua - 镜头模块，用于控制玩家镜头
+    │   ├── courier.lua - 默认的信使模块
     │   ├── dialog.lua - 对话框模块，用于显示对话框
     │   ├── dzapi.lua - Dzapi(配合./plugins/dzapi.jass使用)
     │   ├── effect.lua - 特效模块
+    │   ├── enchant.lua - 附魔模块
     │   ├── enemy.lua - 敌人模块，用于设定敌人玩家，自动分配单位
     │   ├── env.lua - 环境模块，可随机为区域生成装饰物及地表纹理
     │   ├── event.lua - 事件模块，自定义事件，包括物品合成分拆/暴击，精确攻击捕捉等

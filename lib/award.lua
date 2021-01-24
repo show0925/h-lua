@@ -91,7 +91,7 @@ haward.forGroup = function(whichUnit, exp, gold, lumber)
     if (exp > 0 and cutExp < 1) then
         cutExp = 1
     end
-    hgroup.loop(g, function(u)
+    hgroup.forEach(g, function(u)
         haward.forUnit(u, cutExp, cutGold, cutLumber)
     end)
     g = nil
