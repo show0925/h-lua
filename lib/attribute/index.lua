@@ -151,13 +151,12 @@ end
 
 -- 设定属性
 --[[
-    白字攻击 绿字攻击
-    攻速 视野 警示范围
+    白字攻击 绿字攻击 攻击间隔
+    攻速 视野 攻击范围 主动攻击范围
     力敏智 力敏智(绿)
-    基础护甲 护甲 魔抗
+    白字护甲 绿字护甲
     生命 魔法 +恢复
-    硬直
-    物暴 术暴 分裂 回避 移动力 力量 敏捷 智力 救助力 吸血 负重 各率
+    硬直 分裂 回避 移动力 吸血 负重 ?率
     type(data) == table
     data = { 支持 加/减/乘/除/等
         life = '+100',
@@ -175,6 +174,10 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     local params = hattr.get(whichUnit)
     if (params == nil) then
         return
+    end
+    -- 属性转接
+    if (attr == 'attack_space') then
+        attr = 'attack_space_origin'
     end
     local buffKey
     if (valType == "number") then
@@ -242,9 +245,8 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 -- 移动
                 futureVal = math.min(522, math.max(0, math.floor(futureVal)))
                 cj.SetUnitMoveSpeed(whichUnit, futureVal)
-            elseif (attr == "attack_space") then
+            elseif (attr == "attack_space_origin") then
                 -- 攻击间隔[JAPI*]
-                params.attack_space_origin = futureVal
                 hjapi.setUnitAttackSpace(whichUnit, futureVal)
             elseif (attr == "attack_white") then
                 -- 白字攻击[JAPI+]
