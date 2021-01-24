@@ -145,8 +145,7 @@ end
 
 --- hSlk形式的设置最大生命值
 ---@private
-hattributeSetter.setUnitMaxLife = function(whichUnit, currentVal, futureVal)
-    local diff = 0
+hattributeSetter.setUnitMaxLife = function(whichUnit, currentVal, futureVal, diff)
     local level = 0
     if (futureVal >= 999999999) then
         if (currentVal >= 999999999) then
@@ -179,8 +178,7 @@ end
 
 --- hSlk形式的设置最大魔法值
 ---@private
-hattributeSetter.setUnitMaxMana = function(whichUnit, currentVal, futureVal)
-    local diff = 0
+hattributeSetter.setUnitMaxMana = function(whichUnit, currentVal, futureVal, diff)
     local level = 0
     if (futureVal >= 999999999) then
         if (currentVal >= 999999999) then
@@ -213,9 +211,8 @@ end
 
 --- hSlk形式的设置白字攻击
 ---@private
-hattributeSetter.setUnitAttackWhite = function(whichUnit, futureVal)
+hattributeSetter.setUnitAttackWhite = function(whichUnit, futureVal, diff)
     local max = 100000000
-    local diff = 0
     if (futureVal > max or futureVal < -max) then
         diff = 0
     end
@@ -443,13 +440,15 @@ hattributeSetter.setUnitThree = function(whichUnit, futureVal, attr, diff)
         end
     end
     -- 三围影响
-    local three = table.obj2arr(hattribute.THREE_BUFF[thumb], CONST_ATTR_KEYS)
-    for _, d in ipairs(three) do
-        local tempV = diff * d.value
-        if (tempV < 0) then
-            hattribute.set(whichUnit, 0, { [d.key] = "-" .. math.abs(tempV) })
-        elseif (tempV > 0) then
-            hattribute.set(whichUnit, 0, { [d.key] = "+" .. tempV })
+    if (hattribute.THREE_BUFF[thumb] ~= nil) then
+        local three = table.obj2arr(hattribute.THREE_BUFF[thumb], CONST_ATTR_KEYS)
+        for _, d in ipairs(three) do
+            local tempV = diff * d.value
+            if (tempV < 0) then
+                hattribute.set(whichUnit, 0, { [d.key] = "-" .. math.abs(tempV) })
+            elseif (tempV > 0) then
+                hattribute.set(whichUnit, 0, { [d.key] = "+" .. tempV })
+            end
         end
     end
 end

@@ -474,11 +474,14 @@ hitem.synthesis = function(whichUnit, items)
                     local charges2 = hitem.getCharges(it2)
                     if (id1 == id2 and charges2 < overlie) then
                         local allow = overlie - charges1
+                        local addCharges = 0
                         if (charges2 <= allow) then
                             charges1 = charges1 + charges2
+                            addCharges = charges2
                             charges2 = 0
                         else
                             charges1 = overlie
+                            addCharges = allow
                             charges2 = charges2 - allow
                         end
                         cj.SetItemCharges(it1, charges1)
@@ -486,6 +489,7 @@ hitem.synthesis = function(whichUnit, items)
                             cj.SetItemCharges(it2, charges2)
                         else
                             if (j > 6) then
+                                hitem.addProperty(whichUnit, id2, addCharges)
                                 table.delete(items, it2, 1)
                             end
                             hitem.del(it2)

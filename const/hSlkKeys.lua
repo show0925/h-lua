@@ -38,4 +38,5 @@ HSLK_KEYS = {
     ATTR_SIGHT_SUB = 137,
     ENV_MODEL_NAME = 138,
     ENV_MODEL = 139,
+    JAPI_DELAY = 140,
 }

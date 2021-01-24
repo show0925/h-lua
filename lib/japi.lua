@@ -42,21 +42,8 @@ hjapi.setUnitAttackWhite = function(whichUnit, value)
     end
     return hjapi.check({ 'SetUnitState' }, function()
         japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x12), value)
-    end)
-end
-
---- [JAPI]设置单位的附加攻击（白字）
----@param whichUnit userdata
----@param value number
----@return boolean
-hjapi.setUnitAttackGreen = function(whichUnit, value)
-    if (value < -99999999) then
-        value = -99999999
-    elseif (value > 99999999) then
-        value = 99999999
-    end
-    return hjapi.check({ 'SetUnitState' }, function()
-        japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x13), value)
+        cj.UnitAddAbility(whichUnit, hslk.japi_delay)
+        cj.UnitRemoveAbility(whichUnit, hslk.japi_delay)
     end)
 end
 
@@ -116,9 +103,10 @@ hjapi.setUnitDefendWhite = function(whichUnit, value)
         value = 99999999
     end
     return hjapi.check({ 'SetUnitState' }, function()
-        local defend = hattribute.get(whichUnit, 'defend') or 0
-        japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x20), value + defend)
-
+        local defend_green = hattribute.get(whichUnit, 'defend_green') or 0
+        japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x20), value + defend_green)
+        cj.UnitAddAbility(whichUnit, hslk.japi_delay)
+        cj.UnitRemoveAbility(whichUnit, hslk.japi_delay)
     end)
 end
 

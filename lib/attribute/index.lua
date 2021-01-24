@@ -141,12 +141,12 @@ hattribute.init = function(whichUnit)
     if (uSlk.attack_space_origin) then
         attribute.attack_space_origin = math.round(uSlk.cool1)
     end
-    if (uSlk.def) then
-        attribute.defend_white = math.round(uSlk.def)
-    end
     if (uSlk.sight) then
         attribute.sight = math.floor(uSlk.sight)
     end
+    hjapi.check({ 'SetUnitState' }, function()
+        attribute.defend_white = math.round(japi.GetUnitState(whichUnit, cj.ConvertUnitState(0x20)))
+    end)
     -- 初始化数据
     hunit.set(whichUnit, 'attribute', attribute)
     return true
@@ -234,12 +234,12 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             if (attr == "life") then
                 -- 最大生命值[JAPI+]
                 if (false == hjapi.setUnitMaxLife(whichUnit, futureVal)) then
-                    hattributeSetter.setUnitMaxLife(whichUnit, currentVal, futureVal)
+                    hattributeSetter.setUnitMaxLife(whichUnit, currentVal, futureVal, diff)
                 end
             elseif (attr == "mana") then
                 -- 最大魔法值[JAPI+]
                 if (false == hjapi.setUnitMaxMana(whichUnit, futureVal)) then
-                    hattributeSetter.setUnitMaxMana(whichUnit, currentVal, futureVal)
+                    hattributeSetter.setUnitMaxMana(whichUnit, currentVal, futureVal, diff)
                 end
             elseif (attr == "move") then
                 -- 移动
@@ -251,13 +251,11 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             elseif (attr == "attack_white") then
                 -- 白字攻击[JAPI+]
                 if (false == hjapi.setUnitAttackWhite(whichUnit, futureVal)) then
-                    hattributeSetter.setUnitAttackWhite(whichUnit, futureVal)
+                    hattributeSetter.setUnitAttackWhite(whichUnit, futureVal, diff)
                 end
             elseif (attr == "attack_green") then
-                -- 绿字攻击[JAPI+]
-                if (false == hjapi.setUnitAttackGreen(whichUnit, futureVal)) then
-                    hattributeSetter.setUnitAttackGreen(whichUnit, futureVal)
-                end
+                -- 绿字攻击
+                hattributeSetter.setUnitAttackGreen(whichUnit, futureVal)
             elseif (attr == "attack_range") then
                 -- 攻击范围[JAPI]
                 hjapi.setUnitAttackRange(whichUnit, futureVal)

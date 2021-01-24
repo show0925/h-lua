@@ -9,6 +9,7 @@ hslk = {
     unit_hero_tavern = 0, -- 酒馆id
     unit_hero_tavern_token = 0, -- 酒馆选择马甲id（视野）
     unit_hero_death_token = 0,
+    japi_delay = 0, --JAPI延迟处理
     i2v = {
         unit = {},
         item = {},
@@ -128,6 +129,9 @@ for i = 1, qty do
     local val = cj.LoadInteger(cg.hash_hslk, HSLK_KEYS.ENV_MODEL, i)
     hslk.env_model[key] = val
 end
+
+-- JAPI延迟处理
+hslk.japi_delay = cj.LoadInteger(cg.hash_hslk, HSLK_KEYS.JAPI_DELAY, 0)
 
 -- 属性系统
 for i = 1, 9 do
