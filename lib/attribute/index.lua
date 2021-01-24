@@ -235,12 +235,12 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             local tempVal = 0
             local level = 0
             if (attr == "life") then
-                -- 最大生命值
+                -- 最大生命值[JAPI+]
                 if (false == hjapi.setUnitMaxLife(whichUnit, futureVal)) then
                     hattributeSetter.setUnitMaxLife(whichUnit, currentVal, futureVal)
                 end
             elseif (attr == "mana") then
-                -- 最大魔法值
+                -- 最大魔法值[JAPI+]
                 if (false == hjapi.setUnitMaxMana(whichUnit, futureVal)) then
                     hattributeSetter.setUnitMaxMana(whichUnit, currentVal, futureVal)
                 end
@@ -249,12 +249,17 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 futureVal = math.min(522, math.max(0, math.floor(futureVal)))
                 cj.SetUnitMoveSpeed(whichUnit, futureVal)
             elseif (attr == "attack_space") then
-                -- 攻击间隔[JAPI]
+                -- 攻击间隔[JAPI*]
                 hjapi.setUnitAttackSpace(whichUnit, futureVal)
             elseif (attr == "attack_white") then
-                -- 白字攻击
+                -- 白字攻击[JAPI+]
                 if (false == hjapi.setUnitAttackWhite(whichUnit, futureVal)) then
                     hattributeSetter.setUnitAttackWhite(whichUnit, futureVal)
+                end
+            elseif (attr == "attack_green") then
+                -- 绿字攻击[JAPI+]
+                if (false == hjapi.setUnitAttackGreen(whichUnit, futureVal)) then
+                    hattributeSetter.setUnitAttackGreen(whichUnit, futureVal)
                 end
             elseif (attr == "attack_range") then
                 -- 攻击范围[JAPI]
@@ -263,78 +268,15 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 -- 主动攻击范围
                 futureVal = math.min(9999, math.max(0, math.floor(futureVal)))
                 cj.SetUnitAcquireRange(whichUnit, futureVal)
-            elseif (attr == "sight") then
-                -- 视野
-                for _, gradient in ipairs(hslk.attr.sight_gradient) do
-                    cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.add[gradient])
-                    cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.sub[gradient])
-                end
-                tempVal = math.floor(math.abs(futureVal))
-                local sight_gradient = table.clone(hslk.attr.sight_gradient)
-                if (tempVal ~= 0) then
-                    while (true) do
-                        local isFound = false
-                        for _, v in ipairs(sight_gradient) do
-                            if (tempVal >= v) then
-                                tempVal = math.floor(tempVal - v)
-                                table.delete(sight_gradient, v)
-                                if (futureVal > 0) then
-                                    cj.UnitAddAbility(whichUnit, hslk.attr.sight.add[v])
-                                else
-                                    cj.UnitAddAbility(whichUnit, hslk.attr.sight.sub[v])
-                                end
-                                isFound = true
-                                break
-                            end
-                        end
-                        if (isFound == false) then
-                            break
-                        end
-                    end
-                end
             elseif (attr == "attack_speed") then
-                -- 攻击速度
+                -- 攻击速度[JAPI+]
                 if (false == hjapi.setUnitAttackSpeed(whichUnit, futureVal)) then
-                    if (futureVal < -99999999) then
-                        futureVal = -99999999
-                    elseif (futureVal > 99999999) then
-                        futureVal = 99999999
-                    end
-                    for _, grad in ipairs(hslk.attr.ablis_gradient) do
-                        local ab = hslk.attr[attr].add[grad]
-                        if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                            cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                        end
-                        ab = hslk.attr[attr].sub[grad]
-                        if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                            cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                        end
-                    end
-                    tempVal = math.floor(math.abs(futureVal))
-                    local max = 100000000
-                    if (tempVal ~= 0) then
-                        while (max >= 1) do
-                            level = math.floor(tempVal / max)
-                            tempVal = math.floor(tempVal - level * max)
-                            if (futureVal > 0) then
-                                if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
-                                    cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
-                                end
-                                cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
-                            else
-                                if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
-                                    cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
-                                end
-                                cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
-                            end
-                            max = math.floor(max / 10)
-                        end
-                    end
+                    hattributeSetter.setUnitAttackSpeed(whichUnit, futureVal)
                 end
-            elseif ("defend_white" == attr) then
-                -- 白字护甲[JAPI]
+            elseif (attr == "defend_white") then
+                -- 白字护甲[JAPI*]
                 hjapi.setUnitDefendWhite(whichUnit, futureVal)
-            elseif ("defend_green" == attr) then
+            elseif (attr == "defend_green") then
                 -- 绿字护甲
                 if (futureVal < -99999999) then
                     futureVal = -99999999
@@ -371,43 +313,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                         max = math.floor(max / 10)
                     end
                 end
-            elseif ("attack_green" == attr) then
-                -- 绿字攻击
-                if (futureVal < -99999999) then
-                    futureVal = -99999999
-                elseif (futureVal > 99999999) then
-                    futureVal = 99999999
-                end
-                for _, grad in ipairs(hslk.attr.ablis_gradient) do
-                    local ab = hslk.attr[attr].add[grad]
-                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                    end
-                    ab = hslk.attr[attr].sub[grad]
-                    if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
-                        cj.SetUnitAbilityLevel(whichUnit, ab, 1)
-                    end
-                end
-                tempVal = math.floor(math.abs(futureVal))
-                local max = 100000000
-                if (tempVal ~= 0) then
-                    while (max >= 1) do
-                        level = math.floor(tempVal / max)
-                        tempVal = math.floor(tempVal - level * max)
-                        if (futureVal > 0) then
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
-                            end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
-                        else
-                            if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
-                                cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
-                            end
-                            cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
-                        end
-                        max = math.floor(max / 10)
-                    end
-                end
+            elseif (attr == "sight") then
+                -- 视野
+                hattributeSetter.setUnitSight(whichUnit, futureVal)
             elseif (his.hero(whichUnit) and table.includes({ "str_green", "agi_green", "int_green" }, attr)) then
                 -- 绿字力量 绿字敏捷 绿字智力
                 if (futureVal < -99999999) then

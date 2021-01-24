@@ -20,7 +20,7 @@ hjapi.check = function(methods, trueAction)
     end
     if (#lose > 0) then
         if (type(trueAction) == 'function') then
-            print("JAPI Method not exist: " .. string.implode(', ', lose))
+            echo("JAPI Method not exist: " .. string.implode(', ', lose))
         end
         return false
     end

@@ -233,3 +233,115 @@ hattributeSetter.setUnitAttackWhite = function(whichUnit, futureVal)
         end
     end
 end
+
+--- hSlk形式的设置绿字攻击
+---@private
+hattributeSetter.setUnitAttackGreen = function(whichUnit, futureVal)
+    if (futureVal < -99999999) then
+        futureVal = -99999999
+    elseif (futureVal > 99999999) then
+        futureVal = 99999999
+    end
+    for _, grad in ipairs(hslk.attr.ablis_gradient) do
+        local ab = hslk.attr.attack_green.add[grad]
+        if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+            cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+        end
+        ab = hslk.attr.attack_green.sub[grad]
+        if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+            cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+        end
+    end
+    local tempVal = math.floor(math.abs(futureVal))
+    local max = 100000000
+    if (tempVal ~= 0) then
+        while (max >= 1) do
+            local level = math.floor(tempVal / max)
+            tempVal = math.floor(tempVal - level * max)
+            if (futureVal > 0) then
+                if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr.attack_green.add[max]) < 1) then
+                    cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.add[max])
+                end
+                cj.SetUnitAbilityLevel(whichUnit, hslk.attr.attack_green.add[max], level + 1)
+            else
+                if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr.attack_green.sub[max]) < 1) then
+                    cj.UnitAddAbility(whichUnit, hslk.attr.attack_green.sub[max])
+                end
+                cj.SetUnitAbilityLevel(whichUnit, hslk.attr.attack_green.sub[max], level + 1)
+            end
+            max = math.floor(max / 10)
+        end
+    end
+end
+
+--- hSlk形式的设置攻击速度
+---@private
+hattributeSetter.setUnitAttackSpeed = function(whichUnit, futureVal)
+    if (futureVal < -99999999) then
+        futureVal = -99999999
+    elseif (futureVal > 99999999) then
+        futureVal = 99999999
+    end
+    for _, grad in ipairs(hslk.attr.ablis_gradient) do
+        local ab = hslk.attr.attack_speed.add[grad]
+        if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+            cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+        end
+        ab = hslk.attr.attack_speed.sub[grad]
+        if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
+            cj.SetUnitAbilityLevel(whichUnit, ab, 1)
+        end
+    end
+    local tempVal = math.floor(math.abs(futureVal))
+    local max = 100000000
+    if (tempVal ~= 0) then
+        while (max >= 1) do
+            local level = math.floor(tempVal / max)
+            tempVal = math.floor(tempVal - level * max)
+            if (futureVal > 0) then
+                if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr.attack_speed.add[max]) < 1) then
+                    cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.add[max])
+                end
+                cj.SetUnitAbilityLevel(whichUnit, hslk.attr.attack_speed.add[max], level + 1)
+            else
+                if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr.attack_speed.sub[max]) < 1) then
+                    cj.UnitAddAbility(whichUnit, hslk.attr.attack_speed.sub[max])
+                end
+                cj.SetUnitAbilityLevel(whichUnit, hslk.attr.attack_speed.sub[max], level + 1)
+            end
+            max = math.floor(max / 10)
+        end
+    end
+end
+
+--- hSlk形式的设置视野
+---@private
+hattributeSetter.setUnitSight = function(whichUnit, futureVal)
+    for _, gradient in ipairs(hslk.attr.sight_gradient) do
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.add[gradient])
+        cj.UnitRemoveAbility(whichUnit, hslk.attr.sight.sub[gradient])
+    end
+    local tempVal = math.floor(math.abs(futureVal))
+    local sight_gradient = table.clone(hslk.attr.sight_gradient)
+    if (tempVal ~= 0) then
+        while (true) do
+            local found = false
+            for _, v in ipairs(sight_gradient) do
+                if (tempVal >= v) then
+                    tempVal = math.floor(tempVal - v)
+                    table.delete(sight_gradient, v)
+                    if (futureVal > 0) then
+                        cj.UnitAddAbility(whichUnit, hslk.attr.sight.add[v])
+                    else
+                        cj.UnitAddAbility(whichUnit, hslk.attr.sight.sub[v])
+                    end
+                    found = true
+                    break
+                end
+            end
+            if (found == false) then
+                break
+            end
+        end
+    end
+end
