@@ -497,7 +497,7 @@ hattribute.get = function(whichUnit, attr)
     end
     attribute.attack = hunit.getAttackSides(whichUnit) + (attribute.attack_white or 0) + (attribute.attack_green or 0)
     attribute.defend = math.floor((attribute.defend_white or 0) + (attribute.defend_green or 0))
-    attribute.attack_space = math.round(attribute.attack_space_origin / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
+    attribute.attack_space = math.round(math.max(0, attribute.attack_space_origin) / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
     attribute.str = (attribute.str_white or 0) + (attribute.str_green or 0)
     attribute.agi = (attribute.agi_white or 0) + (attribute.agi_green or 0)
     attribute.int = (attribute.int_white or 0) + (attribute.int_green or 0)

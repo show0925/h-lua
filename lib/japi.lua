@@ -82,10 +82,10 @@ end
 ---@param value number
 ---@return boolean
 hjapi.setUnitAttackSpace = function(whichUnit, value)
-    if (value > 10) then
-        value = 10
-    elseif (value < 0) then
-        value = 0
+    if (value > 30) then
+        value = 30.00
+    elseif (value < 0.1) then
+        value = 0.1
     end
     return hjapi.check({ 'SetUnitState' }, function()
         japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x25), value)
