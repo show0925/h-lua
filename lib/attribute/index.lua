@@ -374,22 +374,16 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 if (currentVal > 0) then
                     local punishCurrent = hattribute.get(whichUnit, 'punish_current')
                     if (punishCurrent > futureVal) then
-                        hattribute.set(whichUnit, 0, {
-                            punish_current = futureVal
-                        })
+                        hattribute.set(whichUnit, 0, { punish_current = futureVal })
                     end
                 else
-                    hattribute.set(whichUnit, 0, {
-                        punish_current = futureVal
-                    })
+                    hattribute.set(whichUnit, 0, { punish_current = futureVal })
                 end
             elseif (attr == "punish_current" and hunit.isOpenPunish(whichUnit)) then
                 -- 硬直(current)
                 local punish = hattribute.get(whichUnit, 'punish')
                 if (punish > 0 and (futureVal > punish or futureVal <= 0)) then
-                    hattribute.set(whichUnit, 0, {
-                        punish_current = punish
-                    })
+                    hattribute.set(whichUnit, 0, { punish_current = punish })
                 end
             end
         end
