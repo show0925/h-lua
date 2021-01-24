@@ -25,10 +25,9 @@ hattribute.xtrasSupportEvents = {
 
 --- 属性系统，val数据支持的单位属性
 hattribute.xtrasSupportVals = {
-    "life", "mana",
-    "move", "defend_white", "defend_green",
-    "attack_range", "attack_range_acquire", "attack_space",
-    "attack", "attack_white", "attack_green",
+    "life", "mana", "move",
+    "defend", "defend_white", "defend_green",
+    "attack", "attack_white", "attack_green", "attack_range", "attack_range_acquire", "attack_space",
     "str", "agi", "int", "str_green", "agi_green", "int_green", "str_white", "agi_white", "int_white",
     "level",
     "gold", "lumber",
