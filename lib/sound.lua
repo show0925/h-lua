@@ -3,9 +3,28 @@ hsound = {
     BREAK_DELAY = 3
 }
 
---- 播放音效
+--- 创建音效
+---@param path string 音频文件路径
+---@param channel number 频道
+---@param volume number 音量
+---@param pitch number 音高
+hsound.create = function(path, channel, volume, pitch)
+    local voice
+    if (path ~= nil) then
+        channel = channel or 0
+        volume = volume or 127
+        pitch = pitch or 1.0
+        voice = cj.CreateSound(path, false, false, false, 10, 10, "")
+        cj.SetSoundChannel(voice, channel)
+        cj.SetSoundVolume(voice, volume)
+        cj.SetSoundPitch(voice, pitch)
+    end
+    return voice
+end
+
+--- 播放音效(推荐使用hsound.create创造)
 ---@param s userdata F5设定音效
-hsound.sound = function(s)
+hsound.voice = function(s)
     if (s ~= nil) then
         cj.StartSound(s)
     end
@@ -13,7 +32,7 @@ end
 --- 播放音效对某个玩家
 ---@param s userdata
 ---@param whichPlayer userdata
-hsound.sound2Player = function(s, whichPlayer)
+hsound.voice2Player = function(s, whichPlayer)
     if (s ~= nil and cj.GetLocalPlayer() == whichPlayer) then
         cj.StartSound(s)
     end
@@ -22,7 +41,7 @@ end
 ---@param s userdata
 ---@param volumePercent number %
 ---@param u userdata
-hsound.sound2Unit = function(s, volumePercent, u)
+hsound.voice2Unit = function(s, volumePercent, u)
     if (s ~= nil) then
         cj.AttachSoundToUnit(s, u)
         cj.SetSoundVolume(s, math.floor(volumePercent * 127 * 0.01))
@@ -34,7 +53,7 @@ end
 ---@param x number
 ---@param y number
 ---@param z number
-hsound.sound2XYZ = function(s, x, y, z)
+hsound.voice2XYZ = function(s, x, y, z)
     if (s ~= nil) then
         cj.SetSoundPosition(s, x, y, z)
     end
@@ -44,7 +63,7 @@ end
 ---@param s userdata
 ---@param whichRect userdata
 ---@param during number 0=unLimit
-hsound.sound2Rect = function(s, whichRect, during)
+hsound.voice2Rect = function(s, whichRect, during)
     if (s ~= nil) then
         during = during or 0
         local width = cj.GetRectMaxX(whichRect) - cj.GetRectMinX(whichRect)
