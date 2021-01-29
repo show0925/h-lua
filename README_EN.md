@@ -80,7 +80,6 @@ Timers, environments, shots, units, enemies, music, weather, masks, missions, an
     │   ├── time.lua
     │   ├── unit.lua
     │   └── weather.lua 
-    ├── package - Package on the WY platform
     ├── plugins（Copy all codes to the TRIGGER when using）
     │   ├── dzapi.v1.jass - WY expand dzapi(ver.1)
     │   └── dzapi.v2.jass - WY expand dzapi(ver.2)
@@ -97,31 +96,21 @@ Timers, environments, shots, units, enemies, music, weather, masks, missions, an
 
 > This set of codes is free for trial by authors who understand Lua. If you do n’t know Lua language, please use T to make maps or learn by yourself. Teaching is not provided here. This tutorial uses YDWE as an example
 
-## Preparation：
+#### Quick start：
+use [h-lua-cli](https://github.com/hunzsig-warcraft3/h-lua-cli)
 
-> Checked the Lua engine of YDWE
 
-> You can sed editor settings in the [Quick start]
-
-### Let's start to use h-lua：
-
-> Open YDWE, open the map, press F4 to open the trigger editor
-
-> Add a [new trigger] at the top of the top position
-
-> Select the new trigger and click the menu [Edit] to convert it to custom text and replace it with your code, as follows:
-
+#### Enable debug：
 ```
-<?
-#include "[YOUR PATH]/h-lua/h-lua.jass"
-#include "[YOUR MAP PATH]/slk/init.ljass" //need start lua，see demo helloworld.w3x
-?>
+-- Set HLUA_DEBUG is true before require h-lua
+HLUA_DEBUG = true
+require "h-lua"
+...
 ```
-> You need to feel in your init.ljass Import your entry file and execute the Lua file (the h-lua framework does not automatically perform this behavior now)
 
-> You can refer to it: https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld
+
+#### Note：
 ```
-Note：
 The h-lua library is open source, updated from time to time, you can visit http://wenku.hunzsig.org to view the latest documents
 The h-lua library only provides some functional functions to help map authors make maps easier
 The h-lua library is not guaranteed to be completely correct and bug-free. If necessary, please modify the source code for game production. Here is just to provide ideas and help.

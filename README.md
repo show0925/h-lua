@@ -78,7 +78,6 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多
     │   ├── time.lua - 时间/计时器 * 常用
     │   ├── unit.lua - 单位
     │   └── weather.lua - 天气
-    ├── package - 打包上线用exe
     ├── plugins（使用时需整段复制到触发内）
     │   ├── dzapi.v1.jass - 拓展dzapi(前期第1个版本)
     │   └── dzapi.v2.jass - 拓展dzapi(现任第2个版本)
@@ -95,36 +94,21 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多
 
 > 本套代码免费提供给了解lua的作者试用，如果不了解lua语言请使用T来制作地图或自行学习，此处不提供教学，本教程以YDWE为例
 
-## 前期准备：
+#### 快速开始：
+请使用 [h-lua-cli集成开发环境](https://github.com/hunzsig-warcraft3/h-lua-cli)
 
-> 记得打开 YDWE【设置】的lua引擎
 
-> 编辑器设置可查看极速上手参考
-
-### 好了，让我们开始接入：
-
-> 打开 YDWE 打开地图按F4打开触发编辑器
-
-> 在最上方第一的位置添加一个【新触发】
-
-> 选中新建的触发点击菜单【编辑】将他转为自定义文本，替换成你的代码，如下：
-
+#### 开启DEBUG：
 ```
-<?
-#include "[YOUR PATH]/h-lua/h-lua.jass"
-#include "[YOUR MAP PATH]/slk/init.ljass" //你需要在自己的文件里启用lua，可参考helloworld演示图
-?>
+--在引用库之前，配置HLUA_DEBUG等于true
+HLUA_DEBUG = true
+require "h-lua"
+...
 ```
-> （不建议路径存在有中文）
 
-> 你需要自己觉得在你的init.ljass中import你的入口文件和执行那个lua文件（h-lua框架现在不再自动执行此行为）
-
-> 你可以参考：https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld
-
+#### 注意：
 ```
-注意：
 h-lua库开源，不定时更新，可访问 http://wenku.hunzsig.org 查看最新文档
 h-lua库仅提供一些功能函数协助做图作者更加轻松制作地图
 h-lua库不保证完全正确且无bug，如有需要，请自行修改源码进行游戏制作，这里不过是提供思路与帮助
-由于h-lua使用了slk，保存时会自动帮助你生成框架需要的所有物编，所以无需自行构建物编
 ```
