@@ -594,7 +594,7 @@ hevent_default_actions = {
                     }
                 )
             elseif (abilityName == "信使-拾取") then
-                local radius = 500 --半径
+                local radius = 400 --半径
                 hitem.pickRound(triggerUnit, hunit.x(triggerUnit), hunit.y(triggerUnit), radius)
                 hevent.triggerEvent(
                     triggerUnit,
