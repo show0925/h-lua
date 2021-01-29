@@ -1,6 +1,14 @@
 ---@class hattributeSetter 属性配置法
 hattributeSetter = {
     DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认认定这个技能为物品栏
+    SMART = {
+        attack_space = "attack_space_origin",
+        attack = "attack_green",
+        defend = "defend_green",
+        str = "str_green",
+        agi = "agi_green",
+        int = "int_green",
+    }
 }
 
 --- @private

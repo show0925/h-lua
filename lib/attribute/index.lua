@@ -175,9 +175,9 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     if (params == nil) then
         return
     end
-    -- 属性转接
-    if (attr == 'attack_space') then
-        attr = 'attack_space_origin'
+    -- 机智转接 smart link~
+    if (hattributeSetter.SMART[attr] ~= nil) then
+        attr = hattributeSetter.SMART[attr]
     end
     local buffKey
     if (valType == "number") then
