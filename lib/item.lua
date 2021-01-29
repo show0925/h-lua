@@ -498,64 +498,10 @@ hitem.overlyingSlot = function(itemSlot)
                         else
                             itemSlot[j].id = nil
                             itemSlot[j].charges = 0
-                        end
-                        if (charges1 >= overlie) then
-                            break
-                        end
-                    end
-                end
-            end
-        end
-    end
-end
-
---- 控制叠加单位物品栏
----@protected
----@param whichUnit userdata 目标单位
----@param items table 额外物品补充
-hitem.overlyingUnitSlot = function(whichUnit, items)
-    items = items or {}
-    local overlying = {}
-    hitem.forEach(whichUnit, function(enumItem)
-        table.insert(overlying, enumItem)
-    end)
-    overlying = table.merge(overlying, items)
-    for i = 1, (#overlying - 1), 1 do
-        local it1 = overlying[i]
-        if (it1 ~= nil) then
-            local id1 = hitem.getId(it1)
-            local charges1 = hitem.getCharges(it1)
-            local overlie = hitem.getOverlie(id1)
-            if (charges1 < overlie) then
-                for j = i + 1, #overlying, 1 do
-                    local it2 = overlying[j]
-                    if (it2 == nil) then
-                        break
-                    end
-                    local id2 = hitem.getId(it2)
-                    local charges2 = hitem.getCharges(it2)
-                    if (id1 == id2 and charges2 < overlie) then
-                        local allow = overlie - charges1
-                        local addCharges = 0
-                        if (charges2 <= allow) then
-                            charges1 = charges1 + charges2
-                            addCharges = charges2
-                            charges2 = 0
-                        else
-                            charges1 = overlie
-                            addCharges = allow
-                            charges2 = charges2 - allow
-                        end
-                        cj.SetItemCharges(it1, charges1)
-                        if (charges2 > 0) then
-                            cj.SetItemCharges(it2, charges2)
-                        else
                             if (j > 6) then
-                                hitem.addProperty(whichUnit, id2, addCharges)
-                                table.delete(items, it2, 1)
+                                table.remove(itemSlot, j)
+                                j = j - 1
                             end
-                            hitem.del(it2)
-                            overlying[j] = nil
                         end
                         if (charges1 >= overlie) then
                             break
@@ -579,8 +525,6 @@ hitem.synthesis = function(whichUnit, items)
     if (type(items) == 'userdata') then
         items = { items }
     end
-    -- 叠加流程
-    hitem.overlyingUnitSlot(whichUnit, items)
     -- 合成流程
     local itemKind = {}
     local itemSlot = {}
@@ -668,106 +612,98 @@ hitem.synthesis = function(whichUnit, items)
             end
         end
     end
-    if (#itemStat.sub.id > 0 or #itemStat.add.id > 0) then
-        if (#itemStat.sub.id > 0) then
-            for _, subId in ipairs(itemStat.sub.id) do
-                for _, sIt in ipairs(itemSlot) do
-                    if (itemStat.sub.kv[subId] <= 0) then
-                        break
-                    end
-                    if (sIt.id ~= nil and sIt.id == subId) then
-                        if (sIt.charges > itemStat.sub.kv[subId]) then
-                            sIt.charges = sIt.charges - itemStat.sub.kv[subId]
-                            itemStat.sub.kv[subId] = 0
-                            if (sIt.charges == 0) then
-                                sIt.id = nil
-                            end
-                        elseif (sIt.charges == itemStat.sub.kv[subId]) then
-                            itemStat.sub.kv[subId] = 0
+    hitem.overlyingSlot(itemSlot)
+    if (#itemStat.sub.id > 0) then
+        for _, subId in ipairs(itemStat.sub.id) do
+            for _, sIt in ipairs(itemSlot) do
+                if (itemStat.sub.kv[subId] <= 0) then
+                    break
+                end
+                if (sIt.id ~= nil and sIt.id == subId) then
+                    if (sIt.charges > itemStat.sub.kv[subId]) then
+                        sIt.charges = sIt.charges - itemStat.sub.kv[subId]
+                        itemStat.sub.kv[subId] = 0
+                        if (sIt.charges == 0) then
                             sIt.id = nil
-                            sIt.charges = 0
-                        elseif (sIt.charges < itemStat.sub.kv[subId]) then
-                            itemStat.sub.kv[subId] = itemStat.sub.kv[subId] - sIt.charges
-                            sIt.id = nil
-                            sIt.charges = 0
                         end
+                    elseif (sIt.charges == itemStat.sub.kv[subId]) then
+                        itemStat.sub.kv[subId] = 0
+                        sIt.id = nil
+                        sIt.charges = 0
+                    elseif (sIt.charges < itemStat.sub.kv[subId]) then
+                        itemStat.sub.kv[subId] = itemStat.sub.kv[subId] - sIt.charges
+                        sIt.id = nil
+                        sIt.charges = 0
                     end
                 end
             end
         end
-        if (#itemStat.add.id > 0) then
-            for _, addId in ipairs(itemStat.add.id) do
-                for _, sIt in ipairs(itemSlot) do
-                    if (itemStat.add.kv[addId] <= 0) then
-                        break
+    end
+    if (#itemStat.add.id > 0) then
+        for _, addId in ipairs(itemStat.add.id) do
+            for _, sIt in ipairs(itemSlot) do
+                if (itemStat.add.kv[addId] <= 0) then
+                    break
+                end
+                if (sIt.id == nil) then
+                    local overlie = hitem.getOverlie(addId)
+                    sIt.id = addId
+                    if (overlie >= itemStat.add.kv[addId]) then
+                        sIt.charges = itemStat.add.kv[addId]
+                        itemStat.add.kv[addId] = 0
+                    else
+                        sIt.charges = overlie
+                        itemStat.add.kv[addId] = itemStat.add.kv[addId] - overlie
                     end
-                    if (sIt.id == nil) then
-                        local overlie = hitem.getOverlie(addId)
-                        sIt.id = addId
-                        if (overlie >= itemStat.add.kv[addId]) then
-                            sIt.charges = itemStat.add.kv[addId]
+                elseif (addId == sIt.id) then
+                    local overlie = hitem.getOverlie(addId)
+                    if (sIt.charges < overlie) then
+                        local allow = (overlie - sIt.charges)
+                        if (allow >= itemStat.add.kv[addId]) then
+                            sIt.charges = sIt.charges + itemStat.add.kv[addId]
                             itemStat.add.kv[addId] = 0
                         else
                             sIt.charges = overlie
-                            itemStat.add.kv[addId] = itemStat.add.kv[addId] - overlie
-                        end
-                    elseif (addId == sIt.id) then
-                        local overlie = hitem.getOverlie(addId)
-                        if (sIt.charges < overlie) then
-                            local allow = (overlie - sIt.charges)
-                            if (allow >= itemStat.add.kv[addId]) then
-                                sIt.charges = sIt.charges + itemStat.add.kv[addId]
-                                itemStat.add.kv[addId] = 0
-                            else
-                                sIt.charges = overlie
-                                itemStat.add.kv[addId] = itemStat.add.kv[addId] - allow
-                            end
+                            itemStat.add.kv[addId] = itemStat.add.kv[addId] - allow
                         end
                     end
                 end
             end
         end
-        -- 处理结果,先删后加
-        for i = 1, 6, 1 do
-            local sIt = itemSlot[i]
-            local it = cj.UnitItemInSlot(whichUnit, i - 1)
-            if (it ~= nil) then
-                local itId = hitem.getId(it)
+    end
+    -- 处理结果,先删后加
+    for i = 1, 6, 1 do
+        local sIt = itemSlot[i]
+        local it = cj.UnitItemInSlot(whichUnit, i - 1)
+        if (it ~= nil) then
+            local itId = hitem.getId(it)
+            local charges = hitem.getCharges(it) or 1
+            if (sIt.id == nil) then
+                hitem.subProperty(whichUnit, itId, charges)
+                hitem.del(it, 0)
+            elseif (itId == sIt.id) then
+                local diff = sIt.charges - charges
+                if (diff > 0) then
+                    cj.SetItemCharges(it, charges + diff)
+                    hitem.addProperty(whichUnit, itId, diff)
+                elseif (diff < 0) then
+                    cj.SetItemCharges(it, charges + diff)
+                    hitem.subProperty(whichUnit, itId, math.abs(diff))
+                end
+            end
+        end
+    end
+    hitem.overlyingSlot(itemSlot)
+    for i = 1, 6, 1 do
+        local sIt = itemSlot[i]
+        local isProfit = table.includes(itemStat.profit, sIt.id)
+        local it = cj.UnitItemInSlot(whichUnit, i - 1)
+        if (it ~= nil) then
+            local itId = hitem.getId(it)
+            if (sIt.id ~= nil and itId ~= sIt.id) then
                 local charges = hitem.getCharges(it) or 1
-                if (sIt.id == nil) then
-                    hitem.subProperty(whichUnit, itId, charges)
-                    hitem.del(it, 0)
-                elseif (itId == sIt.id) then
-                    local diff = sIt.charges - charges
-                    if (diff > 0) then
-                        cj.SetItemCharges(it, charges + diff)
-                        hitem.addProperty(whichUnit, itId, diff)
-                    elseif (diff < 0) then
-                        cj.SetItemCharges(it, charges + diff)
-                        hitem.subProperty(whichUnit, itId, math.abs(diff))
-                    end
-                end
-            end
-        end
-        hitem.overlyingSlot(itemSlot)
-        for i = 1, 6, 1 do
-            local sIt = itemSlot[i]
-            local isProfit = table.includes(itemStat.profit, sIt.id)
-            local it = cj.UnitItemInSlot(whichUnit, i - 1)
-            if (it ~= nil) then
-                local itId = hitem.getId(it)
-                if (sIt.id ~= nil and itId ~= sIt.id) then
-                    local charges = hitem.getCharges(it) or 1
-                    hitem.subProperty(whichUnit, itId, charges)
-                    hitem.del(it, 0)
-                    local newIt = cj.CreateItem(string.char2id(sIt.id), hunit.x(whichUnit), hunit.y(whichUnit))
-                    if (isProfit) then
-                        hevent.triggerEvent(whichUnit, CONST_EVENT.itemSynthesis, { triggerUnit = whichUnit, triggerItem = newIt }) -- 触发合成事件
-                    end
-                    cj.SetItemCharges(newIt, sIt.charges)
-                    cj.UnitAddItem(whichUnit, newIt)
-                end
-            elseif (sIt.id ~= nil) then
+                hitem.subProperty(whichUnit, itId, charges)
+                hitem.del(it, 0)
                 local newIt = cj.CreateItem(string.char2id(sIt.id), hunit.x(whichUnit), hunit.y(whichUnit))
                 if (isProfit) then
                     hevent.triggerEvent(whichUnit, CONST_EVENT.itemSynthesis, { triggerUnit = whichUnit, triggerItem = newIt }) -- 触发合成事件
@@ -775,6 +711,13 @@ hitem.synthesis = function(whichUnit, items)
                 cj.SetItemCharges(newIt, sIt.charges)
                 cj.UnitAddItem(whichUnit, newIt)
             end
+        elseif (sIt.id ~= nil) then
+            local newIt = cj.CreateItem(string.char2id(sIt.id), hunit.x(whichUnit), hunit.y(whichUnit))
+            if (isProfit) then
+                hevent.triggerEvent(whichUnit, CONST_EVENT.itemSynthesis, { triggerUnit = whichUnit, triggerItem = newIt }) -- 触发合成事件
+            end
+            cj.SetItemCharges(newIt, sIt.charges)
+            cj.UnitAddItem(whichUnit, newIt)
         end
     end
     if (#itemSlot > 6) then
@@ -1092,7 +1035,7 @@ hitem.pickRect = function(u, x, y, w, h)
         return
     end
     hitemPool.forEach("h-lua-pick", function(enumItem)
-        if (hitem.getEmptySlot(u) > 0) then
+        if (hitem.getEmptySlot(u) > 0 or hitem.isShadowBack(enumItem)) then
             local xi = cj.GetItemX(enumItem)
             local yi = cj.GetItemY(enumItem)
             local d = math.getDistanceBetweenXY(x, y, xi, yi)
@@ -1101,8 +1044,6 @@ hitem.pickRect = function(u, x, y, w, h)
             if (d <= distance) then
                 hitem.pick(enumItem, u)
             end
-        else
-            return false
         end
     end)
 end
@@ -1117,15 +1058,13 @@ hitem.pickRound = function(u, x, y, r)
         return
     end
     hitemPool.forEach("h-lua-pick", function(enumItem)
-        if (hitem.getEmptySlot(u) > 0) then
+        if (hitem.getEmptySlot(u) > 0 or hitem.isShadowBack(enumItem)) then
             local xi = cj.GetItemX(enumItem)
             local yi = cj.GetItemY(enumItem)
             local d = math.getDistanceBetweenXY(x, y, xi, yi)
             if (d <= r) then
                 hitem.pick(enumItem, u)
             end
-        else
-            return false
         end
     end)
 end
