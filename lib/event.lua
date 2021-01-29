@@ -337,6 +337,7 @@ end
 --- 丢弃(传递)物品
 ---@alias onItemDrop fun(evtData: {triggerUnit:"丢弃单位",targetUnit:"获得单位（如果有）",triggerItem:"触发物品"}):void
 ---@param whichUnit userdata
+---@param callFunc onItemDrop | "function(evtData) end"
 ---@return any
 hevent.onItemDrop = function(whichUnit, callFunc)
     return hevent.registerEvent(whichUnit, CONST_EVENT.itemDrop, callFunc)

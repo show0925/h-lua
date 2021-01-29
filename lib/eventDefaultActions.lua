@@ -789,6 +789,11 @@ hevent_default_actions = {
             itId = string.id2char(itId)
             local u = cj.GetTriggerUnit()
             local charges = hitem.getCharges(it)
+            -- 反向检测丢弃物品事件
+            local dropUnit = hitem.get(it, "h-lua-drop")
+            if (nil ~= dropUnit) then
+                hevent.triggerEvent(dropUnit, CONST_EVENT.itemDrop, { triggerUnit = dropUnit, triggerItem = it, targetUnit = u })
+            end
             -- 如果是hslk物品，得到技术升级
             if (hitem.getHSlk(itId) ~= nil) then
                 -- 判断超重
@@ -831,6 +836,10 @@ hevent_default_actions = {
             -- 触发获得物品
             hevent.triggerEvent(u, CONST_EVENT.itemGet, { triggerUnit = u, triggerItem = it })
             if (false == his.destroy(it)) then
+                -- cache
+                if (hitem.cache[it] == nil) then
+                    hitem.cache[it] = {}
+                end
                 -- 如果是自动使用的，用一波
                 if (hitem.getIsPowerUp(itId)) then
                     hitem.used(u, it)
@@ -854,22 +863,28 @@ hevent_default_actions = {
             end
             itId = string.id2char(itId)
             local u = cj.GetTriggerUnit()
-            local orderTargetUnit = cj.GetOrderTargetUnit()
-            local charges = cj.GetItemCharges(it)
             if (cj.GetUnitCurrentOrder(u) == 852001) then
                 -- dropitem:852001
+                hitem.set(it, "h-lua-drop", u)
+                local charges = cj.GetItemCharges(it)
                 hitem.subProperty(u, itId, charges)
+                local xyk1 = math.round(cj.GetItemX(it)) .. "|" .. math.round(cj.GetItemY(it))
                 htime.setTimeout(0.05, function(t)
                     htime.delTimer(t)
                     if (false == his.destroy(it)) then
-                        local hs = hitem.getHSlk(it)
-                        if (hitem.isShadowFront(it)) then
-                            local x = cj.GetItemX(it)
-                            local y = cj.GetItemY(it)
+                        local x = cj.GetItemX(it)
+                        local y = cj.GetItemY(it)
+                        local xyk2 = math.round(x) .. "|" .. math.round(y)
+                        if (xyk1 == xyk2) then
+                            --坐标相同视为给予单位类型（几乎不可能坐标一致）
+                            hitem.set(it, "h-lua-drop", u)
+                            return
+                        end
+                        if (hitem.isShadowFront(itId)) then
                             hitem.del(it, 0)
                             -- 影子物品替换
                             it = hitem.create({
-                                itemId = hs._shadow_id,
+                                itemId = hitem.shadowID(itId),
                                 x = x,
                                 y = y,
                                 charges = charges,

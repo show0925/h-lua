@@ -101,7 +101,6 @@ hRuntime = {
         mana_back = {},
         punish = {}
     },
-    itemPool = {},
     leaderBoard = {},
     multiBoard = {},
     dialog = {},
