@@ -439,11 +439,11 @@ hunit.embed = function(u, options)
             cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_TARGET_ORDER)
         end)
     end
-    -- 信使事件
-    local slk = hslk.i2v.unit[id]
-    if (slk ~= nil) then
-        if (slk.UNIT_TYPE == "courier_hero" or slk.UNIT_TYPE == "courier") then
-            if (slk.COURIER_AUTO_SKILL == true) then
+    -- hslk处理
+    local uhSlk = hunit.getHSlk(id)
+    if (uhSlk ~= nil) then
+        if (uhSlk._type == "courier_hero" or uhSlk._type == "courier") then
+            if (true == uhSlk._auto_skill) then
                 hcourier.embed(u)
             end
         end

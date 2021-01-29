@@ -514,9 +514,9 @@ slkHelper.unit = {
     ---@public
     ---@param v table
     courier = function(v)
-        local autoSkill = false
-        if (type(v.autoSkill) == 'boolean') then
-            autoSkill = v.autoSkill
+        local _auto_skill = false
+        if (type(v._auto_skill) == 'boolean') then
+            _auto_skill = v._auto_skill
         end
         slkHelper.count = slkHelper.count + 1
         local Primary
@@ -536,7 +536,7 @@ slkHelper.unit = {
         v.moveHeight = v.moveHeight or 0
         v.spd = v.spd or 100
         local abl = { "AInv" }
-        if (autoSkill == true) then
+        if (_auto_skill == true) then
             abl = table.merge(abl, slkHelper.courierAutoSkill())
         end
         if (type(v.abilList) == "string") then
@@ -722,6 +722,7 @@ slkHelper.unit = {
             _id = id,
             _name = v.Name,
             _type = _type,
+            _auto_skill = _auto_skill
         }, (v._hslk or {})))
         return id
     end,

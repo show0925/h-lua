@@ -576,13 +576,14 @@ hevent_default_actions = {
                 return
             end
             abilityId = string.id2char(abilityId)
-            local slk = hslk.i2v.ability[abilityId]
-            if (slk == nil) then
+            local ahs = hskill.getHSlk(abilityId)
+            if (ahs == nil) then
                 return
             end
+            local abilityName = ahs._name
             local triggerUnit = cj.GetTriggerUnit()
             local p = hunit.getOwner(triggerUnit)
-            if (slk.Name == "信使-闪烁") then
+            if (abilityName == "信使-闪烁") then
                 hevent.triggerEvent(
                     triggerUnit,
                     CONST_EVENT.courierBlink,
@@ -592,7 +593,7 @@ hevent_default_actions = {
                         targetLoc = cj.GetSpellTargetLoc()
                     }
                 )
-            elseif (slk.Name == "信使-拾取") then
+            elseif (abilityName == "信使-拾取") then
                 local radius = 500 --半径
                 hitem.pickRound(triggerUnit, hunit.x(triggerUnit), hunit.y(triggerUnit), radius)
                 hevent.triggerEvent(
@@ -604,20 +605,18 @@ hevent_default_actions = {
                         radius = radius
                     }
                 )
-            elseif (slk.Name == "信使-拆分物品") then
+            elseif (abilityName == "信使-拆分物品") then
                 local it = cj.GetSpellTargetItem()
                 if (it == nil) then
                     echo("物品不存在", p)
                     return
                 end
-                local id = hitem.getId(it)
-                local name = hitem.getName(it)
-                if (hitem.isShadow(id)) then
-                    local hs = hitem.getHSlk(id)
-                    id = hslk.i2v.item[hs._shadow_id]._id
+                local itemId = hitem.getId(it)
+                if (hitem.isShadowBack(itemId)) then
+                    itemId = hitem.shadowID(itemId)
                 end
                 local charges = hitem.getCharges(it)
-                local formulas = hslk.synthesis.profit[id]
+                local formulas = hslk.synthesis.profit[itemId]
                 local allowFormulaIndex = {}
                 if (formulas ~= nil) then
                     for fi, f in ipairs(formulas) do
@@ -628,14 +627,13 @@ hevent_default_actions = {
                 end
                 local buttons = {}
                 if (charges > 1) then
-                    table.insert(buttons, { value = 0, label = name .. "x" .. charges })
+                    table.insert(buttons, { value = 0, label = hitem.getName(it) .. "x" .. charges })
                 end
                 if (#allowFormulaIndex > 0) then
                     for ai, a in ipairs(allowFormulaIndex) do
                         local txt = {}
                         for _, frag in ipairs(formulas[a].fragment) do
-                            local fragName = hitem.getName(it)
-                            table.insert(txt, fragName .. 'x' .. frag[2] * charges)
+                            table.insert(txt, hitem.getName(it) .. 'x' .. frag[2] * charges)
                         end
                         table.insert(buttons, { value = ai, label = string.implode('+', txt) })
                     end
@@ -691,7 +689,7 @@ hevent_default_actions = {
                         )
                     end)
                 end
-            elseif (slk.Name == "信使-传递") then
+            elseif (abilityName == "信使-传递") then
                 local pIndex = hplayer.index(p)
                 if (hhero.player_heroes[pIndex] == nil or #hhero.player_heroes[pIndex] <= 0) then
                     echo("你没有英雄", p)
@@ -792,7 +790,7 @@ hevent_default_actions = {
             local u = cj.GetTriggerUnit()
             local charges = hitem.getCharges(it)
             -- 如果是hslk物品，得到技术升级
-            if (hslk.i2v.item[itId] ~= nil) then
+            if (hitem.getHSlk(itId) ~= nil) then
                 -- 判断超重
                 local newWeight = hattr.get(u, "weight_current") + hitem.getWeight(itId)
                 if (newWeight > hattr.get(u, "weight")) then
@@ -863,8 +861,7 @@ hevent_default_actions = {
                 hitem.subProperty(u, itId, charges)
                 htime.setTimeout(0.05, function(t)
                     htime.delTimer(t)
-                    local n = cj.GetItemName(it)
-                    if (n ~= nil) then
+                    if (false == his.destroy(it)) then
                         local hs = hitem.getHSlk(it)
                         if (hitem.isShadowFront(it)) then
                             local x = cj.GetItemX(it)
@@ -876,7 +873,6 @@ hevent_default_actions = {
                                 x = x,
                                 y = y,
                                 charges = charges,
-                                during = 0
                             })
                         end
                     end

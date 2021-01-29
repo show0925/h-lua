@@ -1,3 +1,9 @@
+--- ID缓存
+string.cache = {
+    char2id = {},
+    id2char = {},
+}
+
 --- 获取一个对象的id
 ---@param idChar string
 ---@return number
@@ -6,14 +12,11 @@ string.char2id = function(idChar)
         print_stack()
         return
     end
-    local len = string.len(idChar)
-    local id = 0
-    for i = 1, len, 1 do
-        if (i == 1) then
-            id = string.byte(idChar, i)
-        else
-            id = id * 256 + string.byte(idChar, i)
-        end
+    local id = string.cache.char2id[idChar]
+    if (id == nil) then
+        id = ('>I4'):unpack(idChar)
+        string.cache.char2id[idChar] = id
+        string.cache.id2char[id] = idChar
     end
     return id
 end
@@ -27,10 +30,13 @@ string.id2char = function(id)
         print(id)
         return
     end
-    return string.char(id // 0x1000000)
-        .. string.char(id // 0x10000 % 0x100)
-        .. string.char(id // 0x100 % 0x100)
-        .. string.char(id % 0x100)
+    local idChar = string.cache.id2char[id]
+    if (idChar == nil) then
+        idChar = ('>I4'):pack(id)
+        string.cache.id2char[id] = idChar
+        string.cache.char2id[idChar] = id
+    end
+    return idChar
 end
 
 --- 获取字符串真实长度
