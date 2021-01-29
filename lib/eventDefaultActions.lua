@@ -711,13 +711,7 @@ hevent_default_actions = {
                         echo("英雄不存在", p)
                         return
                     end
-                    local itemIds = hitem.synthesis(hero, items)
-                    if (#itemIds > 0) then
-                        for _, vi in ipairs(itemIds) do
-                            local tmpIt = cj.CreateItem(string.char2id(vi.id), x, y)
-                            hitem.pick(tmpIt, triggerUnit)
-                        end
-                    end
+                    hitem.synthesis(hero, items)
                     hevent.triggerEvent(
                         triggerUnit,
                         CONST_EVENT.courierDeliver,

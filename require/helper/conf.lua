@@ -18,7 +18,7 @@ slkHelper.conf = {
             Hotkey = 'W',
             Buttonpos1 = 1,
             Buttonpos2 = 2,
-            Cool1 = 3
+            Cool1 = 5
         },
         separate = {
             Ubertip = "将合成或重叠的物品拆分成零件",
@@ -26,7 +26,7 @@ slkHelper.conf = {
             Hotkey = 'E',
             Buttonpos1 = 2,
             Buttonpos2 = 2,
-            Cool1 = 3
+            Cool1 = 5
         },
         deliver = {
             Ubertip = "将所有物品依照顺序传送给英雄，当你的英雄没有空余物品位置，物品会返回给信使",
@@ -34,7 +34,7 @@ slkHelper.conf = {
             Hotkey = 'R',
             Buttonpos1 = 3,
             Buttonpos2 = 2,
-            Cool1 = 3
+            Cool1 = 5
         },
     },
     -- 一般单位白天视野默认值

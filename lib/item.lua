@@ -498,10 +498,6 @@ hitem.overlyingSlot = function(itemSlot)
                         else
                             itemSlot[j].id = nil
                             itemSlot[j].charges = 0
-                            if (j > 6) then
-                                table.remove(itemSlot, j)
-                                j = j - 1
-                            end
                         end
                         if (charges1 >= overlie) then
                             break
@@ -554,7 +550,12 @@ hitem.synthesis = function(whichUnit, items)
         for _, it in ipairs(items) do
             local itId = hitem.getId(it)
             local charges = hitem.getCharges(it) or 1
-            table.insert(itemKind, itId)
+            if (hitem.isShadowBack(itId)) then
+                itId = hitem.shadowID(itId)
+            end
+            if (false == table.includes(itemKind, itId)) then
+                table.insert(itemKind, itId)
+            end
             table.insert(itemSlot, { id = itId, charges = charges })
             if (itemStat.qty[itId] == nil) then
                 itemStat.qty[itId] = 0
@@ -1031,21 +1032,23 @@ end
 ---@param w number
 ---@param h number
 hitem.pickRect = function(u, x, y, w, h)
-    if (u == nil or his.deleted(u) or his.dead(u) or hitem.getEmptySlot(u) <= 0) then
+    if (u == nil or his.deleted(u) or his.dead(u)) then
         return
     end
+    local items = {}
     hitemPool.forEach("h-lua-pick", function(enumItem)
-        if (hitem.getEmptySlot(u) > 0 or hitem.isShadowBack(enumItem)) then
-            local xi = cj.GetItemX(enumItem)
-            local yi = cj.GetItemY(enumItem)
-            local d = math.getDistanceBetweenXY(x, y, xi, yi)
-            local deg = math.getDegBetweenXY(x, y, xi, yi)
-            local distance = math.getMaxDistanceInRect(w, h, deg)
-            if (d <= distance) then
-                hitem.pick(enumItem, u)
-            end
+        local xi = cj.GetItemX(enumItem)
+        local yi = cj.GetItemY(enumItem)
+        local d = math.getDistanceBetweenXY(x, y, xi, yi)
+        local deg = math.getDegBetweenXY(x, y, xi, yi)
+        local distance = math.getMaxDistanceInRect(w, h, deg)
+        if (d <= distance) then
+            table.insert(items, enumItem)
         end
     end)
+    if (#items > 0) then
+        hitem.synthesis(u, items)
+    end
 end
 
 -- 一键拾取圆(x,y)半径(r)
@@ -1054,17 +1057,19 @@ end
 ---@param y number
 ---@param r number
 hitem.pickRound = function(u, x, y, r)
-    if (u == nil or his.deleted(u) or his.dead(u) or hitem.getEmptySlot(u) <= 0) then
+    if (u == nil or his.deleted(u) or his.dead(u)) then
         return
     end
+    local items = {}
     hitemPool.forEach("h-lua-pick", function(enumItem)
-        if (hitem.getEmptySlot(u) > 0 or hitem.isShadowBack(enumItem)) then
-            local xi = cj.GetItemX(enumItem)
-            local yi = cj.GetItemY(enumItem)
-            local d = math.getDistanceBetweenXY(x, y, xi, yi)
-            if (d <= r) then
-                hitem.pick(enumItem, u)
-            end
+        local xi = cj.GetItemX(enumItem)
+        local yi = cj.GetItemY(enumItem)
+        local d = math.getDistanceBetweenXY(x, y, xi, yi)
+        if (d <= r) then
+            table.insert(items, enumItem)
         end
     end)
+    if (#items > 0) then
+        hitem.synthesis(u, items)
+    end
 end
