@@ -1,7 +1,5 @@
 ---@class hdialog 对话框
-hdialog = {
-    trigger = nil
-}
+hdialog = {}
 
 --- 自动根据key识别热键
 ---@param key string
@@ -20,13 +18,13 @@ end
 --- 删除一个对话框
 ---@param whichDialog userdata
 hdialog.del = function(whichDialog)
-    hRuntime.clear(whichDialog)
+    hcache.free(whichDialog)
     cj.DialogClear(whichDialog)
     cj.DialogDestroy(whichDialog)
 end
 
 --- 创建一个新的对话框
-------@alias dialogCreateAction fun(action: string):void
+---@alias dialogCreateAction fun(action: string):void
 ---@param whichPlayer userdata
 ---@param options table
 ---@param action dialogCreateAction | "function(btnValue) end"
@@ -42,31 +40,31 @@ hdialog.create = function(whichPlayer, options, action)
             }
         }
     ]]
-    local d = cj.DialogCreate()
     if (#options.buttons <= 0) then
         print_err("Dialog buttons is empty")
         return
     end
-    hRuntime.dialog[d] = {
-        action = action,
-        buttons = {}
-    }
+    local d = cj.DialogCreate()
     cj.DialogSetMessage(d, options.title)
+    local buttons = {}
     for i = 1, #options.buttons, 1 do
         if (type(options.buttons[i]) == "table") then
             local b = cj.DialogAddButton(d, options.buttons[i].label, hdialog.hotkey(options.buttons[i].value))
-            table.insert(hRuntime.dialog[d].buttons, {
+            table.insert(buttons, {
                 button = b,
                 value = options.buttons[i].value
             })
         else
             local b = cj.DialogAddButton(d, options.buttons[i], hdialog.hotkey(options.buttons[i]))
-            table.insert(hRuntime.dialog[d].buttons, {
+            table.insert(buttons, {
                 button = b,
                 value = options.buttons[i]
             })
         end
     end
+    hcache.alloc(d)
+    hcache.set(d, "action", action)
+    hcache.set(d, "buttons", buttons)
     hevent.pool(d, hevent_default_actions.dialog.click, function(tgr)
         cj.TriggerRegisterDialogEvent(tgr, d)
     end)

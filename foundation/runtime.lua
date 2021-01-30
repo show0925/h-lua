@@ -26,7 +26,6 @@ hRuntime = {
         punish = {}
     },
     multiBoard = {},
-    dialog = {},
     buff = {},
 }
 
@@ -87,9 +86,6 @@ hRuntime.clear = function(handle)
     end
     if (hRuntime.multiBoard[handle] ~= nil) then
         hRuntime.multiBoard[handle] = nil
-    end
-    if (hRuntime.dialog[handle] ~= nil) then
-        hRuntime.dialog[handle] = nil
     end
     if (hRuntime.buff[handle] ~= nil) then
         hRuntime.buff[handle] = nil

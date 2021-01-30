@@ -760,14 +760,19 @@ hevent_default_actions = {
         click = cj.Condition(function()
             local clickedDialog = cj.GetClickedDialog()
             local clickedButton = cj.GetClickedButton()
+            local buttons = hcache.get(clickedDialog, "buttons", nil)
+            if (buttons == nil) then
+                return
+            end
             local val
-            for _, b in ipairs(hRuntime.dialog[clickedDialog].buttons) do
+            for _, b in ipairs(buttons) do
                 if (b.button == clickedButton) then
                     val = b.value
                 end
             end
-            if (type(hRuntime.dialog[clickedDialog].action) == 'function') then
-                hRuntime.dialog[clickedDialog].action(val)
+            local action = hcache.get(clickedDialog, "action", nil)
+            if (type(action) == 'function') then
+                action(val)
             end
             hdialog.del(clickedDialog)
         end)
