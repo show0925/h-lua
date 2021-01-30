@@ -10,6 +10,8 @@ hhero = {
     selectorPool = {},
     --- 英雄选择清理池
     selectorClearPool = {},
+    --- 英雄种类酒馆记录
+    selectorTavern = {},
 }
 
 --- 获取英雄的类型（STR AGI INT）
@@ -44,10 +46,7 @@ end
 ---@param whichHero userdata
 ---@param lv number
 hhero.setPrevLevel = function(whichHero, lv)
-    if (hRuntime.hero[whichHero] == nil) then
-        hRuntime.hero[whichHero] = {}
-    end
-    hRuntime.hero[whichHero].prevLevel = lv
+    hcache.set(whichHero, "prevLevel", lv)
 end
 
 --- 获取英雄之前的等级
@@ -55,10 +54,7 @@ end
 ---@param whichHero userdata
 ---@return number
 hhero.getPrevLevel = function(whichHero)
-    if (hRuntime.hero[whichHero] == nil) then
-        hRuntime.hero[whichHero] = {}
-    end
-    return hRuntime.hero[whichHero].prevLevel or 0
+    return hcache.get(whichHero, "prevLevel", 0)
 end
 
 --- 获取英雄当前等级
@@ -260,9 +256,7 @@ hhero.buildSelector = function(options)
                     isPause = true
                 }
             )
-            hRuntime.hero[whichHero] = {
-                selector = { x, y },
-            }
+            hcache.set(whichHero, "hero-selector", { x, y })
             table.insert(hhero.selectorClearPool, whichHero)
             table.insert(hhero.selectorPool, whichHero)
             currentRowQty = currentRowQty + 1
@@ -365,9 +359,7 @@ hhero.buildSelector = function(options)
                         else
                             echo(tips .. "还差 " .. (hhero.player_allow_qty[pIndex] - #hhero.player_heroes[pIndex]) .. " 个", p)
                         end
-                        hRuntime.hero[whichHero] = {
-                            selector = evtData.triggerUnit,
-                        }
+                        hcache.set(whichHero, "hero-selector", evtData.triggerUnit)
                         -- 触发英雄被选择事件(全局)
                         hevent.triggerEvent(
                             "global",
@@ -383,7 +375,7 @@ hhero.buildSelector = function(options)
             end
             currentTavernQty = currentTavernQty + 1
             cj.AddUnitToStock(tavern, string.char2id(heroId), 1, 1)
-            hRuntime.hero[heroId] = tavern
+            hhero.selectorTavern[heroId] = tavern
             table.insert(hhero.selectorPool, heroId)
         end
     end

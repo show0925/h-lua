@@ -110,10 +110,8 @@ hevent_default_actions = {
                             x = hhero.bornX,
                             y = hhero.bornY
                         })
-                        hRuntime.hero[u] = {
-                            selector = hRuntime.hero[one],
-                        }
-                        cj.RemoveUnitFromStock(hRuntime.hero[one], string.char2id(one))
+                        hcache.set(u, "hero-selector", hhero.selectorTavern[one])
+                        cj.RemoveUnitFromStock(hhero.selectorTavern[one], string.char2id(one))
                     else
                         table.delete(hhero.selectorClearPool, one)
                         hunit.setInvulnerable(u, false)
@@ -150,23 +148,22 @@ hevent_default_actions = {
                 end
                 local qty = #hhero.player_heroes[pIndex]
                 for _, u in ipairs(hhero.player_heroes[pIndex]) do
-                    if (type(hRuntime.hero[u].selector) == "userdata") then
+                    local heroSelector = hcache.get(u, "hero-selector")
+                    if (type(heroSelector) == "userdata") then
                         table.insert(hhero.selectorPool, hunit.getId(u))
-                        cj.AddUnitToStock(hRuntime.hero[u].selector, cj.GetUnitTypeId(u), 1, 1)
+                        cj.AddUnitToStock(heroSelector, cj.GetUnitTypeId(u), 1, 1)
                     else
                         local new = hunit.create(
                             {
                                 whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
                                 unitId = cj.GetUnitTypeId(u),
-                                x = hRuntime.hero[u].selector[1],
-                                y = hRuntime.hero[u].selector[2],
+                                x = heroSelector[1],
+                                y = heroSelector[2],
                                 isInvulnerable = true,
                                 isPause = true
                             }
                         )
-                        hRuntime.hero[new] = {
-                            selector = { hRuntime.hero[u].selector[1], hRuntime.hero[u].selector[2] },
-                        }
+                        hcache.set(new, "hero-selector", { heroSelector[1], heroSelector[2] })
                         table.insert(hhero.selectorClearPool, new)
                         table.insert(hhero.selectorPool, new)
                     end

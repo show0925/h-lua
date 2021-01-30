@@ -5,7 +5,6 @@ hRuntime = {
         -- 池
         pool = {},
     },
-    hero = {},
     skill = {
         silentUnits = {},
         silentTrigger = nil,
@@ -54,9 +53,6 @@ hRuntime.clear = function(handle)
             end
         end
         hRuntime.event.pool[handle] = nil
-    end
-    if (hRuntime.hero[handle] ~= nil) then
-        hRuntime.hero[handle] = nil
     end
     if (hRuntime.skill[handle] ~= nil) then
         hRuntime.skill[handle] = nil
