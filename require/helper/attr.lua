@@ -90,7 +90,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
             for vvi, vv in ipairs(v) do
                 local on = vv["on"]
                 local actions = string.explode('.', vv["action"] or '')
-                if (CONST_EVENT_LABELS[on] ~= nil and table.len(actions) == 3) then
+                if (CONST_EVENT_LABELS[on] ~= nil and #actions == 3) then
                     local target = CONST_EVENT_TARGET_LABELS[on][actions[1]]
                     local actionType = actions[2]
                     local actionField = actions[3]
@@ -145,7 +145,7 @@ slkHelper.attrDesc = function(attr, sep, indent)
                                 valLabel = percent .. unitLabel .. "当前伤害"
                             else
                                 local valAttr = string.explode('.', val)
-                                if (table.len(valAttr) == 2 and CONST_EVENT_TARGET_LABELS[on] and CONST_EVENT_TARGET_LABELS[on][valAttr[1]]) then
+                                if (#valAttr == 2 and CONST_EVENT_TARGET_LABELS[on] and CONST_EVENT_TARGET_LABELS[on][valAttr[1]]) then
                                     local au = CONST_EVENT_TARGET_LABELS[on][valAttr[1]]
                                     au = slkHelper.attrTargetLabel(au, actionType, actionField, true)
                                     local aa = valAttr[2]
