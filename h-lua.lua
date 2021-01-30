@@ -27,12 +27,12 @@ require "const.abilityTarget"
 -- 加载foundation
 -- 加载debug
 require "foundation.debug"
--- 加载cache
-require "foundation.cache"
 -- 加载json
 require "foundation.json"
 -- 加载md5
 require "foundation.md5"
+-- 加载cache
+require "foundation.cache"
 -- 加载runtime
 require "foundation.runtime"
 -- 加载math
@@ -63,6 +63,7 @@ require "lib.japi"
 
 -- 加载h-lua库
 require "lib.time"
+require "lib.monitor"
 require "lib.is"
 require "lib.sound"
 require "lib.texture"
