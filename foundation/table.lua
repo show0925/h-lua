@@ -2,6 +2,7 @@
 
 --- 获取一个table的正确长度
 --- 不建议使用，在不同的lua引擎可能会引起异步，但却没法保证平台提供的引擎是否可靠
+---@protected
 ---@param table table
 ---@return number
 table.len = function(table)

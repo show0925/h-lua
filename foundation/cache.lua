@@ -1,6 +1,12 @@
 ---@class cache
 hcache = { _c_ = {} }
 
+---@protected
+---@return number
+hcache.len = function()
+    return table.len(hcache._c_)
+end
+
 ---@param handle any
 ---@param key any
 ---@return boolean
