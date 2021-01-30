@@ -6,7 +6,6 @@
     物品存在重量，背包有负重，超过负重即使存在合成关系，也会被暂时禁止合成
 ]]
 hitem = {
-    cache = {},
     DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认全部认定这个技能为物品栏，如有需要自行更改
     FLEETING_IDS = {
         GOLD = hslk.item_fleeting[1], -- 默认金币（模型）
@@ -30,29 +29,6 @@ hitem = {
         DOTA2_INVISIBLE = hslk.item_fleeting[19], -- Dota2隐身符
     },
 }
-
----@private
-hitem.set = function(whichItem, key, value)
-    if (whichItem == nil) then
-        print_stack()
-        return
-    end
-    if (hitem.cache[whichItem] ~= nil) then
-        hitem.cache[whichItem][key] = value
-    end
-end
-
----@private
-hitem.get = function(whichItem, key, default)
-    if (whichItem == nil) then
-        print_stack()
-        return
-    end
-    if (hitem.cache[whichItem] == nil) then
-        return default
-    end
-    return hitem.cache[whichItem][key] or default
-end
 
 -- 单位嵌入到物品到框架系统
 ---@protected
@@ -140,7 +116,7 @@ hitem.del = function(it, delay)
     delay = delay or 0
     if (delay <= 0 and it ~= nil) then
         hitemPool.clear(it)
-        hitem.cache[it] = nil
+        hcache.free(it)
         cj.SetWidgetLife(it, 1.00)
         cj.RemoveItem(it)
     else
@@ -149,7 +125,7 @@ hitem.del = function(it, delay)
             function(t)
                 htime.delTimer(t)
                 hitemPool.clear(it)
-                hitem.cache[it] = nil
+                hcache.free(it)
                 cj.SetWidgetLife(it, 1.00)
                 cj.RemoveItem(it)
             end

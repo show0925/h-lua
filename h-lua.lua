@@ -27,6 +27,8 @@ require "const.abilityTarget"
 -- 加载foundation
 -- 加载debug
 require "foundation.debug"
+-- 加载cache
+require "foundation.cache"
 -- 加载json
 require "foundation.json"
 -- 加载md5

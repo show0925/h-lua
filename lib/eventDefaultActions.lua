@@ -784,7 +784,7 @@ hevent_default_actions = {
             local u = cj.GetTriggerUnit()
             local charges = hitem.getCharges(it)
             -- 反向检测丢弃物品事件
-            local dropUnit = hitem.get(it, "h-lua-drop")
+            local dropUnit = hcache.get(it, "h-lua-drop")
             if (nil ~= dropUnit) then
                 hevent.triggerEvent(dropUnit, CONST_EVENT.itemDrop, { triggerUnit = dropUnit, triggerItem = it, targetUnit = u })
             end
@@ -831,8 +831,8 @@ hevent_default_actions = {
             hevent.triggerEvent(u, CONST_EVENT.itemGet, { triggerUnit = u, triggerItem = it })
             if (false == his.destroy(it)) then
                 -- cache
-                if (hitem.cache[it] == nil) then
-                    hitem.cache[it] = {}
+                if (hcache.exist(it) == false) then
+                    hcache.alloc(it)
                 end
                 -- 如果是自动使用的，用一波
                 if (hitem.getIsPowerUp(itId)) then
@@ -859,7 +859,7 @@ hevent_default_actions = {
             local u = cj.GetTriggerUnit()
             if (cj.GetUnitCurrentOrder(u) == 852001) then
                 -- dropitem:852001
-                hitem.set(it, "h-lua-drop", u)
+                hcache.set(it, "h-lua-drop", u)
                 local charges = cj.GetItemCharges(it)
                 hitem.subProperty(u, itId, charges)
                 local xyk1 = math.round(cj.GetItemX(it)) .. "|" .. math.round(cj.GetItemY(it))
@@ -871,7 +871,7 @@ hevent_default_actions = {
                         local xyk2 = math.round(x) .. "|" .. math.round(y)
                         if (xyk1 == xyk2) then
                             --坐标相同视为给予单位类型（几乎不可能坐标一致）
-                            hitem.set(it, "h-lua-drop", u)
+                            hcache.set(it, "h-lua-drop", u)
                             return
                         end
                         if (hitem.isShadowFront(itId)) then
