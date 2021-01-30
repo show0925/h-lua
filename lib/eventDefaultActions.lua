@@ -49,7 +49,11 @@ hevent_default_actions = {
             )
         end),
         apm = cj.Condition(function()
-            local p = hunit.getOwner(cj.GetTriggerUnit())
+            local u = cj.GetTriggerUnit()
+            if (his.locust(u)) then
+                return
+            end
+            local p = hunit.getOwner(u)
             if (his.playing(p) == true and his.playerSite(p) == true and his.computer(p) == false) then
                 hplayer.set(p, "apm", hplayer.get(p, "apm", 0) + 1)
             end
