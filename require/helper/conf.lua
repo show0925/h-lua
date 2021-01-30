@@ -49,7 +49,7 @@ slkHelper.conf = {
     shopSight = 1200,
     -- 商店单位黑夜视野默认值
     shopNSight = 1200,
-    -- 描述文本颜色,可配置 hColor 里拥有的颜色函数，也可以配置 hex 6位颜色码
+    -- 描述文本颜色,可配置 hcolor 里拥有的颜色函数，也可以配置 hex 6位颜色码
     color = {
         -- 热键
         hotKey = "ffcc00",
@@ -70,7 +70,7 @@ slkHelper.conf = {
         -- 物品合成品
         itemProfit = "ffd88c",
         -- 物品零部件
-        itemFragment = hColor.orange,
+        itemFragment = hcolor.orange,
         -- 技能主动
         abilityActive = "fae470",
         -- 技能被动
@@ -86,7 +86,7 @@ slkHelper.conf = {
         -- 光环作用目标
         ringTarget = "99ccff",
         -- 光环描述
-        ringDesc = hColor.white,
+        ringDesc = hcolor.white,
         -- 英雄攻击武器类型
         heroWeapon = "ff3939",
         -- 英雄基础攻击

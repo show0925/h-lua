@@ -1,11 +1,11 @@
----@class hColor
-hColor = {}
+---@class hcolor
+hcolor = {}
 
 ---@private
 ---@param str string
 ---@param color string hex
 ---@return string
-hColor.hex = function(str, color)
+hcolor.hex = function(str, color)
     if (str == nil or str == '' or color == nil) then
         return str
     end
@@ -16,7 +16,7 @@ end
 ---@param str string
 ---@param color string|function
 ---@return string
-hColor.mixed = function(str, color)
+hcolor.mixed = function(str, color)
     if (str == nil or str == '' or color == nil) then
         return str
     end
@@ -32,150 +32,150 @@ end
 ---@public
 ---@param str string
 ---@return string
-hColor.gold = function(str)
-    return hColor.hex(str, "ffcc00")
+hcolor.gold = function(str)
+    return hcolor.hex(str, "ffcc00")
 end
 
 --- 纯白
 ---@public
 ---@param str string
 ---@return string
-hColor.white = function(str)
-    return hColor.hex(str, "ffffff")
+hcolor.white = function(str)
+    return hcolor.hex(str, "ffffff")
 end
 
 --- 纯黑
 ---@public
 ---@param str string
 ---@return string
-hColor.black = function(str)
-    return hColor.hex(str, "000000")
+hcolor.black = function(str)
+    return hcolor.hex(str, "000000")
 end
 
 --- 浅灰
 ---@public
 ---@param str string
 ---@return string
-hColor.grey = function(str)
-    return hColor.hex(str, "c0c0c0")
+hcolor.grey = function(str)
+    return hcolor.hex(str, "c0c0c0")
 end
 
 --- 深灰
 ---@public
 ---@param str string
 ---@return string
-hColor.greyDeep = function(str)
-    return hColor.hex(str, "969696")
+hcolor.greyDeep = function(str)
+    return hcolor.hex(str, "969696")
 end
 
 --- 亮红
 ---@public
 ---@param str string
 ---@return string
-hColor.redLight = function(str)
-    return hColor.hex(str, "ff8080")
+hcolor.redLight = function(str)
+    return hcolor.hex(str, "ff8080")
 end
 
 --- 大红
 ---@public
 ---@param str string
 ---@return string
-hColor.red = function(str)
-    return hColor.hex(str, "ff3939")
+hcolor.red = function(str)
+    return hcolor.hex(str, "ff3939")
 end
 
 --- 浅绿
 ---@public
 ---@param str string
 ---@return string
-hColor.greenLight = function(str)
-    return hColor.hex(str, "ccffcc")
+hcolor.greenLight = function(str)
+    return hcolor.hex(str, "ccffcc")
 end
 
 --- 深绿
 ---@public
 ---@param str string
 ---@return string
-hColor.green = function(str)
-    return hColor.hex(str, "80ff00")
+hcolor.green = function(str)
+    return hcolor.hex(str, "80ff00")
 end
 
 --- 浅黄
 ---@public
 ---@param str string
 ---@return string
-hColor.yellowLight = function(str)
-    return hColor.hex(str, "ffffcc")
+hcolor.yellowLight = function(str)
+    return hcolor.hex(str, "ffffcc")
 end
 
 --- 亮黄
 ---@public
 ---@param str string
 ---@return string
-hColor.yellow = function(str)
-    return hColor.hex(str, "ffff00")
+hcolor.yellow = function(str)
+    return hcolor.hex(str, "ffff00")
 end
 
 --- 浅橙
 ---@public
 ---@param str string
 ---@return string
-hColor.orangeLight = function(str)
-    return hColor.hex(str, "ffd88c")
+hcolor.orangeLight = function(str)
+    return hcolor.hex(str, "ffd88c")
 end
 
 --- 橙色
 ---@public
 ---@param str string
 ---@return string
-hColor.orange = function(str)
-    return hColor.hex(str, "ffc24b")
+hcolor.orange = function(str)
+    return hcolor.hex(str, "ffc24b")
 end
 
 --- 天空蓝
 ---@public
 ---@param str string
 ---@return string
-hColor.skyLight = function(str)
-    return hColor.hex(str, "ccffff")
+hcolor.skyLight = function(str)
+    return hcolor.hex(str, "ccffff")
 end
 
 --- 青空蓝
 ---@public
 ---@param str string
 ---@return string
-hColor.sky = function(str)
-    return hColor.hex(str, "80ffff")
+hcolor.sky = function(str)
+    return hcolor.hex(str, "80ffff")
 end
 
 --- 浅海蓝
 ---@public
 ---@param str string
 ---@return string
-hColor.seaLight = function(str)
-    return hColor.hex(str, "99ccff")
+hcolor.seaLight = function(str)
+    return hcolor.hex(str, "99ccff")
 end
 
 --- 深海蓝
 ---@public
 ---@param str string
 ---@return string
-hColor.sea = function(str)
-    return hColor.hex(str, "00ccff")
+hcolor.sea = function(str)
+    return hcolor.hex(str, "00ccff")
 end
 
 --- 浅紫
 ---@public
 ---@param str string
 ---@return string
-hColor.purpleLight = function(str)
-    return hColor.hex(str, "ee82ee")
+hcolor.purpleLight = function(str)
+    return hcolor.hex(str, "ee82ee")
 end
 
 --- 亮紫
 ---@public
 ---@param str string
 ---@return string
-hColor.purple = function(str)
-    return hColor.hex(str, "ff59ff")
+hcolor.purple = function(str)
+    return hcolor.hex(str, "ff59ff")
 end

@@ -627,7 +627,7 @@ hevent_default_actions = {
                 end
                 local buttons = {}
                 if (charges > 1) then
-                    table.insert(buttons, { value = 0, label = hColor.gold(hitem.getName(it) .. "x" .. charges) })
+                    table.insert(buttons, { value = 0, label = hcolor.gold(hitem.getName(it) .. "x" .. charges) })
                 end
                 if (#allowFormulaIndex > 0) then
                     for ai, a in ipairs(allowFormulaIndex) do
@@ -635,7 +635,7 @@ hevent_default_actions = {
                         for _, frag in ipairs(formulas[a].fragment) do
                             table.insert(txt, hitem.getName(it) .. 'x' .. frag[2] * charges)
                         end
-                        table.insert(buttons, { value = ai, label = hColor.gold(string.implode('+', txt)) })
+                        table.insert(buttons, { value = ai, label = hcolor.gold(string.implode('+', txt)) })
                     end
                 end
                 if (#buttons < 1) then
