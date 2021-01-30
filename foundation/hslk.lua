@@ -77,6 +77,11 @@ hslk = {
         ablis_gradient = {},
         sight_gradient = {}
     },
+    -- 单位类型ID集
+    unit_type_ids = {
+        hero = {},
+        courier_hero = {},
+    },
     -- 瞬逝物
     item_fleeting = {},
     -- 冷却技能ID集
@@ -87,6 +92,84 @@ hslk = {
         fragment = {},
         fragmentNeeds = {},
     },
+}
+
+-- hslk注册数据方法
+hslk.register = {
+    unit = function(data)
+        hslk.i2v.unit[data._id] = data
+        hslk.n2v.unit[data._name] = data
+        if (hslk.unit_type_ids[data._type] == nil) then
+            hslk.unit_type_ids[data._type] = {}
+        end
+        table.insert(hslk.unit_type_ids[data._type], data._id)
+    end,
+    item = function(data)
+        hslk.i2v.item[data._id] = data
+        hslk.n2v.item[data._name] = data
+        if (slk.item[data._id] ~= nil and slk.item[data._id].cooldownID ~= nil) then
+            hslk.item_cooldown_ids[slk.item[data._id].cooldownID] = data._id
+        end
+        if (data._ring ~= nil) then
+            data._ring._id = data._id
+            data._ring._name = data._name
+            hslk.i2v.ring[data._ring._id] = data._ring
+            hslk.n2v.ring[data._ring._name] = data._ring
+        end
+    end,
+    ability = function(data)
+        hslk.i2v.ability[data._id] = data
+        hslk.n2v.ability[data._name] = data
+        if (data._ring ~= nil) then
+            data._ring._id = data._id
+            data._ring._name = data._name
+            hslk.i2v.ring[data._ring._id] = data._ring
+            hslk.n2v.ring[data._ring._name] = data._ring
+        end
+    end,
+    technology = function(data)
+        hslk.i2v.technology[data._id] = data
+        hslk.n2v.technology[data._name] = data
+    end,
+    synthesis = function(data)
+        -- 数据格式化
+        -- 碎片名称转ID
+        local jsonFragment = {}
+        for k, v in ipairs(data._fragment) do
+            data._fragment[k][2] = math.floor(v[2])
+            local fragmentId = hslk.n2v.item[v[1]]._id or nil
+            if (fragmentId ~= nil) then
+                table.insert(jsonFragment, { fragmentId, v[2] })
+            end
+        end
+        local profitId = hslk.n2v.item[data._profit[1]]._id or nil
+        if (profitId == nil) then
+            return
+        end
+        if (hslk.synthesis.profit[profitId] == nil) then
+            hslk.synthesis.profit[profitId] = {}
+        end
+        table.insert(hslk.synthesis.profit[profitId], {
+            qty = data._profit[2],
+            fragment = jsonFragment,
+        })
+        local profitIndex = #hslk.synthesis.profit[profitId]
+        for _, f in ipairs(jsonFragment) do
+            if (hslk.synthesis.fragment[f[1]] == nil) then
+                hslk.synthesis.fragment[f[1]] = {}
+            end
+            if (hslk.synthesis.fragment[f[1]][f[2]] == nil) then
+                hslk.synthesis.fragment[f[1]][f[2]] = {}
+            end
+            table.insert(hslk.synthesis.fragment[f[1]][f[2]], {
+                profit = profitId,
+                index = profitIndex,
+            })
+            if (table.includes(hslk.synthesis.fragmentNeeds, f[2]) == false) then
+                table.insert(hslk.synthesis.fragmentNeeds, f[2])
+            end
+        end
+    end,
 }
 
 -- skill_break
@@ -191,17 +274,13 @@ if (qty > 0) then
         if (data) then
             checked[i] = 1
             if (data._class == 'item') then
-                hRuntime.register.item(data)
+                hslk.register.item(data)
             elseif (data._class == 'unit') then
-                hRuntime.register.unit(data)
-                if (hRuntime.unit_type_ids[data._type] == nil) then
-                    hRuntime.unit_type_ids[data._type] = {}
-                end
-                table.insert(hRuntime.unit_type_ids[data._type], data._id)
+                hslk.register.unit(data)
             elseif (data._class == 'ability') then
-                hRuntime.register.ability(data)
+                hslk.register.ability(data)
             elseif (data._class == 'technology') then
-                hRuntime.register.technology(data)
+                hslk.register.technology(data)
             else
                 checked[i] = nil
             end
@@ -214,7 +293,7 @@ if (qty > 0) then
             local data = json.parse(js)
             if (data) then
                 if (data._class == 'synthesis') then
-                    hRuntime.register.synthesis(data)
+                    hslk.register.synthesis(data)
                 end
                 data = nil
             end

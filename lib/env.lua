@@ -168,15 +168,17 @@ henv.build = function(whichRect, typeStr, isInvulnerable, isDestroyRect, ground,
     if (doodad == nil or units == nil) then
         return
     end
-    if (hRuntime.env[whichRect] == nil) then
-        hRuntime.env[whichRect] = {}
-    else
-        -- 清理装饰单位
-        for _, v in ipairs(hRuntime.env[whichRect]) do
-            hunit.del(v)
-        end
-        hRuntime.env[whichRect] = {}
+    if (hcache.exist(whichRect) == false) then
+        hcache.alloc(whichRect)
     end
+    -- 清理装饰单位
+    local rectUnits = hcache.get(whichRect, "units", {})
+    if (#rectUnits > 0) then
+        for _, u in ipairs(rectUnits) do
+            hunit.del(u)
+        end
+    end
+    rectUnits = {}
     -- 清理装饰物
     henv.clearDestructable(whichRect)
     local rectStartX = hrect.getStartX(whichRect)
@@ -232,7 +234,7 @@ henv.build = function(whichRect, typeStr, isInvulnerable, isDestroyRect, ground,
                     y,
                     bj_UNIT_FACING
                 )
-                table.insert(hRuntime.env[whichRect], tempUnit)
+                table.insert(rectUnits, tempUnit)
                 if (ground ~= nil and math.random(1, 3) == 2) then
                     cj.SetTerrainType(x, y, ground, -1, 1, 0)
                 end

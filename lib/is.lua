@@ -125,8 +125,8 @@ end
 his.hero = function(whichUnit)
     local uid = hunit.getId(whichUnit)
     return cj.IsUnitType(whichUnit, UNIT_TYPE_HERO)
-        or table.includes(hRuntime.unit_type_ids.hero, uid) == true
-        or table.includes(hRuntime.unit_type_ids.courier_hero, uid) == true
+        or table.includes(hslk.unit_type_ids.hero, uid) == true
+        or table.includes(hslk.unit_type_ids.courier_hero, uid) == true
 end
 
 --- 是否建筑

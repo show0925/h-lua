@@ -1,78 +1,4 @@
 hRuntime = {
-    -- 注册runtime的数据
-    register = {
-        unit = function(json)
-            hslk.i2v.unit[json._id] = json
-            hslk.n2v.unit[json._name] = json
-        end,
-        item = function(json)
-            hslk.i2v.item[json._id] = json
-            hslk.n2v.item[json._name] = json
-            if (slk.item[json._id] ~= nil and slk.item[json._id].cooldownID ~= nil) then
-                hslk.item_cooldown_ids[slk.item[json._id].cooldownID] = json._id
-            end
-            if (json._ring ~= nil) then
-                json._ring._id = json._id
-                json._ring._name = json._name
-                hslk.i2v.ring[json._ring._id] = json._ring
-                hslk.n2v.ring[json._ring._name] = json._ring
-            end
-        end,
-        ability = function(json)
-            hslk.i2v.ability[json._id] = json
-            hslk.n2v.ability[json._name] = json
-            if (json._ring ~= nil) then
-                json._ring._id = json._id
-                json._ring._name = json._name
-                hslk.i2v.ring[json._ring._id] = json._ring
-                hslk.n2v.ring[json._ring._name] = json._ring
-            end
-        end,
-        technology = function(json)
-            hslk.i2v.technology[json._id] = json
-            hslk.n2v.technology[json._name] = json
-        end,
-        synthesis = function(json)
-            -- 数据格式化
-            -- 碎片名称转ID
-            local jsonFragment = {}
-            for k, v in ipairs(json._fragment) do
-                json._fragment[k][2] = math.floor(v[2])
-                local fragmentId = hslk.n2v.item[v[1]]._id or nil
-                if (fragmentId ~= nil) then
-                    table.insert(jsonFragment, { fragmentId, v[2] })
-                end
-            end
-            local profitId = hslk.n2v.item[json._profit[1]]._id or nil
-            if (profitId == nil) then
-                return
-            end
-            if (hslk.synthesis.profit[profitId] == nil) then
-                hslk.synthesis.profit[profitId] = {}
-            end
-            table.insert(hslk.synthesis.profit[profitId], {
-                qty = json._profit[2],
-                fragment = jsonFragment,
-            })
-            local profitIndex = #hslk.synthesis.profit[profitId]
-            for _, f in ipairs(jsonFragment) do
-                if (hslk.synthesis.fragment[f[1]] == nil) then
-                    hslk.synthesis.fragment[f[1]] = {}
-                end
-                if (hslk.synthesis.fragment[f[1]][f[2]] == nil) then
-                    hslk.synthesis.fragment[f[1]][f[2]] = {}
-                end
-                table.insert(hslk.synthesis.fragment[f[1]][f[2]], {
-                    profit = profitId,
-                    index = profitIndex,
-                })
-                if (table.includes(hslk.synthesis.fragmentNeeds, f[2]) == false) then
-                    table.insert(hslk.synthesis.fragmentNeeds, f[2])
-                end
-            end
-        end,
-    },
-    env = {},
     event = {
         -- 核心注册
         register = {},
@@ -110,9 +36,6 @@ hRuntime = {
 hRuntime.clear = function(handle)
     if (handle == nil) then
         return
-    end
-    if (hRuntime.env[handle] ~= nil) then
-        hRuntime.env[handle] = nil
     end
     if (hRuntime.event[handle] ~= nil) then
         hRuntime.event[handle] = nil
