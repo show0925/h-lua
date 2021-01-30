@@ -34,6 +34,9 @@ end
 ---@param key string 设定的唯一Key
 hleaderBoard.show = function(key)
     if (hleaderBoard.LBS[key] ~= nil) then
+        if (hleaderBoard.CURRENT ~= nil) then
+            cj.LeaderboardDisplay(hleaderBoard.LBS[key].leaderBoard, false)
+        end
         hleaderBoard.CURRENT = key
         local title = hleaderBoard.LBS[key].title
         local refreshFrequency = hleaderBoard.LBS[key].refreshFrequency
@@ -44,7 +47,9 @@ hleaderBoard.show = function(key)
         htime.setInterval(refreshFrequency, function(curTimer)
             if (hleaderBoard.CURRENT ~= key) then
                 htime.delTimer(curTimer)
-                cj.LeaderboardDisplay(lb, false)
+                if (hleaderBoard.CURRENT == nil) then
+                    cj.LeaderboardDisplay(lb, false)
+                end
                 return
             end
             local data = response(key)
