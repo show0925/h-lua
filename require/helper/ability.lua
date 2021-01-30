@@ -3,13 +3,13 @@
 slkHelper.abilityEmptyUbertip = function(v)
     local d = {}
     if (v._passive ~= nil) then
-        table.insert(d, hColor.mixed("被动：" .. v._passive, slkHelper.conf.color.abilityPassive))
+        table.insert(d, hcolor.mixed("被动：" .. v._passive, slkHelper.conf.color.abilityPassive))
     end
     if (v._attr ~= nil) then
-        table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr, "|n"), slkHelper.conf.color.abilityAttr))
+        table.insert(d, hcolor.mixed(slkHelper.attrDesc(v._attr, "|n"), slkHelper.conf.color.abilityAttr))
     end
     if (v._desc ~= nil and v._desc ~= "") then
-        table.insert(d, hColor.mixed(v._desc, slkHelper.conf.color.abilityDesc))
+        table.insert(d, hcolor.mixed(v._desc, slkHelper.conf.color.abilityDesc))
     end
     return string.implode("|n", d)
 end
@@ -19,26 +19,26 @@ end
 slkHelper.abilityRingUbertip = function(v)
     local d = {}
     if (v._ring.radius ~= nil) then
-        table.insert(d, hColor.mixed("光环范围：" .. v._ring.radius, slkHelper.conf.color.ringArea))
+        table.insert(d, hcolor.mixed("光环范围：" .. v._ring.radius, slkHelper.conf.color.ringArea))
     end
     if (type(v._ring.target) == 'table' and #v._ring.target > 0) then
         local labels = {}
         for _, t in ipairs(v._ring.target) do
             table.insert(labels, CONST_TARGET_LABEL[t])
         end
-        table.insert(d, hColor.mixed("光环目标：" .. string.implode(',', labels), slkHelper.conf.color.ringTarget))
+        table.insert(d, hcolor.mixed("光环目标：" .. string.implode(',', labels), slkHelper.conf.color.ringTarget))
         labels = nil
     end
     if (v._ring.attr ~= nil) then
-        table.insert(d, hColor.mixed("光环效果：|n" .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
+        table.insert(d, hcolor.mixed("光环效果：|n" .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
     end
     if (v._attr ~= nil) then
-        table.insert(d, hColor.mixed("独占效果：", slkHelper.conf.color.abilityAttr))
-        table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr, "|n", ' - '), slkHelper.conf.color.abilityAttr))
+        table.insert(d, hcolor.mixed("独占效果：", slkHelper.conf.color.abilityAttr))
+        table.insert(d, hcolor.mixed(slkHelper.attrDesc(v._attr, "|n", ' - '), slkHelper.conf.color.abilityAttr))
         table.insert(d, "|n")
     end
     if (v._desc ~= nil and v._desc ~= "") then
-        table.insert(d, hColor.mixed(v._desc, slkHelper.conf.color.ringDesc))
+        table.insert(d, hcolor.mixed(v._desc, slkHelper.conf.color.ringDesc))
     end
     return string.implode("|n", d)
 end
@@ -57,7 +57,7 @@ slkHelper.ability = {
         if (v.Hotkey ~= nil) then
             v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos2 or 0
-            v.Tip = Name .. "[" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. "]"
+            v.Tip = Name .. "[" .. hcolor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. "]"
             Name = Name .. v.Hotkey
         else
             v.Tip = Name
@@ -99,7 +99,7 @@ slkHelper.ability = {
         if (v.Hotkey ~= nil) then
             v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos1 or 0
             v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[v.Hotkey].Buttonpos2 or 0
-            v.Tip = Name .. "[" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. "]"
+            v.Tip = Name .. "[" .. hcolor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. "]"
             Name = Name .. v.Hotkey
         else
             v.Tip = Name

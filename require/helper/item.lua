@@ -30,13 +30,13 @@ end
 slkHelper.itemUbertip = function(v)
     local d = {}
     if (v._active ~= nil) then
-        table.insert(d, hColor.mixed("主动：" .. v._active, slkHelper.conf.color.itemActive))
+        table.insert(d, hcolor.mixed("主动：" .. v._active, slkHelper.conf.color.itemActive))
         if (v.cooldown ~= nil and v.cooldown > 0) then
-            table.insert(d, hColor.mixed("冷却：" .. v.cooldown .. "秒", slkHelper.conf.color.itemCoolDown))
+            table.insert(d, hcolor.mixed("冷却：" .. v.cooldown .. "秒", slkHelper.conf.color.itemCoolDown))
         end
     end
     if (v._passive ~= nil) then
-        table.insert(d, hColor.mixed("被动：" .. v._passive, slkHelper.conf.color.itemPassive))
+        table.insert(d, hcolor.mixed("被动：" .. v._passive, slkHelper.conf.color.itemPassive))
     end
     if (v._ring ~= nil) then
         if (v._ring.attr ~= nil and v._ring.radius ~= nil and (type(v._ring.target) == 'table' and #v._ring.target > 0)) then
@@ -48,20 +48,20 @@ slkHelper.itemUbertip = function(v)
             --end
             --txt = txt .. '[' .. string.implode(',', labels) .. ']'
             txt = txt .. "|n"
-            table.insert(d, hColor.mixed(txt .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
+            table.insert(d, hcolor.mixed(txt .. slkHelper.attrDesc(v._ring.attr, "|n", ' - '), slkHelper.conf.color.ringTarget))
         end
     end
     if (v._attr ~= nil) then
-        table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr, "|n"), slkHelper.conf.color.itemAttr))
+        table.insert(d, hcolor.mixed(slkHelper.attrDesc(v._attr, "|n"), slkHelper.conf.color.itemAttr))
     end
     -- 仅文本无效果，适用于例如技能书这类的物品
     if (v._attr_txt ~= nil) then
-        table.insert(d, hColor.mixed(slkHelper.attrDesc(v._attr_txt, "|n"), slkHelper.conf.color.itemAttr))
+        table.insert(d, hcolor.mixed(slkHelper.attrDesc(v._attr_txt, "|n"), slkHelper.conf.color.itemAttr))
     end
     -- 作为零件
     if (slkHelper.item.synthesisMapping.fragment[v.Name] ~= nil
         and #slkHelper.item.synthesisMapping.fragment[v.Name] > 0) then
-        table.insert(d, hColor.mixed("可以合成：" .. string.implode(
+        table.insert(d, hcolor.mixed("可以合成：" .. string.implode(
             '、',
             slkHelper.item.synthesisMapping.fragment[v.Name]),
             slkHelper.conf.color.itemFragment
@@ -69,15 +69,15 @@ slkHelper.itemUbertip = function(v)
     end
     -- 合成公式
     if (slkHelper.item.synthesisMapping.profit[v.Name] ~= nil) then
-        table.insert(d, hColor.mixed("需要零件：" .. slkHelper.item.synthesisMapping.profit[v.Name], slkHelper.conf.color.itemProfit))
+        table.insert(d, hcolor.mixed("需要零件：" .. slkHelper.item.synthesisMapping.profit[v.Name], slkHelper.conf.color.itemProfit))
     end
     local overlie = v._overlie or 1
-    table.insert(d, hColor.mixed("叠加：" .. overlie, slkHelper.conf.color.itemOverlie))
+    table.insert(d, hcolor.mixed("叠加：" .. overlie, slkHelper.conf.color.itemOverlie))
     local weight = v._weight or 0
     weight = tostring(math.round(weight))
-    table.insert(d, hColor.mixed("重量：" .. weight .. "Kg", slkHelper.conf.color.itemWeight))
+    table.insert(d, hcolor.mixed("重量：" .. weight .. "Kg", slkHelper.conf.color.itemWeight))
     if (v._desc ~= nil and v._desc ~= "") then
-        table.insert(d, hColor.mixed(v._desc, slkHelper.conf.color.itemDesc))
+        table.insert(d, hcolor.mixed(v._desc, slkHelper.conf.color.itemDesc))
     end
     return string.implode("|n", d)
 end
@@ -287,7 +287,7 @@ slkHelper.item.shadow = function(v)
         obj.Hotkey = v.Hotkey
         v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
         v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
-        obj.Tip = "获得" .. v.Name .. "(" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. ")"
+        obj.Tip = "获得" .. v.Name .. "(" .. hcolor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. ")"
     else
         obj.Buttonpos1 = v.Buttonpos1 or 0
         obj.Buttonpos2 = v.Buttonpos2 or 0
@@ -408,7 +408,7 @@ slkHelper.item.normal = function(v)
         obj.Hotkey = v.Hotkey
         v.Buttonpos1 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos1 or 0
         v.Buttonpos2 = CONST_HOTKEY_FULL_KV[v.Hotkey].Buttonpos2 or 0
-        obj.Tip = "获得" .. v.Name .. "(" .. hColor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. ")"
+        obj.Tip = "获得" .. v.Name .. "(" .. hcolor.mixed(v.Hotkey, slkHelper.conf.color.hotKey) .. ")"
     else
         obj.Buttonpos1 = v.Buttonpos1 or 0
         obj.Buttonpos2 = v.Buttonpos2 or 0

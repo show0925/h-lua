@@ -67,7 +67,7 @@ hmultiBoard.create = function(key, refreshFrequency, yourData)
                                 end
                                 width = width + string.mb_len(data[row][col].value)
                                 if ((row - 1) == pi) then
-                                    data[row][col].value = hColor.yellow(data[row][col].value)
+                                    data[row][col].value = hcolor.yellow(data[row][col].value)
                                 end
                                 cj.MultiboardSetItemValue(item, data[row][col].value)
                             end
