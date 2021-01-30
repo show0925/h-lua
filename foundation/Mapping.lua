@@ -6,8 +6,8 @@ function Mapping:new()
     local instance = {}
     setmetatable(instance, self)
     self.__index = self
-    self.ks = {}
-    self.kv = {}
+    instance.ks = {}
+    instance.kv = {}
     return instance
 end
 

@@ -1,11 +1,6 @@
 --- 监听器是一种工具，用于管理周期性操作
 ---@class hmonitor 监听器
-hmonitor = { monitors = (Mapping.new()) }
-
----@return number
-hmonitor.len = function()
-    return hmonitor.monitors.length()
-end
+hmonitor = { monitors = {} }
 
 --- 创建一个监听器
 ---@alias monAction fun(object: any):void
@@ -21,32 +16,29 @@ hmonitor.create = function(key, frequency, action, removeFilter)
     if (removeFilter ~= nil and type(removeFilter) ~= "function") then
         return
     end
-    if (hmonitor.monitors.get(key) ~= nil) then
+    if (hmonitor.monitors[key] ~= nil) then
         return
     end
-    local obj = {}
+    local obj = Mapping:new()
     local timer = htime.setInterval(frequency, function(_)
-        for oi, o in ipairs(obj) do
-            if (removeFilter == nil or removeFilter(o) == true) then
+        obj:forEach(function(o, oi)
+            if (removeFilter == nil or removeFilter(o) ~= true) then
                 action(o)
             else
-                table.remove(obj, oi)
-                oi = oi - 1
+                print_mb("???=" .. key .. hunit.getName(o))
+                obj:del(o)
             end
-        end
+        end)
     end)
-    hmonitor.monitors.set(key, { object = obj, timer = timer })
+    hmonitor.monitors[key] = { object = obj, timer = timer }
 end
 
 --- 毁灭一个监听器
 ---@param key string 唯一key
 hmonitor.destroy = function(key)
-    local monitor = hmonitor.monitors.get(key)
-    if (monitor ~= nil) then
-        htime.delTimer(monitor.timer)
-        monitor.object = nil
-        monitor.timer = nil
-        hmonitor.monitors.del(key)
+    if (hmonitor.monitors[key] ~= nil) then
+        htime.delTimer(hmonitor.monitors[key].timer)
+        hmonitor.monitors[key] = nil
     end
 end
 
@@ -55,9 +47,8 @@ end
 ---@param obj any 监听对象
 ---@return boolean
 hmonitor.isMonitoring = function(key, obj)
-    local monitor = hmonitor.monitors.get(key)
-    if (monitor ~= nil) then
-        return table.includes(monitor.object, obj)
+    if (hmonitor.monitors[key] ~= nil) then
+        return 9527 == hmonitor.monitors[key].object:get(obj)
     end
     return false
 end
@@ -66,11 +57,9 @@ end
 ---@param key string 唯一key
 ---@param obj any 监听对象
 hmonitor.insert = function(key, obj)
-    local monitor = hmonitor.monitors.get(key)
+    local monitor = hmonitor.monitors[key]
     if (monitor ~= nil) then
-        if (table.includes(monitor.object, obj) == false) then
-            table.insert(monitor.object, obj)
-        end
+        monitor.object:set(obj, 9527)
     end
 end
 
@@ -78,10 +67,8 @@ end
 ---@param key string 唯一key
 ---@param obj any 监听对象
 hmonitor.remove = function(key, obj)
-    local monitor = hmonitor.monitors.get(key)
+    local monitor = hmonitor.monitors[key]
     if (monitor ~= nil) then
-        if (table.includes(monitor.object, obj) == false) then
-            table.delete(monitor.object, obj)
-        end
+        monitor.object:del(obj)
     end
 end

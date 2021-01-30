@@ -11,11 +11,6 @@ hRuntime = {
         unarmUnits = {},
         unarmTrigger = nil,
     },
-    attributeGroup = {
-        life_back = {},
-        mana_back = {},
-        punish = {}
-    },
 }
 
 hRuntime.clear = function(handle)

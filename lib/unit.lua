@@ -63,18 +63,19 @@ end
 ---@param val number
 hunit.setCurLife = function(u, val)
     cj.SetUnitState(u, UNIT_STATE_LIFE, val)
+    hmonitor.insert("life_back", u)
 end
 --- 增加单位的当前生命
 ---@param u userdata
 ---@param val number
 hunit.addCurLife = function(u, val)
-    cj.SetUnitState(u, UNIT_STATE_LIFE, hunit.getCurLife(u) + val)
+    hunit.setCurLife(u, hunit.getCurLife(u) + val)
 end
 --- 减少单位的当前生命
 ---@param u userdata
 ---@param val number
 hunit.subCurLife = function(u, val)
-    cj.SetUnitState(u, UNIT_STATE_LIFE, hunit.getCurLife(u) - val)
+    hunit.setCurLife(u, hunit.getCurLife(u) - val)
 end
 --- 获取单位的最大魔法
 ---@param u userdata
@@ -93,18 +94,19 @@ end
 ---@param val number
 hunit.setCurMana = function(u, val)
     cj.SetUnitState(u, UNIT_STATE_MANA, val)
+    hmonitor.insert("mana_back", u)
 end
 --- 增加单位的当前魔法
 ---@param u userdata
 ---@param val number
 hunit.addCurMana = function(u, val)
-    cj.SetUnitState(u, UNIT_STATE_MANA, hunit.getCurMana(u) + val)
+    hunit.setCurMana(u, hunit.getCurMana(u) + val)
 end
 --- 减少单位的当前魔法
 ---@param u userdata
 ---@param val number
 hunit.subCurMana = function(u, val)
-    cj.SetUnitState(u, UNIT_STATE_MANA, hunit.getCurMana(u) - val)
+    hunit.setCurMana(u, hunit.getCurMana(u) - val)
 end
 
 --- 获取单位百分比生命
@@ -221,23 +223,19 @@ end
 ---@param u userdata
 ---@return boolean
 hunit.isOpenPunish = function(u)
-    return table.includes(hRuntime.attributeGroup.punish, u)
+    return hmonitor.isMonitoring("punish_current", u)
 end
 
 --- 单位启用硬直（系统默认不启用）
 ---@param u userdata
 hunit.openPunish = function(u)
-    if (table.includes(hRuntime.attributeGroup.punish, u) == false) then
-        table.insert(hRuntime.attributeGroup.punish, u)
-    end
+    hmonitor.insert("punish_current", u)
 end
 
 --- 单位停用硬直（系统默认不启用）
 ---@param u userdata
 hunit.closePunish = function(u)
-    if (table.includes(hRuntime.attributeGroup.punish, u)) then
-        table.delete(hRuntime.attributeGroup.punish, u)
-    end
+    hmonitor.remove("punish_current", u)
 end
 
 --- 设置单位无敌

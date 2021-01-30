@@ -282,15 +282,15 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 hattributeSetter.setUnitThree(whichUnit, futureVal, attr, diff)
             elseif (attr == "life_back" or attr == "mana_back") then
                 -- 生命,魔法恢复
-                if (math.abs(futureVal) > 0.02 and table.includes(hRuntime.attributeGroup[attr], whichUnit) == false) then
-                    table.insert(hRuntime.attributeGroup[attr], whichUnit)
-                elseif (math.abs(futureVal) < 0.02) then
-                    table.delete(hRuntime.attributeGroup[attr], whichUnit)
+                if (math.abs(futureVal) > 0.05) then
+                    hmonitor.insert(attr, whichUnit)
+                elseif (math.abs(futureVal) < 0.05) then
+                    hmonitor.remove(attr, whichUnit)
                 end
             elseif (attr == "punish" and hunit.isOpenPunish(whichUnit)) then
                 -- 硬直
                 if (currentVal > 0) then
-                    local punishCurrent = hattribute.get(whichUnit, 'punish_current')
+                    local punishCurrent = params.punish_current or 0
                     if (punishCurrent > futureVal) then
                         hattribute.set(whichUnit, 0, { punish_current = futureVal })
                     end
@@ -299,9 +299,11 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 end
             elseif (attr == "punish_current" and hunit.isOpenPunish(whichUnit)) then
                 -- 硬直(current)
-                local punish = hattribute.get(whichUnit, 'punish')
+                local punish = params.punish or 0
                 if (punish > 0 and (futureVal > punish or futureVal <= 0)) then
                     hattribute.set(whichUnit, 0, { punish_current = punish })
+                elseif (futureVal < punish) then
+                    hmonitor.insert(attr, whichUnit)
                 end
             end
         end

@@ -83,55 +83,58 @@ for i = 1, bj_MAX_PLAYERS, 1 do
     end
 end
 
--- 生命魔法恢复
-htime.setInterval(
-    0.5,
-    function()
-        for agk, agu in ipairs(hRuntime.attributeGroup.life_back) do
-            if (his.deleted(agu) == true) then
-                table.remove(hRuntime.attributeGroup.life_back, agk)
-            else
-                if (his.alive(agu) and 100 > hunit.getCurLifePercent(agu)) then
-                    local val = hattr.get(agu, "life_back") or 0
-                    if (val ~= 0) then
-                        hunit.addCurLife(agu, val * 0.5)
-                    end
-                end
+-- 恢复生命监听器
+hmonitor.create("life_back", 0.5,
+    function(object)
+        print("m:life_back")
+        if (his.alive(object)) then
+            local val = hattr.get(object, "life_back") or 0
+            if (val ~= 0) then
+                hunit.addCurLife(object, val * 0.5)
             end
         end
-        for agk, agu in ipairs(hRuntime.attributeGroup.mana_back) do
-            if (his.deleted(agu) == true) then
-                table.remove(hRuntime.attributeGroup.mana_back, agk)
-            else
-                if (his.alive(agu) and 100 > hunit.getCurManaPercent(agu)) then
-                    local val = hattr.get(agu, "mana_back") or 0
-                    if (val ~= 0) then
-                        hunit.addCurMana(agu, val * 0.5)
-                    end
-                end
-            end
-        end
+    end,
+    function(object)
+        return his.deleted(object) or hunit.getCurLifePercent(object) >= 100
     end
 )
--- 没收到伤害时,每1.5秒恢复1.5%硬直
-htime.setInterval(
-    1.5,
-    function()
-        for agk, agu in ipairs(hRuntime.attributeGroup.punish) do
-            if (his.deleted(agu) == true) then
-                table.remove(hRuntime.attributeGroup.punish, agk)
-            elseif (his.alive(agu) == true and his.beDamaging(agu) == false) then
-                local punish_current = hattr.get(agu, "punish_current")
-                local punish = hattr.get(agu, "punish")
-                if (punish_current < punish) then
-                    local val = math.floor(0.015 * punish)
-                    if (punish_current + val > punish) then
-                        hattr.set(agu, 0, { punish_current = "=" .. punish })
-                    else
-                        hattr.set(agu, 0, { punish_current = "+" .. val })
-                    end
+
+-- 恢复魔法监听器
+hmonitor.create("mana_back", 0.7,
+    function(object)
+        print("m:mana_back")
+        if (his.alive(object)) then
+            local val = hattr.get(object, "mana_back") or 0
+            if (val ~= 0) then
+                hunit.addCurMana(object, val * 0.7)
+            end
+        end
+    end,
+    function(object)
+        return his.deleted(object) or hunit.getCurManaPercent(object) >= 100
+    end
+)
+
+-- 硬直监听器（没收到伤害时,每3秒恢复3%硬直）
+hmonitor.create("punish_current", 3,
+    function(object)
+        print("m:punish_current")
+        if (his.alive(object) == true) then
+            local punish_current = hattr.get(object, "punish_current")
+            local punish = hattr.get(object, "punish")
+            if (punish_current < punish) then
+                local val = math.floor(0.03 * punish)
+                if (punish_current + val > punish) then
+                    hattr.set(object, 0, { punish_current = "=" .. punish })
+                else
+                    hattr.set(object, 0, { punish_current = "+" .. val })
                 end
             end
         end
+    end,
+    function(object)
+        local punish_current = hattr.get(object, "punish_current")
+        local punish = hattr.get(object, "punish")
+        return his.deleted(object) or his.beDamaging(object) == true or punish_current >= punish
     end
 )
