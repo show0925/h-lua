@@ -830,10 +830,6 @@ hevent_default_actions = {
             -- 触发获得物品
             hevent.triggerEvent(u, CONST_EVENT.itemGet, { triggerUnit = u, triggerItem = it })
             if (false == his.destroy(it)) then
-                -- cache
-                if (hcache.exist(it) == false) then
-                    hcache.alloc(it)
-                end
                 -- 如果是自动使用的，用一波
                 if (hitem.getIsPowerUp(itId)) then
                     hitem.used(u, it)
@@ -841,6 +837,10 @@ hevent_default_actions = {
                         hitem.del(it, 0)
                         return
                     end
+                end
+                -- cache
+                if (hcache.exist(it) == false) then
+                    hcache.alloc(it)
                 end
                 -- 计算属性
                 hitem.addProperty(u, itId, charges)

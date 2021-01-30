@@ -1,5 +1,5 @@
 ---@class cache
-hcache = {}
+hcache = { _c_ = {} }
 
 ---@param handle any
 ---@param key any
@@ -8,10 +8,10 @@ hcache.exist = function(handle, key)
     if (handle == nil) then
         return true
     end
-    if (hcache[handle] == nil) then
+    if (hcache._c_[handle] == nil) then
         return true
     end
-    if (key ~= nil and hcache[handle][key] == nil) then
+    if (key ~= nil and hcache._c_[handle][key] == nil) then
         return true
     end
     return false
@@ -23,8 +23,8 @@ hcache.alloc = function(handle)
         print_stack()
         return
     end
-    if (hcache[handle] == nil) then
-        hcache[handle] = {}
+    if (hcache._c_[handle] == nil) then
+        hcache._c_[handle] = {}
     end
 end
 
@@ -34,11 +34,11 @@ hcache.free = function(handle, key)
     if (handle == nil) then
         return
     end
-    if (hcache[handle] ~= nil) then
+    if (hcache._c_[handle] ~= nil) then
         if (key ~= nil) then
-            hcache[handle][key] = nil
+            hcache._c_[handle][key] = nil
         else
-            hcache[handle] = nil
+            hcache._c_[handle] = nil
         end
     end
 end
@@ -51,8 +51,8 @@ hcache.set = function(handle, key, value)
         print_stack()
         return
     end
-    if (hcache[handle] ~= nil) then
-        hcache[handle][key] = value
+    if (hcache._c_[handle] ~= nil) then
+        hcache._c_[handle][key] = value
     end
 end
 
@@ -64,8 +64,8 @@ hcache.get = function(handle, key, default)
         print_stack()
         return
     end
-    if (hcache[handle] == nil) then
+    if (hcache._c_[handle] == nil) then
         return default
     end
-    return hcache[handle][key] or default
+    return hcache._c_[handle][key] or default
 end
