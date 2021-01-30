@@ -10,7 +10,7 @@ htextTag = {
 htextTag.del = function(ttg, delay)
     if (delay == nil or delay <= 0) then
         htextTag.qty = htextTag.qty - 1
-        hRuntime.clear(ttg)
+        hcache.free(ttg)
         cj.DestroyTextTag(ttg)
     else
         htime.setTimeout(
@@ -18,7 +18,7 @@ htextTag.del = function(ttg, delay)
             function(t)
                 htime.delTimer(t)
                 htextTag.qty = htextTag.qty - 1
-                hRuntime.clear(ttg)
+                hcache.free(ttg)
                 cj.DestroyTextTag(ttg)
             end
         )

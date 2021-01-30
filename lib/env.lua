@@ -106,7 +106,6 @@ henv = {
     delDestructable = function(whichDestructable, delay)
         delay = delay or 0.5
         if (delay == nil or delay <= 0) then
-            hRuntime.clear(whichDestructable)
             cj.RemoveDestructable(whichDestructable)
             whichDestructable = nil
         else
@@ -114,7 +113,6 @@ henv = {
                 delay,
                 function(t)
                     htime.delTimer(t)
-                    hRuntime.clear(whichDestructable)
                     cj.RemoveDestructable(whichDestructable)
                     whichDestructable = nil
                 end
@@ -172,7 +170,7 @@ henv.build = function(whichRect, typeStr, isInvulnerable, isDestroyRect, ground,
         hcache.alloc(whichRect)
     end
     -- 清理装饰单位
-    local rectUnits = hcache.get(whichRect, "units", {})
+    local rectUnits = hcache.get(whichRect, "env-rect-units", {})
     if (#rectUnits > 0) then
         for _, u in ipairs(rectUnits) do
             hunit.del(u)

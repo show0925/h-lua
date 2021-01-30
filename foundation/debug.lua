@@ -95,6 +95,7 @@ print_err = function(val)
 end
 
 --- 打印对象table
+---@param showDetail boolean
 print_r = function(t, printMethod, showDetail)
     if (isDebugging() == false) then
         return
