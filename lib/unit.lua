@@ -307,11 +307,14 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
             hcache.set(whichUnit, 'rgba', { red, green, blue, opacity })
         end,
         function()
-            if (hRuntime.buff[whichUnit].rgba._idx and #hRuntime.buff[whichUnit].rgba._idx > 1) then
-                local uk = hRuntime.buff[whichUnit].rgba._idx[#hRuntime.buff[whichUnit].rgba._idx - 1]
-                hbuff.purpose(whichUnit, string.implode('|', { 'rgba', uk }))
-            else
-                cj.SetUnitVertexColor(whichUnit, math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 255)
+            local buffHandle = hcache.get(whichUnit, "buff", {})
+            if (buffHandle.rgba ~= nil) then
+                if (buffHandle.rgba._idx and #buffHandle.rgba._idx > 1) then
+                    local uk = buffHandle.rgba._idx[#buffHandle.rgba._idx - 1]
+                    hbuff.purpose(whichUnit, string.implode('|', { 'rgba', uk }))
+                else
+                    cj.SetUnitVertexColor(whichUnit, math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 255)
+                end
             end
         end
     )

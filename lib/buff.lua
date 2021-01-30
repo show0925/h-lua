@@ -35,33 +35,38 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
     if (his.deleted(handleUnit)) then
         return
     end
+    if (false == hcache.exist(handleUnit)) then
+        return
+    end
     groupKey = groupKey or hbuff.DEFAULT_BUFF_KEY
     purpose()
-    if (hRuntime.buff[handleUnit] == nil) then
-        hRuntime.buff[handleUnit] = {}
+    local buffHandle = hcache.get(handleUnit, "buff")
+    if (buffHandle == nil) then
+        buffHandle = {}
+        hcache.set(handleUnit, "buff", buffHandle)
     end
-    if (hRuntime.buff[handleUnit][groupKey] == nil) then
-        hRuntime.buff[handleUnit][groupKey] = {}
+    if (buffHandle[groupKey] == nil) then
+        buffHandle[groupKey] = {}
     end
-    if (hRuntime.buff[handleUnit][groupKey]._idx == nil) then
-        hRuntime.buff[handleUnit][groupKey]._idx = {}
+    if (buffHandle[groupKey]._idx == nil) then
+        buffHandle[groupKey]._idx = {}
     end
     local uk = hbuff.uniqueKey()
-    hRuntime.buff[handleUnit][groupKey][uk] = { purpose = purpose, rollback = rollback }
-    table.insert(hRuntime.buff[handleUnit][groupKey]._idx, uk)
+    buffHandle[groupKey][uk] = { purpose = purpose, rollback = rollback }
+    table.insert(buffHandle[groupKey]._idx, uk)
     if (during > 0) then
         htime.setTimeout(during, function(curTimer)
             htime.delTimer(curTimer)
             if (his.deleted(handleUnit)) then
                 return
             end
-            if (hRuntime.buff[handleUnit] ~= nil and hRuntime.buff[handleUnit][groupKey] ~= nil) then
-                if (hRuntime.buff[handleUnit][groupKey]._idx ~= nil) then
-                    table.delete(hRuntime.buff[handleUnit][groupKey]._idx, uk)
+            if (buffHandle ~= nil and buffHandle[groupKey] ~= nil) then
+                if (buffHandle[groupKey]._idx ~= nil) then
+                    table.delete(buffHandle[groupKey]._idx, uk)
                 end
-                if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
+                if (buffHandle[groupKey][uk] ~= nil) then
                     rollback()
-                    hRuntime.buff[handleUnit][groupKey][uk] = nil
+                    buffHandle[groupKey][uk] = nil
                 end
             end
         end)
@@ -80,18 +85,18 @@ hbuff.purpose = function(handleUnit, buffKey)
     if (his.deleted(handleUnit)) then
         return
     end
+    if (false == hcache.exist(handleUnit)) then
+        return
+    end
     local ebk = string.explode('|', buffKey)
     local groupKey = ebk[1] or nil
     local uk = math.floor(ebk[2] or 0)
     if (groupKey == nil or uk == 0) then
         return
     end
-    if (hRuntime.buff[handleUnit] ~= nil) then
-        if (hRuntime.buff[handleUnit][groupKey] ~= nil) then
-            if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
-                hRuntime.buff[handleUnit][groupKey][uk].purpose()
-            end
-        end
+    local buffHandle = hcache.get(handleUnit, "buff", {})
+    if (buffHandle[groupKey] ~= nil and buffHandle[groupKey][uk] ~= nil) then
+        buffHandle[groupKey][uk].purpose()
     end
 end
 
@@ -106,30 +111,32 @@ hbuff.delete = function(handleUnit, buffKey)
     if (his.deleted(handleUnit)) then
         return
     end
+    if (false == hcache.exist(handleUnit)) then
+        return
+    end
     local ebk = string.explode('|', buffKey)
     local groupKey = ebk[1] or nil
     local uk = ebk[2] or nil
     if (groupKey == nil) then
         return
     end
-    if (hRuntime.buff[handleUnit] ~= nil) then
-        if (hRuntime.buff[handleUnit]._idx ~= nil) then
-            if (uk == nil) then
-                -- 删除group下所有buff
-                for _, _uk in ipairs(hRuntime.buff[handleUnit]._idx) do
-                    if (hRuntime.buff[handleUnit][groupKey][_uk] ~= nil) then
-                        hRuntime.buff[handleUnit][groupKey][_uk].rollback() --rollback
-                    end
+    local buffHandle = hcache.get(handleUnit, "buff", {})
+    if (buffHandle._idx ~= nil) then
+        if (uk == nil) then
+            -- 删除group下所有buff
+            for _, _uk in ipairs(buffHandle._idx) do
+                if (buffHandle[groupKey][_uk] ~= nil) then
+                    buffHandle[groupKey][_uk].rollback() --rollback
                 end
-                hRuntime.buff[handleUnit][groupKey] = nil
-            else
-                -- 删除uk指向buff
-                uk = math.floor(uk)
-                if (hRuntime.buff[handleUnit][groupKey][uk] ~= nil) then
-                    hRuntime.buff[handleUnit][groupKey][uk].rollback() --rollback
-                    hRuntime.buff[handleUnit][groupKey][uk] = nil
-                    table.delete(hRuntime.buff[handleUnit][groupKey]._idx, uk)
-                end
+            end
+            buffHandle[groupKey] = nil
+        else
+            -- 删除uk指向buff
+            uk = math.floor(uk)
+            if (buffHandle[groupKey][uk] ~= nil) then
+                buffHandle[groupKey][uk].rollback() --rollback
+                buffHandle[groupKey][uk] = nil
+                table.delete(buffHandle[groupKey]._idx, uk)
             end
         end
     end
