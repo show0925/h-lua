@@ -828,29 +828,20 @@ end
 ---@return any
 hevent.onEnterUnitRange = function(whichUnit, radius, callFunc)
     local key = CONST_EVENT.enterUnitRange
-    if (hRuntime.unit[whichUnit] == nil) then
-        hRuntime.unit[whichUnit] = {}
-    end
-    if (hRuntime.unit[whichUnit]["onEnterUnitRangeAction" .. radius] == nil) then
-        hRuntime.unit[whichUnit]["onEnterUnitRangeAction" .. radius] = function()
-            hevent.triggerEvent(
-                whichUnit,
-                key,
-                {
-                    centerUnit = whichUnit,
-                    enterUnit = cj.GetTriggerUnit(),
-                    radius = radius
-                }
-            )
+    local func = hcache.get(whichUnit, "onEnterUnitRangeAction" .. radius, nil)
+    if (func == nil) then
+        func = function()
+            hevent.triggerEvent(whichUnit, key, {
+                centerUnit = whichUnit,
+                enterUnit = cj.GetTriggerUnit(),
+                radius = radius
+            })
         end
+        hcache.set(whichUnit, "onEnterUnitRangeAction" .. radius, func)
     end
-    hevent.pool(
-        whichUnit,
-        cj.Condition(hRuntime.unit[whichUnit]["onEnterUnitRangeAction" .. radius]),
-        function(tgr)
-            cj.TriggerRegisterUnitInRange(tgr, whichUnit, radius, nil)
-        end
-    )
+    hevent.pool(whichUnit, cj.Condition(func), function(tgr)
+        cj.TriggerRegisterUnitInRange(tgr, whichUnit, radius, nil)
+    end)
     return hevent.registerEvent(whichUnit, key, callFunc)
 end
 

@@ -145,7 +145,7 @@ hattribute.init = function(whichUnit)
         attribute.sight = math.floor(uSlk.sight)
     end
     -- 初始化数据
-    hunit.set(whichUnit, 'attribute', attribute)
+    hcache.set(whichUnit, 'attribute', attribute)
     return true
 end
 
@@ -488,14 +488,14 @@ hattribute.get = function(whichUnit, attr)
     if (whichUnit == nil) then
         return nil
     end
-    local attribute = hunit.get(whichUnit, 'attribute', nil)
+    local attribute = hcache.get(whichUnit, 'attribute', nil)
     if (attribute == nil) then
         return nil
     elseif (attribute == -1) then
         if (hattribute.init(whichUnit) == false) then
             return nil
         end
-        attribute = hunit.get(whichUnit, 'attribute')
+        attribute = hcache.get(whichUnit, 'attribute')
     end
     attribute.attack = hunit.getAttackSides(whichUnit) + (attribute.attack_white or 0) + (attribute.attack_green or 0)
     attribute.defend = math.floor((attribute.defend_white or 0) + (attribute.defend_green or 0))

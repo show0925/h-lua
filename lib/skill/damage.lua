@@ -288,33 +288,33 @@ hskill.damage = function(options)
             enchants = damageType,
         })
         -- 设置单位正在受伤
-        local isBeDamagingTimer = hunit.get(targetUnit, "isBeDamagingTimer", nil)
+        local isBeDamagingTimer = hcache.get(targetUnit, "isBeDamagingTimer", nil)
         if (isBeDamagingTimer ~= nil) then
             htime.delTimer(isBeDamagingTimer)
-            hunit.set(targetUnit, "isBeDamagingTimer", nil)
+            hcache.set(targetUnit, "isBeDamagingTimer", nil)
         end
-        hunit.set(targetUnit, "isBeDamaging", true)
-        hunit.set(targetUnit, "isBeDamagingTimer", htime.setTimeout(
+        hcache.set(targetUnit, "isBeDamaging", true)
+        hcache.set(targetUnit, "isBeDamagingTimer", htime.setTimeout(
             3.5,
             function(t)
                 htime.delTimer(t)
-                hunit.set(targetUnit, "isBeDamagingTimer", nil)
-                hunit.set(targetUnit, "isBeDamaging", false)
+                hcache.set(targetUnit, "isBeDamagingTimer", nil)
+                hcache.set(targetUnit, "isBeDamaging", false)
             end
         ))
         if (sourceUnit ~= nil and his.deleted(sourceUnit) == false) then
-            local isDamagingTimer = hunit.get(sourceUnit, "isDamagingTimer", nil)
+            local isDamagingTimer = hcache.get(sourceUnit, "isDamagingTimer", nil)
             if (isDamagingTimer ~= nil) then
                 htime.delTimer(isDamagingTimer)
-                hunit.set(sourceUnit, "isDamagingTimer", nil)
+                hcache.set(sourceUnit, "isDamagingTimer", nil)
             end
-            hunit.set(sourceUnit, "isDamaging", true)
-            hunit.set(targetUnit, "isBeDamagingTimer", htime.setTimeout(
+            hcache.set(sourceUnit, "isDamaging", true)
+            hcache.set(targetUnit, "isBeDamagingTimer", htime.setTimeout(
                 3.5,
                 function(t)
                     htime.delTimer(t)
-                    hunit.set(sourceUnit, "isDamagingTimer", nil)
-                    hunit.set(sourceUnit, "isDamaging", false)
+                    hcache.set(sourceUnit, "isDamagingTimer", nil)
+                    hcache.set(sourceUnit, "isDamaging", false)
                 end
             ))
             hevent.setLastDamageUnit(targetUnit, sourceUnit)
@@ -526,12 +526,12 @@ hskill.damage = function(options)
                 punish_current = "-" .. lastDamage
             })
             if (targetUnitAttr.punish_current - lastDamage <= 0 and his.deleted(targetUnit) == false) then
-                hunit.set(targetUnit, "isPunishing", true)
+                hcache.set(targetUnit, "isPunishing", true)
                 htime.setTimeout(
                     punish_during + 1.00,
                     function(t)
                         htime.delTimer(t)
-                        hunit.set(targetUnit, "isPunishing", false)
+                        hcache.set(targetUnit, "isPunishing", false)
                     end
                 )
                 local punishEffectAttackSpeed = (100 + targetUnitAttr.attack_speed) * punishEffectRatio

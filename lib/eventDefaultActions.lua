@@ -462,14 +462,14 @@ hevent_default_actions = {
             end
             if (orderId == 851983 or orderId == 851971 or orderId == 851986
                 or (lx ~= 1.11 and ly ~= 2.22 and lz ~= 3.33)) then
-                local mov1 = hunit.get(triggerUnit, 'moving', 0)
+                local mov1 = hcache.get(triggerUnit, 'moving', 0)
                 if (mov1 == 0) then
-                    hunit.set(triggerUnit, 'moving', 1)
+                    hcache.set(triggerUnit, 'moving', 1)
                     local x = math.floor(cj.GetUnitX(triggerUnit))
                     local y = math.floor(cj.GetUnitY(triggerUnit))
                     local step = 0
                     htime.setInterval(0.25, function(curTimer)
-                        local mov2 = hunit.get(triggerUnit, 'moving', 0)
+                        local mov2 = hcache.get(triggerUnit, 'moving', 0)
                         if (mov2 == 0) then
                             htime.delTimer(curTimer)
                             return
@@ -479,7 +479,7 @@ hevent_default_actions = {
                         if (mov2 == 1) then
                             -- 移动开始
                             if (tx ~= x or ty ~= y) then
-                                hunit.set(triggerUnit, 'moving', 2)
+                                hcache.set(triggerUnit, 'moving', 2)
                                 hevent.triggerEvent(
                                     triggerUnit,
                                     CONST_EVENT.moveStart,
@@ -489,7 +489,7 @@ hevent_default_actions = {
                                     }
                                 )
                             else
-                                hunit.set(triggerUnit, 'moving', 0)
+                                hcache.set(triggerUnit, 'moving', 0)
                             end
                         elseif (mov2 == 2) then
                             -- 移动ing
@@ -504,7 +504,7 @@ hevent_default_actions = {
                             )
                             if (tx == x and ty == y) then
                                 -- 没位移，移动停止
-                                hunit.set(triggerUnit, 'moving', 0)
+                                hcache.set(triggerUnit, 'moving', 0)
                                 hevent.triggerEvent(
                                     triggerUnit,
                                     CONST_EVENT.moveStop,
@@ -519,7 +519,7 @@ hevent_default_actions = {
                     end)
                 end
             elseif (orderId == 851993) then
-                hunit.set(triggerUnit, 'moving', 0)
+                hcache.set(triggerUnit, 'moving', 0)
                 hevent.triggerEvent(
                     triggerUnit,
                     CONST_EVENT.holdOn,
@@ -528,7 +528,7 @@ hevent_default_actions = {
                     }
                 )
             elseif (orderId == 851972) then
-                hunit.set(triggerUnit, 'moving', 0)
+                hcache.set(triggerUnit, 'moving', 0)
                 hevent.triggerEvent(
                     triggerUnit,
                     CONST_EVENT.stop,
@@ -958,8 +958,8 @@ hevent_default_actions = {
             local itId = hitem.getId(it)
             local perishable = hitem.getIsPerishable(itId)
             --检测是否有匹配使用
-            local triggerData = hunit.get(u, "item-use-" .. itId, {})
-            hunit.set(u, "item-use-" .. itId, nil)
+            local triggerData = hcache.get(u, "item-use-" .. itId, {})
+            hcache.set(u, "item-use-" .. itId, nil)
             hitem.used(u, it, triggerData)
             --检测是否使用后自动消失，如果不是，次数补回1
             if (perishable == false) then
@@ -982,7 +982,7 @@ hevent_default_actions = {
             if (itId == nil) then
                 return
             end
-            hunit.set(u, "item-use-" .. itId, {
+            hcache.set(u, "item-use-" .. itId, {
                 triggerSkill = skillId,
                 targetUnit = cj.GetSpellTargetUnit(),
                 targetLoc = cj.GetSpellTargetLoc()

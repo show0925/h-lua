@@ -56,9 +56,6 @@ hRuntime.clear = function(handle)
         end
         hRuntime.event.pool[handle] = nil
     end
-    if (hRuntime.unit[handle] ~= nil) then
-        hRuntime.unit[handle] = nil
-    end
     if (hRuntime.hero[handle] ~= nil) then
         hRuntime.hero[handle] = nil
     end

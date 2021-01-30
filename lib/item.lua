@@ -33,8 +33,8 @@ hitem = {
 -- 单位嵌入到物品到框架系统
 ---@protected
 hitem.embed = function(u)
-    if (u == nil or hRuntime.unit[u] == nil) then
-        -- 未注册unit直接跳过
+    if (false == hcache.exist(u)) then
+        -- 没有注册的单位直接跳过
         return
     end
     -- 如果单位的玩家是真人

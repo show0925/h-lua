@@ -1,27 +1,5 @@
+---@class hunit 单位
 hunit = {}
-
----@private
-hunit.set = function(whichUnit, key, value)
-    if (whichUnit == nil) then
-        print_stack()
-        return
-    end
-    if (hRuntime.unit[whichUnit] ~= nil) then
-        hRuntime.unit[whichUnit][key] = value
-    end
-end
-
----@private
-hunit.get = function(whichUnit, key, default)
-    if (whichUnit == nil) then
-        print_stack()
-        return
-    end
-    if (hRuntime.unit[whichUnit] == nil) then
-        return default
-    end
-    return hRuntime.unit[whichUnit][key] or default
-end
 
 --- 数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
 ---@param uOrId userdata|string|number
@@ -285,17 +263,17 @@ hunit.setAnimateSpeed = function(whichUnit, speed, during)
         return
     end
     during = during or 0
-    local prevSpeed = hunit.get(whichUnit, 'animateSpeed', 1.00)
+    local prevSpeed = hcache.get(whichUnit, 'animateSpeed', 1.00)
     speed = speed or prevSpeed
     cj.SetUnitTimeScale(whichUnit, speed)
-    hunit.set(whichUnit, 'animateSpeed', speed)
+    hcache.set(whichUnit, 'animateSpeed', speed)
     if (during > 0) then
         htime.setTimeout(
             during,
             function(t)
                 htime.delTimer(t)
                 cj.SetUnitTimeScale(u, prevSpeed)
-                hunit.set(whichUnit, 'animateSpeed', prevSpeed)
+                hcache.set(whichUnit, 'animateSpeed', prevSpeed)
             end
         )
     end
@@ -314,10 +292,10 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
     end
     during = during or 0
     local uSlk = hunit.getSlk(whichUnit)
-    local rgba = hunit.get(whichUnit, 'rgba')
+    local rgba = hcache.get(whichUnit, 'rgba')
     if (rgba == nil) then
         rgba = { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0 }
-        hunit.set(whichUnit, 'rgba', rgba)
+        hcache.set(whichUnit, 'rgba', rgba)
     end
     red = math.max(0, math.min(255, red or rgba[1]))
     green = math.max(0, math.min(255, green or rgba[2]))
@@ -326,7 +304,7 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
     return hbuff.create(during, whichUnit, 'rgba',
         function()
             cj.SetUnitVertexColor(whichUnit, red, green, blue, 255 * opacity)
-            hunit.set(whichUnit, 'rgba', { red, green, blue, opacity })
+            hcache.set(whichUnit, 'rgba', { red, green, blue, opacity })
         end,
         function()
             if (hRuntime.buff[whichUnit].rgba._idx and #hRuntime.buff[whichUnit].rgba._idx > 1) then
@@ -409,14 +387,9 @@ hunit.embed = function(u, options)
     if (type(id) == 'number') then
         id = string.id2char(id)
     end
-    hRuntime.unit[u] = {
-        id = id,
-        life = options.life or nil,
-        during = options.during or nil,
-        isShadow = options.isShadow or false,
-        animateSpeed = options.timeScale or 1.00,
-        attribute = -1,
-    }
+    hcache.alloc(u)
+    hcache.set(u, "animateSpeed", options.timeScale or 1.00)
+    hcache.set(u, "attribute", -1)
     -- 单位受伤
     hevent.pool(u, hevent_default_actions.unit.damaged, function(tgr)
         cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DAMAGED)
