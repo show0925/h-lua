@@ -5,7 +5,6 @@ hRuntime = {
         -- 池
         pool = {},
     },
-    unit = {},
     hero = {},
     skill = {
         silentUnits = {},
