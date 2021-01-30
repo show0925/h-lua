@@ -839,7 +839,7 @@ hevent_default_actions = {
                     end
                 end
                 -- cache
-                if (hcache.exist(it) == false) then
+                if (false == hcache.exist(it)) then
                     hcache.alloc(it)
                 end
                 -- 计算属性

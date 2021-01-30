@@ -166,7 +166,7 @@ henv.build = function(whichRect, typeStr, isInvulnerable, isDestroyRect, ground,
     if (doodad == nil or units == nil) then
         return
     end
-    if (hcache.exist(whichRect) == false) then
+    if (false == hcache.exist(whichRect)) then
         hcache.alloc(whichRect)
     end
     -- 清理装饰单位

@@ -5,7 +5,6 @@ hRuntime = {
         -- 池
         pool = {},
     },
-    rect = {},
     player = {},
     unit = {},
     group = {}, -- 单位选择器
@@ -64,9 +63,6 @@ hRuntime.clear = function(handle)
             end
         end
         hRuntime.event.pool[handle] = nil
-    end
-    if (hRuntime.rect[handle] ~= nil) then
-        hRuntime.rect[handle] = nil
     end
     if (hRuntime.unit[handle] ~= nil) then
         hRuntime.unit[handle] = nil

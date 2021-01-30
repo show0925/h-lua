@@ -28,17 +28,16 @@ hrect.create = function(x, y, w, h, name)
     local endX = x + (w * 0.5)
     local endY = y + (h * 0.5)
     local r = cj.Rect(startX, startY, endX, endY)
-    hRuntime.rect[r] = {
-        name = name,
-        x = x,
-        y = y,
-        width = w,
-        height = h,
-        startX = startX,
-        startY = startY,
-        endX = endX,
-        endY = endY
-    }
+    hcache.alloc(r)
+    hcache.set(r, "n", name)
+    hcache.set(r, "x", x)
+    hcache.set(r, "y", y)
+    hcache.set(r, "w", w)
+    hcache.set(r, "h", h)
+    hcache.set(r, "xs", startX)
+    hcache.set(r, "ys", startY)
+    hcache.set(r, "xe", endX)
+    hcache.set(r, "ye", endY)
     return r
 end
 
@@ -46,90 +45,63 @@ end
 ---@param whichRect userdata
 ---@return string
 hrect.getName = function(whichRect)
-    if (hRuntime.rect[whichRect]) then
-        return hRuntime.rect[whichRect].name
-    end
-    return ""
+    return hcache.get(whichRect, "n", '')
 end
 
 --- 获取区域中心坐标x
 ---@param whichRect userdata
 ---@return number
 hrect.getX = function(whichRect)
-    if (hRuntime.rect[whichRect]) then
-        return hRuntime.rect[whichRect].x
-    end
-    return 0
+    return hcache.get(whichRect, "x", 0)
 end
 
 --- 获取区域中心坐标y
 ---@param whichRect userdata
 ---@return number
 hrect.getY = function(whichRect)
-    if (hRuntime.rect[whichRect]) then
-        return hRuntime.rect[whichRect].y
-    end
-    return 0
+    return hcache.get(whichRect, "y", 0)
 end
 
 --- 获取区域的长
 ---@param whichRect userdata
 ---@return number
 hrect.getWidth = function(whichRect)
-    if (hRuntime.rect[whichRect]) then
-        return hRuntime.rect[whichRect].width
-    end
-    return 0
+    return hcache.get(whichRect, "w", 0)
 end
 
 --- 获取区域的宽
 ---@param whichRect userdata
 ---@return number
 hrect.getHeight = function(whichRect)
-    if (hRuntime.rect[whichRect]) then
-        return hRuntime.rect[whichRect].height
-    end
-    return 0
+    return hcache.get(whichRect, "h", 0)
 end
 
 --- 获取区域的起点坐标x(左下角)
 ---@param whichRect userdata
 ---@return number
 hrect.getStartX = function(whichRect)
-    if (hRuntime.rect[whichRect]) then
-        return hRuntime.rect[whichRect].startX
-    end
-    return 0
+    return hcache.get(whichRect, "xs", 0)
 end
 
 --- 获取区域的起点坐标y(左下角)
 ---@param whichRect userdata
 ---@return number
 hrect.getStartY = function(whichRect)
-    if (hRuntime.rect[whichRect]) then
-        return hRuntime.rect[whichRect].startY
-    end
-    return 0
+    return hcache.get(whichRect, "ys", 0)
 end
 
 --- 获取区域的结束坐标x(右上角)
 ---@param whichRect userdata
 ---@return number
 hrect.getEndX = function(whichRect)
-    if (hRuntime.rect[whichRect]) then
-        return hRuntime.rect[whichRect].endX
-    end
-    return 0
+    return hcache.get(whichRect, "xe", 0)
 end
 
 --- 获取区域的结束坐标y(右上角)
 ---@param whichRect userdata
 ---@return number
 hrect.getEndY = function(whichRect)
-    if (hRuntime.rect[whichRect]) then
-        return hRuntime.rect[whichRect].endY
-    end
-    return 0
+    return hcache.get(whichRect, "ye", 0)
 end
 
 --- 删除区域
@@ -138,14 +110,14 @@ end
 hrect.del = function(whichRect, delay)
     delay = delay or 0
     if (delay == nil or delay <= 0) then
-        hRuntime.clear(whichRect)
+        hcache.free(whichRect)
         cj.RemoveRect(whichRect)
     else
         htime.setTimeout(
             delay,
             function(t)
                 htime.delTimer(t)
-                hRuntime.clear(whichRect)
+                hcache.free(whichRect)
                 cj.RemoveRect(whichRect)
             end
         )

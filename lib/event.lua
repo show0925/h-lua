@@ -860,31 +860,25 @@ end
 ---@param callFunc onEnterRect | "function(evtData) end"
 ---@return any
 hevent.onEnterRect = function(whichRect, callFunc)
+    if (false == hcache.exist(whichRect)) then
+        hcache.alloc(whichRect)
+    end
     local key = CONST_EVENT.enterRect
-    if (hRuntime.rect[whichRect] == nil) then
-        hRuntime.rect[whichRect] = {}
-    end
-    if (hRuntime.rect[whichRect].onEnterRectAction == nil) then
-        hRuntime.rect[whichRect].onEnterRectAction = function()
-            hevent.triggerEvent(
-                whichRect,
-                key,
-                {
-                    triggerRect = whichRect,
-                    triggerUnit = cj.GetTriggerUnit()
-                }
-            )
+    local onEnterRectAction = hcache.get(whichRect, "onEnterRectAction")
+    if (onEnterRectAction == nil) then
+        onEnterRectAction = function()
+            hevent.triggerEvent(whichRect, key, {
+                triggerRect = whichRect,
+                triggerUnit = cj.GetTriggerUnit()
+            })
         end
+        hcache.set(whichRect, "onEnterRectAction", onEnterRectAction)
     end
-    hevent.pool(
-        whichRect,
-        cj.Condition(hRuntime.rect[whichRect].onEnterRectAction),
-        function(tgr)
-            local rectRegion = cj.CreateRegion()
-            cj.RegionAddRect(rectRegion, whichRect)
-            cj.TriggerRegisterEnterRegion(tgr, rectRegion, nil)
-        end
-    )
+    hevent.pool(whichRect, cj.Condition(onEnterRectAction), function(tgr)
+        local rectRegion = cj.CreateRegion()
+        cj.RegionAddRect(rectRegion, whichRect)
+        cj.TriggerRegisterEnterRegion(tgr, rectRegion, nil)
+    end)
     return hevent.registerEvent(whichRect, key, callFunc)
 end
 
@@ -894,31 +888,25 @@ end
 ---@param callFunc onLeaveRect | "function(evtData) end"
 ---@return any
 hevent.onLeaveRect = function(whichRect, callFunc)
+    if (false == hcache.exist(whichRect)) then
+        hcache.alloc(whichRect)
+    end
     local key = CONST_EVENT.leaveRect
-    if (hRuntime.rect[whichRect] == nil) then
-        hRuntime.rect[whichRect] = {}
-    end
-    if (hRuntime.rect[whichRect].onLeaveRectAction == nil) then
-        hRuntime.rect[whichRect].onLeaveRectAction = function()
-            hevent.triggerEvent(
-                whichRect,
-                key,
-                {
-                    triggerRect = whichRect,
-                    triggerUnit = cj.GetTriggerUnit()
-                }
-            )
+    local onLeaveRectAction = hcache.get(whichRect, "onLeaveRectAction")
+    if (onLeaveRectAction == nil) then
+        onLeaveRectAction = function()
+            hevent.triggerEvent(whichRect, key, {
+                triggerRect = whichRect,
+                triggerUnit = cj.GetTriggerUnit()
+            })
         end
+        hcache.set(whichRect, "onLeaveRectAction", onLeaveRectAction)
     end
-    hevent.pool(
-        whichRect,
-        cj.Condition(hRuntime.rect[whichRect].onLeaveRectAction),
-        function(tgr)
-            local rectRegion = cj.CreateRegion()
-            cj.RegionAddRect(rectRegion, whichRect)
-            cj.TriggerRegisterLeaveRegion(tgr, rectRegion, nil)
-        end
-    )
+    hevent.pool(whichRect, cj.Condition(onLeaveRectAction), function(tgr)
+        local rectRegion = cj.CreateRegion()
+        cj.RegionAddRect(rectRegion, whichRect)
+        cj.TriggerRegisterLeaveRegion(tgr, rectRegion, nil)
+    end)
     return hevent.registerEvent(whichRect, key, callFunc)
 end
 

@@ -12,15 +12,15 @@ end
 ---@return boolean
 hcache.exist = function(handle, key)
     if (handle == nil) then
-        return true
+        return false
     end
     if (hcache._c_[handle] == nil) then
-        return true
+        return false
     end
     if (key ~= nil and hcache._c_[handle][key] == nil) then
-        return true
+        return false
     end
-    return false
+    return true
 end
 
 ---@param handle any
