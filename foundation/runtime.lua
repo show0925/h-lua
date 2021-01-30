@@ -6,7 +6,6 @@ hRuntime = {
         pool = {},
     },
     unit = {},
-    group = {}, -- 单位选择器
     hero = {},
     skill = {
         silentUnits = {},
@@ -59,9 +58,6 @@ hRuntime.clear = function(handle)
     end
     if (hRuntime.unit[handle] ~= nil) then
         hRuntime.unit[handle] = nil
-    end
-    if (table.includes(hRuntime.group, handle)) then
-        table.delete(hRuntime.group, handle)
     end
     if (hRuntime.hero[handle] ~= nil) then
         hRuntime.hero[handle] = nil

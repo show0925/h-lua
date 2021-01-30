@@ -1,4 +1,5 @@
-hgroup = {}
+---@class hgroup 单位组
+hgroup = { GLOBAL = {} }
 
 --- 遍历单位组
 ---@alias GroupForEach fun(enumUnit: userdata, idx: number):void
@@ -81,13 +82,13 @@ end
 ---@param filterFunc GroupFilter | "function(filterUnit) end"
 ---@return table
 hgroup.createByXY = function(x, y, radius, filterFunc)
-    if (#hRuntime.group == 0) then
+    if (#hgroup.GLOBAL == 0) then
         return {}
     end
     local g = {}
-    for idx, filterUnit in ipairs(hRuntime.group) do
+    for idx, filterUnit in ipairs(hgroup.GLOBAL) do
         if (his.deleted(filterUnit)) then
-            table.remove(hRuntime.group, idx)
+            table.remove(hgroup.GLOBAL, idx)
             idx = idx - 1
         end
         -- 排除超过距离的单位
@@ -127,13 +128,13 @@ end
 ---@param filterFunc GroupFilter | "function(filterUnit) end"
 ---@return userdata
 hgroup.createByRect = function(r, filterFunc)
-    if (#hRuntime.group == 0) then
+    if (#hgroup.GLOBAL == 0) then
         return {}
     end
     local g = {}
-    for idx, filterUnit in ipairs(hRuntime.group) do
+    for idx, filterUnit in ipairs(hgroup.GLOBAL) do
         if (his.deleted(filterUnit)) then
-            table.remove(hRuntime.group, idx)
+            table.remove(hgroup.GLOBAL, idx)
             idx = idx - 1
         end
         -- 排除区域外

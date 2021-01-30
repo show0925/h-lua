@@ -403,7 +403,7 @@ hunit.embed = function(u, options)
         options.registerOrderEvent = false
     end
     -- 记入group选择器（不在框架系统内的单位，也不会被group选择到）
-    table.insert(hRuntime.group, u)
+    hgroup.addUnit(hgroup.GLOBAL, u)
     -- 记入realtime
     local id = options.unitId
     if (type(id) == 'number') then
@@ -732,6 +732,7 @@ end
 ---@param delay number
 hunit.del = function(targetUnit, delay)
     if (delay == nil or delay <= 0) then
+        hgroup.removeUnit(hgroup.GLOBAL, targetUnit)
         hRuntime.clear(targetUnit)
         cj.RemoveUnit(targetUnit)
     else
@@ -739,6 +740,7 @@ hunit.del = function(targetUnit, delay)
             delay,
             function(t)
                 htime.delTimer(t)
+                hgroup.removeUnit(hgroup.GLOBAL, targetUnit)
                 hRuntime.clear(targetUnit)
                 cj.RemoveUnit(targetUnit)
             end
