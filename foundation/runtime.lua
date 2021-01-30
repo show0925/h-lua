@@ -13,7 +13,6 @@ hRuntime = {
         hero = {},
         courier_hero = {},
     },
-    heroBuildSelection = {},
     skill = {
         silentUnits = {},
         silentTrigger = nil,
@@ -71,9 +70,6 @@ hRuntime.clear = function(handle)
     end
     if (hRuntime.hero[handle] ~= nil) then
         hRuntime.hero[handle] = nil
-    end
-    if (hRuntime.heroBuildSelection[handle] ~= nil) then
-        hRuntime.heroBuildSelection[handle] = nil
     end
     if (hRuntime.skill[handle] ~= nil) then
         hRuntime.skill[handle] = nil
