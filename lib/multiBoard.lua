@@ -14,32 +14,34 @@ hmultiBoard.create = function(key, refreshFrequency, yourData)
     for pi = 1, hplayer.qty_max, 1 do
         local p = hplayer.players[pi]
         if (his.playing(p)) then
-            if (hRuntime.multiBoard[pi] == nil) then
-                hRuntime.multiBoard[pi] = {
+            local pmb = hplayer.get(p, "multiBoard")
+            if (pmb == nil) then
+                pmb = {
                     visible = true,
                     timer = nil,
                     boards = {}
                 }
+                hplayer.set(p, "multiBoard", pmb)
             end
-            if (hRuntime.multiBoard[pi].boards[key] ~= nil) then
-                cj.DestroyMultiboard(hRuntime.multiBoard[pi].boards[key])
+            if (pmb.boards[key] ~= nil) then
+                cj.DestroyMultiboard(pmb.boards[key])
             end
-            hRuntime.multiBoard[pi].boards[key] = cj.CreateMultiboard()
+            pmb.boards[key] = cj.CreateMultiboard()
             --title
-            cj.MultiboardSetTitleText(hRuntime.multiBoard[pi].boards[key], "多面板")
+            cj.MultiboardSetTitleText(pmb.boards[key], "多面板")
             --
-            hRuntime.multiBoard[pi].timer = htime.setInterval(
+            pmb.timer = htime.setInterval(
                 refreshFrequency,
                 function()
                     --检查玩家是否隐藏了多面板 -mbv
-                    if (hRuntime.multiBoard[pi].visible ~= true) then
+                    if (pmb.visible ~= true) then
                         if (cj.GetLocalPlayer() == p) then
-                            cj.MultiboardDisplay(hRuntime.multiBoard[pi].boards[key], false)
+                            cj.MultiboardDisplay(pmb.boards[key], false)
                         end
                         --而且隐藏就没必要展示数据了，后续流程中止
                         return
                     end
-                    local data = yourData(hRuntime.multiBoard[pi].boards[key], pi)
+                    local data = yourData(pmb.boards[key], pi)
                     local totalRow = #data
                     local totalCol = 0
                     if (totalRow > 0) then
@@ -50,12 +52,12 @@ hmultiBoard.create = function(key, refreshFrequency, yourData)
                         return
                     end
                     --设置行列数
-                    cj.MultiboardSetRowCount(hRuntime.multiBoard[pi].boards[key], totalRow)
-                    cj.MultiboardSetColumnCount(hRuntime.multiBoard[pi].boards[key], totalCol)
+                    cj.MultiboardSetRowCount(pmb.boards[key], totalRow)
+                    cj.MultiboardSetColumnCount(pmb.boards[key], totalCol)
                     local widthCol = {}
                     for row = 1, totalRow, 1 do
                         for col = 1, totalCol, 1 do
-                            local item = cj.MultiboardGetItem(hRuntime.multiBoard[pi].boards[key], row - 1, col - 1)
+                            local item = cj.MultiboardGetItem(pmb.boards[key], row - 1, col - 1)
                             local isSetValue = false
                             local isSetIcon = false
                             local width = 0
@@ -88,14 +90,14 @@ hmultiBoard.create = function(key, refreshFrequency, yourData)
                     for row = 1, totalRow, 1 do
                         for col = 1, totalCol, 1 do
                             cj.MultiboardSetItemWidth(
-                                cj.MultiboardGetItem(hRuntime.multiBoard[pi].boards[key], row - 1, col - 1),
+                                cj.MultiboardGetItem(pmb.boards[key], row - 1, col - 1),
                                 widthCol[col] / 140
                             )
                         end
                     end
                     --显示
                     if (cj.GetLocalPlayer() == p) then
-                        cj.MultiboardDisplay(hRuntime.multiBoard[pi].boards[key], true)
+                        cj.MultiboardDisplay(pmb.boards[key], true)
                     end
                 end
             )

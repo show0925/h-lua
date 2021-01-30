@@ -16,7 +16,6 @@ hRuntime = {
         mana_back = {},
         punish = {}
     },
-    multiBoard = {},
 }
 
 hRuntime.clear = function(handle)
@@ -61,9 +60,6 @@ hRuntime.clear = function(handle)
         if (table.includes(hRuntime.skill.unarmUnits, handle)) then
             table.delete(hRuntime.skill.unarmUnits, handle)
         end
-    end
-    if (hRuntime.multiBoard[handle] ~= nil) then
-        hRuntime.multiBoard[handle] = nil
     end
 end
 
