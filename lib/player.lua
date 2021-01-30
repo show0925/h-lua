@@ -26,28 +26,25 @@ hplayer = {
 
 ---@private
 hplayer.set = function(whichPlayer, key, value)
-    if (whichPlayer == nil) then
+    if (type(whichPlayer) ~= "userdata") then
         print_stack()
         return
     end
-    local index = hplayer.index(whichPlayer)
-    if (hRuntime.player[index] == nil) then
-        hRuntime.player[index] = {}
+    local handle = 'h-lua-p-' .. hplayer.index(whichPlayer)
+    if (false == hcache.exist(handle)) then
+        hcache.alloc(handle)
     end
-    hRuntime.player[index][key] = value
+    hcache.set(handle, key, value)
 end
 
 ---@private
 hplayer.get = function(whichPlayer, key, default)
-    if (whichPlayer == nil) then
+    if (type(whichPlayer) ~= "userdata") then
         print_stack()
         return
     end
-    local index = hplayer.index(whichPlayer)
-    if (hRuntime.player[index] == nil) then
-        hRuntime.player[index] = {}
-    end
-    return hRuntime.player[index][key] or default
+    local handle = 'h-lua-p-' .. hplayer.index(whichPlayer)
+    return hcache.get(handle, key, default)
 end
 
 ---@private

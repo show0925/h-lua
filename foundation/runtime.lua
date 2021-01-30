@@ -5,7 +5,6 @@ hRuntime = {
         -- 池
         pool = {},
     },
-    player = {},
     unit = {},
     group = {}, -- 单位选择器
     hero = {},
