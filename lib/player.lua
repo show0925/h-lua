@@ -102,19 +102,35 @@ hplayer.getConvertRatio = function()
     return hplayer.convert_ratio
 end
 
+--- 玩家ID索引
+---@protected
+hplayer.indexes = {}
+
 --- 获取玩家ID
 --- 例如：玩家一等于1，玩家三等于3
 ---@param whichPlayer userdata
 ---@return number
 hplayer.index = function(whichPlayer)
-    return cj.GetPlayerId(whichPlayer) + 1
+    local idx
+    if (hplayer.indexes[whichPlayer] ~= nil) then
+        idx = hplayer.indexes[whichPlayer]
+    else
+        idx = cj.GetPlayerId(whichPlayer) + 1
+        hplayer.indexes[whichPlayer] = idx
+    end
+    return idx
 end
 
 --- 获取玩家名称
 ---@param whichPlayer userdata
 ---@return string
 hplayer.getName = function(whichPlayer)
-    return cj.GetPlayerName(whichPlayer)
+    local n = hplayer.get(whichPlayer, "name")
+    if (n == nil) then
+        n = cj.GetPlayerName(whichPlayer)
+        hplayer.set(whichPlayer, "name", n)
+    end
+    return n
 end
 
 --- 设置玩家名称
@@ -122,6 +138,7 @@ end
 ---@param name string
 hplayer.setName = function(whichPlayer, name)
     cj.SetPlayerName(whichPlayer, name)
+    hplayer.set(whichPlayer, "name", name)
 end
 
 --- 获取玩家当前选中的单位

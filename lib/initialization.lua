@@ -31,7 +31,6 @@ for i = 1, bj_MAX_PLAYERS, 1 do
 
     cj.SetPlayerHandicapXP(hplayer.players[i], 0) -- 经验置0
 
-    hplayer.set(hplayer.players[i], "index", i)
     hplayer.set(hplayer.players[i], "prevGold", 0)
     hplayer.set(hplayer.players[i], "prevLumber", 0)
     hplayer.set(hplayer.players[i], "totalGold", 0)
