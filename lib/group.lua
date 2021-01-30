@@ -84,10 +84,6 @@ hgroup.createByXY = function(x, y, radius, filterFunc)
     if (#hRuntime.group == 0) then
         return {}
     end
-    -- 镜头放大模式下，范围缩小一半
-    if (hcamera.model == "zoomin") then
-        radius = radius * 0.5
-    end
     local g = {}
     for idx, filterUnit in ipairs(hRuntime.group) do
         if (his.deleted(filterUnit)) then

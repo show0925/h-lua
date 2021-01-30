@@ -53,13 +53,12 @@ htextTag.create = function(msg, size, color, opacity, during)
     if (color ~= nil and string.len(color) == 6) then
         msg = "|cff" .. color .. msg .. "|r"
     end
-    hRuntime.textTag[ttg] = {
-        msg = msg,
-        size = size,
-        color = color,
-        opacity = opacity,
-        during = during
-    }
+    hcache.alloc(ttg)
+    hcache.set(ttg, "msg", msg)
+    hcache.set(ttg, "size", size)
+    hcache.set(ttg, "color", color)
+    hcache.set(ttg, "opacity", opacity)
+    hcache.set(ttg, "during", during)
     cj.SetTextTagText(ttg, msg, size * 0.023 / 10)
     cj.SetTextTagColor(ttg, 255, 255, 255, math.floor(255 * opacity))
     if (during == 0) then
@@ -139,11 +138,6 @@ htextTag.createFollowUnit = function(u, msg, size, color, opacity, during, zOffs
                 htime.delTimer(t)
                 return
             end
-            if (hcamera.model == "zoomin") then
-                scale = 0.25
-            elseif (hcamera.model == "zoomout") then
-                scale = 1
-            end
             cj.SetTextTagPos(ttg, hunit.x(u) - cj.StringLength(txt) * size * scale, hunit.y(u), zOffset)
             if (his.alive(u) == true) then
                 cj.SetTextTagVisibility(ttg, true)
@@ -154,51 +148,42 @@ htextTag.createFollowUnit = function(u, msg, size, color, opacity, during, zOffs
     )
     return ttg
 end
+
 --- 获取漂浮字大小
 ---@param ttg userdata
----@return number
+---@return number|nil
 htextTag.getSize = function(ttg)
-    if (hRuntime.textTag[ttg] == nil) then
-        return
-    end
-    return hRuntime.textTag[ttg].size
+    return hcache.get(ttg, "size")
 end
+
 --- 获取漂浮字颜色
 ---@param ttg userdata
----@return string
+---@return string|nil
 htextTag.getColor = function(ttg)
-    if (hRuntime.textTag[ttg] == nil) then
-        return
-    end
-    return hRuntime.textTag[ttg].color
+    return hcache.get(ttg, "color")
 end
+
 --- 获取漂浮字内容
 ---@param ttg userdata
----@return string
+---@return string|nil
 htextTag.getMsg = function(ttg)
-    if (hRuntime.textTag[ttg] == nil) then
-        return
-    end
-    return hRuntime.textTag[ttg].msg
+    return hcache.get(ttg, "msg")
 end
+
 --- 获取漂浮字透明度
 ---@param ttg userdata
----@return number
+---@return number|nil
 htextTag.getOpacity = function(ttg)
-    if (hRuntime.textTag[ttg] == nil) then
-        return
-    end
-    return hRuntime.textTag[ttg].opacity
+    return hcache.get(ttg, "opacity")
 end
+
 --- 获取漂浮字持续时间
 ---@param ttg userdata
----@return number
+---@return number|nil
 htextTag.getDuring = function(ttg)
-    if (hRuntime.textTag[ttg] == nil) then
-        return
-    end
-    return hRuntime.textTag[ttg].during
+    return hcache.get(ttg, "during")
 end
+
 --- 风格特效
 ---@param ttg userdata
 ---@param showType string | "'scale'" | "'shrink'" | "'toggle'"

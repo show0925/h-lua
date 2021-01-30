@@ -5,7 +5,6 @@ hRuntime = {
         -- 池
         pool = {},
     },
-    textTag = {},
     rect = {},
     player = {},
     unit = {},
@@ -66,9 +65,6 @@ hRuntime.clear = function(handle)
             end
         end
         hRuntime.event.pool[handle] = nil
-    end
-    if (hRuntime.textTag[handle] ~= nil) then
-        hRuntime.textTag[handle] = nil
     end
     if (hRuntime.rect[handle] ~= nil) then
         hRuntime.rect[handle] = nil

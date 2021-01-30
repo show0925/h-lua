@@ -1,6 +1,8 @@
+---@class cache
 hcache = {}
 
----@private
+---@param handle any
+---@param key any
 ---@return boolean
 hcache.exist = function(handle, key)
     if (handle == nil) then
@@ -15,7 +17,7 @@ hcache.exist = function(handle, key)
     return false
 end
 
----@private
+---@param handle any
 hcache.alloc = function(handle)
     if (handle == nil) then
         print_stack()
@@ -26,7 +28,8 @@ hcache.alloc = function(handle)
     end
 end
 
----@private
+---@param handle any
+---@param key any
 hcache.free = function(handle, key)
     if (handle == nil) then
         return
@@ -40,7 +43,9 @@ hcache.free = function(handle, key)
     end
 end
 
----@private
+---@param handle any
+---@param key any
+---@param value any|nil
 hcache.set = function(handle, key, value)
     if (handle == nil) then
         print_stack()
@@ -51,7 +56,9 @@ hcache.set = function(handle, key, value)
     end
 end
 
----@private
+---@param handle any
+---@param key any
+---@param default any|nil
 hcache.get = function(handle, key, default)
     if (handle == nil) then
         print_stack()
