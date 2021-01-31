@@ -125,10 +125,10 @@ end
 ---@param whichPlayer userdata
 ---@return string
 hplayer.getName = function(whichPlayer)
-    local n = hplayer.get(whichPlayer, "name")
+    local n = hplayer.get(whichPlayer, CONST_CACHE.PLAYER_NAME)
     if (n == nil) then
         n = cj.GetPlayerName(whichPlayer)
-        hplayer.set(whichPlayer, "name", n)
+        hplayer.set(whichPlayer, CONST_CACHE.PLAYER_NAME, n)
     end
     return n
 end
@@ -138,79 +138,68 @@ end
 ---@param name string
 hplayer.setName = function(whichPlayer, name)
     cj.SetPlayerName(whichPlayer, name)
-    hplayer.set(whichPlayer, "name", name)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_NAME, name)
 end
 
 --- 获取玩家当前选中的单位
 ---@param whichPlayer userdata
 ---@return userdata unit
 hplayer.getSelection = function(whichPlayer)
-    return hplayer.get(whichPlayer, "selection", nil)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_SELECTION, nil)
 end
 
 --- 获取玩家当前状态
 ---@param whichPlayer userdata
 ---@return string
 hplayer.getStatus = function(whichPlayer)
-    return hplayer.get(whichPlayer, "status", hplayer.player_status.none)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_STATUS, hplayer.player_status.none)
 end
 --- 设置玩家当前状态
 ---@param whichPlayer userdata
 ---@param status string
 hplayer.setStatus = function(whichPlayer, status)
-    hplayer.set(whichPlayer, "status", status)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_STATUS, status)
 end
 
 --- 获取玩家当前称号
 ---@param whichPlayer userdata
 ---@return string
 hplayer.getPrestige = function(whichPlayer)
-    return hplayer.get(whichPlayer, "prestige", "无称号")
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_PRESTIGE, " - ")
 end
 --- 设置玩家当前称号
 ---@param whichPlayer userdata
 ---@param status string
 hplayer.setPrestige = function(whichPlayer, prestige)
-    hplayer.set(whichPlayer, "prestige", prestige)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_PRESTIGE, prestige)
 end
 
---- 获取玩家是否支持random/repick命令
+--- 获取玩家是否支持命令：random/repick
 ---@param whichPlayer userdata
----@return boolean
-hplayer.getAllowCommandPick = function(whichPlayer)
-    return hplayer.get(whichPlayer, "allowCommandPick", false)
+---@return table
+hplayer.getAllowCommands = function(whichPlayer)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_ALLOW_COMMAND, false)
 end
---- 设置玩家是否支持random/repick命令
+--- 设置玩家是否支持命令,包含：random/repick
 ---@param whichPlayer userdata
----@param flag boolean
-hplayer.setAllowCommandPick = function(whichPlayer, flag)
-    hplayer.set(whichPlayer, "allowCommandPick", flag)
+---@param commands table
+hplayer.setAllowCommands = function(whichPlayer, commands)
+    if (type(commands) == "string") then
+        commands = { commands }
+    end
+    if (type(commands) ~= "table") then
+        return
+    end
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_ALLOW_COMMAND, commands)
 end
 
 --- 获取玩家APM
 ---@param whichPlayer userdata
 ---@return number
 hplayer.getApm = function(whichPlayer)
-    return hplayer.get(whichPlayer, "apm", 0)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_APM, 0)
 end
---- 设置玩家是否允许调节镜头高度
----@param whichPlayer userdata
----@param flag boolean
-hplayer.setAllowCameraDistance = function(whichPlayer, flag)
-    if (whichPlayer == nil) then
-        return
-    end
-    if (type(flag) ~= "boolean") then
-        flag = false
-    end
-    hplayer.set(whichPlayer, "allowCameraDistance", flag)
-end
---- 玩家是否允许调节镜头高度
----@param whichPlayer userdata
----@return boolean
-hplayer.getAllowCameraDistance = function(whichPlayer)
-    return hplayer.get(whichPlayer, "allowCameraDistance")
-end
+
 --- 在所有玩家里获取一个随机的英雄
 ---@return userdata
 hplayer.getRandomHero = function()
@@ -313,13 +302,13 @@ end
 ---@param whichPlayer userdata
 ---@param b boolean
 hplayer.setIsAutoConvert = function(whichPlayer, b)
-    hplayer.set(whichPlayer, "isAutoConvert", b)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_IS_AUTO_CONVERT, b)
 end
 --- 获取玩家是否自动将{hAwardConvertRatio}黄金换1木头
 ---@param whichPlayer userdata
 ---@return boolean
 hplayer.getIsAutoConvert = function(whichPlayer)
-    return hplayer.get(whichPlayer, "isAutoConvert", false)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_IS_AUTO_CONVERT, false)
 end
 
 --- 设置玩家镜头是否在震动
@@ -327,19 +316,19 @@ end
 ---@param whichPlayer userdata
 ---@param b boolean
 hplayer.setIsShocking = function(whichPlayer, b)
-    hplayer.set(whichPlayer, "isShocking", b)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_IS_SHOCKING, b)
 end
 --- 获取玩家镜头是否在震动
 ---@param whichPlayer userdata
 ---@return boolean
 hplayer.getIsShocking = function(whichPlayer)
-    return hplayer.get(whichPlayer, "isShocking", false)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_IS_SHOCKING, false)
 end
 
 --- 自动寄存超出的黄金数量，如果满转换数值，则返回对应的整数木头
 ---@private
 hplayer.getExceedLumber = function(whichPlayer, exceedGold)
-    local current = hplayer.get(whichPlayer, "exceed_gold", 0)
+    local current = hplayer.get(whichPlayer, CONST_CACHE.PLAYER_GOLD_EXCEED, 0)
     local l = 0
     if (current < 0) then
         current = 0
@@ -353,14 +342,14 @@ hplayer.getExceedLumber = function(whichPlayer, exceedGold)
         l = math.floor(current / player_convert_ratio)
         current = math.floor(current - l * player_convert_ratio)
     end
-    hplayer.set(whichPlayer, "exceed_gold", current)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_GOLD_EXCEED, current)
     return l
 end
 --- 获取玩家造成的总伤害
 ---@param whichPlayer userdata
 ---@return number
 hplayer.getDamage = function(whichPlayer)
-    return hplayer.get(whichPlayer, "damage", 0)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_DAMAGE, 0)
 end
 --- 增加玩家造成的总伤害
 ---@param whichPlayer userdata
@@ -370,13 +359,13 @@ hplayer.addDamage = function(whichPlayer, val)
         return
     end
     val = val or 0
-    hplayer.set(whichPlayer, "damage", hplayer.getDamage(whichPlayer) + val)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_DAMAGE, hplayer.getDamage(whichPlayer) + val)
 end
 --- 获取玩家受到的总伤害
 ---@param whichPlayer userdata
 ---@return number
 hplayer.getBeDamage = function(whichPlayer)
-    return hplayer.get(whichPlayer, "beDamage", 0)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_BE_DAMAGE, 0)
 end
 --- 增加玩家受到的总伤害
 ---@param whichPlayer userdata
@@ -386,13 +375,13 @@ hplayer.addBeDamage = function(whichPlayer, val)
         return
     end
     val = val or 0
-    hplayer.set(whichPlayer, "beDamage", hplayer.getBeDamage(whichPlayer) + val)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_BE_DAMAGE, hplayer.getBeDamage(whichPlayer) + val)
 end
 --- 获取玩家杀敌数
 ---@param whichPlayer userdata
 ---@return number
 hplayer.getKill = function(whichPlayer)
-    return hplayer.get(whichPlayer, "kill", 0)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_KILL, 0)
 end
 -- 增加玩家杀敌数
 ---@param whichPlayer userdata
@@ -402,22 +391,19 @@ hplayer.addKill = function(whichPlayer, val)
         return
     end
     val = val or 1
-    hplayer.set(whichPlayer, "kill", hplayer.getKill(whichPlayer) + val)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_KILL, hplayer.getKill(whichPlayer) + val)
 end
 
 --- 黄金比率
 ---@private
 hplayer.diffGoldRatio = function(whichPlayer, diff, during)
     if (diff ~= 0) then
-        hplayer.set(whichPlayer, "goldRatio", hplayer.get(whichPlayer, "goldRatio") + diff)
+        hplayer.set(whichPlayer, CONST_CACHE.PLAYER_GOLD_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_GOLD_RATIO) + diff)
         if (during > 0) then
-            htime.setTimeout(
-                during,
-                function(t)
-                    htime.delTimer(t)
-                    hplayer.set(whichPlayer, "goldRatio", hplayer.get(whichPlayer, "goldRatio") - diff)
-                end
-            )
+            htime.setTimeout(during, function(t)
+                htime.delTimer(t)
+                hplayer.set(whichPlayer, CONST_CACHE.PLAYER_GOLD_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_GOLD_RATIO) - diff)
+            end)
         end
     end
 end
@@ -425,7 +411,7 @@ end
 ---@param val number
 ---@param during number
 hplayer.setGoldRatio = function(whichPlayer, val, during)
-    hplayer.diffGoldRatio(whichPlayer, val - hplayer.get(whichPlayer, "goldRatio"), during)
+    hplayer.diffGoldRatio(whichPlayer, val - hplayer.get(whichPlayer, CONST_CACHE.PLAYER_GOLD_RATIO), during)
 end
 ---@param whichPlayer userdata
 ---@param val number
@@ -442,20 +428,20 @@ end
 ---@param whichPlayer userdata
 ---@return number %
 hplayer.getGoldRatio = function(whichPlayer)
-    return hplayer.get(whichPlayer, "goldRatio") or 100
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_GOLD_RATIO) or 100
 end
 
 --- 木头比率
 ---@private
 hplayer.diffLumberRatio = function(whichPlayer, diff, during)
     if (diff ~= 0) then
-        hplayer.set(whichPlayer, "lumberRatio", hplayer.get(whichPlayer, "lumberRatio") + diff)
+        hplayer.set(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO) + diff)
         if (during > 0) then
             htime.setTimeout(
                 during,
                 function(t)
                     htime.delTimer(t)
-                    hplayer.set(whichPlayer, "lumberRatio", hplayer.get(whichPlayer, "lumberRatio") - diff)
+                    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO) - diff)
                 end
             )
         end
@@ -465,8 +451,7 @@ end
 ---@param val number
 ---@param during number
 hplayer.setLumberRatio = function(whichPlayer, val, during)
-    local index = hplayer.index(whichPlayer)
-    hplayer.diffLumberRatio(whichPlayer, val - hplayer.get(whichPlayer, "lumberRatio"), during)
+    hplayer.diffLumberRatio(whichPlayer, val - hplayer.get(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO), during)
 end
 ---@param whichPlayer userdata
 ---@param val number
@@ -483,22 +468,19 @@ end
 ---@param whichPlayer userdata
 ---@return number %
 hplayer.getLumberRatio = function(whichPlayer)
-    return hplayer.get(whichPlayer, "lumberRatio")
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO)
 end
 
 --- 经验比率
 ---@private
 hplayer.diffExpRatio = function(whichPlayer, diff, during)
     if (diff ~= 0) then
-        hplayer.set(whichPlayer, "expRatio", hplayer.get(whichPlayer, "expRatio") + diff)
+        hplayer.set(whichPlayer, CONST_CACHE.PLAYER_EXP_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_EXP_RATIO) + diff)
         if (during > 0) then
-            htime.setTimeout(
-                during,
-                function(t)
-                    htime.delTimer(t)
-                    hplayer.set(whichPlayer, "expRatio", hplayer.get(whichPlayer, "expRatio") - diff)
-                end
-            )
+            htime.setTimeout(during, function(t)
+                htime.delTimer(t)
+                hplayer.set(whichPlayer, CONST_CACHE.PLAYER_EXP_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_EXP_RATIO) - diff)
+            end)
         end
     end
 end
@@ -506,8 +488,7 @@ end
 ---@param val number
 ---@param during number
 hplayer.setExpRatio = function(whichPlayer, val, during)
-    local index = hplayer.index(whichPlayer)
-    hplayer.diffExpRatio(whichPlayer, val - hplayer.get(whichPlayer, "expRatio"), during)
+    hplayer.diffExpRatio(whichPlayer, val - hplayer.get(whichPlayer, CONST_CACHE.PLAYER_EXP_RATIO), during)
 end
 ---@param whichPlayer userdata
 ---@param val number
@@ -524,22 +505,19 @@ end
 ---@param whichPlayer userdata
 ---@return number %
 hplayer.getExpRatio = function(whichPlayer)
-    return hplayer.get(whichPlayer, "expRatio")
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_EXP_RATIO)
 end
 
 --- 售卖比率
 ---@private
 hplayer.diffSellRatio = function(whichPlayer, diff, during)
     if (diff ~= 0) then
-        hplayer.set(whichPlayer, "sellRatio", hplayer.get(whichPlayer, "sellRatio") + diff)
+        hplayer.set(whichPlayer, CONST_CACHE.PLAYER_SELL_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_SELL_RATIO) + diff)
         if (during > 0) then
-            htime.setTimeout(
-                during,
-                function(t)
-                    htime.delTimer(t)
-                    hplayer.set(whichPlayer, "sellRatio", hplayer.get(whichPlayer, "sellRatio") - diff)
-                end
-            )
+            htime.setTimeout(during, function(t)
+                htime.delTimer(t)
+                hplayer.set(whichPlayer, CONST_CACHE.PLAYER_SELL_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_SELL_RATIO) - diff)
+            end)
         end
     end
 end
@@ -547,8 +525,7 @@ end
 ---@param val number
 ---@param during number
 hplayer.setSellRatio = function(whichPlayer, val, during)
-    local index = hplayer.index(whichPlayer)
-    hplayer.diffSellRatio(whichPlayer, val - hplayer.get(whichPlayer, "sellRatio"), during)
+    hplayer.diffSellRatio(whichPlayer, val - hplayer.get(whichPlayer, CONST_CACHE.PLAYER_SELL_RATIO), during)
 end
 ---@param whichPlayer userdata
 ---@param val number
@@ -565,78 +542,78 @@ end
 ---@param whichPlayer userdata
 ---@return number %
 hplayer.getSellRatio = function(whichPlayer)
-    return hplayer.get(whichPlayer, "sellRatio", 50)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_SELL_RATIO, 50)
 end
 
 --- 玩家总获金量
 ---@param whichPlayer userdata
 ---@return number
 hplayer.getTotalGold = function(whichPlayer)
-    return hplayer.get(whichPlayer, "totalGold")
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_GOLD_TOTAL)
 end
 ---@param whichPlayer userdata
 ---@param val number
 hplayer.addTotalGold = function(whichPlayer, val)
-    return hplayer.set(whichPlayer, "totalGold", hplayer.getTotalGold(whichPlayer) + val)
+    return hplayer.set(whichPlayer, CONST_CACHE.PLAYER_GOLD_TOTAL, hplayer.getTotalGold(whichPlayer) + val)
 end
 --- 玩家总耗金量
 ---@param whichPlayer userdata
 ---@return number
 hplayer.getTotalGoldCost = function(whichPlayer)
-    return hplayer.get(whichPlayer, "totalGoldCost")
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_GOLD_COST)
 end
 ---@param whichPlayer userdata
 ---@param val number
 hplayer.addTotalGoldCost = function(whichPlayer, val)
-    return hplayer.set(whichPlayer, "totalGoldCost", hplayer.getTotalGoldCost(whichPlayer) + val)
+    return hplayer.set(whichPlayer, CONST_CACHE.PLAYER_GOLD_COST, hplayer.getTotalGoldCost(whichPlayer) + val)
 end
 
 --- 玩家总获木量
 ---@param whichPlayer userdata
 ---@return number
 hplayer.getTotalLumber = function(whichPlayer)
-    return hplayer.get(whichPlayer, "totalLumber")
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_LUMBER_TOTAL)
 end
 ---@param whichPlayer userdata
 ---@param val number
 hplayer.addTotalLumber = function(whichPlayer, val)
-    return hplayer.set(whichPlayer, "totalLumber", hplayer.getTotalLumber(whichPlayer) + val)
+    return hplayer.set(whichPlayer, CONST_CACHE.PLAYER_LUMBER_TOTAL, hplayer.getTotalLumber(whichPlayer) + val)
 end
 --- 玩家总耗木量
 ---@param whichPlayer userdata
 ---@return number
 hplayer.getTotalLumberCost = function(whichPlayer)
-    return hplayer.get(whichPlayer, "totalLumberCost")
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_LUMBER_COST)
 end
 ---@param whichPlayer userdata
 ---@param val number
 hplayer.addTotalLumberCost = function(whichPlayer, val)
-    return hplayer.set(whichPlayer, "totalLumberCost", hplayer.getTotalLumberCost(whichPlayer) + val)
+    return hplayer.set(whichPlayer, CONST_CACHE.PLAYER_LUMBER_COST, hplayer.getTotalLumberCost(whichPlayer) + val)
 end
 
 --- 核算玩家金钱
 ---@private
 hplayer.adjustGold = function(whichPlayer)
-    local prvSys = hplayer.get(whichPlayer, "prevGold")
+    local prvSys = hplayer.get(whichPlayer, CONST_CACHE.PLAYER_GOLD_PREV)
     local relSys = cj.GetPlayerState(whichPlayer, PLAYER_STATE_RESOURCE_GOLD)
     if (prvSys > relSys) then
         hplayer.addTotalGoldCost(whichPlayer, prvSys - relSys)
     elseif (prvSys < relSys) then
         hplayer.addTotalGold(whichPlayer, relSys - prvSys)
     end
-    hplayer.set(whichPlayer, "prevGold", relSys)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_GOLD_PREV, relSys)
 end
 --- 核算玩家木头
 ---@private
 hplayer.adjustLumber = function(whichPlayer)
-    local prvSys = hplayer.get(whichPlayer, "prevLumber")
+    local prvSys = hplayer.get(whichPlayer, CONST_CACHE.PLAYER_LUMBER_PREV)
     local relSys = cj.GetPlayerState(whichPlayer, PLAYER_STATE_RESOURCE_LUMBER)
     if (prvSys > relSys) then
         hplayer.addTotalLumberCost(whichPlayer, prvSys - relSys)
     elseif (prvSys < relSys) then
         hplayer.addTotalLumber(whichPlayer, relSys - prvSys)
     end
-    hplayer.set(whichPlayer, "prevLumber", relSys)
+    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_LUMBER_PREV, relSys)
 end
 
 --- 获取玩家实时金钱

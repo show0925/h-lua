@@ -55,13 +55,18 @@ hevent_default_actions = {
             end
             local p = hunit.getOwner(u)
             if (his.playing(p) == true and his.playerSite(p) == true and his.computer(p) == false) then
-                hplayer.set(p, "apm", hplayer.get(p, "apm", 0) + 1)
+                hplayer.set(p, CONST_CACHE.PLAYER_APM, hplayer.get(p, CONST_CACHE.PLAYER_APM, 0) + 1)
             end
         end),
         command = function()
             local p = cj.GetTriggerPlayer()
             local str = string.lower(cj.GetEventPlayerChatString())
-            if (str == "-apc") then
+            local commands = string.explode(" ", str)
+            local allowCommands = hplayer.getAllowCommands(p)
+            if (#allowCommands <= 0 or table.includes(allowCommands, commands[1])) then
+                return
+            end
+            if (commands[1] == "-apc") then
                 if (hplayer.getIsAutoConvert(p) == true) then
                     hplayer.setIsAutoConvert(p, false)
                     echo("|cffffcc00已关闭|r自动换算", p)
@@ -69,9 +74,9 @@ hevent_default_actions = {
                     hplayer.setIsAutoConvert(p, true)
                     echo("|cffffcc00已开启|r自动换算", p)
                 end
-            elseif (str == "-apm") then
+            elseif (commands[1] == "-apm") then
                 echo("您的apm为:" .. hplayer.getApm(p), p)
-            elseif (str == "-eff") then
+            elseif (commands[1] == "-eff") then
                 if (hplayer.qty_current == 1) then
                     if (heffect.enable == true) then
                         heffect.enable = false
@@ -85,10 +90,10 @@ hevent_default_actions = {
                 else
                     echo("此命令仅在单人时有效", p)
                 end
-            elseif (str == "-gg") then
+            elseif (commands[1] == "-gg") then
                 hplayer.defeat(p, "GG")
-            elseif (str == "-random") then
-                if (#hhero.selectorPool <= 0 or hplayer.getAllowCommandPick(p) ~= true) then
+            elseif (commands[1] == "-random") then
+                if (#hhero.selectorPool <= 0) then
                     echo("-random命令被禁用", p)
                     return
                 end
@@ -136,8 +141,8 @@ hevent_default_actions = {
                     end
                 end
                 echo("已为您 |cffffff80random|r 挑选了 " .. "|cffffff80" .. math.floor(qty) .. "|r 个：|cffffff80" .. txt .. "|r", p)
-            elseif (str == "-repick") then
-                if (#hhero.selectorPool <= 0 or hplayer.getAllowCommandPick(p) ~= true) then
+            elseif (commands[1] == "-repick") then
+                if (#hhero.selectorPool <= 0) then
                     echo("-repick命令被禁用", p)
                     return
                 end
@@ -169,11 +174,12 @@ hevent_default_actions = {
                 end
                 hhero.player_heroes[pIndex] = {}
                 echo("已为您 |cffffff80repick|r 了 " .. "|cffffff80" .. qty .. "|r 个单位", p)
-            else
-                local first = string.sub(str, 1, 1)
+            elseif (commands[1] == "-d") then
+                -- -d +100
+                local first = string.sub(commands[2], 1, 1)
                 if (first == "+" or first == "-") then
                     --视距
-                    local v = string.sub(str, 2, string.len(str))
+                    local v = string.sub(commands[1], 2, string.len(commands[1]))
                     v = tonumber(v)
                     if (v == nil) then
                         return
@@ -190,7 +196,7 @@ hevent_default_actions = {
         end,
         leave = cj.Condition(function()
             local p = cj.GetTriggerPlayer()
-            hplayer.set(p, "status", hplayer.player_status.leave)
+            hplayer.set(p, CONST_CACHE.PLAYER_STATUS, hplayer.player_status.leave)
             echo(cj.GetPlayerName(p) .. "离开了游戏～")
             hplayer.clearUnit(p)
             hplayer.qty_current = hplayer.qty_current - 1
@@ -206,20 +212,20 @@ hevent_default_actions = {
         selection = cj.Condition(function()
             local triggerPlayer = cj.GetTriggerPlayer()
             local triggerUnit = cj.GetTriggerUnit()
-            local click = hplayer.get(triggerPlayer, "click", nil)
+            local click = hplayer.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK, nil)
             if (click == nil) then
                 click = 0
             end
-            hplayer.set(triggerPlayer, "click", click + 1)
+            hplayer.set(triggerPlayer, CONST_CACHE.PLAYER_CLICK, click + 1)
             htime.setTimeout(
                 0.3,
                 function(ct)
                     htime.delTimer(ct)
-                    hplayer.set(triggerPlayer, "click", hplayer.get(triggerPlayer, "click") - 1)
+                    hplayer.set(triggerPlayer, CONST_CACHE.PLAYER_CLICK, hplayer.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK) - 1)
                 end
             )
             for qty = 1, 10 do
-                if (hplayer.get(triggerPlayer, "click") >= qty) then
+                if (hplayer.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK) >= qty) then
                     hevent.triggerEvent(
                         triggerPlayer,
                         CONST_EVENT.selection .. "#" .. qty,

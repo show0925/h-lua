@@ -14,14 +14,14 @@ hmultiBoard.create = function(key, refreshFrequency, yourData)
     for pi = 1, hplayer.qty_max, 1 do
         local p = hplayer.players[pi]
         if (his.playing(p)) then
-            local pmb = hplayer.get(p, "multiBoard")
+            local pmb = hplayer.get(p, CONST_CACHE.PLAYER_MULTI_BOARD)
             if (pmb == nil) then
                 pmb = {
                     visible = true,
                     timer = nil,
                     boards = {}
                 }
-                hplayer.set(p, "multiBoard", pmb)
+                hplayer.set(p, CONST_CACHE.PLAYER_MULTI_BOARD, pmb)
             end
             if (pmb.boards[key] ~= nil) then
                 cj.DestroyMultiboard(pmb.boards[key])

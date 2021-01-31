@@ -31,20 +31,20 @@ for i = 1, bj_MAX_PLAYERS, 1 do
 
     cj.SetPlayerHandicapXP(hplayer.players[i], 0) -- 经验置0
 
-    hplayer.set(hplayer.players[i], "prevGold", 0)
-    hplayer.set(hplayer.players[i], "prevLumber", 0)
-    hplayer.set(hplayer.players[i], "totalGold", 0)
-    hplayer.set(hplayer.players[i], "totalGoldCost", 0)
-    hplayer.set(hplayer.players[i], "totalLumber", 0)
-    hplayer.set(hplayer.players[i], "totalLumberCost", 0)
-    hplayer.set(hplayer.players[i], "goldRatio", 100)
-    hplayer.set(hplayer.players[i], "lumberRatio", 100)
-    hplayer.set(hplayer.players[i], "expRatio", 100)
-    hplayer.set(hplayer.players[i], "sellRatio", 50)
-    hplayer.set(hplayer.players[i], "apm", 0)
-    hplayer.set(hplayer.players[i], "damage", 0)
-    hplayer.set(hplayer.players[i], "beDamage", 0)
-    hplayer.set(hplayer.players[i], "kill", 0)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_GOLD_PREV, 0)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_GOLD_TOTAL, 0)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_GOLD_COST, 0)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_GOLD_RATIO, 100)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_LUMBER_PREV, 0)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_LUMBER_TOTAL, 0)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_LUMBER_COST, 0)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_LUMBER_RATIO, 100)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_EXP_RATIO, 100)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_SELL_RATIO, 50)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_APM, 0)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_DAMAGE, 0)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_BE_DAMAGE, 0)
+    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_KILL, 0)
     if ((cj.GetPlayerController(hplayer.players[i]) == MAP_CONTROL_USER)
         and (cj.GetPlayerSlotState(hplayer.players[i]) == PLAYER_SLOT_STATE_PLAYING)) then
         --
@@ -52,7 +52,7 @@ for i = 1, bj_MAX_PLAYERS, 1 do
 
         -- 默认开启自动换木
         hplayer.setIsAutoConvert(hplayer.players[i], true)
-        hplayer.set(hplayer.players[i], "status", hplayer.player_status.gaming)
+        hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_STATUS, hplayer.player_status.gaming)
 
         hevent.onChat(
             hplayer.players[i], "+", false,
@@ -68,7 +68,7 @@ for i = 1, bj_MAX_PLAYERS, 1 do
         end)
         -- 玩家取消选择单位
         hevent.onDeSelection(hplayer.players[i], function(evtData)
-            hplayer.set(evtData.triggerPlayer, "selection", nil)
+            hplayer.set(evtData.triggerPlayer, CONST_CACHE.PLAYER_SELECTION, nil)
         end)
         -- 玩家选中单位
         hevent.pool(hplayer.players[i], hevent_default_actions.player.selection, function(tgr)
@@ -76,10 +76,10 @@ for i = 1, bj_MAX_PLAYERS, 1 do
         end)
 
         hevent.onSelection(hplayer.players[i], 1, function(evtData)
-            hplayer.set(evtData.triggerPlayer, "selection", evtData.triggerUnit)
+            hplayer.set(evtData.triggerPlayer, CONST_CACHE.PLAYER_SELECTION, evtData.triggerUnit)
         end)
     else
-        hplayer.set(hplayer.players[i], "status", hplayer.player_status.none)
+        hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_STATUS, hplayer.player_status.none)
     end
 end
 
