@@ -180,7 +180,7 @@ end
 ---@param whichPlayer userdata
 ---@return table
 hplayer.getAllowCommands = function(whichPlayer)
-    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_ALLOW_COMMAND, false)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_ALLOW_COMMAND, {})
 end
 --- 设置玩家是否支持命令,包含：random/repick
 ---@param whichPlayer userdata

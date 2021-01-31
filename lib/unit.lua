@@ -36,6 +36,9 @@ end
 ---@return number
 hunit.getAttackSides = function(uOrId)
     local s = hunit.getSlk(uOrId)
+    if (s == nil) then
+        return 0
+    end
     local sides1 = s.sides1 or 1
     local dice1 = s.dice1 or 0
     sides1 = math.floor(sides1)

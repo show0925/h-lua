@@ -926,15 +926,11 @@ hevent.onChat = function(whichPlayer, chatStr, matchAll, callFunc)
     local condition = hplayer.get(whichPlayer, key, nil)
     if (condition == nil) then
         condition = function()
-            hevent.triggerEvent(
-                cj.GetTriggerPlayer(),
-                key,
-                {
-                    triggerPlayer = cj.GetTriggerPlayer(),
-                    chatString = cj.GetEventPlayerChatString(),
-                    matchedString = cj.GetEventPlayerChatStringMatched()
-                }
-            )
+            hevent.triggerEvent(cj.GetTriggerPlayer(), key, {
+                triggerPlayer = cj.GetTriggerPlayer(),
+                chatString = cj.GetEventPlayerChatString(),
+                matchedString = cj.GetEventPlayerChatStringMatched()
+            })
         end
         hplayer.set(whichPlayer, key, condition)
     end

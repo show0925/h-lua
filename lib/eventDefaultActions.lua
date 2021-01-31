@@ -63,7 +63,7 @@ hevent_default_actions = {
             local str = string.lower(cj.GetEventPlayerChatString())
             local commands = string.explode(" ", str)
             local allowCommands = hplayer.getAllowCommands(p)
-            if (#allowCommands <= 0 or table.includes(allowCommands, commands[1])) then
+            if (#allowCommands <= 0 or false == table.includes(allowCommands, commands[1])) then
                 return
             end
             if (commands[1] == "-apc") then
@@ -174,12 +174,12 @@ hevent_default_actions = {
                 end
                 hhero.player_heroes[pIndex] = {}
                 echo("已为您 |cffffff80repick|r 了 " .. "|cffffff80" .. qty .. "|r 个单位", p)
-            elseif (commands[1] == "-d") then
+            elseif (commands[1] == "-d" and commands[2]) then
                 -- -d +100
                 local first = string.sub(commands[2], 1, 1)
                 if (first == "+" or first == "-") then
                     --视距
-                    local v = string.sub(commands[1], 2, string.len(commands[1]))
+                    local v = string.sub(commands[2], 2, string.len(commands[2]))
                     v = tonumber(v)
                     if (v == nil) then
                         return
