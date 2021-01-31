@@ -26,7 +26,7 @@ henemy.set = function(name, color, playerIndexes, isShareSight)
     name = name or ("enemy-" .. (1 + #henemy.conf))
     color = color or CONST_PLAYER_COLOR.BLACK
     playerIndexes = playerIndexes or {}
-    if (type(isShareSight) ~= 'boolean') then
+    if (type(isShareSight) ~= "boolean") then
         isShareSight = false
     end
     table.insert(henemy.conf, {
@@ -91,7 +91,7 @@ end
     @return 最后创建单位/单位组
     {
         teamNo = 1, -- 敌军队伍序号，默认1
-        unitId = nil, --类型id,如'H001'
+        unitId = nil, --类型id,如 H001
         x = nil, --创建坐标X，可选
         y = nil, --创建坐标Y，可选
         loc = nil, --创建点，可选

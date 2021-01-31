@@ -148,11 +148,11 @@ end
 ---@return string|nil
 hitem.getId = function(itOrId)
     local id
-    if (type(itOrId) == 'userdata') then
+    if (type(itOrId) == "userdata") then
         id = string.id2char(cj.GetItemTypeId(itOrId))
-    elseif (type(itOrId) == 'number') then
+    elseif (type(itOrId) == "number") then
         id = string.id2char(itOrId)
-    elseif (type(itOrId) == 'string') then
+    elseif (type(itOrId) == "string") then
         id = itOrId
     end
     return id
@@ -162,15 +162,15 @@ end
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getName = function(itOrId)
-    if (type(itOrId) == 'userdata') then
+    if (type(itOrId) == "userdata") then
         return cj.GetItemName(itOrId)
-    elseif (type(itOrId) == 'string' or type(itOrId) == 'number') then
+    elseif (type(itOrId) == "string" or type(itOrId) == "number") then
         local slk = hitem.getSlk(itOrId)
         if (slk ~= nil) then
             return slk.Name;
         end
     end
-    return ''
+    return ""
 end
 
 --- 数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
@@ -415,7 +415,7 @@ hitem.forEach = function(whichUnit, action)
     for i = 0, 5, 1 do
         it = cj.UnitItemInSlot(whichUnit, i)
         local res = action(it, i)
-        if (type(res) == 'boolean' and res == false) then
+        if (type(res) == "boolean" and res == false) then
             break
         end
     end
@@ -494,7 +494,7 @@ hitem.synthesis = function(whichUnit, items)
         return
     end
     items = items or {}
-    if (type(items) == 'userdata') then
+    if (type(items) == "userdata") then
         items = { items }
     end
     -- 合成流程
@@ -811,7 +811,7 @@ end
 --[[
     创建物品
     options = {
-        itemId = 'I001', --物品ID
+        itemId = "I001", --物品ID
         charges = 1, --物品可使用次数（可选，默认为1）
         whichUnit = nil, --哪个单位（可选）
         x = nil, --哪个坐标X（可选）

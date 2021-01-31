@@ -8,7 +8,7 @@ hmultiBoard = {}
 ---@alias hmultiBoard fun(whichBoard: userdata,playerIndex:number):void
 ---@param key string 多面板唯一key
 ---@param refreshFrequency number 刷新频率
----@param yourData hmultiBoard | "function(whichBoard,playerIndex) return {{value = '标题',icon = '图标'}} end"
+---@param yourData hmultiBoard | "function(whichBoard,playerIndex) return {{value = "标题",icon = "图标"}} end"
 hmultiBoard.create = function(key, refreshFrequency, yourData)
     --判断玩家各自的多面板属性
     for pi = 1, hplayer.qty_max, 1 do

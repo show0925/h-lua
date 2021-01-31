@@ -83,7 +83,7 @@ hskill.pause = function(whichUnit, during, pauseColor)
     if (during < 0) then
         during = 0.01 -- 假如没有设置时间，默认打断效果
     end
-    local rgba = nil
+    local rgba
     if (pauseColor == "black") then
         rgba = { 30, 30, 30 }
     elseif (pauseColor == "blue") then
@@ -104,7 +104,7 @@ hskill.pause = function(whichUnit, during, pauseColor)
             prevTimeRemaining = 0
         end
     end
-    local colorBuff = nil
+    local colorBuff
     if (rgba) then
         colorBuff = hunit.setRGBA(whichUnit, rgba[1], rgba[2], rgba[3])
     end

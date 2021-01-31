@@ -223,20 +223,20 @@ end
 ---@param u userdata
 ---@return boolean
 hunit.isPunishing = function(u)
-    return (true == hcache.get(u, "enable-punishing", false))
+    return (true == hcache.get(u, "h-lua-unit-punishing", false))
 end
 
 --- 单位启用硬直（系统默认不启用）
 ---@param u userdata
 hunit.enablePunish = function(u)
-    hcache.set(u, "enable-punishing", true)
+    hcache.set(u, "h-lua-unit-punishing", true)
     hmonitor.listen("punish_current", u)
 end
 
 --- 单位停用硬直（系统默认不启用）
 ---@param u userdata
 hunit.disablePunish = function(u)
-    hcache.set(u, "enable-punishing", false)
+    hcache.set(u, "h-lua-unit-punishing", false)
     hmonitor.ignore("punish_current", u)
 end
 
@@ -263,17 +263,17 @@ hunit.setAnimateSpeed = function(whichUnit, speed, during)
         return
     end
     during = during or 0
-    local prevSpeed = hcache.get(whichUnit, 'animateSpeed', 1.00)
+    local prevSpeed = hcache.get(whichUnit, "h-lua-unit-animate-speed", 1.00)
     speed = speed or prevSpeed
     cj.SetUnitTimeScale(whichUnit, speed)
-    hcache.set(whichUnit, 'animateSpeed', speed)
+    hcache.set(whichUnit, "h-lua-unit-animate-speed", speed)
     if (during > 0) then
         htime.setTimeout(
             during,
             function(t)
                 htime.delTimer(t)
                 cj.SetUnitTimeScale(u, prevSpeed)
-                hcache.set(whichUnit, 'animateSpeed', prevSpeed)
+                hcache.set(whichUnit, "h-lua-unit-animate-speed", prevSpeed)
             end
         )
     end
@@ -292,26 +292,26 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
     end
     during = during or 0
     local uSlk = hunit.getSlk(whichUnit)
-    local rgba = hcache.get(whichUnit, 'rgba')
+    local rgba = hcache.get(whichUnit, "h-lua-unit-rgba")
     if (rgba == nil) then
         rgba = { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0 }
-        hcache.set(whichUnit, 'rgba', rgba)
+        hcache.set(whichUnit, "h-lua-unit-rgba", rgba)
     end
     red = math.max(0, math.min(255, red or rgba[1]))
     green = math.max(0, math.min(255, green or rgba[2]))
     blue = math.max(0, math.min(255, blue or rgba[3]))
     opacity = math.max(0, math.min(1, opacity or rgba[4]))
-    return hbuff.create(during, whichUnit, 'rgba',
+    return hbuff.create(during, whichUnit, "h-lua-buff-rgba",
         function()
             cj.SetUnitVertexColor(whichUnit, red, green, blue, 255 * opacity)
-            hcache.set(whichUnit, 'rgba', { red, green, blue, opacity })
+            hcache.set(whichUnit, "h-lua-unit-rgba", { red, green, blue, opacity })
         end,
         function()
-            local buffHandle = hcache.get(whichUnit, "buff", {})
+            local buffHandle = hcache.get(whichUnit, "h-lua-buff", {})
             if (buffHandle.rgba ~= nil) then
                 if (buffHandle.rgba._idx and #buffHandle.rgba._idx > 1) then
                     local uk = buffHandle.rgba._idx[#buffHandle.rgba._idx - 1]
-                    hbuff.purpose(whichUnit, string.implode('|', { 'rgba', uk }))
+                    hbuff.purpose(whichUnit, string.implode("|", { "h-lua-buff-rgba", uk }))
                 else
                     cj.SetUnitVertexColor(whichUnit, math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 255)
                 end
@@ -329,7 +329,7 @@ end
 --- 重置单位的三原色
 ---@param whichUnit userdata
 hunit.resetRGBA = function(whichUnit)
-    hbuff.delete(whichUnit, 'rgba')
+    hbuff.delete(whichUnit, "h-lua-buff-rgba")
 end
 
 --- 获取单位当前归属玩家
@@ -380,19 +380,19 @@ end
 ---@param options table
 hunit.embed = function(u, options)
     options = options or {}
-    if (type(options.registerOrderEvent ~= 'boolean')) then
+    if (type(options.registerOrderEvent ~= "boolean")) then
         options.registerOrderEvent = false
     end
     -- 记入group选择器（不在框架系统内的单位，也不会被group选择到）
     hgroup.addUnit(hgroup.GLOBAL, u)
     -- 记入realtime
     local id = options.unitId
-    if (type(id) == 'number') then
+    if (type(id) == "number") then
         id = string.id2char(id)
     end
     hcache.alloc(u)
-    hcache.set(u, "animateSpeed", options.timeScale or 1.00)
-    hcache.set(u, "attribute", -1)
+    hcache.set(u, "h-lua-unit-animate-speed", options.timeScale or 1.00)
+    hcache.set(u, "h-lua-attr", -1)
     -- 单位受伤
     hevent.pool(u, hevent_default_actions.unit.damaged, function(tgr)
         cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DAMAGED)
@@ -454,7 +454,7 @@ hunit.create = function(options)
             register = true, --是否注册进系统
             registerOrderEvent = false, --是否注册系统指令事件，可选
             whichPlayer = nil, --归属玩家
-            unitId = nil, --类型id,如'H001'
+            unitId = nil, --类型id,如 H001
             x = nil, --创建坐标X，可选
             y = nil, --创建坐标Y，可选
             loc = nil, --创建点，可选
@@ -637,11 +637,11 @@ end
 ---@return string|nil
 hunit.getId = function(uOrId)
     local id
-    if (type(uOrId) == 'userdata') then
+    if (type(uOrId) == "userdata") then
         id = string.id2char(cj.GetUnitTypeId(uOrId))
-    elseif (type(uOrId) == 'number') then
+    elseif (type(uOrId) == "number") then
         id = string.id2char(uOrId)
-    elseif (type(uOrId) == 'string') then
+    elseif (type(uOrId) == "string") then
         id = uOrId
     end
     return id

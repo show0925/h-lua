@@ -14,7 +14,7 @@ hattributeSetter.relyRegister(preReadUnit)
 hunit.del(preReadUnit)
 
 -- register APM
-hevent.pool('global', hevent_default_actions.player.apm, function(tgr)
+hevent.pool("global", hevent_default_actions.player.apm, function(tgr)
     for i = 1, bj_MAX_PLAYERS, 1 do
         cj.TriggerRegisterPlayerUnitEvent(tgr, cj.Player(i - 1), EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, nil)
         cj.TriggerRegisterPlayerUnitEvent(tgr, cj.Player(i - 1), EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, nil)
@@ -55,11 +55,11 @@ for i = 1, bj_MAX_PLAYERS, 1 do
         hplayer.set(hplayer.players[i], "status", hplayer.player_status.gaming)
 
         hevent.onChat(
-            hplayer.players[i], '+', false,
+            hplayer.players[i], "+", false,
             hevent_default_actions.player.command
         )
         hevent.onChat(
-            hplayer.players[i], '-', false,
+            hplayer.players[i], "-", false,
             hevent_default_actions.player.command
         )
         -- 玩家离开游戏

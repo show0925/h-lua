@@ -103,14 +103,14 @@ hevent_default_actions = {
                     local one = table.random(hhero.selectorPool)
                     table.delete(hhero.selectorPool, one)
                     local u = one
-                    if (type(one) == 'string') then
+                    if (type(one) == "string") then
                         u = hunit.create({
                             whichPlayer = p,
                             unitId = one,
                             x = hhero.bornX,
                             y = hhero.bornY
                         })
-                        hcache.set(u, "hero-selector", hhero.selectorTavern[one])
+                        hcache.set(u, "h-lua-hero-selector", hhero.selectorTavern[one])
                         cj.RemoveUnitFromStock(hhero.selectorTavern[one], string.char2id(one))
                     else
                         table.delete(hhero.selectorClearPool, one)
@@ -148,7 +148,7 @@ hevent_default_actions = {
                 end
                 local qty = #hhero.player_heroes[pIndex]
                 for _, u in ipairs(hhero.player_heroes[pIndex]) do
-                    local heroSelector = hcache.get(u, "hero-selector")
+                    local heroSelector = hcache.get(u, "h-lua-hero-selector")
                     if (type(heroSelector) == "userdata") then
                         table.insert(hhero.selectorPool, hunit.getId(u))
                         cj.AddUnitToStock(heroSelector, cj.GetUnitTypeId(u), 1, 1)
@@ -163,7 +163,7 @@ hevent_default_actions = {
                                 isPause = true
                             }
                         )
-                        hcache.set(new, "hero-selector", { heroSelector[1], heroSelector[2] })
+                        hcache.set(new, "h-lua-hero-selector", { heroSelector[1], heroSelector[2] })
                         table.insert(hhero.selectorClearPool, new)
                         table.insert(hhero.selectorPool, new)
                     end
@@ -208,20 +208,20 @@ hevent_default_actions = {
         selection = cj.Condition(function()
             local triggerPlayer = cj.GetTriggerPlayer()
             local triggerUnit = cj.GetTriggerUnit()
-            local click = hplayer.get(triggerPlayer, 'click', nil)
+            local click = hplayer.get(triggerPlayer, "click", nil)
             if (click == nil) then
                 click = 0
             end
-            hplayer.set(triggerPlayer, 'click', click + 1)
+            hplayer.set(triggerPlayer, "click", click + 1)
             htime.setTimeout(
                 0.3,
                 function(ct)
                     htime.delTimer(ct)
-                    hplayer.set(triggerPlayer, 'click', hplayer.get(triggerPlayer, 'click') - 1)
+                    hplayer.set(triggerPlayer, "click", hplayer.get(triggerPlayer, "click") - 1)
                 end
             )
             for qty = 1, 10 do
-                if (hplayer.get(triggerPlayer, 'click') >= qty) then
+                if (hplayer.get(triggerPlayer, "click") >= qty) then
                     hevent.triggerEvent(
                         triggerPlayer,
                         CONST_EVENT.selection .. "#" .. qty,
@@ -459,14 +459,14 @@ hevent_default_actions = {
             end
             if (orderId == 851983 or orderId == 851971 or orderId == 851986
                 or (lx ~= 1.11 and ly ~= 2.22 and lz ~= 3.33)) then
-                local mov1 = hcache.get(triggerUnit, 'moving', 0)
+                local mov1 = hcache.get(triggerUnit, "h-lua-moving", 0)
                 if (mov1 == 0) then
-                    hcache.set(triggerUnit, 'moving', 1)
+                    hcache.set(triggerUnit, "h-lua-moving", 1)
                     local x = math.floor(cj.GetUnitX(triggerUnit))
                     local y = math.floor(cj.GetUnitY(triggerUnit))
                     local step = 0
                     htime.setInterval(0.25, function(curTimer)
-                        local mov2 = hcache.get(triggerUnit, 'moving', 0)
+                        local mov2 = hcache.get(triggerUnit, "h-lua-moving", 0)
                         if (mov2 == 0) then
                             htime.delTimer(curTimer)
                             return
@@ -476,7 +476,7 @@ hevent_default_actions = {
                         if (mov2 == 1) then
                             -- 移动开始
                             if (tx ~= x or ty ~= y) then
-                                hcache.set(triggerUnit, 'moving', 2)
+                                hcache.set(triggerUnit, "h-lua-moving", 2)
                                 hevent.triggerEvent(
                                     triggerUnit,
                                     CONST_EVENT.moveStart,
@@ -486,7 +486,7 @@ hevent_default_actions = {
                                     }
                                 )
                             else
-                                hcache.set(triggerUnit, 'moving', 0)
+                                hcache.set(triggerUnit, "h-lua-moving", 0)
                             end
                         elseif (mov2 == 2) then
                             -- 移动ing
@@ -501,7 +501,7 @@ hevent_default_actions = {
                             )
                             if (tx == x and ty == y) then
                                 -- 没位移，移动停止
-                                hcache.set(triggerUnit, 'moving', 0)
+                                hcache.set(triggerUnit, "h-lua-moving", 0)
                                 hevent.triggerEvent(
                                     triggerUnit,
                                     CONST_EVENT.moveStop,
@@ -516,7 +516,7 @@ hevent_default_actions = {
                     end)
                 end
             elseif (orderId == 851993) then
-                hcache.set(triggerUnit, 'moving', 0)
+                hcache.set(triggerUnit, "h-lua-moving", 0)
                 hevent.triggerEvent(
                     triggerUnit,
                     CONST_EVENT.holdOn,
@@ -525,7 +525,7 @@ hevent_default_actions = {
                     }
                 )
             elseif (orderId == 851972) then
-                hcache.set(triggerUnit, 'moving', 0)
+                hcache.set(triggerUnit, "h-lua-moving", 0)
                 hevent.triggerEvent(
                     triggerUnit,
                     CONST_EVENT.stop,
@@ -761,7 +761,7 @@ hevent_default_actions = {
         click = cj.Condition(function()
             local clickedDialog = cj.GetClickedDialog()
             local clickedButton = cj.GetClickedButton()
-            local buttons = hcache.get(clickedDialog, "buttons", nil)
+            local buttons = hcache.get(clickedDialog, "h-lua-dialog-buttons", nil)
             if (buttons == nil) then
                 return
             end
@@ -771,7 +771,7 @@ hevent_default_actions = {
                     val = b.value
                 end
             end
-            local action = hcache.get(clickedDialog, "action", nil)
+            local action = hcache.get(clickedDialog, "h-lua-dialog-action", nil)
             if (type(action) == 'function') then
                 action(val)
             end
@@ -955,8 +955,8 @@ hevent_default_actions = {
             local itId = hitem.getId(it)
             local perishable = hitem.getIsPerishable(itId)
             --检测是否有匹配使用
-            local triggerData = hcache.get(u, "item-use-" .. itId, {})
-            hcache.set(u, "item-use-" .. itId, nil)
+            local triggerData = hcache.get(u, "h-lua-item-use-" .. itId, {})
+            hcache.set(u, "h-lua-item-use-" .. itId, nil)
             hitem.used(u, it, triggerData)
             --检测是否使用后自动消失，如果不是，次数补回1
             if (perishable == false) then
@@ -979,7 +979,7 @@ hevent_default_actions = {
             if (itId == nil) then
                 return
             end
-            hcache.set(u, "item-use-" .. itId, {
+            hcache.set(u, "h-lua-item-use-" .. itId, {
                 triggerSkill = skillId,
                 targetUnit = cj.GetSpellTargetUnit(),
                 targetLoc = cj.GetSpellTargetLoc()

@@ -54,11 +54,11 @@ htextTag.create = function(msg, size, color, opacity, during)
         msg = "|cff" .. color .. msg .. "|r"
     end
     hcache.alloc(ttg)
-    hcache.set(ttg, "msg", msg)
-    hcache.set(ttg, "size", size)
-    hcache.set(ttg, "color", color)
-    hcache.set(ttg, "opacity", opacity)
-    hcache.set(ttg, "during", during)
+    hcache.set(ttg, "h-lua-ttg-msg", msg)
+    hcache.set(ttg, "h-lua-ttg-size", size)
+    hcache.set(ttg, "h-lua-ttg-color", color)
+    hcache.set(ttg, "h-lua-ttg-opacity", opacity)
+    hcache.set(ttg, "h-lua-ttg-during", during)
     cj.SetTextTagText(ttg, msg, size * 0.023 / 10)
     cj.SetTextTagColor(ttg, 255, 255, 255, math.floor(255 * opacity))
     if (during == 0) then
@@ -153,35 +153,35 @@ end
 ---@param ttg userdata
 ---@return number|nil
 htextTag.getSize = function(ttg)
-    return hcache.get(ttg, "size")
+    return hcache.get(ttg, "h-lua-ttg-size")
 end
 
 --- 获取漂浮字颜色
 ---@param ttg userdata
 ---@return string|nil
 htextTag.getColor = function(ttg)
-    return hcache.get(ttg, "color")
+    return hcache.get(ttg, "h-lua-ttg-color")
 end
 
 --- 获取漂浮字内容
 ---@param ttg userdata
 ---@return string|nil
 htextTag.getMsg = function(ttg)
-    return hcache.get(ttg, "msg")
+    return hcache.get(ttg, "h-lua-ttg-msg")
 end
 
 --- 获取漂浮字透明度
 ---@param ttg userdata
 ---@return number|nil
 htextTag.getOpacity = function(ttg)
-    return hcache.get(ttg, "opacity")
+    return hcache.get(ttg, "h-lua-ttg-opacity")
 end
 
 --- 获取漂浮字持续时间
 ---@param ttg userdata
 ---@return number|nil
 htextTag.getDuring = function(ttg)
-    return hcache.get(ttg, "during")
+    return hcache.get(ttg, "h-lua-ttg-during")
 end
 
 --- 风格特效

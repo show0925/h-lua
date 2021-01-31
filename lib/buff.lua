@@ -40,10 +40,10 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
     end
     groupKey = groupKey or hbuff.DEFAULT_BUFF_KEY
     purpose()
-    local buffHandle = hcache.get(handleUnit, "buff")
+    local buffHandle = hcache.get(handleUnit, "h-lua-buff")
     if (buffHandle == nil) then
         buffHandle = {}
-        hcache.set(handleUnit, "buff", buffHandle)
+        hcache.set(handleUnit, "h-lua-buff", buffHandle)
     end
     if (buffHandle[groupKey] == nil) then
         buffHandle[groupKey] = {}
@@ -94,7 +94,7 @@ hbuff.purpose = function(handleUnit, buffKey)
     if (groupKey == nil or uk == 0) then
         return
     end
-    local buffHandle = hcache.get(handleUnit, "buff", {})
+    local buffHandle = hcache.get(handleUnit, "h-lua-buff", {})
     if (buffHandle[groupKey] ~= nil and buffHandle[groupKey][uk] ~= nil) then
         buffHandle[groupKey][uk].purpose()
     end
@@ -120,7 +120,7 @@ hbuff.delete = function(handleUnit, buffKey)
     if (groupKey == nil) then
         return
     end
-    local buffHandle = hcache.get(handleUnit, "buff", {})
+    local buffHandle = hcache.get(handleUnit, "h-lua-buff", {})
     if (buffHandle._idx ~= nil) then
         if (uk == nil) then
             -- 删除group下所有buff

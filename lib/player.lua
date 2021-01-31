@@ -30,7 +30,7 @@ hplayer.set = function(whichPlayer, key, value)
         print_stack()
         return
     end
-    local handle = 'h-lua-p-' .. hplayer.index(whichPlayer)
+    local handle = "h-lua-p-" .. hplayer.index(whichPlayer)
     if (false == hcache.exist(handle)) then
         hcache.alloc(handle)
     end
@@ -43,7 +43,7 @@ hplayer.get = function(whichPlayer, key, default)
         print_stack()
         return
     end
-    local handle = 'h-lua-p-' .. hplayer.index(whichPlayer)
+    local handle = "h-lua-p-" .. hplayer.index(whichPlayer)
     return hcache.get(handle, key, default)
 end
 
@@ -83,7 +83,7 @@ hplayer.forEach = function(action)
     if (type(action) == "function") then
         for idx = 1, hplayer.qty_max, 1 do
             local res = action(hplayer.players[idx], idx)
-            if (type(res) == 'boolean' and res == false) then
+            if (type(res) == "boolean" and res == false) then
                 break
             end
         end
@@ -657,7 +657,7 @@ hplayer.setGold = function(whichPlayer, gold, u)
     hevent.triggerEvent("global", CONST_EVENT.playerResourceChange, {
         triggerPlayer = whichPlayer,
         triggerUnit = u,
-        type = 'gold',
+        type = "gold",
         value = gold - hplayer.getGold(whichPlayer),
     })
     local exceedLumber = 0
@@ -712,10 +712,10 @@ hplayer.setLumber = function(whichPlayer, lumber, u)
         return
     end
     -- 触发英雄资源变动
-    hevent.triggerEvent('global', CONST_EVENT.playerResourceChange, {
+    hevent.triggerEvent("global", CONST_EVENT.playerResourceChange, {
         triggerPlayer = whichPlayer,
         triggerUnit = u,
-        type = 'lumber',
+        type = "lumber",
         value = lumber - hplayer.getLumber(whichPlayer),
     })
     hplayer.setPlayerState(whichPlayer, PLAYER_STATE_RESOURCE_LUMBER, lumber)

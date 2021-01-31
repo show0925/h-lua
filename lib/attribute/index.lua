@@ -125,9 +125,9 @@ hattribute.init = function(whichUnit)
     }
     for _, v in ipairs(CONST_ENCHANT) do
         attribute["e_" .. v.value] = 0.0
-        attribute["e_" .. v.value .. '_oppose'] = 0.0
-        attribute["e_" .. v.value .. '_attack'] = 0
-        attribute["e_" .. v.value .. '_append'] = 0
+        attribute["e_" .. v.value .. "_oppose"] = 0.0
+        attribute["e_" .. v.value .. "_attack"] = 0
+        attribute["e_" .. v.value .. "_append"] = 0
     end
     if (uSlk.dmgplus1) then
         attribute.attack_white = math.floor(uSlk.dmgplus1)
@@ -145,7 +145,7 @@ hattribute.init = function(whichUnit)
         attribute.sight = math.floor(uSlk.sight)
     end
     -- 初始化数据
-    hcache.set(whichUnit, 'attribute', attribute)
+    hcache.set(whichUnit, "h-lua-attr", attribute)
     return true
 end
 
@@ -488,14 +488,14 @@ hattribute.get = function(whichUnit, attr)
     if (whichUnit == nil) then
         return nil
     end
-    local attribute = hcache.get(whichUnit, 'attribute', nil)
+    local attribute = hcache.get(whichUnit, "h-lua-attr", nil)
     if (attribute == nil) then
         return nil
     elseif (attribute == -1) then
         if (hattribute.init(whichUnit) == false) then
             return nil
         end
-        attribute = hcache.get(whichUnit, 'attribute')
+        attribute = hcache.get(whichUnit, "h-lua-attr")
     end
     attribute.attack = hunit.getAttackSides(whichUnit) + (attribute.attack_white or 0) + (attribute.attack_green or 0)
     attribute.defend = math.floor((attribute.defend_white or 0) + (attribute.defend_green or 0))

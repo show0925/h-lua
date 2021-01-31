@@ -306,7 +306,7 @@ hskill.swim = function(options)
     if (during < 0.05) then
         during = 0.05
     end
-    hcache.set(u, "isSwim", true)
+    hcache.set(u, "h-lua-is-swim", true)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
         heffect.bindUnit(options.effect, u, "origin", during)
     end
@@ -330,7 +330,7 @@ hskill.swim = function(options)
                 function(t)
                     htime.delTimer(t)
                     cj.UnitRemoveAbility(u, hskill.BUFF_SWIM)
-                    hcache.set(u, "isSwim", false)
+                    hcache.set(u, "h-lua-is-swim", false)
                 end
             )
         )
@@ -433,7 +433,7 @@ hskill.silent = function(options)
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "head", -1)
         hskill.set(u, "silentEffect", eff)
     end
-    hcache.set(u, "isSilent", true)
+    hcache.set(u, "h-lua-is-silent", true)
     if (damage > 0) then
         hskill.damage(
             {
@@ -481,7 +481,7 @@ hskill.silent = function(options)
                 if (table.includes(hRuntime.skill.silentUnits, u)) then
                     table.delete(hRuntime.skill.silentUnits, u)
                 end
-                hcache.set(u, "isSilent", false)
+                hcache.set(u, "h-lua-is-silent", false)
             end
         end
     )
@@ -545,7 +545,7 @@ hskill.unarm = function(options)
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "weapon", -1)
         hskill.set(u, "unarmEffect", eff)
     end
-    hcache.set(u, "isUnArm", true)
+    hcache.set(u, "h-lua-is-un-arm", true)
     if (damage > 0) then
         hskill.damage(
             {
@@ -593,7 +593,7 @@ hskill.unarm = function(options)
                 if (table.includes(hRuntime.skill.unarmUnits, u)) then
                     table.delete(hRuntime.skill.unarmUnits, u)
                 end
-                hcache.set(u, "isUnArm", false)
+                hcache.set(u, "h-lua-is-un-arm", false)
             end
         end
     )
@@ -988,10 +988,10 @@ hskill.crackFly = function(options)
         during = 0.5
     end
     --不二次击飞
-    if (hcache.get(options.targetUnit, "isCrackFly", false) == true) then
+    if (hcache.get(options.targetUnit, "h-lua-is-crack-fly", false) == true) then
         return
     end
-    hcache.set(options.targetUnit, "isCrackFly", true)
+    hcache.set(options.targetUnit, "h-lua-is-crack-fly", true)
     local tempObj = {
         odds = 99999,
         targetUnit = options.targetUnit,
@@ -1064,7 +1064,7 @@ hskill.crackFly = function(options)
                 end
                 cj.SetUnitFlyHeight(options.targetUnit, originHigh, 10000)
                 cj.SetUnitPathing(options.targetUnit, true)
-                hcache.set(options.targetUnit, "isCrackFly", false)
+                hcache.set(options.targetUnit, "h-lua-is-crack-fly", false)
                 -- 默认是地面，创建沙尘
                 local tempEff = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
                 if (his.water(options.targetUnit) == true) then
@@ -1239,10 +1239,10 @@ hskill.whirlwind = function(options)
         return
     end
     --不二次
-    if (hcache.get(options.sourceUnit, "isWhirlwind", false) == true) then
+    if (hcache.get(options.sourceUnit, "h-lua-is-whirlwind", false) == true) then
         return
     end
-    hcache.set(options.sourceUnit, "isWhirlwind", true)
+    hcache.set(options.sourceUnit, "h-lua-is-whirlwind", true)
     if (options.effect ~= nil) then
         heffect.bindUnit(options.effect, options.sourceUnit, "origin", during)
     end
@@ -1259,7 +1259,7 @@ hskill.whirlwind = function(options)
                 if (options.animation) then
                     cj.AddUnitAnimationProperties(options.sourceUnit, options.animation, false)
                 end
-                hcache.set(options.sourceUnit, "isWhirlwind", false)
+                hcache.set(options.sourceUnit, "h-lua-is-Whirlwind", false)
                 return
             end
             if (options.animation) then

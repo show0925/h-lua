@@ -8,12 +8,12 @@ hmonitor = { monitors = {} }
 ---@param key string 唯一key
 ---@param frequency number 周期间隔，每个周期会把受监听对象回调
 ---@param action monAction | "function(object) end" 监听操作
----@param removeFilter nil|monRemoveFilter | "function(object) end" 移除监听对象的适配条件
-hmonitor.create = function(key, frequency, action, removeFilter)
+---@param ignoreFilter nil|monRemoveFilter | "function(object) end" 移除监听对象的适配条件
+hmonitor.create = function(key, frequency, action, ignoreFilter)
     if (type(key) ~= "string" or type(frequency) ~= "number" or type(action) ~= "function") then
         return
     end
-    if (removeFilter ~= nil and type(removeFilter) ~= "function") then
+    if (ignoreFilter ~= nil and type(ignoreFilter) ~= "function") then
         return
     end
     if (hmonitor.monitors[key] ~= nil) then
@@ -22,7 +22,7 @@ hmonitor.create = function(key, frequency, action, removeFilter)
     local obj = Mapping:new()
     local timer = htime.setInterval(frequency, function(_)
         obj:forEach(function(o, oi)
-            if (removeFilter == nil or removeFilter(o) ~= true) then
+            if (ignoreFilter == nil or ignoreFilter(o) ~= true) then
                 action(o)
             else
                 print_mb("???=" .. key .. hunit.getName(o))
@@ -64,6 +64,9 @@ hmonitor.listen = function(key, obj)
 end
 
 --- 忽略对象
+--- 由于监听器的特殊性和长效性
+--- 不建议手动忽略，推荐在 create 时严谨地编写 ignoreFilter 中返回true从而自动忽略
+---@protected
 ---@param key string 唯一key
 ---@param obj any 监听对象
 hmonitor.ignore = function(key, obj)

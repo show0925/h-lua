@@ -210,49 +210,49 @@ end
 ---@param whichUnit userdata
 ---@return boolean
 his.swim = function(whichUnit)
-    return hcache.get(whichUnit, "isSwim", false)
+    return hcache.get(whichUnit, "h-lua-is-swim", false)
 end
 
 --- 是否被硬直
 ---@param whichUnit userdata
 ---@return boolean
 his.punish = function(whichUnit)
-    return hcache.get(whichUnit, "isPunishing", false)
+    return hcache.get(whichUnit, "h-lua-is-punishing", false)
 end
 
 --- 是否被沉默
 ---@param whichUnit userdata
 ---@return boolean
 his.silent = function(whichUnit)
-    return hcache.get(whichUnit, "isSilent", false)
+    return hcache.get(whichUnit, "h-lua-is-silent", false)
 end
 
 --- 是否被缴械
 ---@param whichUnit userdata
 ---@return boolean
 his.unarm = function(whichUnit)
-    return hcache.get(whichUnit, "isUnArm", false)
+    return hcache.get(whichUnit, "h-lua-is-un-arm", false)
 end
 
 --- 是否被击飞
 ---@param whichUnit userdata
 ---@return boolean
 his.crackFly = function(whichUnit)
-    return hcache.get(whichUnit, "isCrackFly", false)
+    return hcache.get(whichUnit, "h-lua-is-crack-fly", false)
 end
 
 --- 是否正在受伤
 ---@param whichUnit userdata
 ---@return boolean
 his.beDamaging = function(whichUnit)
-    return hcache.get(whichUnit, "isBeDamaging", false)
+    return hcache.get(whichUnit, "h-lua-is-be-damaging", false)
 end
 
 --- 是否正在造成伤害
 ---@param whichUnit userdata
 ---@return boolean
 his.damaging = function(whichUnit)
-    return hcache.get(whichUnit, "isDamaging", false)
+    return hcache.get(whichUnit, "h-lua-is-damaging", false)
 end
 
 --- 是否处在水面

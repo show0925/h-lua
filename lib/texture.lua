@@ -82,8 +82,8 @@ htexture.mark = function(path, during, whichPlayer, red, green, blue)
             end
         )
     elseif (whichPlayer ~= nil) then
-        if (hplayer.get(whichPlayer, 'marking', false) ~= true) then
-            hplayer.set(whichPlayer, 'marking', true)
+        if (hplayer.get(whichPlayer, "marking", false) ~= true) then
+            hplayer.set(whichPlayer, "marking", true)
             if (whichPlayer == cj.GetLocalPlayer()) then
                 htexture.cinematicFilterGeneric(
                     0.50,
@@ -97,7 +97,7 @@ htexture.mark = function(path, during, whichPlayer, red, green, blue)
                 during,
                 function(t)
                     htime.delTimer(t)
-                    hplayer.set(whichPlayer, 'marking', false)
+                    hplayer.set(whichPlayer, "marking", false)
                     if (whichPlayer == cj.GetLocalPlayer()) then
                         htexture.cinematicFilterGeneric(
                             0.50,
