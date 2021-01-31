@@ -3,32 +3,6 @@ hevent = {
     POOL_RED_LINE = 1000,
 }
 
---- set
----@private
-hevent.set = function(handle, key, value)
-    if (handle == nil) then
-        print_stack()
-        return
-    end
-    if (hRuntime.event[handle] == nil) then
-        hRuntime.event[handle] = {}
-    end
-    hRuntime.event[handle][key] = value
-end
-
---- get
----@private
-hevent.get = function(handle, key)
-    if (handle == nil) then
-        print_stack()
-        return
-    end
-    if (hRuntime.event[handle] == nil) then
-        hRuntime.event[handle] = {}
-    end
-    return hRuntime.event[handle][key]
-end
-
 --- 触发池
 --- 使用一个handle，以不同的conditionAction累计计数
 --- 分配触发到回调注册
@@ -84,13 +58,13 @@ hevent.setLastDamageUnit = function(whichUnit, lastUnit)
     if (whichUnit == nil and lastUnit == nil) then
         return
     end
-    hevent.set(whichUnit, "lastDamageUnit", lastUnit)
+    hcache.set(whichUnit, CONST_CACHE.EVENT_LAST_DAMAGE_SRC, lastUnit)
 end
 
 --- 最后一位伤害的单位
 ---@protected
 hevent.getLastDamageUnit = function(whichUnit)
-    return hevent.get(whichUnit, "lastDamageUnit")
+    return hcache.get(whichUnit, CONST_CACHE.EVENT_LAST_DAMAGE_SRC)
 end
 
 --- 注册事件，会返回一个event_id（私有通用）

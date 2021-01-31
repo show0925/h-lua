@@ -301,7 +301,7 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
     green = math.max(0, math.min(255, green or rgba[2]))
     blue = math.max(0, math.min(255, blue or rgba[3]))
     opacity = math.max(0, math.min(1, opacity or rgba[4]))
-    return hbuff.create(during, whichUnit, CONST_BUFF.RGBA,
+    return hbuff.create(during, whichUnit, CONST_CACHE.BUFF_RGBA,
         function()
             cj.SetUnitVertexColor(whichUnit, red, green, blue, 255 * opacity)
             hcache.set(whichUnit, CONST_CACHE.UNIT_RGBA, { red, green, blue, opacity })
@@ -311,7 +311,7 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
             if (buffHandle.rgba ~= nil) then
                 if (buffHandle.rgba._idx and #buffHandle.rgba._idx > 1) then
                     local uk = buffHandle.rgba._idx[#buffHandle.rgba._idx - 1]
-                    hbuff.purpose(whichUnit, string.implode("|", { CONST_BUFF.RGBA, uk }))
+                    hbuff.purpose(whichUnit, string.implode("|", { CONST_CACHE.BUFF_RGBA, uk }))
                 else
                     cj.SetUnitVertexColor(whichUnit, math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 255)
                 end
@@ -329,7 +329,7 @@ end
 --- 重置单位的三原色
 ---@param whichUnit userdata
 hunit.resetRGBA = function(whichUnit)
-    hbuff.delete(whichUnit, CONST_BUFF.RGBA)
+    hbuff.delete(whichUnit, CONST_CACHE.BUFF_RGBA)
 end
 
 --- 获取单位当前归属玩家

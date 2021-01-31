@@ -716,7 +716,7 @@ hitem.synthesis = function(whichUnit, items)
                     end
                     local newIt = cj.CreateItem(string.char2id(sIt.id), hunit.x(whichUnit), hunit.y(whichUnit))
                     cj.SetItemCharges(newIt, sIt.charges)
-                    hitemPool.insert("h-lua-pick", newIt)
+                    hitemPool.insert(CONST_CACHE.ITEM_POOL_PICK, newIt)
                 end
             end
         end
@@ -858,7 +858,7 @@ hitem.create = function(options)
         -- 掉在地上
         it = cj.CreateItem(itemId, x, y)
         cj.SetItemCharges(it, charges)
-        hitemPool.insert("h-lua-pick", it)
+        hitemPool.insert(CONST_CACHE.ITEM_POOL_PICK, it)
         if (options.whichUnit ~= nil and during > 0) then
             htime.setTimeout(during, function(t)
                 htime.delTimer(t)
@@ -884,11 +884,11 @@ hitem.create = function(options)
             -- 掉在地上
             it = cj.CreateItem(itemId, x, y)
             cj.SetItemCharges(it, charges)
-            hitemPool.insert("h-lua-pick", it)
+            hitemPool.insert(CONST_CACHE.ITEM_POOL_PICK, it)
         else
             -- 满格了，如果是一般物品；掉在地上
             cj.SetItemCharges(it, charges)
-            hitemPool.insert("h-lua-pick", it)
+            hitemPool.insert(CONST_CACHE.ITEM_POOL_PICK, it)
         end
     end
     return it
@@ -1012,7 +1012,7 @@ hitem.pickRect = function(u, x, y, w, h)
         return
     end
     local items = {}
-    hitemPool.forEach("h-lua-pick", function(enumItem)
+    hitemPool.forEach(CONST_CACHE.ITEM_POOL_PICK, function(enumItem)
         local xi = cj.GetItemX(enumItem)
         local yi = cj.GetItemY(enumItem)
         local d = math.getDistanceBetweenXY(x, y, xi, yi)
@@ -1037,7 +1037,7 @@ hitem.pickRound = function(u, x, y, r)
         return
     end
     local items = {}
-    hitemPool.forEach("h-lua-pick", function(enumItem)
+    hitemPool.forEach(CONST_CACHE.ITEM_POOL_PICK, function(enumItem)
         local xi = cj.GetItemX(enumItem)
         local yi = cj.GetItemY(enumItem)
         local d = math.getDistanceBetweenXY(x, y, xi, yi)
