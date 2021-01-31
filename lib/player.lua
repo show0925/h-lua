@@ -90,14 +90,16 @@ hplayer.forEach = function(action)
     end
 end
 
---- 设置换算比率
----@param ratio number (%)
+--- 设置换算比率，多少金换1木
+---@param ratio number
 hplayer.setConvertRatio = function(ratio)
-    hplayer.convert_ratio = ratio
+    if (type(ratio) == "number") then
+        hplayer.convert_ratio = math.floor(ratio)
+    end
 end
 
 --- 获取换算比率
----@return number (%)
+---@return number
 hplayer.getConvertRatio = function()
     return hplayer.convert_ratio
 end
@@ -325,26 +327,6 @@ hplayer.getIsShocking = function(whichPlayer)
     return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_IS_SHOCKING, false)
 end
 
---- 自动寄存超出的黄金数量，如果满转换数值，则返回对应的整数木头
----@private
-hplayer.getExceedLumber = function(whichPlayer, exceedGold)
-    local current = hplayer.get(whichPlayer, CONST_CACHE.PLAYER_GOLD_EXCEED, 0)
-    local l = 0
-    if (current < 0) then
-        current = 0
-    end
-    current = current + exceedGold
-    if (current > 10000000) then
-        current = 10000000
-    end
-    -- 如果没有开启，则先寄存着，开启后再换算，但是最多只存1000W
-    if (hplayer.getIsAutoConvert(whichPlayer) == true and current >= hplayer.getConvertRatio()) then
-        l = math.floor(current / player_convert_ratio)
-        current = math.floor(current - l * player_convert_ratio)
-    end
-    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_GOLD_EXCEED, current)
-    return l
-end
 --- 获取玩家造成的总伤害
 ---@param whichPlayer userdata
 ---@return number
@@ -637,21 +619,25 @@ hplayer.setGold = function(whichPlayer, gold, u)
         type = "gold",
         value = gold - hplayer.getGold(whichPlayer),
     })
-    local exceedLumber = 0
     -- 满 100W 调用自动换算（至于换不换算，看玩家有没有开转换）
     if (gold > 1000000) then
-        exceedLumber = hplayer.getExceedLumber(whichPlayer, gold - 1000000)
-        if (hplayer.getIsAutoConvert(whichPlayer) == true) then
+        if (hplayer.getIsAutoConvert(whichPlayer)) then
+            local playerConvertRatio = hplayer.getConvertRatio()
+            local goldRemain = math.fmod(gold, playerConvertRatio)
+            local exceedLumber = math.floor((gold - goldRemain) / playerConvertRatio)
             if (exceedLumber > 0) then
                 hplayer.adjustPlayerState(exceedLumber, whichPlayer, PLAYER_STATE_RESOURCE_LUMBER)
                 hplayer.adjustLumber(whichPlayer)
             end
+            gold = goldRemain
+        else
+            gold = 1000000
         end
-        gold = 1000000
     end
     hplayer.setPlayerState(whichPlayer, PLAYER_STATE_RESOURCE_GOLD, gold)
     hplayer.adjustGold(whichPlayer)
 end
+
 --- 增加玩家金钱
 ---@param whichPlayer userdata
 ---@param gold number
