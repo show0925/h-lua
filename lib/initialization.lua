@@ -87,15 +87,12 @@ end
 hmonitor.create("life_back", 0.5,
     function(object)
         print("m:life_back")
-        if (his.alive(object)) then
-            local val = hattr.get(object, "life_back") or 0
-            if (val ~= 0) then
-                hunit.addCurLife(object, val * 0.5)
-            end
-        end
+        local val = hattr.get(object, "life_back") or 0
+        hunit.addCurLife(object, val * 0.5)
     end,
     function(object)
-        return his.deleted(object) or hunit.getCurLifePercent(object) >= 100
+        local val = math.round(hattr.get(object, "life_back") or 0)
+        return val < 0.05 or his.dead(object) or his.deleted(object) or hunit.getCurLifePercent(object) >= 100
     end
 )
 
@@ -103,15 +100,12 @@ hmonitor.create("life_back", 0.5,
 hmonitor.create("mana_back", 0.7,
     function(object)
         print("m:mana_back")
-        if (his.alive(object)) then
-            local val = hattr.get(object, "mana_back") or 0
-            if (val ~= 0) then
-                hunit.addCurMana(object, val * 0.7)
-            end
-        end
+        local val = hattr.get(object, "mana_back") or 0
+        hunit.addCurMana(object, val * 0.7)
     end,
     function(object)
-        return his.deleted(object) or hunit.getCurManaPercent(object) >= 100
+        local val = math.round(hattr.get(object, "mana_back") or 0)
+        return val < 0.05 or his.dead(object) or his.deleted(object) or hunit.getCurManaPercent(object) >= 100
     end
 )
 
@@ -119,22 +113,20 @@ hmonitor.create("mana_back", 0.7,
 hmonitor.create("punish_current", 3,
     function(object)
         print("m:punish_current")
-        if (his.alive(object) == true) then
-            local punish_current = hattr.get(object, "punish_current")
-            local punish = hattr.get(object, "punish")
-            if (punish_current < punish) then
-                local val = math.floor(0.03 * punish)
-                if (punish_current + val > punish) then
-                    hattr.set(object, 0, { punish_current = "=" .. punish })
-                else
-                    hattr.set(object, 0, { punish_current = "+" .. val })
-                end
+        local punish_current = hattr.get(object, "punish_current")
+        local punish = hattr.get(object, "punish")
+        if (punish_current < punish) then
+            local val = math.floor(0.03 * punish)
+            if (punish_current + val > punish) then
+                hattr.set(object, 0, { punish_current = "=" .. punish })
+            else
+                hattr.set(object, 0, { punish_current = "+" .. val })
             end
         end
     end,
     function(object)
         local punish_current = hattr.get(object, "punish_current")
         local punish = hattr.get(object, "punish")
-        return his.deleted(object) or his.beDamaging(object) == true or punish_current >= punish
+        return his.dead(object) or his.deleted(object) or his.beDamaging(object) or punish_current >= punish
     end
 )

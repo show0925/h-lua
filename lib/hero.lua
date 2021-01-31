@@ -141,47 +141,38 @@ hhero.rebornAtXY = function(whichHero, delay, invulnerable, x, y, showDialog)
     if (his.hero(whichHero)) then
         if (delay < 0.3 and his.deleted(whichHero) == false) then
             cj.ReviveHero(whichHero, x, y, true)
-            hattr.resetAttrGroups(whichHero)
+            hmonitor.listen("lift_back", whichHero)
+            hmonitor.listen("mana_back", whichHero)
             if (invulnerable > 0) then
                 hskill.invulnerable(whichHero, invulnerable)
             end
             -- @触发复活事件
-            hevent.triggerEvent(
-                whichHero,
-                CONST_EVENT.reborn,
-                {
-                    triggerUnit = whichHero
-                }
-            )
+            hevent.triggerEvent(whichHero, CONST_EVENT.reborn, {
+                triggerUnit = whichHero
+            })
         else
             local title
             if (showDialog == true) then
                 title = hunit.getName(whichHero)
             end
-            htime.setTimeout(
-                delay,
-                function(t)
-                    htime.delTimer(t)
-                    if (his.deleted(whichHero) == false) then
-                        if (his.alive(whichHero)) then
-                            return
-                        end
-                        cj.ReviveHero(whichHero, x, y, true)
-                        if (invulnerable > 0) then
-                            hskill.invulnerable(whichHero, invulnerable)
-                        end
-                        -- @触发复活事件
-                        hevent.triggerEvent(
-                            whichHero,
-                            CONST_EVENT.reborn,
-                            {
-                                triggerUnit = whichHero
-                            }
-                        )
+            htime.setTimeout(delay, function(t)
+                htime.delTimer(t)
+                if (his.deleted(whichHero) == false) then
+                    if (his.alive(whichHero)) then
+                        return
                     end
-                end,
-                title
-            )
+                    cj.ReviveHero(whichHero, x, y, true)
+                    hmonitor.listen("lift_back", whichHero)
+                    hmonitor.listen("mana_back", whichHero)
+                    if (invulnerable > 0) then
+                        hskill.invulnerable(whichHero, invulnerable)
+                    end
+                    -- @触发复活事件
+                    hevent.triggerEvent(whichHero, CONST_EVENT.reborn, {
+                        triggerUnit = whichHero
+                    })
+                end
+            end, title)
         end
     end
 end

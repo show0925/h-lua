@@ -63,7 +63,7 @@ end
 ---@param val number
 hunit.setCurLife = function(u, val)
     cj.SetUnitState(u, UNIT_STATE_LIFE, val)
-    hmonitor.insert("life_back", u)
+    hmonitor.listen("life_back", u)
 end
 --- 增加单位的当前生命
 ---@param u userdata
@@ -94,7 +94,7 @@ end
 ---@param val number
 hunit.setCurMana = function(u, val)
     cj.SetUnitState(u, UNIT_STATE_MANA, val)
-    hmonitor.insert("mana_back", u)
+    hmonitor.listen("mana_back", u)
 end
 --- 增加单位的当前魔法
 ---@param u userdata
@@ -222,20 +222,22 @@ end
 --- 单位是否启用硬直（系统默认不启用）
 ---@param u userdata
 ---@return boolean
-hunit.isOpenPunish = function(u)
-    return hmonitor.isMonitoring("punish_current", u)
+hunit.isPunishing = function(u)
+    return (true == hcache.get(u, "enable-punishing", false))
 end
 
 --- 单位启用硬直（系统默认不启用）
 ---@param u userdata
-hunit.openPunish = function(u)
-    hmonitor.insert("punish_current", u)
+hunit.enablePunish = function(u)
+    hcache.set(u, "enable-punishing", true)
+    hmonitor.listen("punish_current", u)
 end
 
 --- 单位停用硬直（系统默认不启用）
 ---@param u userdata
-hunit.closePunish = function(u)
-    hmonitor.remove("punish_current", u)
+hunit.disablePunish = function(u)
+    hcache.set(u, "enable-punishing", false)
+    hmonitor.ignore("punish_current", u)
 end
 
 --- 设置单位无敌
@@ -587,7 +589,7 @@ hunit.create = function(options)
         end
         --开启硬直，执行硬直计算
         if (options.isOpenPunish ~= nil and options.isOpenPunish == true) then
-            hunit.openPunish(u)
+            hunit.enablePunish(u)
         end
         --影子，无敌蝗虫暂停,且不注册系统
         if (options.isShadow ~= nil and options.isShadow == true) then

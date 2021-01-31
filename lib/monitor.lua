@@ -46,27 +46,27 @@ end
 ---@param key string 唯一key
 ---@param obj any 监听对象
 ---@return boolean
-hmonitor.isMonitoring = function(key, obj)
+hmonitor.isListening = function(key, obj)
     if (hmonitor.monitors[key] ~= nil) then
         return 9527 == hmonitor.monitors[key].object:get(obj)
     end
     return false
 end
 
---- 往监听器添加受监听对象
+--- 监听对象
 ---@param key string 唯一key
 ---@param obj any 监听对象
-hmonitor.insert = function(key, obj)
+hmonitor.listen = function(key, obj)
     local monitor = hmonitor.monitors[key]
     if (monitor ~= nil) then
         monitor.object:set(obj, 9527)
     end
 end
 
---- 往监听器剔除受监听对象
+--- 忽略对象
 ---@param key string 唯一key
 ---@param obj any 监听对象
-hmonitor.remove = function(key, obj)
+hmonitor.ignore = function(key, obj)
     local monitor = hmonitor.monitors[key]
     if (monitor ~= nil) then
         monitor.object:del(obj)
