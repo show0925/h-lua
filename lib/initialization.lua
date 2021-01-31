@@ -86,7 +86,6 @@ end
 -- 恢复生命监听器
 hmonitor.create("life_back", 0.5,
     function(object)
-        print("m:life_back")
         local val = hattr.get(object, "life_back") or 0
         hunit.addCurLife(object, val * 0.5)
     end,
@@ -99,7 +98,6 @@ hmonitor.create("life_back", 0.5,
 -- 恢复魔法监听器
 hmonitor.create("mana_back", 0.7,
     function(object)
-        print("m:mana_back")
         local val = hattr.get(object, "mana_back") or 0
         hunit.addCurMana(object, val * 0.7)
     end,
@@ -112,21 +110,18 @@ hmonitor.create("mana_back", 0.7,
 -- 硬直监听器（没收到伤害时,每3秒恢复3%硬直）
 hmonitor.create("punish_current", 3,
     function(object)
-        print("m:punish_current")
         local punish_current = hattr.get(object, "punish_current")
         local punish = hattr.get(object, "punish")
-        if (punish_current < punish) then
-            local val = math.floor(0.03 * punish)
-            if (punish_current + val > punish) then
-                hattr.set(object, 0, { punish_current = "=" .. punish })
-            else
-                hattr.set(object, 0, { punish_current = "+" .. val })
-            end
+        local val = math.floor(0.03 * punish)
+        if (punish_current + val > punish) then
+            hattr.set(object, 0, { punish_current = "=" .. punish })
+        else
+            hattr.set(object, 0, { punish_current = "+" .. val })
         end
     end,
     function(object)
         local punish_current = hattr.get(object, "punish_current")
         local punish = hattr.get(object, "punish")
-        return his.dead(object) or his.deleted(object) or his.beDamaging(object) or punish_current >= punish
+        return punish_current >= punish or his.dead(object) or his.deleted(object) or his.beDamaging(object) or hunit.isPunishing(object) == false
     end
 )

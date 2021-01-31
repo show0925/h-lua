@@ -46,7 +46,6 @@ htextTag.create = function(msg, size, color, opacity, during)
     local ttg = cj.CreateTextTag()
     if (ttg == nil) then
         --由于漂浮字有上限，所以有可能为nil，此时返回不创建即可
-        print_mb("ttg == nil=" .. msg)
         return
     end
     htextTag.qty = htextTag.qty + 1

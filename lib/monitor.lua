@@ -25,7 +25,6 @@ hmonitor.create = function(key, frequency, action, ignoreFilter)
             if (ignoreFilter == nil or ignoreFilter(o) ~= true) then
                 action(o)
             else
-                print_mb("???=" .. key .. hunit.getName(o))
                 obj:del(o)
             end
         end)
