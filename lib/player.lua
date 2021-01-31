@@ -620,18 +620,24 @@ hplayer.setGold = function(whichPlayer, gold, u)
         value = gold - hplayer.getGold(whichPlayer),
     })
     -- 满 100W 调用自动换算（至于换不换算，看玩家有没有开转换）
-    if (gold > 1000000) then
-        if (hplayer.getIsAutoConvert(whichPlayer)) then
+    local max = 1000000
+    if (gold > max) then
+        local curLumber = hplayer.getLumber(whichPlayer)
+        if (hplayer.getIsAutoConvert(whichPlayer) and curLumber < max) then
             local playerConvertRatio = hplayer.getConvertRatio()
             local goldRemain = math.fmod(gold, playerConvertRatio)
             local exceedLumber = math.floor((gold - goldRemain) / playerConvertRatio)
             if (exceedLumber > 0) then
+                if (exceedLumber + curLumber > max) then
+                    goldRemain = goldRemain + playerConvertRatio * (exceedLumber + curLumber - max)
+                    exceedLumber = max - curLumber
+                end
                 hplayer.adjustPlayerState(exceedLumber, whichPlayer, PLAYER_STATE_RESOURCE_LUMBER)
                 hplayer.adjustLumber(whichPlayer)
+                gold = goldRemain
+            else
+                gold = max
             end
-            gold = goldRemain
-        else
-            gold = 1000000
         end
     end
     hplayer.setPlayerState(whichPlayer, PLAYER_STATE_RESOURCE_GOLD, gold)
