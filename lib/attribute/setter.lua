@@ -13,15 +13,15 @@ hattributeSetter = {
 
 --- @private
 hattributeSetter.getDecimalTemporaryStorage = function(whichUnit, attr)
-    local diff = hcache.get(whichUnit, 'h-lua-decimal-temporary-storage', {})
+    local diff = hcache.get(whichUnit, CONST_CACHE.ATTR_DEC_TEM, {})
     return diff[attr] or 0
 end
 
 --- @private
 hattributeSetter.setDecimalTemporaryStorage = function(whichUnit, attr, value)
-    local diff = hcache.get(whichUnit, 'h-lua-decimal-temporary-storage', {})
+    local diff = hcache.get(whichUnit, CONST_CACHE.ATTR_DEC_TEM, {})
     diff[attr] = math.round(value)
-    hcache.set(whichUnit, 'h-lua-decimal-temporary-storage', diff)
+    hcache.set(whichUnit, CONST_CACHE.ATTR_DEC_TEM, diff)
 end
 
 --- 为单位注册属性系统所需要的基础技能

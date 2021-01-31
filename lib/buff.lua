@@ -3,7 +3,7 @@
 ---当buff被删除时，将会
 hbuff = {
     UNIQUE_KEY = 0,
-    DEFAULT_BUFF_KEY = '_h_lua',
+    DEFAULT_CONST_BUFF = '_h_lua',
 }
 
 ---@private
@@ -38,12 +38,12 @@ hbuff.create = function(during, handleUnit, groupKey, purpose, rollback)
     if (false == hcache.exist(handleUnit)) then
         return
     end
-    groupKey = groupKey or hbuff.DEFAULT_BUFF_KEY
+    groupKey = groupKey or hbuff.DEFAULT_CONST_BUFF
     purpose()
-    local buffHandle = hcache.get(handleUnit, "h-lua-buff")
+    local buffHandle = hcache.get(handleUnit, CONST_CACHE.BUFF)
     if (buffHandle == nil) then
         buffHandle = {}
-        hcache.set(handleUnit, "h-lua-buff", buffHandle)
+        hcache.set(handleUnit, CONST_CACHE.BUFF, buffHandle)
     end
     if (buffHandle[groupKey] == nil) then
         buffHandle[groupKey] = {}
@@ -94,7 +94,7 @@ hbuff.purpose = function(handleUnit, buffKey)
     if (groupKey == nil or uk == 0) then
         return
     end
-    local buffHandle = hcache.get(handleUnit, "h-lua-buff", {})
+    local buffHandle = hcache.get(handleUnit, CONST_CACHE.BUFF, {})
     if (buffHandle[groupKey] ~= nil and buffHandle[groupKey][uk] ~= nil) then
         buffHandle[groupKey][uk].purpose()
     end
@@ -120,7 +120,7 @@ hbuff.delete = function(handleUnit, buffKey)
     if (groupKey == nil) then
         return
     end
-    local buffHandle = hcache.get(handleUnit, "h-lua-buff", {})
+    local buffHandle = hcache.get(handleUnit, CONST_CACHE.BUFF, {})
     if (buffHandle._idx ~= nil) then
         if (uk == nil) then
             -- 删除group下所有buff

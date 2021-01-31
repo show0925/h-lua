@@ -30,7 +30,7 @@ hplayer.set = function(whichPlayer, key, value)
         print_stack()
         return
     end
-    local handle = "h-lua-p-" .. hplayer.index(whichPlayer)
+    local handle = CONST_CACHE.PLAYER .. hplayer.index(whichPlayer)
     if (false == hcache.exist(handle)) then
         hcache.alloc(handle)
     end
@@ -43,7 +43,7 @@ hplayer.get = function(whichPlayer, key, default)
         print_stack()
         return
     end
-    local handle = "h-lua-p-" .. hplayer.index(whichPlayer)
+    local handle = CONST_CACHE.PLAYER .. hplayer.index(whichPlayer)
     return hcache.get(handle, key, default)
 end
 

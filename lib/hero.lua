@@ -46,7 +46,7 @@ end
 ---@param whichHero userdata
 ---@param lv number
 hhero.setPrevLevel = function(whichHero, lv)
-    hcache.set(whichHero, "h-lua-hero-plv", lv)
+    hcache.set(whichHero, CONST_CACHE.HERO_PREV_LEVEL, lv)
 end
 
 --- 获取英雄之前的等级
@@ -54,7 +54,7 @@ end
 ---@param whichHero userdata
 ---@return number
 hhero.getPrevLevel = function(whichHero)
-    return hcache.get(whichHero, "h-lua-hero-plv", 0)
+    return hcache.get(whichHero, CONST_CACHE.HERO_PREV_LEVEL, 0)
 end
 
 --- 获取英雄当前等级
@@ -247,7 +247,7 @@ hhero.buildSelector = function(options)
                     isPause = true
                 }
             )
-            hcache.set(whichHero, "h-lua-hero-selector", { x, y })
+            hcache.set(whichHero, CONST_CACHE.HERO_SELECTOR, { x, y })
             table.insert(hhero.selectorClearPool, whichHero)
             table.insert(hhero.selectorPool, whichHero)
             currentRowQty = currentRowQty + 1
@@ -350,7 +350,7 @@ hhero.buildSelector = function(options)
                         else
                             echo(tips .. "还差 " .. (hhero.player_allow_qty[pIndex] - #hhero.player_heroes[pIndex]) .. " 个", p)
                         end
-                        hcache.set(whichHero, "h-lua-hero-selector", evtData.triggerUnit)
+                        hcache.set(whichHero, CONST_CACHE.HERO_SELECTOR, evtData.triggerUnit)
                         -- 触发英雄被选择事件(全局)
                         hevent.triggerEvent(
                             "global",

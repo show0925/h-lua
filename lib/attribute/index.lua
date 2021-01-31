@@ -145,7 +145,7 @@ hattribute.init = function(whichUnit)
         attribute.sight = math.floor(uSlk.sight)
     end
     -- 初始化数据
-    hcache.set(whichUnit, "h-lua-attr", attribute)
+    hcache.set(whichUnit, CONST_CACHE.ATTR, attribute)
     return true
 end
 
@@ -488,14 +488,14 @@ hattribute.get = function(whichUnit, attr)
     if (whichUnit == nil) then
         return nil
     end
-    local attribute = hcache.get(whichUnit, "h-lua-attr", nil)
+    local attribute = hcache.get(whichUnit, CONST_CACHE.ATTR, nil)
     if (attribute == nil) then
         return nil
     elseif (attribute == -1) then
         if (hattribute.init(whichUnit) == false) then
             return nil
         end
-        attribute = hcache.get(whichUnit, "h-lua-attr")
+        attribute = hcache.get(whichUnit, CONST_CACHE.ATTR)
     end
     attribute.attack = hunit.getAttackSides(whichUnit) + (attribute.attack_white or 0) + (attribute.attack_green or 0)
     attribute.defend = math.floor((attribute.defend_white or 0) + (attribute.defend_green or 0))

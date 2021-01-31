@@ -210,49 +210,49 @@ end
 ---@param whichUnit userdata
 ---@return boolean
 his.swim = function(whichUnit)
-    return hcache.get(whichUnit, "h-lua-is-swim", false)
+    return hcache.get(whichUnit, CONST_CACHE.SKILL_SWIM, false)
 end
 
 --- 是否被硬直
 ---@param whichUnit userdata
 ---@return boolean
 his.punish = function(whichUnit)
-    return hcache.get(whichUnit, "h-lua-is-punishing", false)
+    return hcache.get(whichUnit, CONST_CACHE.ATTR_PUNISHING, false)
 end
 
 --- 是否被沉默
 ---@param whichUnit userdata
 ---@return boolean
 his.silent = function(whichUnit)
-    return hcache.get(whichUnit, "h-lua-is-silent", false)
+    return hcache.get(whichUnit, CONST_CACHE.SKILL_SILENT, false)
 end
 
 --- 是否被缴械
 ---@param whichUnit userdata
 ---@return boolean
 his.unarm = function(whichUnit)
-    return hcache.get(whichUnit, "h-lua-is-un-arm", false)
+    return hcache.get(whichUnit, CONST_CACHE.SKILL_UN_ARM, false)
 end
 
 --- 是否被击飞
 ---@param whichUnit userdata
 ---@return boolean
 his.crackFly = function(whichUnit)
-    return hcache.get(whichUnit, "h-lua-is-crack-fly", false)
+    return hcache.get(whichUnit, CONST_CACHE.SKILL_CRACK_FLY, false)
 end
 
 --- 是否正在受伤
 ---@param whichUnit userdata
 ---@return boolean
 his.beDamaging = function(whichUnit)
-    return hcache.get(whichUnit, "h-lua-is-be-damaging", false)
+    return hcache.get(whichUnit, CONST_CACHE.ATTR_BE_DAMAGING, false)
 end
 
 --- 是否正在造成伤害
 ---@param whichUnit userdata
 ---@return boolean
 his.damaging = function(whichUnit)
-    return hcache.get(whichUnit, "h-lua-is-damaging", false)
+    return hcache.get(whichUnit, CONST_CACHE.ATTR_DAMAGING, false)
 end
 
 --- 是否处在水面

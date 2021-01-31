@@ -828,7 +828,7 @@ end
 ---@return any
 hevent.onEnterUnitRange = function(whichUnit, radius, callFunc)
     local key = CONST_EVENT.enterUnitRange
-    local func = hcache.get(whichUnit, "h-lua-evt-on-enter-range" .. radius, nil)
+    local func = hcache.get(whichUnit, CONST_CACHE.EVENT_ON_ENTER_RANGE .. radius, nil)
     if (func == nil) then
         func = function()
             hevent.triggerEvent(whichUnit, key, {
@@ -837,7 +837,7 @@ hevent.onEnterUnitRange = function(whichUnit, radius, callFunc)
                 radius = radius
             })
         end
-        hcache.set(whichUnit, "h-lua-evt-on-enter-range" .. radius, func)
+        hcache.set(whichUnit, CONST_CACHE.EVENT_ON_ENTER_RANGE .. radius, func)
     end
     hevent.pool(whichUnit, cj.Condition(func), function(tgr)
         cj.TriggerRegisterUnitInRange(tgr, whichUnit, radius, nil)
@@ -855,7 +855,7 @@ hevent.onEnterRect = function(whichRect, callFunc)
         hcache.alloc(whichRect)
     end
     local key = CONST_EVENT.enterRect
-    local onEnterRectAction = hcache.get(whichRect, "h-lua-evt-on-enter-rect")
+    local onEnterRectAction = hcache.get(whichRect, CONST_CACHE.EVENT_ON_ENTER_RECT)
     if (onEnterRectAction == nil) then
         onEnterRectAction = function()
             hevent.triggerEvent(whichRect, key, {
@@ -863,7 +863,7 @@ hevent.onEnterRect = function(whichRect, callFunc)
                 triggerUnit = cj.GetTriggerUnit()
             })
         end
-        hcache.set(whichRect, "h-lua-evt-on-enter-rect", onEnterRectAction)
+        hcache.set(whichRect, CONST_CACHE.EVENT_ON_ENTER_RECT, onEnterRectAction)
     end
     hevent.pool(whichRect, cj.Condition(onEnterRectAction), function(tgr)
         local rectRegion = cj.CreateRegion()
@@ -883,7 +883,7 @@ hevent.onLeaveRect = function(whichRect, callFunc)
         hcache.alloc(whichRect)
     end
     local key = CONST_EVENT.leaveRect
-    local onLeaveRectAction = hcache.get(whichRect, "h-lua-evt-on-leave-rect")
+    local onLeaveRectAction = hcache.get(whichRect, CONST_CACHE.EVENT_ON_LEAVE_RECT)
     if (onLeaveRectAction == nil) then
         onLeaveRectAction = function()
             hevent.triggerEvent(whichRect, key, {
@@ -891,7 +891,7 @@ hevent.onLeaveRect = function(whichRect, callFunc)
                 triggerUnit = cj.GetTriggerUnit()
             })
         end
-        hcache.set(whichRect, "h-lua-evt-on-leave-rect", onLeaveRectAction)
+        hcache.set(whichRect, CONST_CACHE.EVENT_ON_LEAVE_RECT, onLeaveRectAction)
     end
     hevent.pool(whichRect, cj.Condition(onLeaveRectAction), function(tgr)
         local rectRegion = cj.CreateRegion()

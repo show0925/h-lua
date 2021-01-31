@@ -170,7 +170,11 @@ henv.build = function(whichRect, typeStr, isInvulnerable, isDestroyRect, ground,
         hcache.alloc(whichRect)
     end
     -- 清理装饰单位
-    local rectUnits = hcache.get(whichRect, "h-lua-env-rect-units", {})
+    local rectUnits = hcache.get(whichRect, CONST_CACHE.ENV_RECT_UNITS)
+    if (rectUnits == nil) then
+        rectUnits = {}
+        hcache.set(whichRect, CONST_CACHE.ENV_RECT_UNITS, rectUnits)
+    end
     if (#rectUnits > 0) then
         for _, u in ipairs(rectUnits) do
             hunit.del(u)

@@ -288,33 +288,33 @@ hskill.damage = function(options)
             enchants = damageType,
         })
         -- 设置单位正在受伤
-        local isBeDamagingTimer = hcache.get(targetUnit, "h-lua-is-be-damaging-timer", nil)
+        local isBeDamagingTimer = hcache.get(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING_TIMER, nil)
         if (isBeDamagingTimer ~= nil) then
             htime.delTimer(isBeDamagingTimer)
-            hcache.set(targetUnit, "h-lua-is-be-damaging-timer", nil)
+            hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING_TIMER, nil)
         end
-        hcache.set(targetUnit, "h-lua-is-be-damaging", true)
-        hcache.set(targetUnit, "h-lua-is-be-damaging-timer", htime.setTimeout(
+        hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING, true)
+        hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING_TIMER, htime.setTimeout(
             3.5,
             function(t)
                 htime.delTimer(t)
-                hcache.set(targetUnit, "h-lua-is-be-damaging-timer", nil)
-                hcache.set(targetUnit, "h-lua-is-be-damaging", false)
+                hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING_TIMER, nil)
+                hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING, false)
             end
         ))
         if (sourceUnit ~= nil and his.deleted(sourceUnit) == false) then
-            local isDamagingTimer = hcache.get(sourceUnit, "h-lua-is-damaging-timer", nil)
+            local isDamagingTimer = hcache.get(sourceUnit, CONST_CACHE.ATTR_DAMAGING_TIMER, nil)
             if (isDamagingTimer ~= nil) then
                 htime.delTimer(isDamagingTimer)
-                hcache.set(sourceUnit, "h-lua-is-damaging-timer", nil)
+                hcache.set(sourceUnit, CONST_CACHE.ATTR_DAMAGING_TIMER, nil)
             end
-            hcache.set(sourceUnit, "h-lua-is-damaging", true)
-            hcache.set(sourceUnit, "h-lua-is-damaging-timer", htime.setTimeout(
+            hcache.set(sourceUnit, CONST_CACHE.ATTR_DAMAGING, true)
+            hcache.set(sourceUnit, CONST_CACHE.ATTR_DAMAGING_TIMER, htime.setTimeout(
                 3.5,
                 function(t)
                     htime.delTimer(t)
-                    hcache.set(sourceUnit, "h-lua-is-damaging-timer", nil)
-                    hcache.set(sourceUnit, "h-lua-is-damaging", false)
+                    hcache.set(sourceUnit, CONST_CACHE.ATTR_DAMAGING_TIMER, nil)
+                    hcache.set(sourceUnit, CONST_CACHE.ATTR_DAMAGING, false)
                 end
             ))
             hevent.setLastDamageUnit(targetUnit, sourceUnit)
@@ -526,12 +526,12 @@ hskill.damage = function(options)
                 punish_current = "-" .. lastDamage
             })
             if (targetUnitAttr.punish_current - lastDamage <= 0 and his.deleted(targetUnit) == false) then
-                hcache.set(targetUnit, "h-lua-is-punishing", true)
+                hcache.set(targetUnit, CONST_CACHE.ATTR_PUNISHING, true)
                 htime.setTimeout(
                     punish_during + 1.00,
                     function(t)
                         htime.delTimer(t)
-                        hcache.set(targetUnit, "h-lua-is-punishing", false)
+                        hcache.set(targetUnit, CONST_CACHE.ATTR_PUNISHING, false)
                     end
                 )
                 local punishEffectAttackSpeed = (100 + targetUnitAttr.attack_speed) * punishEffectRatio

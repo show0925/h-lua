@@ -306,7 +306,7 @@ hskill.swim = function(options)
     if (during < 0.05) then
         during = 0.05
     end
-    hcache.set(u, "h-lua-is-swim", true)
+    hcache.set(u, CONST_CACHE.SKILL_SWIM, true)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
         heffect.bindUnit(options.effect, u, "origin", during)
     end
@@ -330,7 +330,7 @@ hskill.swim = function(options)
                 function(t)
                     htime.delTimer(t)
                     cj.UnitRemoveAbility(u, hskill.BUFF_SWIM)
-                    hcache.set(u, "h-lua-is-swim", false)
+                    hcache.set(u, CONST_CACHE.SKILL_SWIM, false)
                 end
             )
         )
@@ -433,7 +433,7 @@ hskill.silent = function(options)
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "head", -1)
         hskill.set(u, "silentEffect", eff)
     end
-    hcache.set(u, "h-lua-is-silent", true)
+    hcache.set(u, CONST_CACHE.SKILL_SILENT, true)
     if (damage > 0) then
         hskill.damage(
             {
@@ -481,7 +481,7 @@ hskill.silent = function(options)
                 if (table.includes(hRuntime.skill.silentUnits, u)) then
                     table.delete(hRuntime.skill.silentUnits, u)
                 end
-                hcache.set(u, "h-lua-is-silent", false)
+                hcache.set(u, CONST_CACHE.SKILL_SILENT, false)
             end
         end
     )
@@ -545,58 +545,45 @@ hskill.unarm = function(options)
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "weapon", -1)
         hskill.set(u, "unarmEffect", eff)
     end
-    hcache.set(u, "h-lua-is-un-arm", true)
+    hcache.set(u, CONST_CACHE.SKILL_UN_ARM, true)
     if (damage > 0) then
-        hskill.damage(
-            {
-                sourceUnit = sourceUnit,
-                targetUnit = u,
-                damage = damage,
-                damageString = "缴械",
-                damageSrc = options.damageSrc,
-                damageType = options.damageType,
-                isFixed = options.isFixed,
-            }
-        )
+        hskill.damage({
+            sourceUnit = sourceUnit,
+            targetUnit = u,
+            damage = damage,
+            damageString = "缴械",
+            damageSrc = options.damageSrc,
+            damageType = options.damageType,
+            isFixed = options.isFixed,
+        })
     end
     -- @触发缴械事件
-    hevent.triggerEvent(
-        sourceUnit,
-        CONST_EVENT.unarm,
-        {
-            triggerUnit = sourceUnit,
-            targetUnit = u,
-            odds = odds,
-            damage = damage,
-            during = during
-        }
-    )
+    hevent.triggerEvent(sourceUnit, CONST_EVENT.unarm, {
+        triggerUnit = sourceUnit,
+        targetUnit = u,
+        odds = odds,
+        damage = damage,
+        during = during
+    })
     -- @触发被缴械事件
-    hevent.triggerEvent(
-        u,
-        CONST_EVENT.beUnarm,
-        {
-            triggerUnit = u,
-            sourceUnit = sourceUnit,
-            odds = odds,
-            damage = damage,
-            during = during
-        }
-    )
-    htime.setTimeout(
-        during,
-        function(t)
-            htime.delTimer(t)
-            hskill.set(u, "unarmLevel", hskill.get(u, "unarmLevel", 0) - 1)
-            if (hskill.get(u, "unarmLevel") <= 0) then
-                heffect.del(hskill.get(u, "unarmEffect"))
-                if (table.includes(hRuntime.skill.unarmUnits, u)) then
-                    table.delete(hRuntime.skill.unarmUnits, u)
-                end
-                hcache.set(u, "h-lua-is-un-arm", false)
+    hevent.triggerEvent(u, CONST_EVENT.beUnarm, {
+        triggerUnit = u,
+        sourceUnit = sourceUnit,
+        odds = odds,
+        damage = damage,
+        during = during
+    })
+    htime.setTimeout(during, function(t)
+        htime.delTimer(t)
+        hskill.set(u, "unarmLevel", hskill.get(u, "unarmLevel", 0) - 1)
+        if (hskill.get(u, "unarmLevel") <= 0) then
+            heffect.del(hskill.get(u, "unarmEffect"))
+            if (table.includes(hRuntime.skill.unarmUnits, u)) then
+                table.delete(hRuntime.skill.unarmUnits, u)
             end
+            hcache.set(u, CONST_CACHE.SKILL_UN_ARM, false)
         end
-    )
+    end)
 end
 
 --[[
@@ -988,10 +975,10 @@ hskill.crackFly = function(options)
         during = 0.5
     end
     --不二次击飞
-    if (hcache.get(options.targetUnit, "h-lua-is-crack-fly", false) == true) then
+    if (hcache.get(options.targetUnit, CONST_CACHE.SKILL_CRACK_FLY, false) == true) then
         return
     end
-    hcache.set(options.targetUnit, "h-lua-is-crack-fly", true)
+    hcache.set(options.targetUnit, CONST_CACHE.SKILL_CRACK_FLY, true)
     local tempObj = {
         odds = 99999,
         targetUnit = options.targetUnit,
@@ -1064,7 +1051,7 @@ hskill.crackFly = function(options)
                 end
                 cj.SetUnitFlyHeight(options.targetUnit, originHigh, 10000)
                 cj.SetUnitPathing(options.targetUnit, true)
-                hcache.set(options.targetUnit, "h-lua-is-crack-fly", false)
+                hcache.set(options.targetUnit, CONST_CACHE.SKILL_CRACK_FLY, false)
                 -- 默认是地面，创建沙尘
                 local tempEff = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
                 if (his.water(options.targetUnit) == true) then
@@ -1239,10 +1226,10 @@ hskill.whirlwind = function(options)
         return
     end
     --不二次
-    if (hcache.get(options.sourceUnit, "h-lua-is-whirlwind", false) == true) then
+    if (hcache.get(options.sourceUnit, CONST_CACHE.SKILL_WHIRLWIND, false) == true) then
         return
     end
-    hcache.set(options.sourceUnit, "h-lua-is-whirlwind", true)
+    hcache.set(options.sourceUnit, CONST_CACHE.SKILL_WHIRLWIND, true)
     if (options.effect ~= nil) then
         heffect.bindUnit(options.effect, options.sourceUnit, "origin", during)
     end
@@ -1259,7 +1246,7 @@ hskill.whirlwind = function(options)
                 if (options.animation) then
                     cj.AddUnitAnimationProperties(options.sourceUnit, options.animation, false)
                 end
-                hcache.set(options.sourceUnit, "h-lua-is-Whirlwind", false)
+                hcache.set(options.sourceUnit, CONST_CACHE.SKILL_WHIRLWIND, false)
                 return
             end
             if (options.animation) then

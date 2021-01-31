@@ -29,15 +29,15 @@ hrect.create = function(x, y, w, h, name)
     local endY = y + (h * 0.5)
     local r = cj.Rect(startX, startY, endX, endY)
     hcache.alloc(r)
-    hcache.set(r, "h-lua-rect-n", name)
-    hcache.set(r, "h-lua-rect-x", x)
-    hcache.set(r, "h-lua-rect-y", y)
-    hcache.set(r, "h-lua-rect-w", w)
-    hcache.set(r, "h-lua-rect-h", h)
-    hcache.set(r, "h-lua-rect-xs", startX)
-    hcache.set(r, "h-lua-rect-ys", startY)
-    hcache.set(r, "h-lua-rect-xe", endX)
-    hcache.set(r, "h-lua-rect-ye", endY)
+    hcache.set(r, CONST_CACHE.RECT_NAME, name)
+    hcache.set(r, CONST_CACHE.RECT_WIDTH, w)
+    hcache.set(r, CONST_CACHE.RECT_HEIGHT, h)
+    hcache.set(r, CONST_CACHE.RECT_X, x)
+    hcache.set(r, CONST_CACHE.RECT_Y, y)
+    hcache.set(r, CONST_CACHE.RECT_X_START, startX)
+    hcache.set(r, CONST_CACHE.RECT_Y_START, startY)
+    hcache.set(r, CONST_CACHE.RECT_X_END, endX)
+    hcache.set(r, CONST_CACHE.RECT_Y_END, endY)
     return r
 end
 
@@ -45,63 +45,63 @@ end
 ---@param whichRect userdata
 ---@return string
 hrect.getName = function(whichRect)
-    return hcache.get(whichRect, "h-lua-rect-n", '')
+    return hcache.get(whichRect, CONST_CACHE.RECT_NAME, '')
 end
 
 --- 获取区域中心坐标x
 ---@param whichRect userdata
 ---@return number
 hrect.getX = function(whichRect)
-    return hcache.get(whichRect, "h-lua-rect-x", 0)
+    return hcache.get(whichRect, CONST_CACHE.RECT_X, 0)
 end
 
 --- 获取区域中心坐标y
 ---@param whichRect userdata
 ---@return number
 hrect.getY = function(whichRect)
-    return hcache.get(whichRect, "h-lua-rect-y", 0)
+    return hcache.get(whichRect, CONST_CACHE.RECT_Y, 0)
 end
 
 --- 获取区域的长
 ---@param whichRect userdata
 ---@return number
 hrect.getWidth = function(whichRect)
-    return hcache.get(whichRect, "h-lua-rect-w", 0)
+    return hcache.get(whichRect, CONST_CACHE.RECT_WIDTH, 0)
 end
 
 --- 获取区域的宽
 ---@param whichRect userdata
 ---@return number
 hrect.getHeight = function(whichRect)
-    return hcache.get(whichRect, "h-lua-rect-h", 0)
+    return hcache.get(whichRect, CONST_CACHE.RECT_HEIGHT, 0)
 end
 
 --- 获取区域的起点坐标x(左下角)
 ---@param whichRect userdata
 ---@return number
 hrect.getStartX = function(whichRect)
-    return hcache.get(whichRect, "h-lua-rect-xs", 0)
+    return hcache.get(whichRect, CONST_CACHE.RECT_X_START, 0)
 end
 
 --- 获取区域的起点坐标y(左下角)
 ---@param whichRect userdata
 ---@return number
 hrect.getStartY = function(whichRect)
-    return hcache.get(whichRect, "h-lua-rect-ys", 0)
+    return hcache.get(whichRect, CONST_CACHE.RECT_Y_START, 0)
 end
 
 --- 获取区域的结束坐标x(右上角)
 ---@param whichRect userdata
 ---@return number
 hrect.getEndX = function(whichRect)
-    return hcache.get(whichRect, "h-lua-rect-xe", 0)
+    return hcache.get(whichRect, CONST_CACHE.RECT_X_END, 0)
 end
 
 --- 获取区域的结束坐标y(右上角)
 ---@param whichRect userdata
 ---@return number
 hrect.getEndY = function(whichRect)
-    return hcache.get(whichRect, "h-lua-rect-ye", 0)
+    return hcache.get(whichRect, CONST_CACHE.RECT_Y_END, 0)
 end
 
 --- 删除区域
@@ -113,14 +113,11 @@ hrect.del = function(whichRect, delay)
         hcache.free(whichRect)
         cj.RemoveRect(whichRect)
     else
-        htime.setTimeout(
-            delay,
-            function(t)
-                htime.delTimer(t)
-                hcache.free(whichRect)
-                cj.RemoveRect(whichRect)
-            end
-        )
+        htime.setTimeout(delay, function(t)
+            htime.delTimer(t)
+            hcache.free(whichRect)
+            cj.RemoveRect(whichRect)
+        end)
     end
 end
 

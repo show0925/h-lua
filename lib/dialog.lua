@@ -63,8 +63,8 @@ hdialog.create = function(whichPlayer, options, action)
         end
     end
     hcache.alloc(d)
-    hcache.set(d, "h-lua-dialog-action", action)
-    hcache.set(d, "h-lua-dialog-buttons", buttons)
+    hcache.set(d, CONST_CACHE.DIALOG_ACTION, action)
+    hcache.set(d, CONST_CACHE.DIALOG_BUTTON, buttons)
     hevent.pool(d, hevent_default_actions.dialog.click, function(tgr)
         cj.TriggerRegisterDialogEvent(tgr, d)
     end)

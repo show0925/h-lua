@@ -110,7 +110,7 @@ hevent_default_actions = {
                             x = hhero.bornX,
                             y = hhero.bornY
                         })
-                        hcache.set(u, "h-lua-hero-selector", hhero.selectorTavern[one])
+                        hcache.set(u, CONST_CACHE.HERO_SELECTOR, hhero.selectorTavern[one])
                         cj.RemoveUnitFromStock(hhero.selectorTavern[one], string.char2id(one))
                     else
                         table.delete(hhero.selectorClearPool, one)
@@ -148,22 +148,20 @@ hevent_default_actions = {
                 end
                 local qty = #hhero.player_heroes[pIndex]
                 for _, u in ipairs(hhero.player_heroes[pIndex]) do
-                    local heroSelector = hcache.get(u, "h-lua-hero-selector")
+                    local heroSelector = hcache.get(u, CONST_CACHE.HERO_SELECTOR)
                     if (type(heroSelector) == "userdata") then
                         table.insert(hhero.selectorPool, hunit.getId(u))
                         cj.AddUnitToStock(heroSelector, cj.GetUnitTypeId(u), 1, 1)
                     else
-                        local new = hunit.create(
-                            {
-                                whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
-                                unitId = cj.GetUnitTypeId(u),
-                                x = heroSelector[1],
-                                y = heroSelector[2],
-                                isInvulnerable = true,
-                                isPause = true
-                            }
-                        )
-                        hcache.set(new, "h-lua-hero-selector", { heroSelector[1], heroSelector[2] })
+                        local new = hunit.create({
+                            whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
+                            unitId = cj.GetUnitTypeId(u),
+                            x = heroSelector[1],
+                            y = heroSelector[2],
+                            isInvulnerable = true,
+                            isPause = true
+                        })
+                        hcache.set(new, CONST_CACHE.HERO_SELECTOR, { heroSelector[1], heroSelector[2] })
                         table.insert(hhero.selectorClearPool, new)
                         table.insert(hhero.selectorPool, new)
                     end
@@ -459,14 +457,14 @@ hevent_default_actions = {
             end
             if (orderId == 851983 or orderId == 851971 or orderId == 851986
                 or (lx ~= 1.11 and ly ~= 2.22 and lz ~= 3.33)) then
-                local mov1 = hcache.get(triggerUnit, "h-lua-moving", 0)
+                local mov1 = hcache.get(triggerUnit, CONST_CACHE.MOVING, 0)
                 if (mov1 == 0) then
-                    hcache.set(triggerUnit, "h-lua-moving", 1)
+                    hcache.set(triggerUnit, CONST_CACHE.MOVING, 1)
                     local x = math.floor(cj.GetUnitX(triggerUnit))
                     local y = math.floor(cj.GetUnitY(triggerUnit))
                     local step = 0
                     htime.setInterval(0.25, function(curTimer)
-                        local mov2 = hcache.get(triggerUnit, "h-lua-moving", 0)
+                        local mov2 = hcache.get(triggerUnit, CONST_CACHE.MOVING, 0)
                         if (mov2 == 0) then
                             htime.delTimer(curTimer)
                             return
@@ -476,7 +474,7 @@ hevent_default_actions = {
                         if (mov2 == 1) then
                             -- 移动开始
                             if (tx ~= x or ty ~= y) then
-                                hcache.set(triggerUnit, "h-lua-moving", 2)
+                                hcache.set(triggerUnit, CONST_CACHE.MOVING, 2)
                                 hevent.triggerEvent(
                                     triggerUnit,
                                     CONST_EVENT.moveStart,
@@ -486,7 +484,7 @@ hevent_default_actions = {
                                     }
                                 )
                             else
-                                hcache.set(triggerUnit, "h-lua-moving", 0)
+                                hcache.set(triggerUnit, CONST_CACHE.MOVING, 0)
                             end
                         elseif (mov2 == 2) then
                             -- 移动ing
@@ -501,7 +499,7 @@ hevent_default_actions = {
                             )
                             if (tx == x and ty == y) then
                                 -- 没位移，移动停止
-                                hcache.set(triggerUnit, "h-lua-moving", 0)
+                                hcache.set(triggerUnit, CONST_CACHE.MOVING, 0)
                                 hevent.triggerEvent(
                                     triggerUnit,
                                     CONST_EVENT.moveStop,
@@ -516,7 +514,7 @@ hevent_default_actions = {
                     end)
                 end
             elseif (orderId == 851993) then
-                hcache.set(triggerUnit, "h-lua-moving", 0)
+                hcache.set(triggerUnit, CONST_CACHE.MOVING, 0)
                 hevent.triggerEvent(
                     triggerUnit,
                     CONST_EVENT.holdOn,
@@ -525,7 +523,7 @@ hevent_default_actions = {
                     }
                 )
             elseif (orderId == 851972) then
-                hcache.set(triggerUnit, "h-lua-moving", 0)
+                hcache.set(triggerUnit, CONST_CACHE.MOVING, 0)
                 hevent.triggerEvent(
                     triggerUnit,
                     CONST_EVENT.stop,
@@ -761,7 +759,7 @@ hevent_default_actions = {
         click = cj.Condition(function()
             local clickedDialog = cj.GetClickedDialog()
             local clickedButton = cj.GetClickedButton()
-            local buttons = hcache.get(clickedDialog, "h-lua-dialog-buttons", nil)
+            local buttons = hcache.get(clickedDialog, CONST_CACHE.DIALOG_BUTTON, nil)
             if (buttons == nil) then
                 return
             end
@@ -771,7 +769,7 @@ hevent_default_actions = {
                     val = b.value
                 end
             end
-            local action = hcache.get(clickedDialog, "h-lua-dialog-action", nil)
+            local action = hcache.get(clickedDialog, CONST_CACHE.DIALOG_ACTION, nil)
             if (type(action) == 'function') then
                 action(val)
             end
@@ -790,7 +788,7 @@ hevent_default_actions = {
             local u = cj.GetTriggerUnit()
             local charges = hitem.getCharges(it)
             -- 反向检测丢弃物品事件
-            local dropUnit = hcache.get(it, "h-lua-drop")
+            local dropUnit = hcache.get(it, CONST_CACHE.ITEM_DROP)
             if (nil ~= dropUnit) then
                 hevent.triggerEvent(dropUnit, CONST_EVENT.itemDrop, { triggerUnit = dropUnit, triggerItem = it, targetUnit = u })
             end
@@ -865,7 +863,7 @@ hevent_default_actions = {
             local u = cj.GetTriggerUnit()
             if (cj.GetUnitCurrentOrder(u) == 852001) then
                 -- dropitem:852001
-                hcache.set(it, "h-lua-drop", u)
+                hcache.set(it, CONST_CACHE.ITEM_DROP, u)
                 local charges = cj.GetItemCharges(it)
                 hitem.subProperty(u, itId, charges)
                 local xyk1 = math.round(cj.GetItemX(it)) .. "|" .. math.round(cj.GetItemY(it))
@@ -877,7 +875,7 @@ hevent_default_actions = {
                         local xyk2 = math.round(x) .. "|" .. math.round(y)
                         if (xyk1 == xyk2) then
                             --坐标相同视为给予单位类型（几乎不可能坐标一致）
-                            hcache.set(it, "h-lua-drop", u)
+                            hcache.set(it, CONST_CACHE.ITEM_DROP, u)
                             return
                         end
                         if (hitem.isShadowFront(itId)) then
@@ -955,8 +953,8 @@ hevent_default_actions = {
             local itId = hitem.getId(it)
             local perishable = hitem.getIsPerishable(itId)
             --检测是否有匹配使用
-            local triggerData = hcache.get(u, "h-lua-item-use-" .. itId, {})
-            hcache.set(u, "h-lua-item-use-" .. itId, nil)
+            local triggerData = hcache.get(u, CONST_CACHE.ITEM_USED .. itId, {})
+            hcache.set(u, CONST_CACHE.ITEM_USED .. itId, nil)
             hitem.used(u, it, triggerData)
             --检测是否使用后自动消失，如果不是，次数补回1
             if (perishable == false) then
@@ -979,7 +977,7 @@ hevent_default_actions = {
             if (itId == nil) then
                 return
             end
-            hcache.set(u, "h-lua-item-use-" .. itId, {
+            hcache.set(u, CONST_CACHE.ITEM_USED .. itId, {
                 triggerSkill = skillId,
                 targetUnit = cj.GetSpellTargetUnit(),
                 targetLoc = cj.GetSpellTargetLoc()

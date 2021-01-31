@@ -138,10 +138,10 @@ henchant.append = function(options)
     -- 重置特效
     if (#newEnchants > 0) then
         for _, e in ipairs(newEnchants) do
-            local prevEffs = hcache.get(targetUnit, "h-lua-enchant-effect")
+            local prevEffs = hcache.get(targetUnit, CONST_CACHE.ENCHANT_EFFECT)
             if (prevEffs == nil) then
-                hcache.set(targetUnit, "h-lua-enchant-effect", {})
-                prevEffs = hcache.get(targetUnit, "h-lua-enchant-effect")
+                hcache.set(targetUnit, CONST_CACHE.ENCHANT_EFFECT, {})
+                prevEffs = hcache.get(targetUnit, CONST_CACHE.ENCHANT_EFFECT)
             else
                 for i = #prevEffs, 1, -1 do
                     heffect.del(prevEffs[i])

@@ -223,20 +223,20 @@ end
 ---@param u userdata
 ---@return boolean
 hunit.isPunishing = function(u)
-    return (true == hcache.get(u, "h-lua-unit-punishing", false))
+    return (true == hcache.get(u, CONST_CACHE.UNIT_PUNISHING, false))
 end
 
 --- 单位启用硬直（系统默认不启用）
 ---@param u userdata
 hunit.enablePunish = function(u)
-    hcache.set(u, "h-lua-unit-punishing", true)
+    hcache.set(u, CONST_CACHE.UNIT_PUNISHING, true)
     hmonitor.listen("punish_current", u)
 end
 
 --- 单位停用硬直（系统默认不启用）
 ---@param u userdata
 hunit.disablePunish = function(u)
-    hcache.set(u, "h-lua-unit-punishing", false)
+    hcache.set(u, CONST_CACHE.UNIT_PUNISHING, false)
     hmonitor.ignore("punish_current", u)
 end
 
@@ -263,17 +263,17 @@ hunit.setAnimateSpeed = function(whichUnit, speed, during)
         return
     end
     during = during or 0
-    local prevSpeed = hcache.get(whichUnit, "h-lua-unit-animate-speed", 1.00)
+    local prevSpeed = hcache.get(whichUnit, CONST_CACHE.UNIT_ANIMATE_SPEED, 1.00)
     speed = speed or prevSpeed
     cj.SetUnitTimeScale(whichUnit, speed)
-    hcache.set(whichUnit, "h-lua-unit-animate-speed", speed)
+    hcache.set(whichUnit, CONST_CACHE.UNIT_ANIMATE_SPEED, speed)
     if (during > 0) then
         htime.setTimeout(
             during,
             function(t)
                 htime.delTimer(t)
                 cj.SetUnitTimeScale(u, prevSpeed)
-                hcache.set(whichUnit, "h-lua-unit-animate-speed", prevSpeed)
+                hcache.set(whichUnit, CONST_CACHE.UNIT_ANIMATE_SPEED, prevSpeed)
             end
         )
     end
@@ -292,26 +292,26 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
     end
     during = during or 0
     local uSlk = hunit.getSlk(whichUnit)
-    local rgba = hcache.get(whichUnit, "h-lua-unit-rgba")
+    local rgba = hcache.get(whichUnit, CONST_CACHE.UNIT_RGBA)
     if (rgba == nil) then
         rgba = { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0 }
-        hcache.set(whichUnit, "h-lua-unit-rgba", rgba)
+        hcache.set(whichUnit, CONST_CACHE.UNIT_RGBA, rgba)
     end
     red = math.max(0, math.min(255, red or rgba[1]))
     green = math.max(0, math.min(255, green or rgba[2]))
     blue = math.max(0, math.min(255, blue or rgba[3]))
     opacity = math.max(0, math.min(1, opacity or rgba[4]))
-    return hbuff.create(during, whichUnit, "h-lua-buff-rgba",
+    return hbuff.create(during, whichUnit, CONST_BUFF.RGBA,
         function()
             cj.SetUnitVertexColor(whichUnit, red, green, blue, 255 * opacity)
-            hcache.set(whichUnit, "h-lua-unit-rgba", { red, green, blue, opacity })
+            hcache.set(whichUnit, CONST_CACHE.UNIT_RGBA, { red, green, blue, opacity })
         end,
         function()
-            local buffHandle = hcache.get(whichUnit, "h-lua-buff", {})
+            local buffHandle = hcache.get(whichUnit, CONST_CACHE.BUFF, {})
             if (buffHandle.rgba ~= nil) then
                 if (buffHandle.rgba._idx and #buffHandle.rgba._idx > 1) then
                     local uk = buffHandle.rgba._idx[#buffHandle.rgba._idx - 1]
-                    hbuff.purpose(whichUnit, string.implode("|", { "h-lua-buff-rgba", uk }))
+                    hbuff.purpose(whichUnit, string.implode("|", { CONST_BUFF.RGBA, uk }))
                 else
                     cj.SetUnitVertexColor(whichUnit, math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 255)
                 end
@@ -329,7 +329,7 @@ end
 --- 重置单位的三原色
 ---@param whichUnit userdata
 hunit.resetRGBA = function(whichUnit)
-    hbuff.delete(whichUnit, "h-lua-buff-rgba")
+    hbuff.delete(whichUnit, CONST_BUFF.RGBA)
 end
 
 --- 获取单位当前归属玩家
@@ -391,8 +391,8 @@ hunit.embed = function(u, options)
         id = string.id2char(id)
     end
     hcache.alloc(u)
-    hcache.set(u, "h-lua-unit-animate-speed", options.timeScale or 1.00)
-    hcache.set(u, "h-lua-attr", -1)
+    hcache.set(u, CONST_CACHE.UNIT_ANIMATE_SPEED, options.timeScale or 1.00)
+    hcache.set(u, CONST_CACHE.ATTR, -1)
     -- 单位受伤
     hevent.pool(u, hevent_default_actions.unit.damaged, function(tgr)
         cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DAMAGED)
