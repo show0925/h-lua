@@ -61,6 +61,42 @@ hitem.embed = function(u)
     end
 end
 
+-- 清理物品缓存数据
+---@protected
+hitem.clear = function(whichItem)
+    hitemPool.clear(whichItem)
+    local holder = hitem.getHolder(whichItem)
+    if (holder ~= nil) then
+        hitem.subProperty(holder, hitem.getId(whichItem), hitem.getCharges(whichItem))
+    end
+    hcache.free(whichItem)
+end
+
+--- 设置物品的持有单位
+---@protected
+---@param whichItem userdata
+---@param holder userdata
+hitem.setHolder = function(whichItem, holder)
+    hcache.set(whichItem, CONST_CACHE.ITEM_HOLDER, holder)
+    if (holder ~= nil) then
+        hcache.set(whichItem, CONST_CACHE.ITEM_HOLDER_LAST, holder)
+    end
+end
+
+--- 获取物品的当前持有单位
+---@param whichItem userdata
+---@return userdata|nil
+hitem.getHolder = function(whichItem)
+    return hcache.get(whichItem, CONST_CACHE.ITEM_HOLDER)
+end
+
+--- 获取物品的最后持有单位
+---@param whichItem userdata
+---@return userdata|nil
+hitem.getLastHolder = function(whichItem)
+    return hcache.get(whichItem, CONST_CACHE.ITEM_HOLDER_LAST)
+end
+
 --- match done
 ---@param whichUnit userdata
 ---@param whichItem userdata
@@ -115,21 +151,16 @@ end
 hitem.del = function(it, delay)
     delay = delay or 0
     if (delay <= 0 and it ~= nil) then
-        hitemPool.clear(it)
-        hcache.free(it)
+        hitem.clear(it)
         cj.SetWidgetLife(it, 1.00)
         cj.RemoveItem(it)
     else
-        htime.setTimeout(
-            delay,
-            function(t)
-                htime.delTimer(t)
-                hitemPool.clear(it)
-                hcache.free(it)
-                cj.SetWidgetLife(it, 1.00)
-                cj.RemoveItem(it)
-            end
-        )
+        htime.setTimeout(delay, function(t)
+            htime.delTimer(t)
+            hitem.clear(it)
+            cj.SetWidgetLife(it, 1.00)
+            cj.RemoveItem(it)
+        end)
     end
 end
 
@@ -352,21 +383,27 @@ hitem.getLevel = function(it)
     return 0
 end
 
---- 获取物品的使用次数
+--- 获取物品的件数（以物品右下标的使用次数作为“件”）
+--- 框架会自动强制最低件数为1
 ---@param it userdata
 ---@return number
 hitem.getCharges = function(it)
-    if (it ~= nil) then
-        return cj.GetItemCharges(it)
-    else
+    if (it == nil) then
         return 0
     end
+    local c = cj.GetItemCharges(it)
+    if (c < 1) then
+        c = 1
+        cj.SetItemCharges(it, 1)
+    end
+    return c
 end
+
 --- 设置物品的使用次数
 ---@param it userdata
 ---@param charges number
 hitem.setCharges = function(it, charges)
-    if (it ~= nil and charges > 0) then
+    if (it ~= nil and charges >= 0) then
         cj.SetItemCharges(it, charges)
     end
 end
@@ -424,6 +461,9 @@ end
 --- 附加单位获得物品后的属性
 ---@protected
 hitem.addProperty = function(whichUnit, itId, charges)
+    if (whichUnit == nil or itId == nil or charges < 1) then
+        return
+    end
     local attr = hitem.getAttribute(itId)
     attr.weight_current = "+" .. hitem.getWeight(itId, 1)
     hattribute.caleAttribute(CONST_DAMAGE_SRC.item, true, whichUnit, attr, charges)
@@ -434,6 +474,9 @@ end
 --- 削减单位获得物品后的属性
 ---@protected
 hitem.subProperty = function(whichUnit, itId, charges)
+    if (whichUnit == nil or itId == nil or charges < 1) then
+        return
+    end
     local attr = hitem.getAttribute(itId)
     attr.weight_current = "+" .. hitem.getWeight(itId, 1)
     hattribute.caleAttribute(CONST_DAMAGE_SRC.item, false, whichUnit, attr, charges)
@@ -509,7 +552,7 @@ hitem.synthesis = function(whichUnit, items)
     hitem.forEach(whichUnit, function(slotItem)
         if (slotItem ~= nil) then
             local itId = hitem.getId(slotItem)
-            local charges = hitem.getCharges(slotItem) or 1
+            local charges = hitem.getCharges(slotItem)
             if (false == table.includes(itemKind, itId)) then
                 table.insert(itemKind, itId)
             end
@@ -525,7 +568,7 @@ hitem.synthesis = function(whichUnit, items)
     if (#items > 0) then
         for _, it in ipairs(items) do
             local itId = hitem.getId(it)
-            local charges = hitem.getCharges(it) or 1
+            local charges = hitem.getCharges(it)
             if (hitem.isShadowBack(itId)) then
                 itId = hitem.shadowID(itId)
             end
@@ -536,7 +579,7 @@ hitem.synthesis = function(whichUnit, items)
             if (itemStat.qty[itId] == nil) then
                 itemStat.qty[itId] = 0
             end
-            itemStat.qty[itId] = itemStat.qty[itId] + (hitem.getCharges(it) or 1)
+            itemStat.qty[itId] = itemStat.qty[itId] + (hitem.getCharges(it))
             hitem.del(it)
         end
     end
@@ -654,9 +697,8 @@ hitem.synthesis = function(whichUnit, items)
         local it = cj.UnitItemInSlot(whichUnit, i - 1)
         if (it ~= nil) then
             local itId = hitem.getId(it)
-            local charges = hitem.getCharges(it) or 1
+            local charges = hitem.getCharges(it)
             if (sIt.id == nil) then
-                hitem.subProperty(whichUnit, itId, charges)
                 hitem.del(it, 0)
             elseif (itId == sIt.id) then
                 local diff = sIt.charges - charges
@@ -678,8 +720,6 @@ hitem.synthesis = function(whichUnit, items)
         if (it ~= nil) then
             local itId = hitem.getId(it)
             if (sIt.id ~= nil and itId ~= sIt.id) then
-                local charges = hitem.getCharges(it) or 1
-                hitem.subProperty(whichUnit, itId, charges)
                 hitem.del(it, 0)
                 local newIt = cj.CreateItem(string.char2id(sIt.id), hunit.x(whichUnit), hunit.y(whichUnit))
                 if (isProfit) then
@@ -796,15 +836,11 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
             end
         end
     end
-    hevent.triggerEvent(
-        whichItem,
-        CONST_EVENT.itemSeparate,
-        {
-            triggerItem = whichItem,
-            type = separateType,
-            targetUnit = whichUnit,
-        }
-    )
+    hevent.triggerEvent(whichItem, CONST_EVENT.itemSeparate, {
+        triggerItem = whichItem,
+        type = separateType,
+        targetUnit = whichUnit,
+    })
     hitem.del(whichItem, 0)
 end
 

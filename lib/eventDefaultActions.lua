@@ -572,8 +572,6 @@ hevent_default_actions = {
                     echo("没有物品可传递", p)
                     return
                 end
-                local x = hunit.x(triggerUnit)
-                local y = hunit.y(triggerUnit)
                 if (#hhero.player_heroes[pIndex] == 1) then
                     local hero = hhero.player_heroes[pIndex][1] or nil
                     if (hero == nil or false == his.alive(hero) or true == his.deleted(hero)) then
@@ -604,13 +602,7 @@ hevent_default_actions = {
                             echo("英雄不存在", p)
                             return
                         end
-                        local itemIds = hitem.synthesis(hero, items)
-                        if (#itemIds > 0) then
-                            for _, vi in ipairs(itemIds) do
-                                local tmpIt = cj.CreateItem(string.char2id(vi.id), x, y)
-                                hitem.pick(tmpIt, triggerUnit)
-                            end
-                        end
+                        hitem.synthesis(hero, items)
                         hevent.triggerEvent(
                             triggerUnit,
                             CONST_EVENT.courierDeliver,
@@ -658,9 +650,9 @@ hevent_default_actions = {
             local u = cj.GetTriggerUnit()
             local charges = hitem.getCharges(it)
             -- 反向检测丢弃物品事件
-            local dropUnit = hcache.get(it, CONST_CACHE.ITEM_DROP)
-            if (nil ~= dropUnit) then
-                hevent.triggerEvent(dropUnit, CONST_EVENT.itemDrop, { triggerUnit = dropUnit, triggerItem = it, targetUnit = u })
+            local holder = hitem.getHolder(it)
+            if (nil ~= holder and holder ~= u) then
+                hevent.triggerEvent(holder, CONST_EVENT.itemDrop, { triggerUnit = holder, triggerItem = it, targetUnit = u })
             end
             -- 如果是hslk物品，得到技术升级
             if (hitem.getHSlk(itId) ~= nil) then
@@ -716,6 +708,9 @@ hevent_default_actions = {
                 if (false == hcache.exist(it)) then
                     hcache.alloc(it)
                 end
+                -- 设置持有单位
+                hitem.setHolder(it, u)
+                hitemPool.delete(CONST_CACHE.ITEM_POOL_PICK, it)
                 -- 计算属性
                 hitem.addProperty(u, itId, charges)
                 -- 检查合成
@@ -731,10 +726,8 @@ hevent_default_actions = {
             end
             itId = string.id2char(itId)
             local u = cj.GetTriggerUnit()
-            hcache.set(it, CONST_CACHE.ITEM_DROP, nil)
             if (cj.GetUnitCurrentOrder(u) == 852001) then
                 -- dropitem:852001
-                hcache.set(it, CONST_CACHE.ITEM_DROP, u)
                 local charges = cj.GetItemCharges(it)
                 hitem.subProperty(u, itId, charges)
                 local xyk1 = math.round(cj.GetItemX(it)) .. "|" .. math.round(cj.GetItemY(it))
@@ -746,9 +739,10 @@ hevent_default_actions = {
                         local xyk2 = math.round(x) .. "|" .. math.round(y)
                         if (xyk1 == xyk2) then
                             --坐标相同视为给予单位类型（几乎不可能坐标一致）
-                            hcache.set(it, CONST_CACHE.ITEM_DROP, u)
                             return
                         end
+                        hitem.setHolder(it, nil)
+                        hitemPool.insert(CONST_CACHE.ITEM_POOL_PICK, it)
                         if (hitem.isShadowFront(itId)) then
                             hitem.del(it, 0)
                             -- 影子物品替换
@@ -764,7 +758,7 @@ hevent_default_actions = {
                     hevent.triggerEvent(u, CONST_EVENT.itemDrop, {
                         triggerUnit = u,
                         triggerItem = it,
-                        targetUnit = orderTargetUnit,
+                        targetUnit = nil,
                     })
                 end)
             end
@@ -803,17 +797,13 @@ hevent_default_actions = {
                 end
             end
             --触发抵押物品事件
-            hevent.triggerEvent(
-                u,
-                CONST_EVENT.itemPawn,
-                {
-                    triggerUnit = u,
-                    soldItem = it,
-                    buyingUnit = cj.GetBuyingUnit(),
-                    soldGold = soldGold,
-                    soldLumber = soldLumber,
-                }
-            )
+            hevent.triggerEvent(u, CONST_EVENT.itemPawn, {
+                triggerUnit = u,
+                soldItem = it,
+                buyingUnit = cj.GetBuyingUnit(),
+                soldGold = soldGold,
+                soldLumber = soldLumber,
+            })
         end),
         use = cj.Condition(function()
             local u = cj.GetTriggerUnit()
@@ -833,8 +823,7 @@ hevent_default_actions = {
             else
                 hitem.subProperty(u, itId, 1)
             end
-            --消失的清理cache
-            if (perishable == true and hitem.getCharges(it) <= 0) then
+            if (hitem.getCharges(it) <= 0) then
                 hitem.del(it)
             end
         end),
