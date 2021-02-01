@@ -11,6 +11,7 @@ CONST_CACHE = {
     PLAYER = "c-p-",
     PLAYER_APM = "c-p-apm",
     PLAYER_STATUS = "c-p-status",
+    PLAYER_CHAT = "c-p-chat",
     PLAYER_CLICK = "c-p-click",
     PLAYER_SELECTION = "c-p-selection",
     PLAYER_MARKING = "c-p-marking",

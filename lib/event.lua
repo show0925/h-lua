@@ -914,30 +914,20 @@ end
 --- 当聊天时
 ---@alias onChat fun(evtData: {triggerPlayer:"聊天的玩家",chatString:"聊天的内容",matchedString:"匹配命中的内容"}):void
 ---@param whichPlayer userdata
----@param chatStr string
----@param matchAll boolean
+---@param pattern string 支持正则
 ---@param callFunc onChat | "function(evtData) end"
 ---@return any
-hevent.onChat = function(whichPlayer, chatStr, matchAll, callFunc)
-    local key = CONST_EVENT.chat .. chatStr .. '|F'
-    if (matchAll) then
-        key = CONST_EVENT.chat .. chatStr .. '|T'
-    end
-    local condition = hplayer.get(whichPlayer, key, nil)
-    if (condition == nil) then
-        condition = function()
-            hevent.triggerEvent(cj.GetTriggerPlayer(), key, {
-                triggerPlayer = cj.GetTriggerPlayer(),
-                chatString = cj.GetEventPlayerChatString(),
-                matchedString = cj.GetEventPlayerChatStringMatched()
-            })
+hevent.onChat = function(whichPlayer, pattern, callFunc)
+    return hevent.registerEvent(whichPlayer, CONST_EVENT.chat, function(evtData)
+        local triggerPlayer = evtData.triggerPlayer
+        local chatString = evtData.chatString
+        print("event=", triggerPlayer, chatString)
+        local m = string.match(chatString, pattern)
+        if (m ~= nil) then
+            evtData.matchedString = m
+            callFunc(evtData)
         end
-        hplayer.set(whichPlayer, key, condition)
-    end
-    hevent.pool(whichPlayer, cj.Condition(condition), function(tgr)
-        cj.TriggerRegisterPlayerChatEvent(tgr, whichPlayer, chatStr, matchAll)
     end)
-    return hevent.registerEvent(whichPlayer, key, callFunc)
 end
 
 --- 按ESC

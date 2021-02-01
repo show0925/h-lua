@@ -54,14 +54,6 @@ for i = 1, bj_MAX_PLAYERS, 1 do
         hplayer.setIsAutoConvert(hplayer.players[i], true)
         hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_STATUS, hplayer.player_status.gaming)
 
-        hevent.onChat(
-            hplayer.players[i], "+", false,
-            hevent_default_actions.player.command
-        )
-        hevent.onChat(
-            hplayer.players[i], "-", false,
-            hevent_default_actions.player.command
-        )
         -- 玩家离开游戏
         hevent.pool(hplayer.players[i], hevent_default_actions.player.leave, function(tgr)
             cj.TriggerRegisterPlayerEvent(tgr, hplayer.players[i], EVENT_PLAYER_LEAVE)
@@ -74,10 +66,14 @@ for i = 1, bj_MAX_PLAYERS, 1 do
         hevent.pool(hplayer.players[i], hevent_default_actions.player.selection, function(tgr)
             cj.TriggerRegisterPlayerUnitEvent(tgr, hplayer.players[i], EVENT_PLAYER_UNIT_SELECTED, nil)
         end)
-
         hevent.onSelection(hplayer.players[i], 1, function(evtData)
             hplayer.set(evtData.triggerPlayer, CONST_CACHE.PLAYER_SELECTION, evtData.triggerUnit)
         end)
+        -- 玩家聊天控制
+        hevent.pool(hplayer.players[i], hevent_default_actions.player.chat, function(tgr)
+            cj.TriggerRegisterPlayerChatEvent(tgr, hplayer.players[i], "", false)
+        end)
+        --hevent.onChat(hplayer.players[i], "+", false, hevent_default_actions.player.command)
     else
         hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_STATUS, hplayer.player_status.none)
     end

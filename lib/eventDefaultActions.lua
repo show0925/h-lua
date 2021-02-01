@@ -238,6 +238,12 @@ hevent_default_actions = {
                 end
             end
         end),
+        chat = cj.Condition(function()
+            hevent.triggerEvent(cj.GetTriggerPlayer(), CONST_EVENT.chat, {
+                triggerPlayer = cj.GetTriggerPlayer(),
+                chatString = cj.GetEventPlayerChatString()
+            })
+        end),
     },
     unit = {
         attackDetect = cj.Condition(function()
