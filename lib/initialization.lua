@@ -85,7 +85,7 @@ hmonitor.create("life_back", 0.5,
         hunit.addCurLife(object, val * 0.5)
     end,
     function(object)
-        local val = math.round(hattr.get(object, "life_back") or 0)
+        local val = math.abs(hattr.get(object, "life_back") or 0)
         return val < 0.05 or his.dead(object) or his.deleted(object) or hunit.getCurLifePercent(object) >= 100
     end
 )
@@ -97,7 +97,7 @@ hmonitor.create("mana_back", 0.7,
         hunit.addCurMana(object, val * 0.7)
     end,
     function(object)
-        local val = math.round(hattr.get(object, "mana_back") or 0)
+        local val = math.abs(hattr.get(object, "mana_back") or 0)
         return val < 0.05 or his.dead(object) or his.deleted(object) or hunit.getCurManaPercent(object) >= 100
     end
 )
