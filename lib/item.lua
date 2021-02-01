@@ -38,27 +38,27 @@ hitem.embed = function(u)
         return
     end
     -- 如果单位的玩家是真人
-    if (his.computer(hunit.getOwner(u)) == false) then
-        -- 拾取
-        hevent.pool(u, hevent_default_actions.item.pickup, function(tgr)
-            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PICKUP_ITEM)
-        end)
-        -- 丢弃
-        hevent.pool(u, hevent_default_actions.item.drop, function(tgr)
-            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DROP_ITEM)
-        end)
-        -- 抵押
-        hevent.pool(u, hevent_default_actions.item.pawn, function(tgr)
-            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PAWN_ITEM)
-        end)
-        -- 使用
-        hevent.pool(u, hevent_default_actions.item.use, function(tgr)
-            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_USE_ITEM)
-        end)
-        hevent.pool(u, hevent_default_actions.item.use_s, function(tgr)
-            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_SPELL_EFFECT)
-        end)
-    end
+    --if (his.computer(hunit.getOwner(u)) == false) then
+    -- 拾取
+    hevent.pool(u, hevent_default_actions.item.pickup, function(tgr)
+        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PICKUP_ITEM)
+    end)
+    -- 丢弃
+    hevent.pool(u, hevent_default_actions.item.drop, function(tgr)
+        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DROP_ITEM)
+    end)
+    -- 抵押
+    hevent.pool(u, hevent_default_actions.item.pawn, function(tgr)
+        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PAWN_ITEM)
+    end)
+    -- 使用
+    hevent.pool(u, hevent_default_actions.item.use, function(tgr)
+        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_USE_ITEM)
+    end)
+    hevent.pool(u, hevent_default_actions.item.use_s, function(tgr)
+        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_SPELL_EFFECT)
+    end)
+    --end
 end
 
 -- 清理物品缓存数据
@@ -78,9 +78,7 @@ end
 ---@param holder userdata
 hitem.setHolder = function(whichItem, holder)
     hcache.set(whichItem, CONST_CACHE.ITEM_HOLDER, holder)
-    if (holder ~= nil) then
-        hcache.set(whichItem, CONST_CACHE.ITEM_HOLDER_LAST, holder)
-    end
+    hitem.setLastHolder(whichItem, holder)
 end
 
 --- 获取物品的当前持有单位
@@ -90,11 +88,53 @@ hitem.getHolder = function(whichItem)
     return hcache.get(whichItem, CONST_CACHE.ITEM_HOLDER)
 end
 
+--- 设置物品的最后持有单位
+---@protected
+---@param whichItem userdata
+---@param holder userdata
+hitem.setLastHolder = function(whichItem, holder)
+    if (holder ~= nil and hitem.getLastHolder(whichItem) == nil) then
+        hcache.set(whichItem, CONST_CACHE.ITEM_HOLDER_LAST, holder)
+    end
+end
+
 --- 获取物品的最后持有单位
 ---@param whichItem userdata
 ---@return userdata|nil
 hitem.getLastHolder = function(whichItem)
     return hcache.get(whichItem, CONST_CACHE.ITEM_HOLDER_LAST)
+end
+
+--- 把物品给回的最后持有单位
+---@param whichItem userdata
+---@return userdata|nil
+hitem.backToLastHolder = function(whichItem)
+    local lastHolder = hitem.getLastHolder(whichItem)
+    cj.UnitAddItem(lastHolder, whichItem)
+    htextTag.style(htextTag.create2Unit(lastHolder, "物品回来了", 8.00, "ffffff", 1, 1.1, 50.00), "scale", 0, 0.05)
+end
+
+--- 判断单位对于某件物品来说是否强取豪夺
+---@param whichItem userdata
+---@param robber userdata
+---@return boolean
+hitem.isRobber = function(whichItem, robber)
+    if (whichItem == nil or robber == nil) then
+        return false
+    end
+    local lastHolder = hitem.getLastHolder(whichItem)
+    if (lastHolder == nil) then
+        return false
+    end
+    local owner = hunit.getOwner(robber)
+    if (hplayer.isIsolated(owner) == false) then
+        return false
+    end
+    local lastOwner = hunit.getOwner(lastHolder)
+    if (lastOwner == owner) then
+        return false
+    end
+    return true
 end
 
 --- match done
@@ -567,20 +607,24 @@ hitem.synthesis = function(whichUnit, items)
     end)
     if (#items > 0) then
         for _, it in ipairs(items) do
-            local itId = hitem.getId(it)
-            local charges = hitem.getCharges(it)
-            if (hitem.isShadowBack(itId)) then
-                itId = hitem.shadowID(itId)
+            if (hitem.isRobber(it, whichUnit) == false) then
+                local itId = hitem.getId(it)
+                local charges = hitem.getCharges(it)
+                if (hitem.isShadowBack(itId)) then
+                    itId = hitem.shadowID(itId)
+                end
+                if (false == table.includes(itemKind, itId)) then
+                    table.insert(itemKind, itId)
+                end
+                table.insert(itemSlot, { id = itId, charges = charges })
+                if (itemStat.qty[itId] == nil) then
+                    itemStat.qty[itId] = 0
+                end
+                itemStat.qty[itId] = itemStat.qty[itId] + (hitem.getCharges(it))
+                hitem.del(it)
+            else
+                hitem.backToLastHolder(it)
             end
-            if (false == table.includes(itemKind, itId)) then
-                table.insert(itemKind, itId)
-            end
-            table.insert(itemSlot, { id = itId, charges = charges })
-            if (itemStat.qty[itId] == nil) then
-                itemStat.qty[itId] = 0
-            end
-            itemStat.qty[itId] = itemStat.qty[itId] + (hitem.getCharges(it))
-            hitem.del(it)
         end
     end
     local matchStack = 1
@@ -1049,13 +1093,15 @@ hitem.pickRect = function(u, x, y, w, h)
     end
     local items = {}
     hitemPool.forEach(CONST_CACHE.ITEM_POOL_PICK, function(enumItem)
-        local xi = cj.GetItemX(enumItem)
-        local yi = cj.GetItemY(enumItem)
-        local d = math.getDistanceBetweenXY(x, y, xi, yi)
-        local deg = math.getDegBetweenXY(x, y, xi, yi)
-        local distance = math.getMaxDistanceInRect(w, h, deg)
-        if (d <= distance) then
-            table.insert(items, enumItem)
+        if (hitem.isRobber(enumItem, u) == false) then
+            local xi = cj.GetItemX(enumItem)
+            local yi = cj.GetItemY(enumItem)
+            local d = math.getDistanceBetweenXY(x, y, xi, yi)
+            local deg = math.getDegBetweenXY(x, y, xi, yi)
+            local distance = math.getMaxDistanceInRect(w, h, deg)
+            if (d <= distance) then
+                table.insert(items, enumItem)
+            end
         end
     end)
     if (#items > 0) then
@@ -1074,11 +1120,13 @@ hitem.pickRound = function(u, x, y, r)
     end
     local items = {}
     hitemPool.forEach(CONST_CACHE.ITEM_POOL_PICK, function(enumItem)
-        local xi = cj.GetItemX(enumItem)
-        local yi = cj.GetItemY(enumItem)
-        local d = math.getDistanceBetweenXY(x, y, xi, yi)
-        if (d <= r) then
-            table.insert(items, enumItem)
+        if (hitem.isRobber(enumItem, u) == false) then
+            local xi = cj.GetItemX(enumItem)
+            local yi = cj.GetItemY(enumItem)
+            local d = math.getDistanceBetweenXY(x, y, xi, yi)
+            if (d <= r) then
+                table.insert(items, enumItem)
+            end
         end
     end)
     if (#items > 0) then

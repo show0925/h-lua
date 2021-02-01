@@ -90,20 +90,6 @@ hplayer.forEach = function(action)
     end
 end
 
---- 设置换算比率，多少金换1木
----@param ratio number
-hplayer.setConvertRatio = function(ratio)
-    if (type(ratio) == "number") then
-        hplayer.convert_ratio = math.floor(ratio)
-    end
-end
-
---- 获取换算比率
----@return number
-hplayer.getConvertRatio = function()
-    return hplayer.convert_ratio
-end
-
 --- 玩家ID索引
 ---@protected
 hplayer.indexes = {}
@@ -121,6 +107,20 @@ hplayer.index = function(whichPlayer)
         hplayer.indexes[whichPlayer] = idx
     end
     return idx
+end
+
+--- 设置换算比率，多少金换1木
+---@param ratio number
+hplayer.setConvertRatio = function(ratio)
+    if (type(ratio) == "number") then
+        hplayer.convert_ratio = math.floor(ratio)
+    end
+end
+
+--- 获取换算比率
+---@return number
+hplayer.getConvertRatio = function()
+    return hplayer.convert_ratio
 end
 
 --- 获取玩家名称
@@ -183,6 +183,22 @@ hplayer.getApm = function(whichPlayer)
     return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_APM, 0)
 end
 
+--- 设置玩家是否不可获取他人物品
+---@param whichPlayer userdata
+---@param isIsolated boolean
+hplayer.setIsolated = function(whichPlayer, isIsolated)
+    if (type(isIsolated) == "boolean") then
+        hplayer.set(whichPlayer, CONST_CACHE.PLAYER_ISOLATED, isIsolated)
+    end
+end
+
+--- 获取玩家是否不可获取他人物品
+---@param whichPlayer userdata
+---@return boolean
+hplayer.isIsolated = function(whichPlayer)
+    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_ISOLATED, false)
+end
+
 --- 在所有玩家里获取一个随机的英雄
 ---@return userdata
 hplayer.getRandomHero = function()
@@ -201,6 +217,7 @@ hplayer.getRandomHero = function()
         math.random(1, hhero.getPlayerAllowQty(hplayer.players[pi[ri]]))
     )
 end
+
 --- 令玩家单位全部隐藏
 ---@param whichPlayer userdata
 hplayer.hideUnit = function(whichPlayer)
@@ -232,6 +249,7 @@ hplayer.clearUnit = function(whichPlayer)
     )
     hgroup.clear(g, true, true)
 end
+
 --- 令玩家失败并退出
 ---@param whichPlayer userdata
 ---@param tips string

@@ -16,6 +16,7 @@ CONST_CACHE = {
     PLAYER_SELECTION = "c-p-selection",
     PLAYER_MARKING = "c-p-marking",
     PLAYER_NAME = "c-p-name",
+    PLAYER_ISOLATED = "c-p-isolated",
     PLAYER_PRESTIGE = "c-p-prestige",
     PLAYER_ALLOW_COMMAND = "c-p-allow-command",
     PLAYER_MULTI_BOARD = "c-p-multi-board",

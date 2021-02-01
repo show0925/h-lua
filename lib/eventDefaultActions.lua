@@ -480,6 +480,10 @@ hevent_default_actions = {
                     echo("物品不存在", p)
                     return
                 end
+                if (hitem.isRobber(it, triggerUnit)) then
+                    echo("物品不属于你", p)
+                    return
+                end
                 local itemId = hitem.getId(it)
                 if (hitem.isShadowBack(itemId)) then
                     itemId = hitem.shadowID(itemId)
@@ -654,6 +658,17 @@ hevent_default_actions = {
             if (nil ~= holder and holder ~= u) then
                 hevent.triggerEvent(holder, CONST_EVENT.itemDrop, { triggerUnit = holder, triggerItem = it, targetUnit = u })
             end
+            -- 判断玩家是否不能获取他人物品
+            local lastHolder = hitem.getLastHolder(it)
+            if (hitem.isRobber(it, u)) then
+                -- 得到了别人先获得过的物品，不准拿
+                htextTag.style(
+                    htextTag.create2Unit(u, "不是你的不要捡", 8.00, "e04240", 1, 1.1, 50.00),
+                    "scale", 0, 0.05
+                )
+                hitem.backToLastHolder(it)
+                return
+            end
             -- 如果是hslk物品，得到技术升级
             if (hitem.getHSlk(itId) ~= nil) then
                 -- 判断超重
@@ -671,6 +686,8 @@ hevent_default_actions = {
                     hitem.del(it)
                     it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
                     cj.SetItemCharges(it, charges)
+                    hitem.alloc(it)
+                    hitem.setLastHolder(it, lastHolder)
                     -- 触发超重事件
                     hevent.triggerEvent(u, CONST_EVENT.itemOverWeight, {
                         triggerUnit = u,
@@ -685,6 +702,7 @@ hevent_default_actions = {
                     hitem.del(it)
                     it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
                     cj.SetItemCharges(it, charges)
+                    hitem.setLastHolder(it, lastHolder)
                     if (hitem.getEmptySlot(u) <= 0) then
                         hitem.synthesis(u, it) -- 看看有没有合成，可能这个实体物品有合成可以收到物品栏
                     else
@@ -744,6 +762,7 @@ hevent_default_actions = {
                         hitem.setHolder(it, nil)
                         hitemPool.insert(CONST_CACHE.ITEM_POOL_PICK, it)
                         if (hitem.isShadowFront(itId)) then
+                            local lastHolder = hitem.getLastHolder(it)
                             hitem.del(it, 0)
                             -- 影子物品替换
                             it = hitem.create({
@@ -752,6 +771,8 @@ hevent_default_actions = {
                                 y = y,
                                 charges = charges,
                             })
+                            hcache.alloc(it)
+                            hitem.setLastHolder(it, lastHolder)
                         end
                     end
                     --触发丢弃物品事件
