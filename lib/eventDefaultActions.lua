@@ -786,8 +786,8 @@ hevent_default_actions = {
         pickup = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = cj.GetItemTypeId(it)
-            if (table.includes(hslk.attr.item_attack_white.items, itId) or his.destroy(it)) then
-                --过滤hlua白字攻击物品
+            if (itId == 0 or table.includes(hslk.attr.item_attack_white.items, itId)) then
+                --过滤无效物品
                 return
             end
             itId = string.id2char(itId)
@@ -861,12 +861,13 @@ hevent_default_actions = {
         drop = cj.Condition(function()
             local it = cj.GetManipulatedItem()
             local itId = cj.GetItemTypeId(it)
-            if (table.includes(hslk.attr.item_attack_white.items, itId)) then
-                --过滤hlua白字攻击物品
+            if (itId == 0 or table.includes(hslk.attr.item_attack_white.items, itId)) then
+                --过滤无效物品
                 return
             end
             itId = string.id2char(itId)
             local u = cj.GetTriggerUnit()
+            hcache.set(it, CONST_CACHE.ITEM_DROP, nil)
             if (cj.GetUnitCurrentOrder(u) == 852001) then
                 -- dropitem:852001
                 hcache.set(it, CONST_CACHE.ITEM_DROP, u)
@@ -883,8 +884,6 @@ hevent_default_actions = {
                             --坐标相同视为给予单位类型（几乎不可能坐标一致）
                             hcache.set(it, CONST_CACHE.ITEM_DROP, u)
                             return
-                        elseif (hcache.get(it, CONST_CACHE.ITEM_DROP) ~= nil) then
-                            hcache.set(it, CONST_CACHE.ITEM_DROP, nil)
                         end
                         if (hitem.isShadowFront(itId)) then
                             hitem.del(it, 0)
