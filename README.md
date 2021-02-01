@@ -101,10 +101,6 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多
 
 > 本套代码免费提供给了解lua的作者试用，如果不了解lua语言请使用T来制作地图或自行学习，此处不提供教学，本教程以YDWE为例
 
-#### 快速开始：
-请使用 [h-lua-cli集成开发环境](https://github.com/hunzsig-warcraft3/h-lua-cli)
-
-
 #### 开启DEBUG：
 ```
 --在引用库之前，配置HLUA_DEBUG等于true
