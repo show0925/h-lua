@@ -883,6 +883,8 @@ hevent_default_actions = {
                             --坐标相同视为给予单位类型（几乎不可能坐标一致）
                             hcache.set(it, CONST_CACHE.ITEM_DROP, u)
                             return
+                        elseif (hcache.get(it, CONST_CACHE.ITEM_DROP) ~= nil) then
+                            hcache.set(it, CONST_CACHE.ITEM_DROP, nil)
                         end
                         if (hitem.isShadowFront(itId)) then
                             hitem.del(it, 0)
