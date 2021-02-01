@@ -52,7 +52,7 @@ hcmd._cds["-apc"] = {
             icon = "ReplaceableTextures\\CommandButtons\\BTNTomeOfRetraining.blp",
             content = {
                 "-apc 设定是否自动转换黄金为木头",
-                "-开启后，当黄金达到100万时，自动按照比例把黄金转换为木头",
+                "开启后，当黄金达到100万时，自动按照比例把黄金转换为木头",
             }
         })
     end
@@ -95,7 +95,7 @@ hcmd._cds["-random"] = {
     action = function(evtData)
         local p = evtData.triggerPlayer
         if (#hhero.selectorPool <= 0) then
-            echo("-random命令被禁用", p)
+            echo("-random 指令无效", p)
             return
         end
         local pIndex = hplayer.index(p)
@@ -157,7 +157,7 @@ hcmd._cds["-repick"] = {
     action = function(evtData)
         local p = evtData.triggerPlayer
         if (#hhero.selectorPool <= 0) then
-            echo("-repick命令被禁用", p)
+            echo("-repick 指令无效", p)
             return
         end
         local pIndex = hplayer.index(p)
@@ -203,17 +203,15 @@ hcmd._cds["-repick"] = {
 
 -- Command: -d [+|-][NUMBER]视距减少/增加
 hcmd._cds["-d"] = {
-    pattern = "^-d [\-+]\d+$",
+    pattern = "^-d [-+]%d+$",
     action = function(evtData)
         local cds = string.explode(" ", string.lower(evtData.chatString))
         local first = string.sub(cds[2], 1, 1)
         if (first == "+" or first == "-") then
             --视距
             local v = string.sub(cds[2], 2, string.len(cds[2]))
-            v = tonumber(v)
-            if (v == nil) then
-                return
-            else
+            v = math.abs(tonumber(v))
+            if (v > 0) then
                 local val = math.abs(v)
                 if (first == "+") then
                     hcamera.changeDistance(evtData.triggerPlayer, val)
@@ -239,6 +237,13 @@ hcmd._cds["-d"] = {
 
 --- 配置这局游戏支持的框架指令，只能设置一次
 --- commands一览:
+--- -gg 投降
+--- -apm 显示每分钟操作数
+--- -apc 开关金自动转木
+--- -eff 开关特效
+--- -random 随机选择英雄
+--- -repick 重新选择英雄
+--- -d [+|-][NUMBER] 升降视距；例：-d +100 / -d -50
 ---@param commands table<string> 例 {"-apm","-gg"}
 ---@param playerIndexes table<number> 例 {1,2,3}
 hcmd.conf = function(commands, playerIndexes)

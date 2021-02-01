@@ -921,7 +921,6 @@ hevent.onChat = function(whichPlayer, pattern, callFunc)
     return hevent.registerEvent(whichPlayer, CONST_EVENT.chat, function(evtData)
         local triggerPlayer = evtData.triggerPlayer
         local chatString = evtData.chatString
-        print("event=", triggerPlayer, chatString)
         local m = string.match(chatString, pattern)
         if (m ~= nil) then
             evtData.matchedString = m
