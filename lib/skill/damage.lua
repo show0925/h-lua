@@ -300,6 +300,9 @@ hskill.damage = function(options)
                 htime.delTimer(t)
                 hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING_TIMER, nil)
                 hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING, false)
+                if (hunit.isPunishing(targetUnit)) then
+                    hmonitor.listen("punish_current", targetUnit)
+                end
             end
         ))
         if (sourceUnit ~= nil and his.deleted(sourceUnit) == false) then
