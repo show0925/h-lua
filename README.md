@@ -1,6 +1,6 @@
  * [github地址](https://github.com/hunzsig-warcraft3/h-lua)
  * [开源地图：HelloWorld](https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld)
- * [开源地图：我塔非凡](https://github.com/hunzsig-warcraft3/w3x-my-tower)
+ * [开源地图：秘地探奇](https://github.com/hunzsig-warcraft3/w3x-mysterious-land)
  * [功能测试：DZAPI](https://github.com/hunzsig-warcraft3/w3x-test-dzapi)
  * [功能测试：崩溃压力](https://github.com/hunzsig-warcraft3/w3x-test-breakdown)
  * [技术文档](http://wenku.hunzsig.org/?_=_1_5)
@@ -19,7 +19,9 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多
     ├── const - 静态值
     │   ├── abilityTarget - 技能目标
     │   ├── attritube - 属性
+    │   ├── attributeXtras - 属性Xtras
     │   ├── breakArmorType - 破防类型
+    │   ├── cache - 缓存Keys
     │   ├── damageSource - 伤害来源
     │   ├── damageType - 伤害类型
     │   ├── enchant - 附魔值
@@ -36,6 +38,7 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多
     │   ├── blizzard_c.lua - 暴雪C全局变量
     │   ├── blizzard_bj.lua - 暴雪部分BJ函数，实际无用，非要用bj就自行拓展编写载入
     │   ├── blizzard_def.lua - 实际无用，参考用途
+    │   ├── cache.lua - 缓存
     │   ├── color.lua - 颜色
     │   ├── debug.lua - 调试
     │   ├── echo.lua - 游戏荧幕打印
@@ -65,8 +68,12 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多
     │   ├── hero.lua - 英雄/选英雄模块，包含点击/酒馆选择，repick/random功能等
     │   ├── is.lua - 判断模块 * 常用
     │   ├── item.lua - 物品模块，与属性系统无缝结合，合成/分拆等功能
+    │   ├── itemPool.lua - 物品池
+    │   ├── japi.lua - JAPI
     │   ├── leaderBoard.lua 排行榜模块，用于简易构建排行榜
     │   ├── lightning.lua - 闪电链
+    │   ├── matcher.lua - 匹配器
+    │   ├── monitor.lua - 监听器
     │   ├── multiBoard.lua - 多面板
     │   ├── player.lua - 玩家
     │   ├── quest.lua - 任务
