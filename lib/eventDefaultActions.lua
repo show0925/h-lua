@@ -268,30 +268,24 @@ hevent_default_actions = {
                 )
             end
         end),
-        death = cj.Condition(function()
+        dead = cj.Condition(function()
             local u = cj.GetTriggerUnit()
             local killer = hevent.getLastDamageUnit(u)
             if (killer ~= nil) then
                 hplayer.addKill(hunit.getOwner(killer), 1)
             end
+            -- 死亡标志
+            hcache.set(u, CONST_CACHE.UNIT_DEAD, true)
             -- @触发死亡事件
-            hevent.triggerEvent(
-                u,
-                CONST_EVENT.dead,
-                {
-                    triggerUnit = u,
-                    killUnit = killer
-                }
-            )
+            hevent.triggerEvent(u, CONST_EVENT.dead, {
+                triggerUnit = u,
+                killUnit = killer
+            })
             -- @触发击杀事件
-            hevent.triggerEvent(
-                killer,
-                CONST_EVENT.kill,
-                {
-                    triggerUnit = killer,
-                    targetUnit = u
-                }
-            )
+            hevent.triggerEvent(killer, CONST_EVENT.kill, {
+                triggerUnit = killer,
+                targetUnit = u
+            })
         end),
         order = cj.Condition(function()
             --[[

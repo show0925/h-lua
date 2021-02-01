@@ -520,15 +520,18 @@ hskill.damage = function(options)
             end
         end
         -- 硬直
-        local punish_during = 5.00
+        local punishDuring = 5.00
         if (lastDamage > 1 and his.alive(targetUnit) and his.punish(targetUnit) == false and hunit.isPunishing(targetUnit)) then
+            local cutVal = lastDamage * 1
+            local isCut = (targetUnitAttr.punish_current - cutVal <= 0)
             hattr.set(targetUnit, 0, {
-                punish_current = "-" .. lastDamage
+                punish_current = "-" .. cutVal
             })
-            if (targetUnitAttr.punish_current - lastDamage <= 0 and his.deleted(targetUnit) == false) then
+            if (isCut and his.deleted(targetUnit) == false) then
                 hcache.set(targetUnit, CONST_CACHE.ATTR_PUNISHING, true)
+                hunit.setRGBA(targetUnit, 77, 77, 77, 1, punishDuring)
                 htime.setTimeout(
-                    punish_during + 1.00,
+                    punishDuring + 1.00,
                     function(t)
                         htime.delTimer(t)
                         hcache.set(targetUnit, CONST_CACHE.ATTR_PUNISHING, false)
@@ -537,32 +540,28 @@ hskill.damage = function(options)
                 local punishEffectAttackSpeed = (100 + targetUnitAttr.attack_speed) * punishEffectRatio
                 local punishEffectMove = targetUnitAttr.move * punishEffectRatio
                 if (punishEffectAttackSpeed < 1) then
-                    punishEffectAttackSpeed = 1.00
+                    punishEffectAttackSpeed = 1
                 end
                 if (punishEffectMove < 1) then
-                    punishEffectMove = 1.00
+                    punishEffectMove = 1
                 end
-                hattr.set(targetUnit, punish_during, {
+                hattr.set(targetUnit, punishDuring, {
                     attack_speed = "-" .. punishEffectAttackSpeed,
                     move = "-" .. punishEffectMove
                 })
                 htextTag.style(
-                    htextTag.create2Unit(targetUnit, "僵硬", 6.00, "c0c0c0", 0, punish_during, 50.00),
+                    htextTag.create2Unit(targetUnit, "僵硬", 6.00, "c0c0c0", 0, punishDuring, 50.00),
                     "scale",
                     0,
                     0
                 )
                 -- @触发硬直事件
-                hevent.triggerEvent(
-                    targetUnit,
-                    CONST_EVENT.heavy,
-                    {
-                        triggerUnit = targetUnit,
-                        sourceUnit = sourceUnit,
-                        percent = punishEffectRatio * 100,
-                        during = punish_during
-                    }
-                )
+                hevent.triggerEvent(targetUnit, CONST_EVENT.punish, {
+                    triggerUnit = targetUnit,
+                    sourceUnit = sourceUnit,
+                    percent = punishEffectRatio * 100,
+                    during = punishDuring
+                })
             end
         end
         -- 反伤

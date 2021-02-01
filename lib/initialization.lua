@@ -102,12 +102,12 @@ hmonitor.create("mana_back", 0.7,
     end
 )
 
--- 硬直监听器（没收到伤害时,每3秒恢复3%硬直）
+-- 硬直监听器（没收到伤害时,每3秒恢复5%硬直）
 hmonitor.create("punish_current", 3,
     function(object)
         local punish_current = hattr.get(object, "punish_current")
         local punish = hattr.get(object, "punish")
-        local val = math.floor(0.03 * punish)
+        local val = math.floor(0.05 * punish)
         if (punish_current + val > punish) then
             hattr.set(object, 0, { punish_current = "=" .. punish })
         else

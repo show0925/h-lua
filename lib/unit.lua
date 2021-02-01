@@ -402,7 +402,7 @@ hunit.embed = function(u, options)
         cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DAMAGED)
     end)
     -- 单位死亡
-    hevent.pool(u, hevent_default_actions.unit.death, function(tgr)
+    hevent.pool(u, hevent_default_actions.unit.dead, function(tgr)
         cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DEATH)
     end)
     --[[

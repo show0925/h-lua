@@ -86,14 +86,14 @@ end
 ---@param whichUnit userdata
 ---@return boolean
 his.dead = function(whichUnit)
-    return cj.GetUnitState(whichUnit, UNIT_STATE_LIFE) <= 0
+    return (true == hcache.get(whichUnit, CONST_CACHE.UNIT_DEAD)) or cj.IsUnitType(whichUnit, UNIT_TYPE_DEAD) or (cj.GetUnitState(whichUnit, UNIT_STATE_LIFE) <= 0)
 end
 
 --- 是否生存
 ---@param whichUnit userdata
 ---@return boolean
 his.alive = function(whichUnit)
-    return cj.GetUnitState(whichUnit, UNIT_STATE_LIFE) > 0
+    return false == his.dead(whichUnit)
 end
 
 --- 单位是否已被删除
@@ -343,6 +343,13 @@ end
 ---@return boolean
 his.allyPlayer = function(whichUnit, whichPlayer)
     return cj.IsUnitAlly(whichUnit, whichPlayer)
+end
+
+--- 玩家是否有贴图在展示
+---@param whichPlayer userdata
+---@return boolean
+his.marking = function(whichPlayer)
+    return hcache.get(whichPlayer, CONST_CACHE.PLAYER_MARKING) == true
 end
 
 --- 是否在区域内

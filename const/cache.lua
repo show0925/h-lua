@@ -57,6 +57,7 @@ CONST_CACHE = {
     ITEM_DROP = "c-item-drop",
     ITEM_USED = "c-item-used-",
     ITEM_POOL_PICK = "c-item-pool-pick",
+    UNIT_DEAD = "c-u-dead",
     UNIT_PUNISHING = "c-u-punishing",
     UNIT_ANIMATE_SPEED = "c-u-animate-speed",
     UNIT_RGBA = "c-u-rgba",

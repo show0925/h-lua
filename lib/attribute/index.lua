@@ -290,16 +290,16 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 if (currentVal > 0) then
                     local punishCurrent = params.punish_current or 0
                     if (punishCurrent > futureVal) then
-                        hattribute.set(whichUnit, 0, { punish_current = futureVal })
+                        params.punish_current = futureVal
                     end
                 else
-                    hattribute.set(whichUnit, 0, { punish_current = futureVal })
+                    params.punish_current = futureVal
                 end
             elseif (attr == "punish_current" and hunit.isPunishing(whichUnit)) then
                 -- 硬直(current)
                 local punish = params.punish or 0
                 if (punish > 0 and (futureVal > punish or futureVal <= 0)) then
-                    hattribute.set(whichUnit, 0, { punish_current = punish })
+                    params.punish_current = punish
                 elseif (futureVal < punish) then
                     hmonitor.listen(attr, whichUnit)
                 end
