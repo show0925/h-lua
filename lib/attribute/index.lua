@@ -284,6 +284,8 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
                 -- 生命,魔法恢复
                 if (math.abs(futureVal) > 0.05) then
                     hmonitor.listen(attr, whichUnit)
+                else
+                    hmonitor.ignore(attr, whichUnit)
                 end
             elseif (attr == "punish" and hunit.isPunishing(whichUnit)) then
                 -- 硬直
