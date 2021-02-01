@@ -176,25 +176,6 @@ hplayer.setPrestige = function(whichPlayer, prestige)
     hplayer.set(whichPlayer, CONST_CACHE.PLAYER_PRESTIGE, prestige)
 end
 
---- 获取玩家是否支持命令：random/repick
----@param whichPlayer userdata
----@return table
-hplayer.getAllowCommands = function(whichPlayer)
-    return hplayer.get(whichPlayer, CONST_CACHE.PLAYER_ALLOW_COMMAND, {})
-end
---- 设置玩家是否支持命令,包含：random/repick
----@param whichPlayer userdata
----@param commands table
-hplayer.setAllowCommands = function(whichPlayer, commands)
-    if (type(commands) == "string") then
-        commands = { commands }
-    end
-    if (type(commands) ~= "table") then
-        return
-    end
-    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_ALLOW_COMMAND, commands)
-end
-
 --- 获取玩家APM
 ---@param whichPlayer userdata
 ---@return number

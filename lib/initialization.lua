@@ -69,11 +69,10 @@ for i = 1, bj_MAX_PLAYERS, 1 do
         hevent.onSelection(hplayer.players[i], 1, function(evtData)
             hplayer.set(evtData.triggerPlayer, CONST_CACHE.PLAYER_SELECTION, evtData.triggerUnit)
         end)
-        -- 玩家聊天控制
+        -- 玩家聊天接管
         hevent.pool(hplayer.players[i], hevent_default_actions.player.chat, function(tgr)
             cj.TriggerRegisterPlayerChatEvent(tgr, hplayer.players[i], "", false)
         end)
-        --hevent.onChat(hplayer.players[i], "+", false, hevent_default_actions.player.command)
     else
         hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_STATUS, hplayer.player_status.none)
     end

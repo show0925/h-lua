@@ -47,7 +47,7 @@ require "foundation.color"
 -- 加载h-lua自带的slk数据
 require "foundation.hslk"
 -- 加载h-lua的F9
-require "foundation.f9"
+require "foundation.cmd"
 -- 加载echo
 require "foundation.echo"
 -- 加载Mapping

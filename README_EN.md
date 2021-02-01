@@ -40,10 +40,10 @@ Timers, environments, shots, units, enemies, music, weather, masks, missions, an
     │   ├── blizzard_bj.lua - [INVALID]
     │   ├── blizzard_def.lua - [INVALID]
     │   ├── cache.lua
+    │   ├── cmd.lua - h-lua Default Commands
     │   ├── color.lua - Color for text
     │   ├── debug.lua
     │   ├── echo.lua - Game screen printing
-    │   ├── f9.lua - h-lua Quest
     │   ├── json.lua
     │   ├── Mapping.lua
     │   ├── math.lua

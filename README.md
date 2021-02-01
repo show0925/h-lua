@@ -39,10 +39,10 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多
     │   ├── blizzard_bj.lua - 暴雪部分BJ函数，实际无用，非要用bj就自行拓展编写载入
     │   ├── blizzard_def.lua - 实际无用，参考用途
     │   ├── cache.lua - 缓存
+    │   ├── cmd.lua - 框架自带命令管理
     │   ├── color.lua - 颜色
     │   ├── debug.lua - 调试
     │   ├── echo.lua - 游戏荧幕打印
-    │   ├── f9.lua - 框架任务
     │   ├── json.lua - json库
     │   ├── Mapping.lua - 值对库
     │   ├── math.lua - 计算库
