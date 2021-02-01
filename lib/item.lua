@@ -38,27 +38,27 @@ hitem.embed = function(u)
         return
     end
     -- 如果单位的玩家是真人
-    --if (his.computer(hunit.getOwner(u)) == false) then
-    -- 拾取
-    hevent.pool(u, hevent_default_actions.item.pickup, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PICKUP_ITEM)
-    end)
-    -- 丢弃
-    hevent.pool(u, hevent_default_actions.item.drop, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DROP_ITEM)
-    end)
-    -- 抵押
-    hevent.pool(u, hevent_default_actions.item.pawn, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PAWN_ITEM)
-    end)
-    -- 使用
-    hevent.pool(u, hevent_default_actions.item.use, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_USE_ITEM)
-    end)
-    hevent.pool(u, hevent_default_actions.item.use_s, function(tgr)
-        cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_SPELL_EFFECT)
-    end)
-    --end
+    if (his.computer(hunit.getOwner(u)) == false) then
+        -- 拾取
+        hevent.pool(u, hevent_default_actions.item.pickup, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PICKUP_ITEM)
+        end)
+        -- 丢弃
+        hevent.pool(u, hevent_default_actions.item.drop, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_DROP_ITEM)
+        end)
+        -- 抵押
+        hevent.pool(u, hevent_default_actions.item.pawn, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_PAWN_ITEM)
+        end)
+        -- 使用
+        hevent.pool(u, hevent_default_actions.item.use, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_USE_ITEM)
+        end)
+        hevent.pool(u, hevent_default_actions.item.use_s, function(tgr)
+            cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_SPELL_EFFECT)
+        end)
+    end
 end
 
 -- 清理物品缓存数据
