@@ -42,7 +42,7 @@ end
 
 --- 将物品从所有物品池删除
 ---@param whichItem userdata
-hitemPool.clear = function(whichItem)
+hitemPool.free = function(whichItem)
     if (whichItem == nil) then
         return
     end

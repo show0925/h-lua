@@ -63,8 +63,8 @@ end
 
 -- 清理物品缓存数据
 ---@protected
-hitem.clear = function(whichItem)
-    hitemPool.clear(whichItem)
+hitem.free = function(whichItem)
+    hitemPool.free(whichItem)
     local holder = hitem.getHolder(whichItem)
     if (holder ~= nil) then
         hitem.subProperty(holder, hitem.getId(whichItem), hitem.getCharges(whichItem))
@@ -191,13 +191,13 @@ end
 hitem.del = function(it, delay)
     delay = delay or 0
     if (delay <= 0 and it ~= nil) then
-        hitem.clear(it)
+        hitem.free(it)
         cj.SetWidgetLife(it, 1.00)
         cj.RemoveItem(it)
     else
         htime.setTimeout(delay, function(t)
             htime.delTimer(t)
-            hitem.clear(it)
+            hitem.free(it)
             cj.SetWidgetLife(it, 1.00)
             cj.RemoveItem(it)
         end)
