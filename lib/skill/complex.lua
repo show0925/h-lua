@@ -281,27 +281,25 @@ hskill.swim = function(options)
     end
     local damageString = "眩晕"
     local damageStringColor = "4169E1"
-    local swimTimer = hskill.get(u, "swimTimer")
+    local swimTimer = hcache.get(u, CONST_CACHE.SKILL_SWIM_TIMER)
     if (swimTimer ~= nil and htime.getRemainTime(swimTimer) > 0) then
         if (during <= htime.getRemainTime(swimTimer)) then
             return
         else
             htime.delTimer(swimTimer)
-            hskill.set(u, "swimTimer", nil)
+            hcache.set(u, CONST_CACHE.SKILL_SWIM_TIMER, nil)
             cj.UnitRemoveAbility(u, hskill.BUFF_SWIM)
             damageString = "劲眩"
             damageStringColor = "64e3f2"
         end
     end
-    local cu = hunit.create(
-        {
-            register = false,
-            unitId = hskill.SKILL_TOKEN,
-            whichPlayer = hplayer.player_passive,
-            x = hunit.x(u),
-            y = hunit.y(u)
-        }
-    )
+    local cu = hunit.create({
+        register = false,
+        unitId = hskill.SKILL_TOKEN,
+        whichPlayer = hplayer.player_passive,
+        x = hunit.x(u),
+        y = hunit.y(u)
+    })
     --判断during的时候是否小于0.5秒，使用眩晕0.05-0.5的技能，大于0.5使用无限眩晕法
     if (during < 0.05) then
         during = 0.05
@@ -322,8 +320,8 @@ hskill.swim = function(options)
         cj.SetUnitAbilityLevel(cu, hskill.SKILL_SWIM_UNLIMIT, 1)
         cj.IssueTargetOrder(cu, "thunderbolt", u)
         hunit.del(cu, 0.4)
-        hskill.set(
-            u, "swimTimer",
+        hcache.set(
+            u, CONST_CACHE.SKILL_SWIM_TIMER,
             htime.setTimeout(during, function(t)
                 htime.delTimer(t)
                 cj.UnitRemoveAbility(u, hskill.BUFF_SWIM)
@@ -409,7 +407,7 @@ hskill.silent = function(options)
         during = during * (1 - oppose * 0.01)
         damage = damage * (1 - oppose * 0.01)
     end
-    local level = hskill.get(u, "silentLevel", 0) + 1
+    local level = hcache.get(u, CONST_CACHE.SKILL_SILENT_LEVEL, 0) + 1
     if (level <= 1) then
         htextTag.style(htextTag.create2Unit(u, "沉默", 6.00, "ee82ee", 10, 1.00, 10.00), "scale", 0, 0.2)
     else
@@ -423,10 +421,10 @@ hskill.silent = function(options)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
         heffect.bindUnit(options.effect, u, "origin", during)
     end
-    hskill.set(u, "silentLevel", level)
+    hcache.set(u, CONST_CACHE.SKILL_SILENT_LEVEL, level)
     if (true == hcache.get(u, CONST_CACHE.SKILL_SILENT, false)) then
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "head", -1)
-        hskill.set(u, "silentEffect", eff)
+        hcache.set(u, CONST_CACHE.SKILL_SILENT_EFFECT, eff)
     end
     hcache.set(u, CONST_CACHE.SKILL_SILENT, true)
     if (damage > 0) then
@@ -468,9 +466,9 @@ hskill.silent = function(options)
     )
     htime.setTimeout(during, function(t)
         htime.delTimer(t)
-        hskill.set(u, "silentLevel", hskill.get(u, "silentLevel", 0) - 1)
-        if (hskill.get(u, "silentLevel") <= 0) then
-            heffect.del(hskill.get(u, "silentEffect"))
+        hcache.set(u, CONST_CACHE.SKILL_SILENT_LEVEL, hcache.get(u, CONST_CACHE.SKILL_SILENT_LEVEL, 0) - 1)
+        if (hcache.get(u, CONST_CACHE.SKILL_SILENT_LEVEL, 0) <= 0) then
+            heffect.del(hcache.get(u, CONST_CACHE.SKILL_SILENT_EFFECT))
             hcache.set(u, CONST_CACHE.SKILL_SILENT, false)
         end
     end)
@@ -514,7 +512,7 @@ hskill.unarm = function(options)
         during = during * (1 - oppose * 0.01)
         damage = damage * (1 - oppose * 0.01)
     end
-    local level = hskill.get(u, "unarmLevel", 0) + 1
+    local level = hcache.get(whichUnit, CONST_CACHE.SKILL_UN_ARM_LEVEL, 0) + 1
     if (level <= 1) then
         htextTag.style(htextTag.create2Unit(u, "缴械", 6.00, "ffe4e1", 10, 1.00, 10.00), "scale", 0, 0.2)
     else
@@ -528,10 +526,10 @@ hskill.unarm = function(options)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
         heffect.bindUnit(options.effect, u, "origin", during)
     end
-    hskill.set(u, "unarmLevel", level)
+    hcache.set(u, CONST_CACHE.SKILL_UN_ARM_LEVEL, level)
     if (true == hcache.get(u, CONST_CACHE.SKILL_UN_ARM, false)) then
         local eff = heffect.bindUnit("Abilities\\Spells\\Other\\Silence\\SilenceTarget.mdl", u, "weapon", -1)
-        hskill.set(u, "unarmEffect", eff)
+        hcache.set(u, CONST_CACHE.SKILL_UN_ARM_EFFECT, eff)
     end
     hcache.set(u, CONST_CACHE.SKILL_UN_ARM, true)
     if (damage > 0) then
@@ -563,9 +561,9 @@ hskill.unarm = function(options)
     })
     htime.setTimeout(during, function(t)
         htime.delTimer(t)
-        hskill.set(u, "unarmLevel", hskill.get(u, "unarmLevel", 0) - 1)
-        if (hskill.get(u, "unarmLevel") <= 0) then
-            heffect.del(hskill.get(u, "unarmEffect"))
+        hcache.set(u, CONST_CACHE.SKILL_UN_ARM_LEVEL, hcache.get(u, CONST_CACHE.SKILL_UN_ARM_LEVEL, 0) - 1)
+        if (hcache.get(u, CONST_CACHE.SKILL_UN_ARM_LEVEL, 0) <= 0) then
+            heffect.del(hcache.get(u, CONST_CACHE.SKILL_UN_ARM_EFFECT))
             hcache.set(u, CONST_CACHE.SKILL_UN_ARM, false)
         end
     end)

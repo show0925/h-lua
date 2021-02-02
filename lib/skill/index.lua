@@ -10,28 +10,6 @@ hskill = {
     BUFF_INVULNERABLE = string.char2id("Avul")
 }
 
----@private
-hskill.set = function(handle, key, val)
-    if (handle == nil or key == nil) then
-        return
-    end
-    if (hRuntime.skill[handle] == nil) then
-        hRuntime.skill[handle] = {}
-    end
-    hRuntime.skill[handle][key] = val
-end
-
----@private
-hskill.get = function(handle, key, defaultVal)
-    if (handle == nil or key == nil) then
-        return defaultVal
-    end
-    if (hRuntime.skill[handle] == nil or hRuntime.skill[handle][key] == nil) then
-        return defaultVal
-    end
-    return hRuntime.skill[handle][key]
-end
-
 --- 获取原生SLK数据集
 ---@param abilityId string|number
 ---@return table|nil

@@ -84,13 +84,13 @@ hskill.pause = function(whichUnit, during, pauseColor)
     elseif (pauseColor == "green") then
         rgba = { 30, 220, 30 }
     end
-    local prevTimer = hskill.get(whichUnit, "pauseTimer")
+    local prevTimer = hcache.get(whichUnit, CONST_CACHE.SKILL_PAUSE_TIMER)
     local prevTimeRemaining = 0
     if (prevTimer ~= nil) then
         prevTimeRemaining = htime.getRemainTime(prevTimer)
         if (prevTimeRemaining > 0) then
             htime.delTimer(prevTimer)
-            hskill.set(whichUnit, "pauseTimer", nil)
+            hcache.set(whichUnit, CONST_CACHE.SKILL_PAUSE_TIMER, nil)
         else
             prevTimeRemaining = 0
         end
@@ -101,9 +101,8 @@ hskill.pause = function(whichUnit, during, pauseColor)
     end
     cj.SetUnitTimeScale(whichUnit, 0.00)
     cj.PauseUnit(whichUnit, true)
-    hskill.set(
-        whichUnit,
-        "pauseTimer",
+    hcache.set(
+        whichUnit, CONST_CACHE.SKILL_PAUSE_TIMER,
         htime.setTimeout(during + prevTimeRemaining, function(t)
             htime.delTimer(t)
             cj.PauseUnit(whichUnit, false)

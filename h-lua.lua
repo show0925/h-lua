@@ -36,8 +36,6 @@ require "foundation.md5"
 require "foundation.cache"
 -- 加载cmd
 require "foundation.cmd"
--- 加载runtime
-require "foundation.runtime"
 -- 加载math
 require "foundation.math"
 -- 加载string
