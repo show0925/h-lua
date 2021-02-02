@@ -28,13 +28,10 @@ heffect.toXY = function(effectModel, x, y, during)
     local eff
     if (during > 0) then
         eff = cj.AddSpecialEffect(effectModel, x, y)
-        htime.setTimeout(
-            during,
-            function(t)
-                htime.delTimer(t)
-                cj.DestroyEffect(eff)
-            end
-        )
+        htime.setTimeout(during, function(t)
+            htime.delTimer(t)
+            cj.DestroyEffect(eff)
+        end)
     else
         eff = cj.AddSpecialEffect(effectModel, x, y)
         cj.DestroyEffect(eff)
@@ -58,13 +55,10 @@ heffect.toLoc = function(effectModel, loc, during)
     local eff
     if (during > 0) then
         eff = cj.AddSpecialEffectLoc(effectModel, loc)
-        htime.setTimeout(
-            during,
-            function(t)
-                htime.delTimer(t)
-                cj.DestroyEffect(eff)
-            end
-        )
+        htime.setTimeout(during, function(t)
+            htime.delTimer(t)
+            cj.DestroyEffect(eff)
+        end)
     else
         eff = cj.AddSpecialEffectLoc(effectModel, x, y)
         cj.DestroyEffect(eff)
@@ -90,13 +84,10 @@ heffect.toUnit = function(effectModel, targetUnit, during)
     local y = hunit.y(targetUnit)
     if (during > 0) then
         eff = cj.AddSpecialEffect(effectModel, x, y)
-        htime.setTimeout(
-            during,
-            function(t)
-                htime.delTimer(t)
-                cj.DestroyEffect(eff)
-            end
-        )
+        htime.setTimeout(during, function(t)
+            htime.delTimer(t)
+            cj.DestroyEffect(eff)
+        end)
     else
         eff = cj.AddSpecialEffect(effectModel, x, y)
         cj.DestroyEffect(eff)
@@ -121,13 +112,10 @@ heffect.bindUnit = function(effectModel, targetUnit, attach, during)
     during = during or 0
     if (during > 0) then
         eff = cj.AddSpecialEffectTarget(effectModel, targetUnit, attach)
-        htime.setTimeout(
-            during,
-            function(t)
-                htime.delTimer(t)
-                cj.DestroyEffect(eff)
-            end
-        )
+        htime.setTimeout(during, function(t)
+            htime.delTimer(t)
+            cj.DestroyEffect(eff)
+        end)
     elseif (during == -1) then
         eff = cj.AddSpecialEffectTarget(effectModel, targetUnit, attach)
     else

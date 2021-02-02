@@ -30,77 +30,74 @@ hmultiBoard.create = function(key, refreshFrequency, yourData)
             --title
             cj.MultiboardSetTitleText(pmb.boards[key], "多面板")
             --
-            pmb.timer = htime.setInterval(
-                refreshFrequency,
-                function()
-                    --检查玩家是否隐藏了多面板 -mbv
-                    if (pmb.visible ~= true) then
-                        if (cj.GetLocalPlayer() == p) then
-                            cj.MultiboardDisplay(pmb.boards[key], false)
-                        end
-                        --而且隐藏就没必要展示数据了，后续流程中止
-                        return
-                    end
-                    local data = yourData(pmb.boards[key], pi)
-                    local totalRow = #data
-                    local totalCol = 0
-                    if (totalRow > 0) then
-                        totalCol = #data[1]
-                    end
-                    if (totalRow <= 0 or totalCol <= 0) then
-                        print_err("Multiboard:-totalRow -totalCol")
-                        return
-                    end
-                    --设置行列数
-                    cj.MultiboardSetRowCount(pmb.boards[key], totalRow)
-                    cj.MultiboardSetColumnCount(pmb.boards[key], totalCol)
-                    local widthCol = {}
-                    for row = 1, totalRow, 1 do
-                        for col = 1, totalCol, 1 do
-                            local item = cj.MultiboardGetItem(pmb.boards[key], row - 1, col - 1)
-                            local isSetValue = false
-                            local isSetIcon = false
-                            local width = 0
-                            local valueType = type(data[row][col].value)
-                            if (valueType == "string" or valueType == "number") then
-                                isSetValue = true
-                                if (valueType == "number") then
-                                    data[row][col].value = tostring(data[row][col].value)
-                                end
-                                width = width + string.mb_len(data[row][col].value)
-                                if ((row - 1) == pi) then
-                                    data[row][col].value = hcolor.yellow(data[row][col].value)
-                                end
-                                cj.MultiboardSetItemValue(item, data[row][col].value)
-                            end
-                            if (type(data[row][col].icon) == "string") then
-                                isSetIcon = true
-                                cj.MultiboardSetItemIcon(item, data[row][col].icon)
-                                width = width + 3
-                            end
-                            cj.MultiboardSetItemStyle(item, isSetValue, isSetIcon)
-                            if (widthCol[col] == nil) then
-                                widthCol[col] = 0
-                            end
-                            if (width > widthCol[col]) then
-                                widthCol[col] = width
-                            end
-                        end
-                    end
-                    for row = 1, totalRow, 1 do
-                        for col = 1, totalCol, 1 do
-                            cj.MultiboardSetItemWidth(
-                                cj.MultiboardGetItem(pmb.boards[key], row - 1, col - 1),
-                                widthCol[col] / 140
-                            )
-                        end
-                    end
-                    --显示
+            pmb.timer = htime.setInterval(refreshFrequency, function()
+                --检查玩家是否隐藏了多面板 -mbv
+                if (pmb.visible ~= true) then
                     if (cj.GetLocalPlayer() == p) then
-                        cj.MultiboardDisplay(pmb.boards[key], true)
+                        cj.MultiboardDisplay(pmb.boards[key], false)
+                    end
+                    --而且隐藏就没必要展示数据了，后续流程中止
+                    return
+                end
+                local data = yourData(pmb.boards[key], pi)
+                local totalRow = #data
+                local totalCol = 0
+                if (totalRow > 0) then
+                    totalCol = #data[1]
+                end
+                if (totalRow <= 0 or totalCol <= 0) then
+                    print_err("Multiboard:-totalRow -totalCol")
+                    return
+                end
+                --设置行列数
+                cj.MultiboardSetRowCount(pmb.boards[key], totalRow)
+                cj.MultiboardSetColumnCount(pmb.boards[key], totalCol)
+                local widthCol = {}
+                for row = 1, totalRow, 1 do
+                    for col = 1, totalCol, 1 do
+                        local item = cj.MultiboardGetItem(pmb.boards[key], row - 1, col - 1)
+                        local isSetValue = false
+                        local isSetIcon = false
+                        local width = 0
+                        local valueType = type(data[row][col].value)
+                        if (valueType == "string" or valueType == "number") then
+                            isSetValue = true
+                            if (valueType == "number") then
+                                data[row][col].value = tostring(data[row][col].value)
+                            end
+                            width = width + string.mb_len(data[row][col].value)
+                            if ((row - 1) == pi) then
+                                data[row][col].value = hcolor.yellow(data[row][col].value)
+                            end
+                            cj.MultiboardSetItemValue(item, data[row][col].value)
+                        end
+                        if (type(data[row][col].icon) == "string") then
+                            isSetIcon = true
+                            cj.MultiboardSetItemIcon(item, data[row][col].icon)
+                            width = width + 3
+                        end
+                        cj.MultiboardSetItemStyle(item, isSetValue, isSetIcon)
+                        if (widthCol[col] == nil) then
+                            widthCol[col] = 0
+                        end
+                        if (width > widthCol[col]) then
+                            widthCol[col] = width
+                        end
                     end
                 end
-            )
+                for row = 1, totalRow, 1 do
+                    for col = 1, totalCol, 1 do
+                        cj.MultiboardSetItemWidth(
+                            cj.MultiboardGetItem(pmb.boards[key], row - 1, col - 1),
+                            widthCol[col] / 140
+                        )
+                    end
+                end
+                --显示
+                if (cj.GetLocalPlayer() == p) then
+                    cj.MultiboardDisplay(pmb.boards[key], true)
+                end
+            end)
         end
     end
 end

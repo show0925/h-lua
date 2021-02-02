@@ -21,7 +21,7 @@ hmonitor.create = function(key, frequency, action, ignoreFilter)
     end
     local obj = Mapping:new()
     local timer = htime.setInterval(frequency, function(_)
-        obj:forEach(function(o, oi)
+        obj:forEach(function(o, _)
             if (ignoreFilter == nil or ignoreFilter(o) ~= true) then
                 action(o)
             else

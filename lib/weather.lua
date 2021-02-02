@@ -24,14 +24,11 @@ hweather.del = function(w, delay)
         cj.EnableWeatherEffect(w, false)
         cj.RemoveWeatherEffect(w)
     else
-        htime.setTimeout(
-            delay,
-            function(t)
-                htime.delTimer(t)
-                cj.EnableWeatherEffect(w, false)
-                cj.RemoveWeatherEffect(w)
-            end
-        )
+        htime.setTimeout(delay, function(t)
+            htime.delTimer(t)
+            cj.EnableWeatherEffect(w, false)
+            cj.RemoveWeatherEffect(w)
+        end)
     end
 end
 

@@ -116,16 +116,16 @@ hsound.bgm = function(musicFileName, whichPlayer)
             end
             hsound.bgmStop(whichPlayer)
             hplayer.set(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, musicFileName)
-            hplayer.set(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, htime.setTimeout(
-                hsound.BREAK_DELAY,
-                function(t)
+            hplayer.set(
+                whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER,
+                htime.setTimeout(hsound.BREAK_DELAY, function(t)
                     htime.delTimer(t)
                     hplayer.set(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
                     if (cj.GetLocalPlayer() == whichPlayer) then
                         cj.PlayMusic(bgmCurrent)
                     end
-                end
-            ))
+                end)
+            )
         else
             hsound.bgmStop()
             for i = 1, bj_MAX_PLAYERS, 1 do
@@ -137,16 +137,16 @@ hsound.bgm = function(musicFileName, whichPlayer)
                         hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
                     end
                     hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_CURRENT, musicFileName)
-                    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, htime.setTimeout(
-                        hsound.BREAK_DELAY,
-                        function(t)
+                    hplayer.set(
+                        hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER,
+                        htime.setTimeout(hsound.BREAK_DELAY, function(t)
                             htime.delTimer(t)
                             hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
                             if (cj.GetLocalPlayer() == hplayer.players[i]) then
                                 cj.PlayMusic(musicFileName)
                             end
-                        end
-                    ))
+                        end)
+                    )
                 end
             end
         end

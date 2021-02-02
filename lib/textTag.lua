@@ -13,15 +13,12 @@ htextTag.del = function(ttg, delay)
         hcache.free(ttg)
         cj.DestroyTextTag(ttg)
     else
-        htime.setTimeout(
-            delay,
-            function(t)
-                htime.delTimer(t)
-                htextTag.qty = htextTag.qty - 1
-                hcache.free(ttg)
-                cj.DestroyTextTag(ttg)
-            end
-        )
+        htime.setTimeout(delay, function(t)
+            htime.delTimer(t)
+            htextTag.qty = htextTag.qty - 1
+            hcache.free(ttg)
+            cj.DestroyTextTag(ttg)
+        end)
     end
 end
 --- 创建漂浮字
@@ -119,32 +116,26 @@ end
 htextTag.createFollowUnit = function(u, msg, size, color, opacity, during, zOffset)
     local ttg = htextTag.create2Unit(u, msg, size, color, opacity, during, zOffset)
     if (ttg == nil) then
-        htime.setTimeout(
-            0.1,
-            function(t)
-                htime.delTimer(t)
-                htextTag.createFollowUnit(u, msg, size, color, opacity, during, zOffset)
-            end
-        )
+        htime.setTimeout(0.1, function(t)
+            htime.delTimer(t)
+            htextTag.createFollowUnit(u, msg, size, color, opacity, during, zOffset)
+        end)
         return
     end
     local txt = htextTag.getMsg(ttg)
     local scale = 0.5
-    htime.setInterval(
-        0.03,
-        function(t)
-            if (txt == nil) then
-                htime.delTimer(t)
-                return
-            end
-            cj.SetTextTagPos(ttg, hunit.x(u) - cj.StringLength(txt) * size * scale, hunit.y(u), zOffset)
-            if (his.alive(u) == true) then
-                cj.SetTextTagVisibility(ttg, true)
-            else
-                cj.SetTextTagVisibility(ttg, false)
-            end
+    htime.setInterval(0.03, function(t)
+        if (txt == nil) then
+            htime.delTimer(t)
+            return
         end
-    )
+        cj.SetTextTagPos(ttg, hunit.x(u) - cj.StringLength(txt) * size * scale, hunit.y(u), zOffset)
+        if (his.alive(u) == true) then
+            cj.SetTextTagVisibility(ttg, true)
+        else
+            cj.SetTextTagVisibility(ttg, false)
+        end
+    end)
     return ttg
 end
 
@@ -201,33 +192,27 @@ htextTag.style = function(ttg, showType, xSpeed, ySpeed)
     if (showType == "scale") then
         -- 放大
         local tnow = 0
-        htime.setInterval(
-            0.03,
-            function(t)
-                tnow = tnow + htime.getSetTime(t)
-                local msg = htextTag.getMsg(ttg)
-                if (msg == nil or tnow >= tend) then
-                    htime.delTimer(t)
-                    return
-                end
-                cj.SetTextTagText(ttg, msg, (size * (1 + tnow * 0.5 / tend)) * 0.023 / 10)
+        htime.setInterval(0.03, function(t)
+            tnow = tnow + htime.getSetTime(t)
+            local msg = htextTag.getMsg(ttg)
+            if (msg == nil or tnow >= tend) then
+                htime.delTimer(t)
+                return
             end
-        )
+            cj.SetTextTagText(ttg, msg, (size * (1 + tnow * 0.5 / tend)) * 0.023 / 10)
+        end)
     elseif (showType == "shrink") then
         -- 缩小
         local tnow = 0
-        htime.setInterval(
-            0.03,
-            function(t)
-                tnow = tnow + htime.getSetTime(t)
-                local msg = htextTag.getMsg(ttg)
-                if (msg == nil or tnow >= tend) then
-                    htime.delTimer(t)
-                    return
-                end
-                cj.SetTextTagText(ttg, msg, (size * (1 - tnow * 0.5 / tend)) * 0.023 / 10)
+        htime.setInterval(0.03, function(t)
+            tnow = tnow + htime.getSetTime(t)
+            local msg = htextTag.getMsg(ttg)
+            if (msg == nil or tnow >= tend) then
+                htime.delTimer(t)
+                return
             end
-        )
+            cj.SetTextTagText(ttg, msg, (size * (1 - tnow * 0.5 / tend)) * 0.023 / 10)
+        end)
     elseif (showType == "toggle") then
         -- 放大再缩小
         local tnow = 0
@@ -235,21 +220,18 @@ htextTag.style = function(ttg, showType, xSpeed, ySpeed)
         local tend2 = tend * 0.25
         local tend3 = tend - tend1 - tend2
         local scale = tend * 0.002
-        htime.setInterval(
-            0.03,
-            function(t)
-                tnow = tnow + htime.getSetTime(t)
-                local msg = htextTag.getMsg(ttg)
-                if (msg == nil or tnow >= tend1 + tend2 + tend3) then
-                    htime.delTimer(t)
-                    return
-                end
-                if (tnow <= tend1) then
-                    cj.SetTextTagText(ttg, msg, (size * (1 + tnow / tend1)) * scale)
-                elseif (tnow > tend1 + tend3) then
-                    cj.SetTextTagText(ttg, msg, (size * 2 - (5 * (tnow - tend1 - tend3) / tend2)) * scale)
-                end
+        htime.setInterval(0.03, function(t)
+            tnow = tnow + htime.getSetTime(t)
+            local msg = htextTag.getMsg(ttg)
+            if (msg == nil or tnow >= tend1 + tend2 + tend3) then
+                htime.delTimer(t)
+                return
             end
-        )
+            if (tnow <= tend1) then
+                cj.SetTextTagText(ttg, msg, (size * (1 + tnow / tend1)) * scale)
+            elseif (tnow > tend1 + tend3) then
+                cj.SetTextTagText(ttg, msg, (size * 2 - (5 * (tnow - tend1 - tend3) / tend2)) * scale)
+            end
+        end)
     end
 end

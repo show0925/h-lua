@@ -418,13 +418,10 @@ hplayer.diffLumberRatio = function(whichPlayer, diff, during)
     if (diff ~= 0) then
         hplayer.set(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO) + diff)
         if (during > 0) then
-            htime.setTimeout(
-                during,
-                function(t)
-                    htime.delTimer(t)
-                    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO) - diff)
-                end
-            )
+            htime.setTimeout(during, function(t)
+                htime.delTimer(t)
+                hplayer.set(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO, hplayer.get(whichPlayer, CONST_CACHE.PLAYER_LUMBER_RATIO) - diff)
+            end)
         end
     end
 end

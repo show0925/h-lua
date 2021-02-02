@@ -8,13 +8,10 @@ hquest.del = function(q, delay)
     if (delay == nil or delay <= 0) then
         cj.DestroyQuest(q)
     else
-        htime.setTimeout(
-            delay,
-            function(t)
-                htime.delTimer(t)
-                cj.DestroyQuest(q)
-            end
-        )
+        htime.setTimeout(delay, function(t)
+            htime.delTimer(t)
+            cj.DestroyQuest(q)
+        end)
     end
 end
 

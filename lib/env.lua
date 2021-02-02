@@ -109,14 +109,11 @@ henv = {
             cj.RemoveDestructable(whichDestructable)
             whichDestructable = nil
         else
-            htime.setTimeout(
-                delay,
-                function(t)
-                    htime.delTimer(t)
-                    cj.RemoveDestructable(whichDestructable)
-                    whichDestructable = nil
-                end
-            )
+            htime.setTimeout(delay, function(t)
+                htime.delTimer(t)
+                cj.RemoveDestructable(whichDestructable)
+                whichDestructable = nil
+            end)
         end
     end,
     --- 清理可破坏物
@@ -196,68 +193,65 @@ henv.build = function(whichRect, typeStr, isInvulnerable, isDestroyRect, ground,
         end
     end
     local randomM = 2
-    htime.setInterval(
-        0.01,
-        function(t)
-            local x = rectStartX + indexX * 80
-            local y = rectStartY + indexY * 80
-            local buildType = math.random(1, randomM)
-            if (indexX == -1 or indexY == -1) then
-                htime.delTimer(t)
-                if (isDestroyRect) then
-                    hrect.del(whichRect)
-                end
+    htime.setInterval(0.01, function(t)
+        local x = rectStartX + indexX * 80
+        local y = rectStartY + indexY * 80
+        local buildType = math.random(1, randomM)
+        if (indexX == -1 or indexY == -1) then
+            htime.delTimer(t)
+            if (isDestroyRect) then
+                hrect.del(whichRect)
+            end
+            return
+        end
+        randomM = randomM + math.random(1, 3)
+        if (randomM > 180) then
+            randomM = 2
+        end
+        if (x > rectEndX) then
+            indexY = 1 + indexY
+            indexX = -1
+        end
+        if (y > rectEndY) then
+            indexY = -1
+        end
+        indexX = 1 + indexX
+        --- 一些特殊的地形要处理一下
+        if (typeStr == "sea") then
+            --- 海洋 - 深水不处理
+            if (cj.IsTerrainPathable(x, y, PATHING_TYPE_WALKABILITY) == true) then
                 return
             end
-            randomM = randomM + math.random(1, 3)
-            if (randomM > 180) then
-                randomM = 2
+        end
+        if (#units > 0 and (buildType == 1 or buildType == 40 or (#doodads <= 0 and buildType == 51))) then
+            local tempUnit = cj.CreateUnit(
+                cj.Player(PLAYER_NEUTRAL_PASSIVE),
+                units[math.random(1, #units)],
+                x,
+                y,
+                bj_UNIT_FACING
+            )
+            table.insert(rectUnits, tempUnit)
+            if (ground ~= nil and math.random(1, 3) == 2) then
+                cj.SetTerrainType(x, y, ground, -1, 1, 0)
             end
-            if (x > rectEndX) then
-                indexY = 1 + indexY
-                indexX = -1
+        elseif (#doodads > 0 and buildType == 16) then
+            local dest = cj.CreateDestructable(
+                doodads[math.random(1, #doodads)],
+                x,
+                y,
+                math.random(0, 360),
+                math.random(0.5, 1.1),
+                0
+            )
+            if (isInvulnerable == true) then
+                cj.SetDestructableInvulnerable(dest, true)
             end
-            if (y > rectEndY) then
-                indexY = -1
-            end
-            indexX = 1 + indexX
-            --- 一些特殊的地形要处理一下
-            if (typeStr == "sea") then
-                --- 海洋 - 深水不处理
-                if (cj.IsTerrainPathable(x, y, PATHING_TYPE_WALKABILITY) == true) then
-                    return
-                end
-            end
-            if (#units > 0 and (buildType == 1 or buildType == 40 or (#doodads <= 0 and buildType == 51))) then
-                local tempUnit = cj.CreateUnit(
-                    cj.Player(PLAYER_NEUTRAL_PASSIVE),
-                    units[math.random(1, #units)],
-                    x,
-                    y,
-                    bj_UNIT_FACING
-                )
-                table.insert(rectUnits, tempUnit)
-                if (ground ~= nil and math.random(1, 3) == 2) then
-                    cj.SetTerrainType(x, y, ground, -1, 1, 0)
-                end
-            elseif (#doodads > 0 and buildType == 16) then
-                local dest = cj.CreateDestructable(
-                    doodads[math.random(1, #doodads)],
-                    x,
-                    y,
-                    math.random(0, 360),
-                    math.random(0.5, 1.1),
-                    0
-                )
-                if (isInvulnerable == true) then
-                    cj.SetDestructableInvulnerable(dest, true)
-                end
-                if (ground ~= nil) then
-                    cj.SetTerrainType(x, y, ground, -1, 1, 0)
-                end
+            if (ground ~= nil) then
+                cj.SetTerrainType(x, y, ground, -1, 1, 0)
             end
         end
-    )
+    end)
 end
 
 --- 随机构建区域装饰

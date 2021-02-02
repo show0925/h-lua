@@ -121,33 +121,30 @@ hattributeSetter.relyAttackWhite = function(u, itemId, qty)
     else
         local per = 3.00
         local limit = 60.0 / per -- 一般不会超过1分钟复活
-        htime.setInterval(
-            per,
-            function(t)
-                limit = limit - 1
-                if (limit < 0) then
-                    htime.delTimer(t)
-                elseif (his.alive(u) == true) then
-                    htime.delTimer(t)
-                    local i = 1
-                    local it
-                    local hasSlot = (cj.GetUnitAbilityLevel(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT) >= 1)
-                    if (hasSlot == false) then
-                        cj.UnitAddAbility(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT)
-                    end
-                    while (i <= qty) do
-                        it = cj.CreateItem(itemId, 0, 0)
-                        cj.UnitAddItem(u, it)
-                        cj.SetWidgetLife(it, 10.00)
-                        cj.RemoveItem(it)
-                        i = i + 1
-                    end
-                    if (hasSlot == false) then
-                        cj.UnitRemoveAbility(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT)
-                    end
+        htime.setInterval(per, function(t)
+            limit = limit - 1
+            if (limit < 0) then
+                htime.delTimer(t)
+            elseif (his.alive(u) == true) then
+                htime.delTimer(t)
+                local i = 1
+                local it
+                local hasSlot = (cj.GetUnitAbilityLevel(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT) >= 1)
+                if (hasSlot == false) then
+                    cj.UnitAddAbility(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT)
+                end
+                while (i <= qty) do
+                    it = cj.CreateItem(itemId, 0, 0)
+                    cj.UnitAddItem(u, it)
+                    cj.SetWidgetLife(it, 10.00)
+                    cj.RemoveItem(it)
+                    i = i + 1
+                end
+                if (hasSlot == false) then
+                    cj.UnitRemoveAbility(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT)
                 end
             end
-        )
+        end)
     end
 end
 

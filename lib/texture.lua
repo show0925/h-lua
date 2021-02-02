@@ -68,19 +68,16 @@ htexture.mark = function(path, during, whichPlayer, red, green, blue)
             red, green, blue, 255,
             red, green, blue, 0
         )
-        htime.setTimeout(
-            during,
-            function(t)
-                htime.delTimer(t)
-                htexture.cinematicFilterGeneric(
-                    0.50,
-                    BLEND_MODE_ADDITIVE,
-                    path,
-                    red, green, blue, 0,
-                    red, green, blue, 255
-                )
-            end
-        )
+        htime.setTimeout(during, function(t)
+            htime.delTimer(t)
+            htexture.cinematicFilterGeneric(
+                0.50,
+                BLEND_MODE_ADDITIVE,
+                path,
+                red, green, blue, 0,
+                red, green, blue, 255
+            )
+        end)
     elseif (whichPlayer ~= nil) then
         if (hplayer.get(whichPlayer, CONST_CACHE.PLAYER_MARKING, false) ~= true) then
             hplayer.set(whichPlayer, CONST_CACHE.PLAYER_MARKING, true)
@@ -93,22 +90,19 @@ htexture.mark = function(path, during, whichPlayer, red, green, blue)
                     red, green, blue, 0
                 )
             end
-            htime.setTimeout(
-                during,
-                function(t)
-                    htime.delTimer(t)
-                    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_MARKING, false)
-                    if (whichPlayer == cj.GetLocalPlayer()) then
-                        htexture.cinematicFilterGeneric(
-                            0.50,
-                            BLEND_MODE_ADDITIVE,
-                            path,
-                            red, green, blue, 0,
-                            red, green, blue, 255
-                        )
-                    end
+            htime.setTimeout(during, function(t)
+                htime.delTimer(t)
+                hplayer.set(whichPlayer, CONST_CACHE.PLAYER_MARKING, false)
+                if (whichPlayer == cj.GetLocalPlayer()) then
+                    htexture.cinematicFilterGeneric(
+                        0.50,
+                        BLEND_MODE_ADDITIVE,
+                        path,
+                        red, green, blue, 0,
+                        red, green, blue, 255
+                    )
                 end
-            )
+            end)
         end
     end
 end

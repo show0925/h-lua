@@ -4,15 +4,12 @@ hskill.avoid = function(whichUnit)
     cj.UnitAddAbility(whichUnit, hskill.SKILL_AVOID_PLUS)
     cj.SetUnitAbilityLevel(whichUnit, hskill.SKILL_AVOID_PLUS, 2)
     cj.UnitRemoveAbility(whichUnit, hskill.SKILL_AVOID_PLUS)
-    htime.setTimeout(
-        0.00,
-        function(t)
-            htime.delTimer(t)
-            cj.UnitAddAbility(whichUnit, hskill.SKILL_AVOID_MIUNS)
-            cj.SetUnitAbilityLevel(whichUnit, hskill.SKILL_AVOID_MIUNS, 2)
-            cj.UnitRemoveAbility(whichUnit, hskill.SKILL_AVOID_MIUNS)
-        end
-    )
+    htime.setTimeout(0, function(t)
+        htime.delTimer(t)
+        cj.UnitAddAbility(whichUnit, hskill.SKILL_AVOID_MIUNS)
+        cj.SetUnitAbilityLevel(whichUnit, hskill.SKILL_AVOID_MIUNS, 2)
+        cj.UnitRemoveAbility(whichUnit, hskill.SKILL_AVOID_MIUNS)
+    end)
 end
 
 --- 无敌
@@ -30,13 +27,10 @@ hskill.invulnerable = function(whichUnit, during, effect)
     if (during > 0 and effect ~= nil) then
         heffect.bindUnit(effect, whichUnit, "origin", during)
     end
-    htime.setTimeout(
-        during,
-        function(t)
-            htime.delTimer(t)
-            cj.UnitRemoveAbility(whichUnit, hskill.BUFF_INVULNERABLE)
-        end
-    )
+    htime.setTimeout(during, function(t)
+        htime.delTimer(t)
+        cj.UnitRemoveAbility(whichUnit, hskill.BUFF_INVULNERABLE)
+    end)
 end
 
 --- 范围群体无敌
@@ -60,16 +54,13 @@ hskill.invulnerableRange = function(x, y, radius, filter, during, effect)
             heffect.bindUnit(effect, eu, "origin", during)
         end
     end)
-    htime.setTimeout(
-        during,
-        function(t)
-            htime.delTimer(t)
-            hgroup.forEach(g, function(eu)
-                hunit.setInvulnerable(eu, false)
-            end)
-            g = nil
-        end
-    )
+    htime.setTimeout(during, function(t)
+        htime.delTimer(t)
+        hgroup.forEach(g, function(eu)
+            hunit.setInvulnerable(eu, false)
+        end)
+        g = nil
+    end)
 end
 
 --- 暂停效果
@@ -113,17 +104,14 @@ hskill.pause = function(whichUnit, during, pauseColor)
     hskill.set(
         whichUnit,
         "pauseTimer",
-        htime.setTimeout(
-            during + prevTimeRemaining,
-            function(t)
-                htime.delTimer(t)
-                cj.PauseUnit(whichUnit, false)
-                if (colorBuff ~= nil) then
-                    hunit.delRGBA(whichUnit, colorBuff)
-                end
-                cj.SetUnitTimeScale(whichUnit, 1)
+        htime.setTimeout(during + prevTimeRemaining, function(t)
+            htime.delTimer(t)
+            cj.PauseUnit(whichUnit, false)
+            if (colorBuff ~= nil) then
+                hunit.delRGBA(whichUnit, colorBuff)
             end
-        )
+            cj.SetUnitTimeScale(whichUnit, 1)
+        end)
     )
 end
 
@@ -144,13 +132,10 @@ hskill.invisible = function(whichUnit, during, transition, effect)
         heffect.toUnit(effect, whichUnit, 0)
     end
     if (transition > 0) then
-        htime.setTimeout(
-            transition,
-            function(t)
-                htime.delTimer(t)
-                hskill.add(whichUnit, hskill.SKILL_INVISIBLE, during)
-            end
-        )
+        htime.setTimeout(transition, function(t)
+            htime.delTimer(t)
+            hskill.add(whichUnit, hskill.SKILL_INVISIBLE, during)
+        end)
     else
         hskill.add(whichUnit, hskill.SKILL_INVISIBLE, during)
     end
@@ -173,13 +158,10 @@ hskill.visible = function(whichUnit, during, transition, effect)
         heffect.toUnit(effect, whichUnit, 0)
     end
     if (transition > 0) then
-        htime.setTimeout(
-            transition,
-            function(t)
-                htime.delTimer(t)
-                hskill.del(whichUnit, hskill.SKILL_INVISIBLE, during)
-            end
-        )
+        htime.setTimeout(transition, function(t)
+            htime.delTimer(t)
+            hskill.del(whichUnit, hskill.SKILL_INVISIBLE, during)
+        end)
     else
         hskill.del(whichUnit, hskill.SKILL_INVISIBLE, during)
     end
@@ -197,13 +179,10 @@ hskill.modelEffect = function(whichUnit, whichAbility, abilityLevel, during)
         if (abilityLevel > 0) then
             cj.SetUnitAbilityLevel(whichUnit, whichAbility, abilityLevel)
         end
-        htime.setTimeout(
-            during,
-            function(t)
-                htime.delTimer(t)
-                cj.UnitRemoveAbility(whichUnit, whichAbility)
-            end
-        )
+        htime.setTimeout(during, function(t)
+            htime.delTimer(t)
+            cj.UnitRemoveAbility(whichUnit, whichAbility)
+        end)
     end
 end
 

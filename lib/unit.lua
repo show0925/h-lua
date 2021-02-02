@@ -271,14 +271,11 @@ hunit.setAnimateSpeed = function(whichUnit, speed, during)
     cj.SetUnitTimeScale(whichUnit, speed)
     hcache.set(whichUnit, CONST_CACHE.UNIT_ANIMATE_SPEED, speed)
     if (during > 0) then
-        htime.setTimeout(
-            during,
-            function(t)
-                htime.delTimer(t)
-                cj.SetUnitTimeScale(u, prevSpeed)
-                hcache.set(whichUnit, CONST_CACHE.UNIT_ANIMATE_SPEED, prevSpeed)
-            end
-        )
+        htime.setTimeout(during, function(t)
+            htime.delTimer(t)
+            cj.SetUnitTimeScale(u, prevSpeed)
+            hcache.set(whichUnit, CONST_CACHE.UNIT_ANIMATE_SPEED, prevSpeed)
+        end)
     end
 end
 
@@ -683,13 +680,10 @@ hunit.setUserData = function(u, val, during)
     cj.SetUnitUserData(u, val)
     during = during or 0
     if (during > 0) then
-        htime.setTimeout(
-            during,
-            function(t)
-                htime.delTimer(t)
-                cj.SetUnitUserData(u, oldData)
-            end
-        )
+        htime.setTimeout(during, function(t)
+            htime.delTimer(t)
+            cj.SetUnitUserData(u, oldData)
+        end)
     end
 end
 
@@ -721,20 +715,17 @@ hunit.del = function(targetUnit, delay)
         hcache.free(targetUnit)
         cj.RemoveUnit(targetUnit)
     else
-        htime.setTimeout(
-            delay,
-            function(t)
-                htime.delTimer(t)
-                if (his.deleted(targetUnit)) then
-                    return
-                end
-                hgroup.removeUnit(hgroup.GLOBAL, targetUnit)
-                hitem.delFromUnit(targetUnit)
-                hevent.free(targetUnit)
-                hcache.free(targetUnit)
-                cj.RemoveUnit(targetUnit)
+        htime.setTimeout(delay, function(t)
+            htime.delTimer(t)
+            if (his.deleted(targetUnit)) then
+                return
             end
-        )
+            hgroup.removeUnit(hgroup.GLOBAL, targetUnit)
+            hitem.delFromUnit(targetUnit)
+            hevent.free(targetUnit)
+            hcache.free(targetUnit)
+            cj.RemoveUnit(targetUnit)
+        end)
     end
 end
 --- 杀死单位，延时<delay>秒

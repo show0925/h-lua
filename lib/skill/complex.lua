@@ -323,16 +323,12 @@ hskill.swim = function(options)
         cj.IssueTargetOrder(cu, "thunderbolt", u)
         hunit.del(cu, 0.4)
         hskill.set(
-            u,
-            "swimTimer",
-            htime.setTimeout(
-                during,
-                function(t)
-                    htime.delTimer(t)
-                    cj.UnitRemoveAbility(u, hskill.BUFF_SWIM)
-                    hcache.set(u, CONST_CACHE.SKILL_SWIM, false)
-                end
-            )
+            u, "swimTimer",
+            htime.setTimeout(during, function(t)
+                htime.delTimer(t)
+                cj.UnitRemoveAbility(u, hskill.BUFF_SWIM)
+                hcache.set(u, CONST_CACHE.SKILL_SWIM, false)
+            end)
         )
     end
     -- @触发眩晕事件
@@ -470,17 +466,14 @@ hskill.silent = function(options)
             during = during
         }
     )
-    htime.setTimeout(
-        during,
-        function(t)
-            htime.delTimer(t)
-            hskill.set(u, "silentLevel", hskill.get(u, "silentLevel", 0) - 1)
-            if (hskill.get(u, "silentLevel") <= 0) then
-                heffect.del(hskill.get(u, "silentEffect"))
-                hcache.set(u, CONST_CACHE.SKILL_SILENT, false)
-            end
+    htime.setTimeout(during, function(t)
+        htime.delTimer(t)
+        hskill.set(u, "silentLevel", hskill.get(u, "silentLevel", 0) - 1)
+        if (hskill.get(u, "silentLevel") <= 0) then
+            heffect.del(hskill.get(u, "silentEffect"))
+            hcache.set(u, CONST_CACHE.SKILL_SILENT, false)
         end
-    )
+    end)
 end
 
 --[[
@@ -907,13 +900,10 @@ hskill.lightningChain = function(options)
         options.odds = 9999 --闪电链只要开始能延续下去就是100%几率了
         hgroup.clear(g, true, false)
         if (options.damage > 0) then
-            htime.setTimeout(
-                0.35,
-                function(t)
-                    htime.delTimer(t)
-                    hskill.lightningChain(options)
-                end
-            )
+            htime.setTimeout(0.35, function(t)
+                htime.delTimer(t)
+                hskill.lightningChain(options)
+            end)
         end
     else
         if (options.repeatGroup ~= nil) then
@@ -1019,81 +1009,78 @@ hskill.crackFly = function(options)
             distance = distance
         }
     )
-    htime.setInterval(
-        0.05,
-        function(t)
-            local dist = 0
-            local z = 0
-            local timerSetTime = htime.getSetTime(t)
-            if (cost > during) then
-                if (damage > 0) then
-                    hskill.damage(
-                        {
-                            sourceUnit = options.sourceUnit,
-                            targetUnit = options.targetUnit,
-                            effect = options.effect,
-                            damage = damage,
-                            damageSrc = options.damageSrc,
-                            damageType = options.damageType,
-                            isFixed = options.isFixed,
-                            damageString = "击飞",
-                            damageStringColor = "808000"
-                        }
-                    )
-                end
-                cj.SetUnitFlyHeight(options.targetUnit, originHigh, 10000)
-                cj.SetUnitPathing(options.targetUnit, true)
-                hcache.set(options.targetUnit, CONST_CACHE.SKILL_CRACK_FLY, false)
-                -- 默认是地面，创建沙尘
-                local tempEff = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
-                if (his.water(options.targetUnit) == true) then
-                    -- 如果是水面，创建水花
-                    tempEff = "Abilities\\Spells\\Other\\CrushingWave\\CrushingWaveDamage.mdl"
-                end
-                heffect.toUnit(tempEff, options.targetUnit, 0)
-                htime.delTimer(t)
-                return
+    htime.setInterval(0.05, function(t)
+        local dist = 0
+        local z = 0
+        local timerSetTime = htime.getSetTime(t)
+        if (cost > during) then
+            if (damage > 0) then
+                hskill.damage(
+                    {
+                        sourceUnit = options.sourceUnit,
+                        targetUnit = options.targetUnit,
+                        effect = options.effect,
+                        damage = damage,
+                        damageSrc = options.damageSrc,
+                        damageType = options.damageType,
+                        isFixed = options.isFixed,
+                        damageString = "击飞",
+                        damageStringColor = "808000"
+                    }
+                )
             end
-            cost = cost + timerSetTime
-            if (cost < during * 0.35) then
-                dist = distance / (during * 0.5 / timerSetTime)
-                z = height / (during * 0.35 / timerSetTime)
-                if (dist > 0) then
-                    local pxy = math.polarProjection(
-                        hunit.x(options.targetUnit),
-                        hunit.y(options.targetUnit),
-                        dist,
-                        originDeg
-                    )
-                    cj.SetUnitFacing(options.targetUnit, originFacing)
-                    if (his.borderMap(pxy.x, pxy.y) == false) then
-                        hunit.portal(options.targetUnit, pxy.x, pxy.y)
-                    end
+            cj.SetUnitFlyHeight(options.targetUnit, originHigh, 10000)
+            cj.SetUnitPathing(options.targetUnit, true)
+            hcache.set(options.targetUnit, CONST_CACHE.SKILL_CRACK_FLY, false)
+            -- 默认是地面，创建沙尘
+            local tempEff = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
+            if (his.water(options.targetUnit) == true) then
+                -- 如果是水面，创建水花
+                tempEff = "Abilities\\Spells\\Other\\CrushingWave\\CrushingWaveDamage.mdl"
+            end
+            heffect.toUnit(tempEff, options.targetUnit, 0)
+            htime.delTimer(t)
+            return
+        end
+        cost = cost + timerSetTime
+        if (cost < during * 0.35) then
+            dist = distance / (during * 0.5 / timerSetTime)
+            z = height / (during * 0.35 / timerSetTime)
+            if (dist > 0) then
+                local pxy = math.polarProjection(
+                    hunit.x(options.targetUnit),
+                    hunit.y(options.targetUnit),
+                    dist,
+                    originDeg
+                )
+                cj.SetUnitFacing(options.targetUnit, originFacing)
+                if (his.borderMap(pxy.x, pxy.y) == false) then
+                    hunit.portal(options.targetUnit, pxy.x, pxy.y)
                 end
-                if (z > 0) then
-                    cj.SetUnitFlyHeight(options.targetUnit, cj.GetUnitFlyHeight(options.targetUnit) + z, z / timerSetTime)
+            end
+            if (z > 0) then
+                cj.SetUnitFlyHeight(options.targetUnit, cj.GetUnitFlyHeight(options.targetUnit) + z, z / timerSetTime)
+            end
+        else
+            dist = distance / (during * 0.5 / timerSetTime)
+            z = height / (during * 0.65 / timerSetTime)
+            if (dist > 0) then
+                local pxy = math.polarProjection(
+                    hunit.x(options.targetUnit),
+                    hunit.y(options.targetUnit),
+                    dist,
+                    originDeg
+                )
+                cj.SetUnitFacing(options.targetUnit, originFacing)
+                if (his.borderMap(pxy.x, pxy.y) == false) then
+                    hunit.portal(options.targetUnit, pxy.x, pxy.y)
                 end
-            else
-                dist = distance / (during * 0.5 / timerSetTime)
-                z = height / (during * 0.65 / timerSetTime)
-                if (dist > 0) then
-                    local pxy = math.polarProjection(
-                        hunit.x(options.targetUnit),
-                        hunit.y(options.targetUnit),
-                        dist,
-                        originDeg
-                    )
-                    cj.SetUnitFacing(options.targetUnit, originFacing)
-                    if (his.borderMap(pxy.x, pxy.y) == false) then
-                        hunit.portal(options.targetUnit, pxy.x, pxy.y)
-                    end
-                end
-                if (z > 0) then
-                    cj.SetUnitFlyHeight(options.targetUnit, cj.GetUnitFlyHeight(options.targetUnit) - z, z / timerSetTime)
-                end
+            end
+            if (z > 0) then
+                cj.SetUnitFlyHeight(options.targetUnit, cj.GetUnitFlyHeight(options.targetUnit) - z, z / timerSetTime)
             end
         end
-    )
+    end)
 end
 
 --[[
@@ -1229,44 +1216,41 @@ hskill.whirlwind = function(options)
         cj.AddUnitAnimationProperties(options.sourceUnit, options.animation, true)
     end
     local time = 0
-    htime.setInterval(
-        frequency,
-        function(t)
-            time = time + frequency
-            if (time > during) then
-                htime.delTimer(t)
-                if (options.animation) then
-                    cj.AddUnitAnimationProperties(options.sourceUnit, options.animation, false)
-                end
-                hcache.set(options.sourceUnit, CONST_CACHE.SKILL_WHIRLWIND, false)
-                return
-            end
+    htime.setInterval(frequency, function(t)
+        time = time + frequency
+        if (time > during) then
+            htime.delTimer(t)
             if (options.animation) then
-                hunit.animate(options.sourceUnit, options.animation)
+                cj.AddUnitAnimationProperties(options.sourceUnit, options.animation, false)
             end
-            local g = hgroup.createByUnit(options.sourceUnit, radius, filter)
-            if (g == nil) then
-                return
-            end
-            if (hgroup.count(g) <= 0) then
-                return
-            end
-            hgroup.forEach(g, function(eu)
-                hskill.damage(
-                    {
-                        sourceUnit = options.sourceUnit,
-                        targetUnit = eu,
-                        effect = options.effectEnum,
-                        damage = damage,
-                        damageSrc = options.damageSrc,
-                        damageType = options.damageType,
-                        isFixed = options.isFixed,
-                    }
-                )
-            end)
-            g = nil
+            hcache.set(options.sourceUnit, CONST_CACHE.SKILL_WHIRLWIND, false)
+            return
         end
-    )
+        if (options.animation) then
+            hunit.animate(options.sourceUnit, options.animation)
+        end
+        local g = hgroup.createByUnit(options.sourceUnit, radius, filter)
+        if (g == nil) then
+            return
+        end
+        if (hgroup.count(g) <= 0) then
+            return
+        end
+        hgroup.forEach(g, function(eu)
+            hskill.damage(
+                {
+                    sourceUnit = options.sourceUnit,
+                    targetUnit = eu,
+                    effect = options.effectEnum,
+                    damage = damage,
+                    damageSrc = options.damageSrc,
+                    damageType = options.damageType,
+                    isFixed = options.isFixed,
+                }
+            )
+        end)
+        g = nil
+    end)
 end
 
 --[[
@@ -1487,100 +1471,97 @@ hskill.leap = function(options)
         end
     end
     --开始冲鸭
-    htime.setInterval(
-        frequency,
-        function(t)
-            local ax = hunit.x(arrowUnit)
-            local ay = hunit.y(arrowUnit)
-            if (his.dead(sourceUnit)) then
-                htime.delTimer(t)
-                ending(ax, ay)
-                return
+    htime.setInterval(frequency, function(t)
+        local ax = hunit.x(arrowUnit)
+        local ay = hunit.y(arrowUnit)
+        if (his.dead(sourceUnit)) then
+            htime.delTimer(t)
+            ending(ax, ay)
+            return
+        end
+        local tx = 0
+        local ty = 0
+        if (options.targetUnit ~= nil) then
+            tx = hunit.x(options.targetUnit)
+            ty = hunit.y(options.targetUnit)
+        else
+            tx = options.x
+            ty = options.y
+        end
+        local sh = 0
+        if (shake ~= 0) then
+            if (shake == 'random') then
+                shake = math.random(-90, 90)
             end
-            local tx = 0
-            local ty = 0
-            if (options.targetUnit ~= nil) then
-                tx = hunit.x(options.targetUnit)
-                ty = hunit.y(options.targetUnit)
-            else
-                tx = options.x
-                ty = options.y
-            end
-            local sh = 0
-            if (shake ~= 0) then
-                if (shake == 'random') then
-                    shake = math.random(-90, 90)
-                end
-                local d = math.getDistanceBetweenXY(hunit.x(arrowUnit), hunit.y(arrowUnit), tx, ty)
-                sh = shake * d / distanceOrigin
-            end
-            local fac = math.getDegBetweenXY(ax, ay, tx, ty) + sh
-            local txy = math.polarProjection(ax, ay, speed, fac)
-            if (acceleration ~= 0) then
-                speed = speed + acceleration
-            end
-            if (his.borderMap(txy.x, txy.y) == false) then
-                hunit.portal(arrowUnit, txy.x, txy.y)
-            else
-                speed = 0
-            end
-            cj.SetUnitFacing(arrowUnit, fac)
-            if (options.effectMovement ~= nil) then
-                heffect.toXY(options.effectMovement, txy.x, txy.y, 0)
-            end
-            if (damageMovementRadius > 0) then
-                local g = hgroup.createByUnit(
-                    arrowUnit,
-                    damageMovementRadius,
-                    function(filterUnit)
-                        local flag = filter(filterUnit)
-                        if (damageMovementRepeat ~= true and hgroup.includes(repeatGroup, filterUnit)) then
-                            flag = false
-                        end
-                        return flag
+            local d = math.getDistanceBetweenXY(hunit.x(arrowUnit), hunit.y(arrowUnit), tx, ty)
+            sh = shake * d / distanceOrigin
+        end
+        local fac = math.getDegBetweenXY(ax, ay, tx, ty) + sh
+        local txy = math.polarProjection(ax, ay, speed, fac)
+        if (acceleration ~= 0) then
+            speed = speed + acceleration
+        end
+        if (his.borderMap(txy.x, txy.y) == false) then
+            hunit.portal(arrowUnit, txy.x, txy.y)
+        else
+            speed = 0
+        end
+        cj.SetUnitFacing(arrowUnit, fac)
+        if (options.effectMovement ~= nil) then
+            heffect.toXY(options.effectMovement, txy.x, txy.y, 0)
+        end
+        if (damageMovementRadius > 0) then
+            local g = hgroup.createByUnit(
+                arrowUnit,
+                damageMovementRadius,
+                function(filterUnit)
+                    local flag = filter(filterUnit)
+                    if (damageMovementRepeat ~= true and hgroup.includes(repeatGroup, filterUnit)) then
+                        flag = false
                     end
-                )
-                if (hgroup.count(g) > 0) then
-                    if (oneHitOnly == true) then
-                        hunit.kill(arrowUnit, 0)
-                    end
-                    hgroup.forEach(g, function(eu)
-                        if (damageMovementRepeat ~= true and repeatGroup ~= nil) then
-                            hgroup.addUnit(repeatGroup, eu)
-                        end
-                        if (damageMovement > 0) then
-                            hskill.damage({
-                                sourceUnit = sourceUnit,
-                                targetUnit = eu,
-                                damage = damageMovement,
-                                damageSrc = options.damageSrc,
-                                damageType = options.damageType,
-                                isFixed = options.isFixed,
-                                effect = options.damageEffect
-                            })
-                        end
-                        if (damageMovementDrag == true) then
-                            hunit.portal(eu, txy.x, txy.y)
-                        end
-                        if (type(extraInfluence) == "function") then
-                            extraInfluence(eu)
-                        end
-                    end)
-                    g = nil
+                    return flag
                 end
-            end
-            local distance = math.getDistanceBetweenXY(hunit.x(arrowUnit), hunit.y(arrowUnit), tx, ty)
-            if (height > 0 and distance < distanceOrigin) then
-                local ddh = 0.5 - distance / distanceOrigin
-                ddh = (heightOrigin + height) * (1 - math.abs(ddh) * 2)
-                hunit.setFlyHeight(arrowUnit, ddh, 9999)
-            end
-            if (distance <= speed or speed <= 0 or his.dead(arrowUnit) == true) then
-                htime.delTimer(t)
-                ending(txy.x, txy.y)
+            )
+            if (hgroup.count(g) > 0) then
+                if (oneHitOnly == true) then
+                    hunit.kill(arrowUnit, 0)
+                end
+                hgroup.forEach(g, function(eu)
+                    if (damageMovementRepeat ~= true and repeatGroup ~= nil) then
+                        hgroup.addUnit(repeatGroup, eu)
+                    end
+                    if (damageMovement > 0) then
+                        hskill.damage({
+                            sourceUnit = sourceUnit,
+                            targetUnit = eu,
+                            damage = damageMovement,
+                            damageSrc = options.damageSrc,
+                            damageType = options.damageType,
+                            isFixed = options.isFixed,
+                            effect = options.damageEffect
+                        })
+                    end
+                    if (damageMovementDrag == true) then
+                        hunit.portal(eu, txy.x, txy.y)
+                    end
+                    if (type(extraInfluence) == "function") then
+                        extraInfluence(eu)
+                    end
+                end)
+                g = nil
             end
         end
-    )
+        local distance = math.getDistanceBetweenXY(hunit.x(arrowUnit), hunit.y(arrowUnit), tx, ty)
+        if (height > 0 and distance < distanceOrigin) then
+            local ddh = 0.5 - distance / distanceOrigin
+            ddh = (heightOrigin + height) * (1 - math.abs(ddh) * 2)
+            hunit.setFlyHeight(arrowUnit, ddh, 9999)
+        end
+        if (distance <= speed or speed <= 0 or his.dead(arrowUnit) == true) then
+            htime.delTimer(t)
+            ending(txy.x, txy.y)
+        end
+    end)
 end
 
 --[[
@@ -1906,53 +1887,50 @@ hskill.rectangleStrike = function(options)
         tg = nil
     else
         local i = 0
-        htime.setInterval(
-            frequency,
-            function(t)
-                i = i + 1
-                local d = i * radius * 0.5
-                if (d >= distance) then
-                    htime.delTimer(t)
-                    return
-                end
-                local txy = math.polarProjection(options.x, options.y, d, options.deg)
-                if (options.effect ~= nil and d - effectOffset < distance) then
-                    local effUnitDur = 0.6
-                    local effUnit = hunit.create(
-                        {
-                            register = false,
-                            whichPlayer = hplayer.player_passive,
-                            unitId = hskill.SKILL_LEAP,
-                            x = txy.x,
-                            y = txy.y,
-                            facing = options.deg,
-                            modelScale = effectScale,
-                            opacity = 1.0,
-                            qty = 1,
-                            during = effUnitDur
-                        }
-                    )
-                    heffect.bindUnit(options.effect, effUnit, "origin", effUnitDur)
-                end
-                local g = hgroup.createByXY(txy.x, txy.y, radius, options.filter)
-                if (hgroup.count(g) > 0) then
-                    hskill.damageGroup(
-                        {
-                            frequency = 0,
-                            times = 1,
-                            effect = options.damageEffect,
-                            whichGroup = g,
-                            damage = damage,
-                            sourceUnit = options.sourceUnit,
-                            damageSrc = options.damageSrc,
-                            damageType = options.damageType,
-                            isFixed = options.isFixed,
-                            extraInfluence = options.extraInfluence
-                        }
-                    )
-                end
-                g = nil
+        htime.setInterval(frequency, function(t)
+            i = i + 1
+            local d = i * radius * 0.5
+            if (d >= distance) then
+                htime.delTimer(t)
+                return
             end
-        )
+            local txy = math.polarProjection(options.x, options.y, d, options.deg)
+            if (options.effect ~= nil and d - effectOffset < distance) then
+                local effUnitDur = 0.6
+                local effUnit = hunit.create(
+                    {
+                        register = false,
+                        whichPlayer = hplayer.player_passive,
+                        unitId = hskill.SKILL_LEAP,
+                        x = txy.x,
+                        y = txy.y,
+                        facing = options.deg,
+                        modelScale = effectScale,
+                        opacity = 1.0,
+                        qty = 1,
+                        during = effUnitDur
+                    }
+                )
+                heffect.bindUnit(options.effect, effUnit, "origin", effUnitDur)
+            end
+            local g = hgroup.createByXY(txy.x, txy.y, radius, options.filter)
+            if (hgroup.count(g) > 0) then
+                hskill.damageGroup(
+                    {
+                        frequency = 0,
+                        times = 1,
+                        effect = options.damageEffect,
+                        whichGroup = g,
+                        damage = damage,
+                        sourceUnit = options.sourceUnit,
+                        damageSrc = options.damageSrc,
+                        damageType = options.damageType,
+                        isFixed = options.isFixed,
+                        extraInfluence = options.extraInfluence
+                    }
+                )
+            end
+            g = nil
+        end)
     end
 end

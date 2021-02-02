@@ -9,13 +9,10 @@ local _damageTtg = function(targetUnit, damage, fix, color)
         htextTag.create2Unit(targetUnit, fix .. math.floor(damage), 6.00, color, 1, during, 12.00),
         "toggle", offx, offy
     )
-    htime.setTimeout(
-        during,
-        function(t)
-            htime.delTimer(t)
-            _damageTtgQty = _damageTtgQty - 1
-        end
-    )
+    htime.setTimeout(during, function(t)
+        htime.delTimer(t)
+        _damageTtgQty = _damageTtgQty - 1
+    end)
 end
 
 --- 造成伤害
@@ -294,17 +291,17 @@ hskill.damage = function(options)
             hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING_TIMER, nil)
         end
         hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING, true)
-        hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING_TIMER, htime.setTimeout(
-            3.5,
-            function(t)
+        hcache.set(
+            targetUnit, CONST_CACHE.ATTR_BE_DAMAGING_TIMER,
+            htime.setTimeout(3.5, function(t)
                 htime.delTimer(t)
                 hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING_TIMER, nil)
                 hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING, false)
                 if (hunit.isPunishing(targetUnit)) then
                     hmonitor.listen("punish_current", targetUnit)
                 end
-            end
-        ))
+            end)
+        )
         if (sourceUnit ~= nil and his.deleted(sourceUnit) == false) then
             local isDamagingTimer = hcache.get(sourceUnit, CONST_CACHE.ATTR_DAMAGING_TIMER, nil)
             if (isDamagingTimer ~= nil) then
@@ -312,14 +309,14 @@ hskill.damage = function(options)
                 hcache.set(sourceUnit, CONST_CACHE.ATTR_DAMAGING_TIMER, nil)
             end
             hcache.set(sourceUnit, CONST_CACHE.ATTR_DAMAGING, true)
-            hcache.set(sourceUnit, CONST_CACHE.ATTR_DAMAGING_TIMER, htime.setTimeout(
-                3.5,
-                function(t)
+            hcache.set(
+                sourceUnit, CONST_CACHE.ATTR_DAMAGING_TIMER,
+                htime.setTimeout(3.5, function(t)
                     htime.delTimer(t)
                     hcache.set(sourceUnit, CONST_CACHE.ATTR_DAMAGING_TIMER, nil)
                     hcache.set(sourceUnit, CONST_CACHE.ATTR_DAMAGING, false)
-                end
-            ))
+                end)
+            )
             hevent.setLastDamageUnit(targetUnit, sourceUnit)
             hplayer.addDamage(hunit.getOwner(sourceUnit), lastDamage)
         end
@@ -533,13 +530,10 @@ hskill.damage = function(options)
             if (isCut and his.deleted(targetUnit) == false) then
                 hcache.set(targetUnit, CONST_CACHE.ATTR_PUNISHING, true)
                 hunit.setRGBA(targetUnit, 77, 77, 77, 1, punishDuring)
-                htime.setTimeout(
-                    punishDuring + 1.00,
-                    function(t)
-                        htime.delTimer(t)
-                        hcache.set(targetUnit, CONST_CACHE.ATTR_PUNISHING, false)
-                    end
-                )
+                htime.setTimeout(punishDuring + 1, function(t)
+                    htime.delTimer(t)
+                    hcache.set(targetUnit, CONST_CACHE.ATTR_PUNISHING, false)
+                end)
                 local punishEffectAttackSpeed = (100 + targetUnitAttr.attack_speed) * punishEffectRatio
                 local punishEffectMove = targetUnitAttr.move * punishEffectRatio
                 if (punishEffectAttackSpeed < 1) then
@@ -647,20 +641,17 @@ hskill.damageStep = function(options)
         end
     else
         local ti = 0
-        htime.setInterval(
-            frequency,
-            function(t)
-                ti = ti + 1
-                if (ti > times) then
-                    htime.delTimer(t)
-                    return
-                end
-                hskill.damage(options)
-                if (type(options.extraInfluence) == "function") then
-                    options.extraInfluence(options.targetUnit)
-                end
+        htime.setInterval(frequency, function(t)
+            ti = ti + 1
+            if (ti > times) then
+                htime.delTimer(t)
+                return
             end
-        )
+            hskill.damage(options)
+            if (type(options.extraInfluence) == "function") then
+                options.extraInfluence(options.targetUnit)
+            end
+        end)
     end
 end
 
@@ -748,40 +739,37 @@ hskill.damageRange = function(options)
         g = nil
     else
         local ti = 0
-        htime.setInterval(
-            frequency,
-            function(t)
-                ti = ti + 1
-                if (ti > times) then
-                    htime.delTimer(t)
-                    return
-                end
-                local g = hgroup.createByXY(x, y, radius, filter)
-                if (g == nil) then
-                    return
-                end
-                if (hgroup.count(g) <= 0) then
-                    return
-                end
-                hgroup.forEach(g, function(eu)
-                    hskill.damage(
-                        {
-                            sourceUnit = options.sourceUnit,
-                            targetUnit = eu,
-                            effect = options.effectSingle,
-                            damage = damage,
-                            damageSrc = options.damageSrc,
-                            damageType = options.damageType,
-                            isFixed = options.isFixed,
-                        }
-                    )
-                    if (type(options.extraInfluence) == "function") then
-                        options.extraInfluence(eu)
-                    end
-                end)
-                g = nil
+        htime.setInterval(frequency, function(t)
+            ti = ti + 1
+            if (ti > times) then
+                htime.delTimer(t)
+                return
             end
-        )
+            local g = hgroup.createByXY(x, y, radius, filter)
+            if (g == nil) then
+                return
+            end
+            if (hgroup.count(g) <= 0) then
+                return
+            end
+            hgroup.forEach(g, function(eu)
+                hskill.damage(
+                    {
+                        sourceUnit = options.sourceUnit,
+                        targetUnit = eu,
+                        effect = options.effectSingle,
+                        damage = damage,
+                        damageSrc = options.damageSrc,
+                        damageType = options.damageType,
+                        isFixed = options.isFixed,
+                    }
+                )
+                if (type(options.extraInfluence) == "function") then
+                    options.extraInfluence(eu)
+                end
+            end)
+            g = nil
+        end)
     end
 end
 
@@ -831,31 +819,28 @@ hskill.damageGroup = function(options)
         end)
     else
         local ti = 0
-        htime.setInterval(
-            frequency,
-            function(t)
-                ti = ti + 1
-                if (ti > times) then
-                    htime.delTimer(t)
-                    return
-                end
-                hgroup.forEach(options.whichGroup, function(eu)
-                    hskill.damage(
-                        {
-                            sourceUnit = options.sourceUnit,
-                            targetUnit = eu,
-                            effect = options.effect,
-                            damage = damage,
-                            damageSrc = options.damageSrc,
-                            damageType = options.damageType,
-                            isFixed = options.isFixed,
-                        }
-                    )
-                    if (type(options.extraInfluence) == "function") then
-                        options.extraInfluence(eu)
-                    end
-                end)
+        htime.setInterval(frequency, function(t)
+            ti = ti + 1
+            if (ti > times) then
+                htime.delTimer(t)
+                return
             end
-        )
+            hgroup.forEach(options.whichGroup, function(eu)
+                hskill.damage(
+                    {
+                        sourceUnit = options.sourceUnit,
+                        targetUnit = eu,
+                        effect = options.effect,
+                        damage = damage,
+                        damageSrc = options.damageSrc,
+                        damageType = options.damageType,
+                        isFixed = options.isFixed,
+                    }
+                )
+                if (type(options.extraInfluence) == "function") then
+                    options.extraInfluence(eu)
+                end
+            end)
+        end)
     end
 end

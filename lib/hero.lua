@@ -389,17 +389,14 @@ hhero.buildSelector = function(options)
             table.insert(hhero.selectorClearPool, whichHero)
         end
         -- 还剩10秒给个选英雄提示
-        htime.setTimeout(
-            during - 10.0,
-            function(t)
-                local x2 = buildX + buildRowQty * buildDistanceX * 0.5
-                local y2 = buildY - math.floor(#heroIds / buildRowQty) * buildDistanceY * 0.5
-                htime.delTimer(t)
-                hhero.selectorPool = {}
-                echo("还剩 10 秒，还未选择的玩家尽快啦～")
-                cj.PingMinimapEx(x2, y2, 8, 255, 0, 0, true)
-            end
-        )
+        htime.setTimeout(during - 10.0, function(t)
+            htime.delTimer(t)
+            local x2 = buildX + buildRowQty * buildDistanceX * 0.5
+            local y2 = buildY - math.floor(#heroIds / buildRowQty) * buildDistanceY * 0.5
+            hhero.selectorPool = {}
+            echo("还剩 10 秒，还未选择的玩家尽快啦～")
+            cj.PingMinimapEx(x2, y2, 8, 255, 0, 0, true)
+        end)
         -- 逾期不选赶出游戏
         -- 对于可以选择多个的玩家，有选即可，不要求全选
         htime.setTimeout(during - 0.5, function(t)

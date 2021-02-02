@@ -81,13 +81,10 @@ hevent_default_actions = {
                 click = 0
             end
             hplayer.set(triggerPlayer, CONST_CACHE.PLAYER_CLICK, click + 1)
-            htime.setTimeout(
-                0.3,
-                function(ct)
-                    htime.delTimer(ct)
-                    hplayer.set(triggerPlayer, CONST_CACHE.PLAYER_CLICK, hplayer.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK) - 1)
-                end
-            )
+            htime.setTimeout(0.3, function(ct)
+                htime.delTimer(ct)
+                hplayer.set(triggerPlayer, CONST_CACHE.PLAYER_CLICK, hplayer.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK) - 1)
+            end)
             for qty = 1, 10 do
                 if (hplayer.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK) >= qty) then
                     hevent.triggerEvent(
@@ -246,26 +243,23 @@ hevent_default_actions = {
                 else
                     hattr.set(targetUnit, 0, { life = "+" .. changeLife })
                 end
-                htime.setTimeout(
-                    0,
-                    function(t)
-                        htime.delTimer(t)
-                        if (isLethal == true) then
-                            cj.SetUnitInvulnerable(targetUnit, false)
-                        else
-                            hattr.set(targetUnit, 0, { life = "-" .. changeLife })
-                            hunit.setCurLife(targetUnit, curLife)
-                        end
-                        hskill.damage(
-                            {
-                                sourceUnit = sourceUnit,
-                                targetUnit = targetUnit,
-                                damage = damage,
-                                damageSrc = "attack"
-                            }
-                        )
+                htime.setTimeout(0, function(t)
+                    htime.delTimer(t)
+                    if (isLethal == true) then
+                        cj.SetUnitInvulnerable(targetUnit, false)
+                    else
+                        hattr.set(targetUnit, 0, { life = "-" .. changeLife })
+                        hunit.setCurLife(targetUnit, curLife)
                     end
-                )
+                    hskill.damage(
+                        {
+                            sourceUnit = sourceUnit,
+                            targetUnit = targetUnit,
+                            damage = damage,
+                            damageSrc = "attack"
+                        }
+                    )
+                end)
             end
         end),
         dead = cj.Condition(function()

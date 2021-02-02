@@ -23,13 +23,10 @@ hlightning = {
 hlightning.del = function(lightning, delay)
     delay = delay or 0
     if (delay > 0) then
-        htime.setTimeout(
-            delay,
-            function(t)
-                htime.delTimer(t)
-                hlightning.del(lightning)
-            end
-        )
+        htime.setTimeout(delay, function(t)
+            htime.delTimer(t)
+            hlightning.del(lightning)
+        end)
     else
         cj.DestroyLightning(lightning)
     end
