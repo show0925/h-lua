@@ -68,14 +68,11 @@ htime.timerInPool = function()
     if (t == nil) then
         t = cj.CreateTimer()
         td = cj.CreateTimerDialog(t)
-        table.insert(
-            htime.pool,
-            {
-                free = false,
-                timer = t,
-                dialog = td
-            }
-        )
+        table.insert(htime.pool, {
+            free = false,
+            timer = t,
+            dialog = td
+        })
     end
     return { t, td }
 end
@@ -132,16 +129,13 @@ htime.timerInKernel = function(time, yourFunc, isInterval)
         end
     end
     if (kernelClock == -1) then
-        table.insert(
-            htime.kernel[space],
-            {
-                running = true,
-                isInterval = isInterval,
-                set = time,
-                remain = time,
-                yourFunc = yourFunc,
-            }
-        )
+        table.insert(htime.kernel[space], {
+            running = true,
+            isInterval = isInterval,
+            set = time,
+            remain = time,
+            yourFunc = yourFunc,
+        })
         kernelClock = #htime.kernel[space]
     else
         htime.kernel[space][kernelClock] = {
