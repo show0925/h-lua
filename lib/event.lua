@@ -70,14 +70,16 @@ end
 --- 注册事件，会返回一个event_id（私有通用）
 ---@protected
 hevent.registerEvent = function(handle, key, callFunc)
-    if (hRuntime.event.register[handle] == nil) then
-        hRuntime.event.register[handle] = {}
+    local register = hcache.get(handle, CONST_CACHE.EVENT_REGISTER)
+    if (register == nil) then
+        register = {}
+        hcache.set(handle, CONST_CACHE.EVENT_REGISTER, register)
     end
-    if (hRuntime.event.register[handle][key] == nil) then
-        hRuntime.event.register[handle][key] = {}
+    if (register[key] == nil) then
+        register[key] = {}
     end
-    table.insert(hRuntime.event.register[handle][key], callFunc)
-    return #hRuntime.event.register[handle][key]
+    table.insert(register[key], callFunc)
+    return #register[key]
 end
 
 --- 触发事件（私有通用）
@@ -89,9 +91,8 @@ hevent.triggerEvent = function(handle, key, triggerData)
     local execRegister = false
     local execXtras = false
     -- 判断事件注册执行与否
-    if (hRuntime.event.register[handle] ~= nil
-        and hRuntime.event.register[handle][key] ~= nil
-        and #hRuntime.event.register[handle][key] > 0) then
+    local register = hcache.get(handle, CONST_CACHE.EVENT_REGISTER)
+    if (register ~= nil and register[key] ~= nil and #register[key] > 0) then
         execRegister = true
     end
     -- 判断xtras执行与否
@@ -112,7 +113,7 @@ hevent.triggerEvent = function(handle, key, triggerData)
             triggerData.targetLoc = nil
         end
         if (execRegister) then
-            for _, callFunc in ipairs(hRuntime.event.register[handle][key]) do
+            for _, callFunc in ipairs(register[key]) do
                 callFunc(triggerData)
             end
         end
@@ -131,10 +132,11 @@ hevent.deleteEvent = function(handle, key, eventId)
         print_stack()
         return
     end
-    if (hRuntime.event.register[handle] == nil or hRuntime.event.register[handle][key] == nil) then
+    local register = hcache.get(handle, CONST_CACHE.EVENT_REGISTER)
+    if (register == nil or register[key] == nil) then
         return
     end
-    table.remove(hRuntime.event.register[handle][key], eventId)
+    table.remove(register[key], eventId)
 end
 
 --- 注意到攻击目标
