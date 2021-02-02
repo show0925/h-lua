@@ -512,7 +512,7 @@ hskill.unarm = function(options)
         during = during * (1 - oppose * 0.01)
         damage = damage * (1 - oppose * 0.01)
     end
-    local level = hcache.get(whichUnit, CONST_CACHE.SKILL_UN_ARM_LEVEL, 0) + 1
+    local level = hcache.get(u, CONST_CACHE.SKILL_UN_ARM_LEVEL, 0) + 1
     if (level <= 1) then
         htextTag.style(htextTag.create2Unit(u, "缴械", 6.00, "ffe4e1", 10, 1.00, 10.00), "scale", 0, 0.2)
     else

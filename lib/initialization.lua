@@ -23,7 +23,10 @@ hevent.pool("global", hevent_default_actions.player.apm, function(tgr)
 end)
 
 for i = 1, bj_MAX_PLAYERS, 1 do
+    -- init
     hplayer.players[i] = cj.Player(i - 1)
+    -- cache
+    hcache.alloc(hplayer.players[i])
 
     -- 英雄模块初始化
     hhero.player_allow_qty[i] = 1
