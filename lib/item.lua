@@ -65,11 +65,11 @@ end
 ---@protected
 hitem.free = function(whichItem)
     hitemPool.free(whichItem)
+    hevent.free(whichItem)
     local holder = hitem.getHolder(whichItem)
     if (holder ~= nil) then
         hitem.subProperty(holder, hitem.getId(whichItem), hitem.getCharges(whichItem))
     end
-    hevent.free(whichItem)
     hcache.free(whichItem)
 end
 
@@ -201,6 +201,17 @@ hitem.del = function(it, delay)
             hitem.free(it)
             cj.SetWidgetLife(it, 1.00)
             cj.RemoveItem(it)
+        end)
+    end
+end
+
+---@protected
+hitem.delFromUnit = function(whichUnit)
+    if (whichUnit ~= nil) then
+        hitem.forEach(whichUnit, function(enumItem)
+            if (enumItem ~= nil) then
+                hitem.del(enumItem)
+            end
         end)
     end
 end

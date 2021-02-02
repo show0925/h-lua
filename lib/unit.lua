@@ -713,7 +713,9 @@ end
 hunit.del = function(targetUnit, delay)
     if (delay == nil or delay <= 0) then
         hgroup.removeUnit(hgroup.GLOBAL, targetUnit)
-        hRuntime.clear(targetUnit)
+        hitem.delFromUnit(targetUnit)
+        hevent.free(targetUnit)
+        hcache.free(targetUnit)
         cj.RemoveUnit(targetUnit)
     else
         htime.setTimeout(
@@ -721,7 +723,9 @@ hunit.del = function(targetUnit, delay)
             function(t)
                 htime.delTimer(t)
                 hgroup.removeUnit(hgroup.GLOBAL, targetUnit)
-                hRuntime.clear(targetUnit)
+                hitem.delFromUnit(targetUnit)
+                hevent.free(targetUnit)
+                hcache.free(targetUnit)
                 cj.RemoveUnit(targetUnit)
             end
         )
@@ -734,13 +738,10 @@ hunit.kill = function(targetUnit, delay)
     if (delay == nil or delay <= 0) then
         cj.KillUnit(targetUnit)
     else
-        htime.setTimeout(
-            delay,
-            function(t)
-                htime.delTimer(t)
-                cj.KillUnit(targetUnit)
-            end
-        )
+        htime.setTimeout(delay, function(t)
+            htime.delTimer(t)
+            cj.KillUnit(targetUnit)
+        end)
     end
 end
 --- 爆毁单位，延时<delay>秒
@@ -751,14 +752,11 @@ hunit.exploded = function(targetUnit, delay)
         cj.SetUnitExploded(targetUnit, true)
         cj.KillUnit(targetUnit)
     else
-        htime.setTimeout(
-            delay,
-            function(t)
-                htime.delTimer(t)
-                cj.SetUnitExploded(targetUnit, true)
-                cj.KillUnit(targetUnit)
-            end
-        )
+        htime.setTimeout(delay, function(t)
+            htime.delTimer(t)
+            cj.SetUnitExploded(targetUnit, true)
+            cj.KillUnit(targetUnit)
+        end)
     end
 end
 
