@@ -79,8 +79,8 @@ htexture.mark = function(path, during, whichPlayer, red, green, blue)
             )
         end)
     elseif (whichPlayer ~= nil) then
-        if (hplayer.get(whichPlayer, CONST_CACHE.PLAYER_MARKING, false) ~= true) then
-            hplayer.set(whichPlayer, CONST_CACHE.PLAYER_MARKING, true)
+        if (hcache.get(whichPlayer, CONST_CACHE.PLAYER_MARKING, false) ~= true) then
+            hcache.set(whichPlayer, CONST_CACHE.PLAYER_MARKING, true)
             if (whichPlayer == cj.GetLocalPlayer()) then
                 htexture.cinematicFilterGeneric(
                     0.50,
@@ -92,7 +92,7 @@ htexture.mark = function(path, during, whichPlayer, red, green, blue)
             end
             htime.setTimeout(during, function(t)
                 htime.delTimer(t)
-                hplayer.set(whichPlayer, CONST_CACHE.PLAYER_MARKING, false)
+                hcache.set(whichPlayer, CONST_CACHE.PLAYER_MARKING, false)
                 if (whichPlayer == cj.GetLocalPlayer()) then
                     htexture.cinematicFilterGeneric(
                         0.50,

@@ -55,12 +55,12 @@ hevent_default_actions = {
             end
             local p = hunit.getOwner(u)
             if (his.playing(p) == true and his.playerSite(p) == true and his.computer(p) == false) then
-                hplayer.set(p, CONST_CACHE.PLAYER_APM, hplayer.get(p, CONST_CACHE.PLAYER_APM, 0) + 1)
+                hcache.set(p, CONST_CACHE.PLAYER_APM, hcache.get(p, CONST_CACHE.PLAYER_APM, 0) + 1)
             end
         end),
         leave = cj.Condition(function()
             local p = cj.GetTriggerPlayer()
-            hplayer.set(p, CONST_CACHE.PLAYER_STATUS, hplayer.player_status.leave)
+            hcache.set(p, CONST_CACHE.PLAYER_STATUS, hplayer.player_status.leave)
             echo(cj.GetPlayerName(p) .. "离开了游戏～")
             hplayer.clearUnit(p)
             hplayer.qty_current = hplayer.qty_current - 1
@@ -76,17 +76,17 @@ hevent_default_actions = {
         selection = cj.Condition(function()
             local triggerPlayer = cj.GetTriggerPlayer()
             local triggerUnit = cj.GetTriggerUnit()
-            local click = hplayer.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK, nil)
+            local click = hcache.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK, nil)
             if (click == nil) then
                 click = 0
             end
-            hplayer.set(triggerPlayer, CONST_CACHE.PLAYER_CLICK, click + 1)
+            hcache.set(triggerPlayer, CONST_CACHE.PLAYER_CLICK, click + 1)
             htime.setTimeout(0.3, function(ct)
                 htime.delTimer(ct)
-                hplayer.set(triggerPlayer, CONST_CACHE.PLAYER_CLICK, hplayer.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK) - 1)
+                hcache.set(triggerPlayer, CONST_CACHE.PLAYER_CLICK, hcache.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK) - 1)
             end)
             for qty = 1, 10 do
-                if (hplayer.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK) >= qty) then
+                if (hcache.get(triggerPlayer, CONST_CACHE.PLAYER_CLICK) >= qty) then
                     hevent.triggerEvent(
                         triggerPlayer,
                         CONST_EVENT.selection .. "#" .. qty,

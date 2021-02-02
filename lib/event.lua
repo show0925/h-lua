@@ -105,7 +105,7 @@ hevent.triggerEvent = function(handle, key, triggerData)
     local execRegister = false
     local execXtras = false
     -- 判断事件注册执行与否
-    local register = hcache.get(handle, CONST_CACHE.EVENT_REGISTER)
+    local register = hcache.get(handle, CONST_CACHE.EVENT_REGISTER, {})
     if (register ~= nil and register[key] ~= nil and #register[key] > 0) then
         execRegister = true
     end
@@ -935,9 +935,7 @@ end
 ---@return any
 hevent.onChat = function(whichPlayer, pattern, callFunc)
     return hevent.registerEvent(whichPlayer, CONST_EVENT.chat, function(evtData)
-        local triggerPlayer = evtData.triggerPlayer
-        local chatString = evtData.chatString
-        local m = string.match(chatString, pattern)
+        local m = string.match(evtData.chatString, pattern)
         if (m ~= nil) then
             evtData.matchedString = m
             callFunc(evtData)

@@ -84,11 +84,11 @@ end
 hsound.bgmStop = function(whichPlayer)
     if (whichPlayer == nil) then
         for i = 1, bj_MAX_PLAYERS, 1 do
-            hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_CURRENT, nil)
+            hcache.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_CURRENT, nil)
         end
         cj.StopMusic(true)
     else
-        hplayer.set(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, nil)
+        hcache.set(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, nil)
         if (cj.GetLocalPlayer() == whichPlayer) then
             cj.StopMusic(true)
         end
@@ -105,22 +105,22 @@ end
 hsound.bgm = function(musicFileName, whichPlayer)
     if (musicFileName ~= nil and string.len(musicFileName) > 0) then
         if (whichPlayer ~= nil) then
-            local bgmCurrent = hplayer.get(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, nil)
-            local bgmDelayTimer = hplayer.get(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
+            local bgmCurrent = hcache.get(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, nil)
+            local bgmDelayTimer = hcache.get(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
             if (bgmCurrent == musicFileName) then
                 return
             end
             if (bgmDelayTimer ~= nil) then
                 htime.delTimer(bgmDelayTimer)
-                hplayer.set(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
+                hcache.set(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
             end
             hsound.bgmStop(whichPlayer)
-            hplayer.set(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, musicFileName)
-            hplayer.set(
+            hcache.set(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, musicFileName)
+            hcache.set(
                 whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER,
                 htime.setTimeout(hsound.BREAK_DELAY, function(t)
                     htime.delTimer(t)
-                    hplayer.set(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
+                    hcache.set(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
                     if (cj.GetLocalPlayer() == whichPlayer) then
                         cj.PlayMusic(bgmCurrent)
                     end
@@ -129,19 +129,19 @@ hsound.bgm = function(musicFileName, whichPlayer)
         else
             hsound.bgmStop()
             for i = 1, bj_MAX_PLAYERS, 1 do
-                local bgmCurrent = hplayer.get(hplayer.players[i], CONST_CACHE.PLAYER_BGM_CURRENT, nil)
-                local bgmDelayTimer = hplayer.get(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
+                local bgmCurrent = hcache.get(hplayer.players[i], CONST_CACHE.PLAYER_BGM_CURRENT, nil)
+                local bgmDelayTimer = hcache.get(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
                 if (bgmCurrent ~= musicFileName) then
                     if (bgmDelayTimer ~= nil) then
                         htime.delTimer(bgmDelayTimer)
-                        hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
+                        hcache.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
                     end
-                    hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_CURRENT, musicFileName)
-                    hplayer.set(
+                    hcache.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_CURRENT, musicFileName)
+                    hcache.set(
                         hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER,
                         htime.setTimeout(hsound.BREAK_DELAY, function(t)
                             htime.delTimer(t)
-                            hplayer.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
+                            hcache.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
                             if (cj.GetLocalPlayer() == hplayer.players[i]) then
                                 cj.PlayMusic(musicFileName)
                             end
