@@ -245,7 +245,6 @@ htime.setInterval = function(frequency, yourFunc, title)
         cj.TimerDialogDisplay(td, true)
         cj.TimerStart(t2, frequency, true, nil)
         htime.reflect[t] = t2
-        print_r(htime.reflect)
     end
     return t
 end
