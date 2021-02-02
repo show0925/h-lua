@@ -9,7 +9,7 @@ hbuff = {
 ---@private
 hbuff.uniqueKey = function()
     hbuff.UNIQUE_KEY = hbuff.UNIQUE_KEY + 1
-    if (hbuff.UNIQUE_KEY >= 1000000) then
+    if (hbuff.UNIQUE_KEY >= 100000) then
         hbuff.UNIQUE_KEY = 1
     end
     return hbuff.UNIQUE_KEY
