@@ -5,15 +5,12 @@ hevent = {
 
 ---@protected
 hevent.free = function(handle)
-    local poolRegister = hcache.get(handle, CONST_CACHE.EVENT_REGISTER)
-    if (type(poolRegister) == "table") then
-        for _, p in ipairs(poolRegister) do
-            local key = p.key
-            local poolIndex = p.poolIndex
+    local poolRegister = hcache.get(handle, CONST_CACHE.EVENT_POOL)
+    if (poolRegister ~= nil) then
+        poolRegister:forEach(function(key, poolIndex)
             hevent.POOL[key][poolIndex].stock = hevent.POOL[key][poolIndex].stock - 1
             -- 起码利用红线1/4允许归零
-            if (hevent.POOL[key][poolIndex].stock == 0
-                and hevent.POOL[key][poolIndex].count > 0.25 * hevent.POOL_RED_LINE) then
+            if (hevent.POOL[key][poolIndex].stock == 0 and hevent.POOL[key][poolIndex].count > 0.25 * hevent.POOL_RED_LINE) then
                 cj.DisableTrigger(hevent.POOL[key][poolIndex].trigger)
                 cj.DestroyTrigger(hevent.POOL[key][poolIndex].trigger)
                 hevent.POOL[key][poolIndex] = -1
@@ -27,7 +24,7 @@ hevent.free = function(handle)
             if (e == #hevent.POOL[key]) then
                 hevent.POOL[key] = nil
             end
-        end
+        end)
     end
 end
 
