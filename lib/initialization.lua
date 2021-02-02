@@ -132,3 +132,25 @@ hmonitor.create("punish_current", 3,
         return punish_current >= punish or his.dead(object) or his.deleted(object) or his.beDamaging(object) or hunit.isPunishing(object) == false
     end
 )
+
+-- 沉默
+local silentTrigger = cj.CreateTrigger()
+cj.TriggerAddAction(silentTrigger, function()
+    local triggerUnit = cj.GetTriggerUnit()
+    if (his.silent(triggerUnit)) then
+        cj.IssueImmediateOrder(triggerUnit, "stop")
+    end
+end)
+
+-- 缴械
+local unArmTrigger = cj.CreateTrigger()
+cj.TriggerAddAction(unArmTrigger, function()
+    local attacker = cj.GetAttacker()
+    if (his.unarm(attacker)) then
+        cj.IssueImmediateOrder(attacker, "stop")
+    end
+end)
+for i = 1, bj_MAX_PLAYERS, 1 do
+    cj.TriggerRegisterPlayerUnitEvent(silentTrigger, hplayer.players[i], EVENT_PLAYER_UNIT_SPELL_CHANNEL, nil)
+    cj.TriggerRegisterPlayerUnitEvent(unArmTrigger, hplayer.players[i], EVENT_PLAYER_UNIT_ATTACKED, nil)
+end

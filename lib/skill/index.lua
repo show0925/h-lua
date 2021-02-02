@@ -1,7 +1,6 @@
 hskill = {
     SKILL_TOKEN = hslk.unit_token,
-    -- SKILL_LEAP的token模式，需要导入https://github.com/hunzsig-warcraft3/assets-models/blob/master/interface/interface_token.mdx
-    SKILL_LEAP = hslk.unit_token_leap,
+    SKILL_LEAP = hslk.unit_token_leap, --leap的token模式，需导入模型：https://github.com/hunzsig-warcraft3/assets-models/blob/master/interface/interface_token.mdx
     SKILL_BREAK = hslk.skill_break, --table[0.05~0.5]
     SKILL_SWIM_UNLIMIT = hslk.skill_swim_unlimit,
     SKILL_INVISIBLE = hslk.skill_invisible,
@@ -180,33 +179,4 @@ hskill.has = function(whichUnit, abilityId)
         return true
     end
     return false
-end
-
--- 初始化一些方法
-
--- 沉默
-hRuntime.skill.silentTrigger = cj.CreateTrigger()
-cj.TriggerAddAction(
-    hRuntime.skill.silentTrigger,
-    function()
-        local u1 = cj.GetTriggerUnit()
-        if (table.includes(hRuntime.skill.silentUnits, u1)) then
-            cj.IssueImmediateOrder(u1, "stop")
-        end
-    end
-)
--- 缴械
-hRuntime.skill.unarmTrigger = cj.CreateTrigger()
-cj.TriggerAddAction(
-    hRuntime.skill.unarmTrigger,
-    function()
-        local u1 = cj.GetAttacker()
-        if (table.includes(hRuntime.skill.unarmUnits, u1) == true) then
-            cj.IssueImmediateOrder(u1, "stop")
-        end
-    end
-)
-for i = 1, bj_MAX_PLAYERS, 1 do
-    cj.TriggerRegisterPlayerUnitEvent(hRuntime.skill.silentTrigger, cj.Player(i - 1), EVENT_PLAYER_UNIT_SPELL_CHANNEL, nil)
-    cj.TriggerRegisterPlayerUnitEvent(hRuntime.skill.unarmTrigger, cj.Player(i - 1), EVENT_PLAYER_UNIT_ATTACKED, nil)
 end
