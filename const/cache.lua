@@ -50,6 +50,7 @@ CONST_CACHE = {
     DIALOG_BUTTON = "c-dialog-btn",
     ENV_RECT_UNITS = "c-env-rect-units",
     EVENT_REGISTER = "c-evt-register",
+    EVENT_POOL = "c-evt-pool",
     EVENT_LAST_DAMAGE_SRC = "c-evt-last-damage-src",
     EVENT_ON_ENTER_RANGE = "c-evt-on-enter-range-",
     EVENT_ON_ENTER_RECT = "c-evt-on-enter-rect-",

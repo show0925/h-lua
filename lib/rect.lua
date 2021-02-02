@@ -110,11 +110,13 @@ end
 hrect.del = function(whichRect, delay)
     delay = delay or 0
     if (delay == nil or delay <= 0) then
+        hevent.free(whichRect)
         hcache.free(whichRect)
         cj.RemoveRect(whichRect)
     else
         htime.setTimeout(delay, function(t)
             htime.delTimer(t)
+            hevent.free(whichRect)
             hcache.free(whichRect)
             cj.RemoveRect(whichRect)
         end)

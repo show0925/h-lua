@@ -2,6 +2,7 @@
 ---@class Mapping
 Mapping = {}
 
+---@return self
 function Mapping:new()
     local instance = {}
     setmetatable(instance, self)

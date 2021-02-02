@@ -69,6 +69,7 @@ hitem.free = function(whichItem)
     if (holder ~= nil) then
         hitem.subProperty(holder, hitem.getId(whichItem), hitem.getCharges(whichItem))
     end
+    hevent.free(whichItem)
     hcache.free(whichItem)
 end
 

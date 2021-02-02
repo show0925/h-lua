@@ -3,6 +3,34 @@ hevent = {
     POOL_RED_LINE = 1000,
 }
 
+---@protected
+hevent.free = function(handle)
+    local poolRegister = hcache.get(handle, CONST_CACHE.EVENT_REGISTER)
+    if (type(poolRegister) == "table") then
+        for _, p in ipairs(poolRegister) do
+            local key = p.key
+            local poolIndex = p.poolIndex
+            hevent.POOL[key][poolIndex].stock = hevent.POOL[key][poolIndex].stock - 1
+            -- 起码利用红线1/4允许归零
+            if (hevent.POOL[key][poolIndex].stock == 0
+                and hevent.POOL[key][poolIndex].count > 0.25 * hevent.POOL_RED_LINE) then
+                cj.DisableTrigger(hevent.POOL[key][poolIndex].trigger)
+                cj.DestroyTrigger(hevent.POOL[key][poolIndex].trigger)
+                hevent.POOL[key][poolIndex] = -1
+            end
+            local e = 0
+            for _, v in ipairs(hevent.POOL[key]) do
+                if (v == -1) then
+                    e = e + 1
+                end
+            end
+            if (e == #hevent.POOL[key]) then
+                hevent.POOL[key] = nil
+            end
+        end
+    end
+end
+
 --- 触发池
 --- 使用一个handle，以不同的conditionAction累计计数
 --- 分配触发到回调注册
@@ -14,17 +42,13 @@ hevent.pool = function(handle, conditionAction, regEvent)
     end
     local key = cj.GetHandleId(conditionAction)
     -- 如果这个handle已经注册过此动作，则不重复注册
-    if (hRuntime.event.pool[handle] ~= nil) then
-        local isInPool = false
-        for _, p in ipairs(hRuntime.event.pool[handle]) do
-            if p.key == key then
-                isInPool = true
-                break
-            end
-        end
-        if (isInPool) then
-            return
-        end
+    local poolRegister = hcache.get(handle, CONST_CACHE.EVENT_POOL)
+    if (poolRegister == nil) then
+        poolRegister = Mapping:new()
+        hcache.set(handle, CONST_CACHE.EVENT_POOL, poolRegister)
+    end
+    if (poolRegister:get(key) ~= nil) then
+        return
     end
     if (hevent.POOL[key] == nil) then
         hevent.POOL[key] = {}
@@ -32,21 +56,11 @@ hevent.pool = function(handle, conditionAction, regEvent)
     local poolIndex = #hevent.POOL[key]
     if (poolIndex <= 0 or hevent.POOL[key][poolIndex] == -1 or hevent.POOL[key][poolIndex].count >= hevent.POOL_RED_LINE) then
         local tgr = cj.CreateTrigger()
-        table.insert(hevent.POOL[key], {
-            stock = 0,
-            count = 0,
-            trigger = tgr
-        })
+        table.insert(hevent.POOL[key], { stock = 0, count = 0, trigger = tgr })
         cj.TriggerAddCondition(tgr, conditionAction)
         poolIndex = #hevent.POOL[key]
     end
-    if (hRuntime.event.pool[handle] == nil) then
-        hRuntime.event.pool[handle] = {}
-    end
-    table.insert(hRuntime.event.pool[handle], {
-        key = key,
-        poolIndex = poolIndex,
-    })
+    poolRegister:set(key, poolIndex)
     hevent.POOL[key][poolIndex].count = hevent.POOL[key][poolIndex].count + 1
     hevent.POOL[key][poolIndex].stock = hevent.POOL[key][poolIndex].stock + 1
     regEvent(hevent.POOL[key][poolIndex].trigger)
