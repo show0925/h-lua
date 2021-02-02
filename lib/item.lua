@@ -190,6 +190,9 @@ end
 ---@param it userdata
 ---@param delay number
 hitem.del = function(it, delay)
+    if (his.destroy(it)) then
+        return
+    end
     delay = delay or 0
     if (delay <= 0 and it ~= nil) then
         hitem.free(it)
@@ -198,6 +201,9 @@ hitem.del = function(it, delay)
     else
         htime.setTimeout(delay, function(t)
             htime.delTimer(t)
+            if (his.destroy(it)) then
+                return
+            end
             hitem.free(it)
             cj.SetWidgetLife(it, 1.00)
             cj.RemoveItem(it)

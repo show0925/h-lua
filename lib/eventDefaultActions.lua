@@ -286,6 +286,17 @@ hevent_default_actions = {
                 triggerUnit = killer,
                 targetUnit = u
             })
+            -- 如果不是英雄，自动清理，在3秒后尝试删除单位
+            -- 如果其他单位需要不备清理，可死亡后立即设置缓存 hcache.set(u,CONST_CACHE.UNIT_NOT_DEL,true)
+            -- * 只有框架内运行单位有效
+            if (his.hero(u) == false) then
+                htime.setTimeout(3, function(curTimer)
+                    htime.delTimer(curTimer)
+                    if (his.dead(u) and true ~= hcache.get(u, CONST_CACHE.UNIT_NOT_DEL)) then
+                        hunit.del(u, 0)
+                    end
+                end)
+            end
         end),
         order = cj.Condition(function()
             --[[

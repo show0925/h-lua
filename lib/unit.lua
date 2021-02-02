@@ -711,6 +711,9 @@ end
 ---@param targetUnit userdata
 ---@param delay number
 hunit.del = function(targetUnit, delay)
+    if (his.deleted(targetUnit)) then
+        return
+    end
     if (delay == nil or delay <= 0) then
         hgroup.removeUnit(hgroup.GLOBAL, targetUnit)
         hitem.delFromUnit(targetUnit)
@@ -722,6 +725,9 @@ hunit.del = function(targetUnit, delay)
             delay,
             function(t)
                 htime.delTimer(t)
+                if (his.deleted(targetUnit)) then
+                    return
+                end
                 hgroup.removeUnit(hgroup.GLOBAL, targetUnit)
                 hitem.delFromUnit(targetUnit)
                 hevent.free(targetUnit)

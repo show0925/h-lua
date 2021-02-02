@@ -65,6 +65,7 @@ CONST_CACHE = {
     UNIT_PUNISHING = "c-u-punishing",
     UNIT_ANIMATE_SPEED = "c-u-animate-speed",
     UNIT_RGBA = "c-u-rgba",
+    UNIT_NOT_DEL = "c-u-n-del",
     RECT_NAME = "c-r-n",
     RECT_WIDTH = "c-r-w",
     RECT_HEIGHT = "c-r-h",

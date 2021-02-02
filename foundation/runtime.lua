@@ -1,6 +1,5 @@
 hRuntime = {
-    skill = {
-    },
+    skill = {},
 }
 
 hRuntime.clear = function(handle)
