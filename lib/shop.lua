@@ -20,7 +20,6 @@ hshop = {
                 if (s and s.Sellitems ~= nil and s.Sellitems ~= "") then
                     print_mb("[!警告!]物编的[出售物品]会永久强占商店出售位，请清理空位供店铺使用！")
                 end
-                cj.SetUnitOwner(whichShop, hplayer.player_passive, true)
                 if (hskill.has(whichShop, license) == false) then
                     hskill.add(whichShop, license)
                 end
@@ -41,7 +40,6 @@ hshop = {
                 if (s and s.Sellunits ~= nil and s.Sellunits ~= "") then
                     print_mb("[!警告!]物编的[出售单位]会永久强占商店出售位，请清理空位供店铺使用！")
                 end
-                cj.SetUnitOwner(whichShop, hplayer.player_passive, true)
                 if (hskill.has(whichShop, license) == false) then
                     hskill.add(whichShop, license)
                 end
