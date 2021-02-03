@@ -4,7 +4,7 @@ hshop = {
         --- 许可证
         item = string.char2id("Asid"),
         unit = string.char2id("Asud"),
-        --- 检查目标商店的物品售卖资格
+        --- 检查目标商店的物品/单位售卖资格(也就是出售物品、出售单位技能)
         --- 如果商店没有资格，给它个许可证
         grant = function(whichShop, license)
             if (hcache.exist(whichShop) == false) then
@@ -14,13 +14,14 @@ hshop = {
             if (true == granted) then
                 return
             end
+            hcache.set(whichShop, CONST_CACHE.SHOP_GRANTED, true)
+            if (hskill.has(whichShop, license) == false) then
+                hskill.add(whichShop, license)
+            end
             local s = hunit.getSlk(whichShop)
             if (license == hshop.license.item) then
                 if (s and s.Sellitems ~= nil and s.Sellitems ~= "") then
                     print_mb("[!警告!]物编的[出售物品]会永久强占商店出售位，请清理空位供店铺使用！")
-                end
-                if (hskill.has(whichShop, license) == false) then
-                    hskill.add(whichShop, license)
                 end
                 hevent.onItemSell(whichShop, function(evtData)
                     local itemId = cj.GetItemTypeId(evtData.soldItem)
@@ -39,9 +40,6 @@ hshop = {
                 if (s and s.Sellunits ~= nil and s.Sellunits ~= "") then
                     print_mb("[!警告!]物编的[出售单位]会永久强占商店出售位，请清理空位供店铺使用！")
                 end
-                if (hskill.has(whichShop, license) == false) then
-                    hskill.add(whichShop, license)
-                end
                 hevent.onUnitSell(whichShop, function(evtData)
                     local unitId = cj.GetUnitTypeId(evtData.soldUnit)
                     htime.setTimeout(0, function(curTimer)
@@ -55,8 +53,9 @@ hshop = {
                         end
                     end)
                 end)
+            else
+                return
             end
-            hcache.set(whichShop, CONST_CACHE.SHOP_GRANTED, true)
         end,
     },
     stockId = function(id)
