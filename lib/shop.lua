@@ -53,8 +53,6 @@ hshop = {
                         end
                     end)
                 end)
-            else
-                return
             end
         end,
     },
