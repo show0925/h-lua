@@ -13,6 +13,17 @@ local preReadUnit = cj.CreateUnit(hplayer.player_passive, hslk.unit_token, 0, 0,
 hattributeSetter.relyRegister(preReadUnit)
 hunit.del(preReadUnit)
 
+---default handle and protect
+local def = { "global" }
+for i = 0, bj_MAX_PLAYERS - 1, 1 do
+    table.insert(def, cj.Player(i))
+end
+for _, d in ipairs(def) do
+    hcache.alloc(d)
+    hcache.protect(d)
+end
+def = nil
+
 -- register APM
 hevent.pool("global", hevent_default_actions.player.apm, function(tgr)
     for i = 1, bj_MAX_PLAYERS, 1 do
@@ -25,9 +36,6 @@ end)
 for i = 1, bj_MAX_PLAYERS, 1 do
     -- init
     hplayer.players[i] = cj.Player(i - 1)
-    -- cache
-    hcache.alloc(hplayer.players[i])
-
     -- 英雄模块初始化
     hhero.player_allow_qty[i] = 1
     hhero.player_heroes[i] = {}

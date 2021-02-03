@@ -1,5 +1,5 @@
 ---@class cache
-hcache = { _c_ = {} }
+hcache = { _c_ = {}, _p_ = {} }
 
 ---@protected
 ---@return number
@@ -35,6 +35,20 @@ hcache.alloc = function(handle)
 end
 
 ---@param handle any
+hcache.protect = function(handle)
+    if (hcache._p_[handle] == nil) then
+        hcache._p_[handle] = true
+    end
+end
+
+---@protected
+---@param handle any
+---@return boolean
+hcache.protected = function(handle)
+    return hcache._p_[handle] ~= nil
+end
+
+---@param handle any
 ---@param key any
 hcache.free = function(handle, key)
     if (handle == nil) then
@@ -43,7 +57,7 @@ hcache.free = function(handle, key)
     if (hcache._c_[handle] ~= nil) then
         if (key ~= nil) then
             hcache._c_[handle][key] = nil
-        else
+        elseif (hcache.protected(handle) ~= true) then
             hcache._c_[handle] = nil
         end
     end
