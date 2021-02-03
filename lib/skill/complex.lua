@@ -187,15 +187,13 @@ hskill.broken = function(options)
         end
         damage = damage * (1 - oppose * 0.01)
     end
-    local cu = hunit.create(
-        {
-            register = false,
-            unitId = hskill.SKILL_TOKEN,
-            whichPlayer = hplayer.player_passive,
-            x = hunit.x(u),
-            y = hunit.y(u)
-        }
-    )
+    local cu = hunit.create({
+        register = false,
+        unitId = hskill.SKILL_TOKEN,
+        whichPlayer = hplayer.player_passive,
+        x = hunit.x(u),
+        y = hunit.y(u)
+    })
     cj.UnitAddAbility(cu, hskill.SKILL_BREAK[0.05])
     cj.SetUnitAbilityLevel(cu, hskill.SKILL_BREAK[0.05], 1)
     cj.IssueTargetOrder(cu, "thunderbolt", u)
@@ -1844,20 +1842,18 @@ hskill.rectangleStrike = function(options)
             local txy = math.polarProjection(options.x, options.y, d, options.deg)
             if (options.effect ~= nil and d - effectOffset < distance) then
                 local effUnitDur = 0.6
-                local effUnit = hunit.create(
-                    {
-                        register = false,
-                        whichPlayer = hplayer.player_passive,
-                        unitId = hskill.SKILL_LEAP,
-                        x = txy.x,
-                        y = txy.y,
-                        facing = options.deg,
-                        modelScale = effectScale,
-                        opacity = 1.0,
-                        qty = 1,
-                        during = effUnitDur
-                    }
-                )
+                local effUnit = hunit.create({
+                    register = false,
+                    whichPlayer = hplayer.player_passive,
+                    unitId = hskill.SKILL_LEAP,
+                    x = txy.x,
+                    y = txy.y,
+                    facing = options.deg,
+                    modelScale = effectScale,
+                    opacity = 1.0,
+                    qty = 1,
+                    during = effUnitDur
+                })
                 heffect.bindUnit(options.effect, effUnit, "origin", effUnitDur)
             end
             local _g = hgroup.createByXY(txy.x, txy.y, radius, options.filter)
@@ -1895,20 +1891,18 @@ hskill.rectangleStrike = function(options)
             local txy = math.polarProjection(options.x, options.y, d, options.deg)
             if (options.effect ~= nil and d - effectOffset < distance) then
                 local effUnitDur = 0.6
-                local effUnit = hunit.create(
-                    {
-                        register = false,
-                        whichPlayer = hplayer.player_passive,
-                        unitId = hskill.SKILL_LEAP,
-                        x = txy.x,
-                        y = txy.y,
-                        facing = options.deg,
-                        modelScale = effectScale,
-                        opacity = 1.0,
-                        qty = 1,
-                        during = effUnitDur
-                    }
-                )
+                local effUnit = hunit.create({
+                    register = false,
+                    whichPlayer = hplayer.player_passive,
+                    unitId = hskill.SKILL_LEAP,
+                    x = txy.x,
+                    y = txy.y,
+                    facing = options.deg,
+                    modelScale = effectScale,
+                    opacity = 1.0,
+                    qty = 1,
+                    during = effUnitDur
+                })
                 heffect.bindUnit(options.effect, effUnit, "origin", effUnitDur)
             end
             local g = hgroup.createByXY(txy.x, txy.y, radius, options.filter)

@@ -1022,6 +1022,7 @@ hitem.fleeting = function(fleetingType, x, y, during, yourFunc)
         y = y,
         during = during,
     })
+    hcache.alloc(it)
     if (type(yourFunc) == "function") then
         hevent.onEnterUnitRange(it, 127, yourFunc)
     end
