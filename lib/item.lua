@@ -450,7 +450,7 @@ hitem.getCharges = function(it)
         return 0
     end
     local c = cj.GetItemCharges(it)
-    if (c < 1) then
+    if (c < 1 and false == hitem.getIsPerishable(it)) then
         c = 1
         cj.SetItemCharges(it, 1)
     end

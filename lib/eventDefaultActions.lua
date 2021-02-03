@@ -848,9 +848,9 @@ hevent_default_actions = {
                 hitem.setCharges(it, hitem.getCharges(it) + 1)
             else
                 hitem.subProperty(u, itId, 1)
-            end
-            if (hitem.getCharges(it) <= 0) then
-                hitem.del(it)
+                if (hitem.getCharges(it) <= 0) then
+                    hitem.del(it)
+                end
             end
         end),
         use_s = cj.Condition(function()
