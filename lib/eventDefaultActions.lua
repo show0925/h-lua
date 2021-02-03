@@ -691,7 +691,7 @@ hevent_default_actions = {
                     hitem.del(it)
                     it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
                     cj.SetItemCharges(it, charges)
-                    hitem.alloc(it)
+                    hcache.alloc(it)
                     hitem.setLastHolder(it, lastHolder)
                     -- 触发超重事件
                     hevent.triggerEvent(u, CONST_EVENT.itemOverWeight, {
