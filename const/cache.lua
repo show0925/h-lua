@@ -86,4 +86,6 @@ CONST_CACHE = {
     TTG_COLOR = "c-ttg-color",
     TTG_OPACITY = "c-ttg-opacity",
     TTG_DURING = "c-ttg-during",
+    SHOP_STOCK = "c-shop-stock-",
+    SHOP_GRANTED = "c-shop-granted",
 }
