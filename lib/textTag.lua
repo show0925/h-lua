@@ -174,6 +174,13 @@ htextTag.getDuring = function(ttg)
     return hcache.get(ttg, CONST_CACHE.TTG_DURING)
 end
 
+--- 设置漂浮字XY的偏移速度
+---@param ttg userdata
+---@return number|nil
+htextTag.setVelocity = function(ttg, xSpeed, ySpeed)
+    cj.SetTextTagVelocity(ttg, xSpeed, ySpeed)
+end
+
 --- 风格特效
 ---@param ttg userdata
 ---@param showType string | "'scale'" | "'shrink'" | "'toggle'"
