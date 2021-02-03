@@ -66,7 +66,7 @@ end
 ---@param val number
 hunit.setCurLife = function(u, val)
     cj.SetUnitState(u, UNIT_STATE_LIFE, val)
-    hmonitor.listen("life_back", u)
+    hmonitor.listen(CONST_MONITOR.LIFE_BACK, u)
 end
 --- 增加单位的当前生命
 ---@param u userdata
@@ -97,7 +97,7 @@ end
 ---@param val number
 hunit.setCurMana = function(u, val)
     cj.SetUnitState(u, UNIT_STATE_MANA, val)
-    hmonitor.listen("mana_back", u)
+    hmonitor.listen(CONST_MONITOR.MANA_BACK, u)
 end
 --- 增加单位的当前魔法
 ---@param u userdata
@@ -233,14 +233,14 @@ end
 ---@param u userdata
 hunit.enablePunish = function(u)
     hcache.set(u, CONST_CACHE.UNIT_PUNISHING, true)
-    hmonitor.listen("punish_current", u)
+    hmonitor.listen(CONST_MONITOR.PUNISH, u)
 end
 
 --- 单位停用硬直（系统默认不启用）
 ---@param u userdata
 hunit.disablePunish = function(u)
     hcache.set(u, CONST_CACHE.UNIT_PUNISHING, false)
-    hmonitor.ignore("punish_current", u)
+    hmonitor.ignore(CONST_MONITOR.PUNISH, u)
 end
 
 --- 设置单位无敌

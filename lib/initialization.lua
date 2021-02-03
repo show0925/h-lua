@@ -90,7 +90,7 @@ for i = 1, bj_MAX_PLAYERS, 1 do
 end
 
 -- 恢复生命监听器
-hmonitor.create("life_back", 0.5,
+hmonitor.create(CONST_MONITOR.LIFE_BACK, 0.5,
     function(object)
         local val = hattr.get(object, "life_back") or 0
         hunit.addCurLife(object, val * 0.5)
@@ -108,7 +108,7 @@ hmonitor.create("life_back", 0.5,
 )
 
 -- 恢复魔法监听器
-hmonitor.create("mana_back", 0.7,
+hmonitor.create(CONST_MONITOR.MANA_BACK, 0.7,
     function(object)
         local val = hattr.get(object, "mana_back") or 0
         hunit.addCurMana(object, val * 0.7)
@@ -126,7 +126,7 @@ hmonitor.create("mana_back", 0.7,
 )
 
 -- 硬直监听器（没收到伤害时,每3秒恢复5%硬直）
-hmonitor.create("punish_current", 3,
+hmonitor.create(CONST_MONITOR.PUNISH, 3,
     function(object)
         local punish_current = hattr.get(object, "punish_current")
         local punish = hattr.get(object, "punish")

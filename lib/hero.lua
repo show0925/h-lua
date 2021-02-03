@@ -142,8 +142,8 @@ hhero.rebornAtXY = function(whichHero, delay, invulnerable, x, y, showDialog)
         if (delay < 0.3 and his.deleted(whichHero) == false) then
             cj.ReviveHero(whichHero, x, y, true)
             hcache.set(whichHero, CONST_CACHE.UNIT_DEAD, nil)
-            hmonitor.listen("lift_back", whichHero)
-            hmonitor.listen("mana_back", whichHero)
+            hmonitor.listen(CONST_MONITOR.LIFE_BACK, whichHero)
+            hmonitor.listen(CONST_MONITOR.MANA_BACK, whichHero)
             if (invulnerable > 0) then
                 hskill.invulnerable(whichHero, invulnerable)
             end
@@ -164,8 +164,8 @@ hhero.rebornAtXY = function(whichHero, delay, invulnerable, x, y, showDialog)
                     end
                     cj.ReviveHero(whichHero, x, y, true)
                     hcache.set(whichHero, CONST_CACHE.UNIT_DEAD, nil)
-                    hmonitor.listen("lift_back", whichHero)
-                    hmonitor.listen("mana_back", whichHero)
+                    hmonitor.listen(CONST_MONITOR.LIFE_BACK, whichHero)
+                    hmonitor.listen(CONST_MONITOR.MANA_BACK, whichHero)
                     if (invulnerable > 0) then
                         hskill.invulnerable(whichHero, invulnerable)
                     end

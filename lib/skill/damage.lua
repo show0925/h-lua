@@ -298,7 +298,7 @@ hskill.damage = function(options)
                 hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING_TIMER, nil)
                 hcache.set(targetUnit, CONST_CACHE.ATTR_BE_DAMAGING, false)
                 if (hunit.isPunishing(targetUnit)) then
-                    hmonitor.listen("punish_current", targetUnit)
+                    hmonitor.listen(CONST_MONITOR.PUNISH, targetUnit)
                 end
             end)
         )
