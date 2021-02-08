@@ -1,3 +1,0 @@
-
-call ExecuteFunc("HluaCli_DZapi")
-call ExecuteFunc("HluaCli_Main")
