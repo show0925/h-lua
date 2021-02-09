@@ -84,3 +84,6 @@ endfunction
 function HluaCli_Main takes nothing returns nothing
     call Cheat("exec-lua:\"main\"")
 endfunction
+
+function HluaCli_HSlk takes nothing returns nothing
+endfunction
