@@ -242,6 +242,25 @@ string.implode = function(delimeter, table)
     return str
 end
 
+--- 分隔字符串
+---@param str string
+---@param size number 每隔几字节切一次
+---@return string
+string.split = function(str, size)
+    local sp = {}
+    local len = string.len(str)
+    if (len <= 0) then
+        return sp
+    end
+    size = size or 1
+    local cur = 1
+    while (cur <= len) do
+        table.insert(sp, string.sub(str, cur, cur + size - 1))
+        cur = cur + size
+    end
+    return sp
+end
+
 --- 统计某个子串出现的首位,不包含返回false
 ---@param str string
 ---@param pattern string
