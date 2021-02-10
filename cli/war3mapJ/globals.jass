@@ -1,7 +1,6 @@
 
 //H-lua struct globals:
-hashtable hash_hslk=InitHashtable()
-hashtable hash_hslk_helper=InitHashtable()
+hashtable hash_hlua_slk=InitHashtable()
 hashtable hash_hlua_dzapi=InitHashtable()
 
 boolean HLUA_DZAPI_FLAG=true

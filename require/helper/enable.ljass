@@ -10,7 +10,7 @@ slkHelper.enable = function()
     <?
     for i, v in ipairs(slkHelperHashData) do
     ?>
-    call SaveStr(hash_hslk_helper, 1, <?= i?>, "<?=string.addslashes(json.stringify(v))?>")
+    call SaveStr(hash_hslk_helper, 1, <?=i?>, "<?=string.addslashes(json.stringify(v))?>")
     <?
     end
 end

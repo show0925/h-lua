@@ -8,6 +8,13 @@ SLK_GO_INI = function(ini)
     end
 end
 
+SLK_GO_SET = function(hash, slk)
+    table.insert(SLK_GO, {
+        hash = hash or {},
+        slk = slk or {}
+    })
+end
+
 local idPrefix = {
     item = "I",
     item_shadow = "I",
@@ -21,9 +28,9 @@ local to36 = function(num)
     end
     local numStr = ""
     while (num ~= 0) do
-        local yu = (num % 36) + 1
-        numStr = hex36[yu] + numStr
-        num = num / 36
+        local yu = math.floor((num % 36) + 1)
+        numStr = hex36[yu] .. numStr
+        num = math.floor(num / 36)
     end
     return string.upper(numStr)
 end
@@ -59,6 +66,6 @@ SLK_ID = function(class)
     return sid
 end
 
-SLK_GO_JSON = function()
+SLK_GO_JSON = function(ini)
     return json.stringify(SLK_GO)
 end

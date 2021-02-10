@@ -65,8 +65,8 @@ SLK_CONF = {
         itemOverlie = "ff59ff",
         -- 物品重量
         itemWeight = "ee82ee",
-        -- 物品描述
-        itemDesc = "969696",
+        -- 物品备注
+        itemRemarks = "969696",
         -- 物品合成品
         itemProfit = "ffd88c",
         -- 物品零部件
