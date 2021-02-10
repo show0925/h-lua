@@ -17,7 +17,6 @@ end
 
 local idPrefix = {
     item = "I",
-    item_shadow = "I",
 }
 
 local idLimit = 46655 -- zzz
@@ -66,6 +65,6 @@ SLK_ID = function(class)
     return sid
 end
 
-SLK_GO_JSON = function(ini)
+SLK_GO_JSON = function()
     return json.stringify(SLK_GO)
 end

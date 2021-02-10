@@ -81,8 +81,8 @@ function HluaCli_DZapi takes nothing returns nothing
     call TriggerAddAction(Hlua_DzAPI_Tgr_9, function HluaCli_DZapi_callback)
 endfunction
 
-function HluaCli_Main takes nothing returns nothing
-    call Cheat("exec-lua:\"main\"")
+function HluaCli_Cli takes nothing returns nothing
+    call Cheat("exec-lua:\"cli\"")
 endfunction
 
 function HluaCli_HSlk takes nothing returns nothing
