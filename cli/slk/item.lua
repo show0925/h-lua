@@ -142,11 +142,11 @@ local tpl = {
     abiList = "",
     Requires = "",
     Requiresamount = "",
-    Name = "",
-    Description = "",
+    Name = nil,
+    Description = nil,
     Tip = "",
-    Ubertip = "",
-    Hotkey = "",
+    Ubertip = nil,
+    Hotkey = nil,
     Art = "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp",
     scale = 1.00,
     file = "Objects\\InventoryItems\\TreasureChest\\treasurechest.mdl",
@@ -157,8 +157,8 @@ local tpl = {
     colorG = 255,
     colorB = 255,
     armor = "Wood",
-    Level = 0,
-    oldLevel = 0,
+    Level = nil,
+    oldLevel = nil,
     class = "Permanent",
     goldcost = 1000000,
     lumbercost = 1000000,
@@ -179,19 +179,35 @@ local tpl = {
     uses = 1,
     perishable = 0,
     usable = 0,
+    _id = nil,
+    _type = "common",
+    _parent = "rat9",
+    _overlie = 1,
+    _weight = 0,
+    _active = nil,
+    _passive = nil,
+    _attr = nil,
+    _attr_txt = nil,
+    _ring = nil,
+    _cooldown = nil,
+    _shadow = false,
 }
 
----@param _v{abiList: "主动技能ID列表",Requires: "科技树",Requiresamount: "科技树",Name: "物品名称",Description: "物品描述",Tip: "物品描述标题",Ubertip: "物品在地上时说明",Hotkey: "热键",Art: "图标",scale: "模型大小",file: "模型路径",Buttonpos1: "商店X坐标",Buttonpos2: "商店Y坐标",selSize: "选择圈大小",colorR: "颜色R",colorG: "颜色G",colorB: "颜色B",armor: "装甲类型",Level: "等级",oldLevel: "等级(旧)",class: "物品分类",goldcost: "黄金",lumbercost: "木头",HP: "生命",stockStart: "开始库存",stockRegen: "补货周期",stockMax: "最大库存",prio: "优先权",morph: "有效的物品转换目标",drop: "死亡时掉落",powerup: "捡到时自动使用",sellable: "可以出售",pawnable: "可以抵押",droppable: "可以丢弃",pickRandom: "可以作为随机物品",uses: "使用次数",perishable: "使用后完全消失",usable: "主动使用","_parent:"模版物编ID","_overlie:"叠加","_weight:"重量",_active:"主动",_passive:"被动","_attr:"属性","_attr_txt":"属性(无效)","_ring:"光环","_cooldown:"冷却时间",_shadow:"强制使用影子物品"}
+---@param _v{abiList: "主动技能ID列表",Requires: "科技树",Requiresamount: "科技树",Name: "物品名称",Description: "物品描述",Tip: "物品描述标题",Ubertip: "物品在地上时说明",Hotkey: "热键",Art: "图标",scale: "模型大小",file: "模型路径",Buttonpos1: "商店X坐标",Buttonpos2: "商店Y坐标",selSize: "选择圈大小",colorR: "颜色R",colorG: "颜色G",colorB: "颜色B",armor: "装甲类型",Level: "等级",oldLevel: "等级(旧)",class: "物品分类",goldcost: "黄金",lumbercost: "木头",HP: "生命",stockStart: "开始库存",stockRegen: "补货周期",stockMax: "最大库存",prio: "优先权",morph: "有效的物品转换目标",drop: "死亡时掉落",powerup: "捡到时自动使用",sellable: "可以出售",pawnable: "可以抵押",droppable: "可以丢弃",pickRandom: "可以作为随机物品",uses: "使用次数",perishable: "使用后完全消失",usable: "主动使用",_id:"物编ID",_type:"slk数据归类","_parent:"模版物编ID","_overlie:"叠加","_weight:"重量",_active:"主动",_passive:"被动","_attr:"属性","_attr_txt":"属性(无效)","_ring:"光环","_cooldown:"冷却时间",_shadow:"强制使用影子物品",_slk:"拓展数据"}
 hslk_item = function(_v)
-    -- hslk
     _v._class = "item"
-    _v._type = _v._type or "common"
-    _v._parent = _v._parent or "rat9"
-    _v._overlie = _v._overlie or 1
-    if (_v._overlie < (_v.uses or tpl.uses)) then
-        _v._overlie = (_v.uses or tpl.uses)
+    for k, v in pairs(tpl) do
+        if (_v[k] == nil) then
+            _v[k] = v
+        end
     end
-    _v._weight = _v._weight or 0
+    -- hslk
+    if (_v._id == nil or true == SLK_ID_ALREADY[_v._id]) then
+        _v._id = SLK_ID(_v._class)
+    end
+    if (_v._overlie < _v.uses) then
+        _v._overlie = _v.uses
+    end
     if (_v._ring ~= nil) then
         _v._ring.effectTarget = _v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
         _v._ring.attach = _v._ring.attach or "origin"
@@ -208,8 +224,6 @@ hslk_item = function(_v)
         end
         _v._ring.target = target
     end
-    -- 建立id
-    local id = SLK_ID(_v._class)
     -- slk
     if (_v.Description == nil) then
         _v.Description = hslk_item_SlkDesc(_v)
@@ -235,16 +249,5 @@ hslk_item = function(_v)
         _v.Buttonpos2 = _v.Buttonpos2 or 0
         _v.Tip = "获得" .. _v.Name
     end
-    -- 只提取有效数值
-    local slk = { _id = id }
-    local hash = { _id = id }
-    for vk, vv in pairs(_v) do
-        -- 下划线开头的设定为hslk
-        if (string.sub(vk, 1, 1) == "_" and vk ~= "_parent") then
-            hash[vk] = vv or tpl[vk]
-        else
-            slk[vk] = vv or tpl[vk]
-        end
-    end
-    SLK_GO_SET(hash, slk)
+    SLK_GO_SET(_v)
 end

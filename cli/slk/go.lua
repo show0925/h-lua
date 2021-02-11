@@ -1,18 +1,15 @@
 SLK_GO = {}
-SLK_INI = {}
+SLK_ID_ALREADY = {}
 
 SLK_GO_INI = function(ini)
     local iniJson = json.parse(ini)
     for _, v in pairs(iniJson) do
-        SLK_INI[v] = true
+        SLK_ID_ALREADY[v] = true
     end
 end
 
-SLK_GO_SET = function(hash, slk)
-    table.insert(SLK_GO, {
-        hash = hash or {},
-        slk = slk or {}
-    })
+SLK_GO_SET = function(data)
+    table.insert(SLK_GO, data)
 end
 
 local idPrefix = {
@@ -57,8 +54,8 @@ SLK_ID = function(class)
             id = "0" .. id
         end
         sid = prefix .. id
-        if true ~= SLK_INI[sid] then
-            SLK_INI[sid] = true
+        if true ~= SLK_ID_ALREADY[sid] then
+            SLK_ID_ALREADY[sid] = true
             break
         end
     end

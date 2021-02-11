@@ -45,8 +45,6 @@ require "foundation.string"
 require "foundation.table"
 -- 加载color
 require "foundation.color"
--- 加载h-lua自带的slk数据
-require "foundation.hslk"
 -- 加载h-lua的F9
 require "foundation.cmd"
 -- 加载echo
@@ -66,6 +64,7 @@ require "lib.japi"
 -- 加载h-lua库
 require "lib.time"
 require "lib.monitor"
+require "lib.slk"
 require "lib.is"
 require "lib.sound"
 require "lib.texture"
