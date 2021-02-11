@@ -1,4 +1,3 @@
 
 call ExecuteFunc("HluaCli_DZapi")
 call ExecuteFunc("HluaCli_Cli")
-call ExecuteFunc("HluaCli_HSlk")
