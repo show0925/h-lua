@@ -14,11 +14,11 @@ local hslk_item_SlkDesc = function(_v)
         table.insert(d, "被动：" .. _v._passive)
     end
     if (_v._attr ~= nil) then
-        table.insert(d, slkHelper.attrDesc(_v._attr, ";"))
+        table.insert(d, hslk_attr_desc(_v._attr, ";"))
     end
     -- 仅文本无效果，适用于例如技能书这类的物品
     if (_v._attr_txt ~= nil) then
-        table.insert(d, slkHelper.attrDesc(_v._attr_txt, ";"))
+        table.insert(d, hslk_attr_desc(_v._attr_txt, ";"))
     end
     local overlie = _v._overlie or 1
     local weight = _v._weight or 0
@@ -45,15 +45,15 @@ local hslk_item_SlkUbertip = function(_v)
     if (_v._ring ~= nil) then
         if (_v._ring.attr ~= nil and _v._ring.radius ~= nil and (type(_v._ring.target) == 'table' and #_v._ring.target > 0)) then
             local txt = "光环：[" .. _v._ring.radius .. "px|n"
-            table.insert(d, hcolor.mixed(txt .. slkHelper.attrDesc(_v._ring.attr, "|n", ' - '), SLK_CONF.color.ringTarget))
+            table.insert(d, hcolor.mixed(txt .. hslk_attr_desc(_v._ring.attr, "|n", ' - '), SLK_CONF.color.ringTarget))
         end
     end
     if (_v._attr ~= nil) then
-        table.insert(d, hcolor.mixed(slkHelper.attrDesc(_v._attr, "|n"), SLK_CONF.color.itemAttr))
+        table.insert(d, hcolor.mixed(hslk_attr_desc(_v._attr, "|n"), SLK_CONF.color.itemAttr))
     end
     -- 仅文本无效果，适用于例如技能书这类的物品
     if (_v._attr_txt ~= nil) then
-        table.insert(d, hcolor.mixed(slkHelper.attrDesc(_v._attr_txt, "|n"), SLK_CONF.color.itemAttr))
+        table.insert(d, hcolor.mixed(hslk_attr_desc(_v._attr_txt, "|n"), SLK_CONF.color.itemAttr))
     end
     -- 作为零件
     if (slk_item_synthesisMapping.fragment[_v.Name] ~= nil
