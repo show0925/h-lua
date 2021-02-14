@@ -138,7 +138,7 @@ slk_item_synthesis = function(formula)
     end
 end
 
-local tpl = {
+local def = {
     abiList = "",
     Requires = "",
     Requiresamount = "",
@@ -196,8 +196,8 @@ local tpl = {
 ---@param _v{abiList: "主动技能ID列表",Requires: "科技树",Requiresamount: "科技树",Name: "物品名称",Description: "物品描述",Tip: "物品描述标题",Ubertip: "物品在地上时说明",Hotkey: "热键",Art: "图标",scale: "模型大小",file: "模型路径",Buttonpos1: "商店X坐标",Buttonpos2: "商店Y坐标",selSize: "选择圈大小",colorR: "颜色R",colorG: "颜色G",colorB: "颜色B",armor: "装甲类型",Level: "等级",oldLevel: "等级(旧)",class: "物品分类",goldcost: "黄金",lumbercost: "木头",HP: "生命",stockStart: "开始库存",stockRegen: "补货周期",stockMax: "最大库存",prio: "优先权",morph: "有效的物品转换目标",drop: "死亡时掉落",powerup: "捡到时自动使用",sellable: "可以出售",pawnable: "可以抵押",droppable: "可以丢弃",pickRandom: "可以作为随机物品",uses: "使用次数",perishable: "使用后完全消失",usable: "主动使用",_id:"物编ID",_type:"slk数据归类","_parent:"模版物编ID","_overlie:"叠加","_weight:"重量",_active:"主动",_passive:"被动","_attr:"属性","_attr_txt":"属性(无效)","_ring:"光环","_cooldown:"冷却时间",_shadow:"强制使用影子物品",_slk:"拓展数据"}
 hslk_item = function(_v)
     _v._class = "item"
-    for k, v in pairs(tpl) do
-        if (_v[k] == nil) then
+    for k, v in pairs(def) do
+        if (_v[k] == nil and v ~= nil) then
             _v[k] = v
         end
     end
@@ -232,7 +232,7 @@ hslk_item = function(_v)
         _v.Ubertip = hslk_item_SlkUbertip(_v)
     end
     if (_v.Level == nil) then
-        _v.Level = math.floor(((_v.goldcost or tpl.goldcost) + (_v.lumbercost or tpl.lumbercost)) / 500)
+        _v.Level = math.floor(((_v.goldcost or def.goldcost) + (_v.lumbercost or def.lumbercost)) / 500)
     end
     if (_v.oldLevel == nil) then
         _v.oldLevel = _v.Level
