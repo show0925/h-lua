@@ -75,11 +75,9 @@ local def = {
     _id = nil,
     _type = "common",
     _parent = "auto",
-    _active = nil,
-    _passive = nil,
+    _desc = nil,
     _attr = nil,
     _attr_txt = nil,
     _ring = nil,
     _cooldown = nil,
-    _shadow = false,
 }
