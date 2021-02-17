@@ -3,7 +3,7 @@
 hashtable hash_hlua_dzapi=InitHashtable()
 
 boolean HLUA_DZAPI_FLAG=true
-integer Hlua_DzAPI_Tgr_count=9
+integer Hlua_DzAPI_Tgr_count=20
 trigger Hlua_DzAPI_Tgr_1
 trigger Hlua_DzAPI_Tgr_2
 trigger Hlua_DzAPI_Tgr_3
@@ -13,6 +13,17 @@ trigger Hlua_DzAPI_Tgr_6
 trigger Hlua_DzAPI_Tgr_7
 trigger Hlua_DzAPI_Tgr_8
 trigger Hlua_DzAPI_Tgr_9
+trigger Hlua_DzAPI_Tgr_10
+trigger Hlua_DzAPI_Tgr_11
+trigger Hlua_DzAPI_Tgr_12
+trigger Hlua_DzAPI_Tgr_13
+trigger Hlua_DzAPI_Tgr_14
+trigger Hlua_DzAPI_Tgr_15
+trigger Hlua_DzAPI_Tgr_16
+trigger Hlua_DzAPI_Tgr_17
+trigger Hlua_DzAPI_Tgr_18
+trigger Hlua_DzAPI_Tgr_19
+trigger Hlua_DzAPI_Tgr_20
 integer HLDK_COMMAND= 101
 integer HLDK_PLAYER= 102
 integer HLDK_KEY= 103
