@@ -2,7 +2,10 @@
 hslk = {
     _yd = {},
     _yd_slk = {},
-    _data = {}
+    _yd_keys = {
+
+    },
+    _m = {}
 }
 
 --- 获取yd-slk数据（当hslk凉凉时会自动调用，不建议手动使用）
@@ -35,14 +38,14 @@ hslk.get = function(id)
     if (type(id) == "number") then
         id = string.id2char(id)
     end
-    if (hslk._data[id] == nil) then
+    if (hslk._m[id] == nil) then
         if (slk.item[id] ~= nil) then
-            hslk._data[id] = slk.item[id]
+            hslk._m[id] = slk.item[id]
         elseif (slk.unit[id] ~= nil) then
-            hslk._data[id] = slk.unit[id]
+            hslk._m[id] = slk.unit[id]
         elseif (slk.ability[id] ~= nil) then
-            hslk._data[id] = slk.ability[id]
+            hslk._m[id] = slk.ability[id]
         end
     end
-    return hslk._data[id]
+    return hslk._m[id]
 end

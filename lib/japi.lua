@@ -5,8 +5,15 @@ hjapi = {}
 ---@param trueAction function
 ---@return boolean
 hjapi.check = function(methods, trueAction)
-    if (japi == nil) then
+    if (japi == -9394) then
         return false
+    end
+    if (japi == nil) then
+        japi = require "jass.japi"
+        if (japi == nil) then
+            japi = -9394
+            return false
+        end
     end
     if (type(methods) ~= 'table') then
         return false

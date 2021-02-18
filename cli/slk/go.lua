@@ -1,3 +1,4 @@
+SLK = require 'slk'
 SLK_GO = {}
 SLK_ID_ALREADY = {}
 
@@ -12,24 +13,20 @@ SLK_GO_SET = function(data)
     table.insert(SLK_GO, data)
 end
 
+for id, obj in pairs(SLK.ability) do
+    local data = {}
+    data._id = id
+    for k, v in pairs(obj) do
+        data[k] = v
+    end
+    SLK_GO_SET(data)
+end
+
 local idPrefix = {
     item = "I",
 }
 
 local idLimit = 46655 -- zzz
-local hex36 = string.split("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1)
-local to36 = function(num)
-    if (num == 0) then
-        return "0"
-    end
-    local numStr = ""
-    while (num ~= 0) do
-        local yu = math.floor((num % 36) + 1)
-        numStr = hex36[yu] .. numStr
-        num = math.floor(num / 36)
-    end
-    return string.upper(numStr)
-end
 
 SLK_ID_COUNT = {}
 SLK_ID = function(class)
@@ -42,7 +39,7 @@ SLK_ID = function(class)
     end
     local sid
     while (true) do
-        local id = to36(SLK_ID_COUNT[prefix])
+        local id = string.convert(SLK_ID_COUNT[prefix], 36)
         SLK_ID_COUNT[prefix] = SLK_ID_COUNT[prefix] + 1
         if (SLK_ID_COUNT[prefix] > idLimit) then
             sid = "ZZZZ"
