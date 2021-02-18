@@ -1,7 +1,6 @@
 -- 加载YDWE库
 cj = require "jass.common"
 cg = require "jass.globals"
-slk = require "jass.slk"
 japi = require "jass.japi"
 
 -- 加载blizzard
