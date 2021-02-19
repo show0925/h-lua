@@ -241,14 +241,14 @@ hevent_default_actions = {
                 if (isLethal == true) then
                     cj.SetUnitInvulnerable(targetUnit, true)
                 else
-                    hattr.set(targetUnit, 0, { life = "+" .. changeLife })
+                    hattribute.set(targetUnit, 0, { life = "+" .. changeLife })
                 end
                 htime.setTimeout(0, function(t)
                     htime.delTimer(t)
                     if (isLethal == true) then
                         cj.SetUnitInvulnerable(targetUnit, false)
                     else
-                        hattr.set(targetUnit, 0, { life = "-" .. changeLife })
+                        hattribute.set(targetUnit, 0, { life = "-" .. changeLife })
                         hunit.setCurLife(targetUnit, curLife)
                     end
                     hskill.damage(
@@ -436,7 +436,7 @@ hevent_default_actions = {
                 value = diffLv
             })
             -- 重读部分属性（因为有些属性在物编可升级提升）
-            hattr.set(u, 0, {
+            hattribute.set(u, 0, {
                 str_white = "=" .. cj.GetHeroStr(u, false),
                 agi_white = "=" .. cj.GetHeroAgi(u, false),
                 int_white = "=" .. cj.GetHeroInt(u, false),
@@ -677,9 +677,9 @@ hevent_default_actions = {
             -- 如果是hslk物品，得到技术升级
             if (hitem.getHSlk(itId) ~= nil) then
                 -- 判断超重
-                local newWeight = hattr.get(u, "weight_current") + hitem.getWeight(itId)
-                if (newWeight > hattr.get(u, "weight")) then
-                    local exWeight = math.round(newWeight - hattr.get(u, "weight"))
+                local newWeight = hattribute.get(u, "weight_current") + hitem.getWeight(itId)
+                if (newWeight > hattribute.get(u, "weight")) then
+                    local exWeight = math.round(newWeight - hattribute.get(u, "weight"))
                     htextTag.style(
                         htextTag.create2Unit(u, "超重" .. exWeight .. "kg", 8.00, "ffffff", 1, 1.1, 50.00),
                         "scale", 0, 0.05

@@ -623,7 +623,7 @@ hunit.create = function(options)
         end
         -- attr
         if (options.attr ~= nil and type(options.attr) == "table") then
-            hattr.set(u, 0, options.attr)
+            hattribute.set(u, 0, options.attr)
         end
     end
     if (g ~= nil) then

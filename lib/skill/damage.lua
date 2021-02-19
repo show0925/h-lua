@@ -53,14 +53,14 @@ hskill.damage = function(options)
         options.damageSrc = CONST_DAMAGE_SRC.unknown
     end
     --双方attr get
-    local targetUnitAttr = hattr.get(targetUnit)
+    local targetUnitAttr = hattribute.get(targetUnit)
     local sourceUnitAttr = {}
     if (targetUnitAttr == nil) then
         print("targetUnit unregister")
         return
     end
     if (sourceUnit ~= nil) then
-        sourceUnitAttr = hattr.get(sourceUnit)
+        sourceUnitAttr = hattribute.get(sourceUnit)
         if (sourceUnitAttr == nil) then
             print("sourceUnit unregister")
             return
@@ -183,7 +183,7 @@ hskill.damage = function(options)
     -- 自身暴击计算，自身暴击触发下，回避几率减少一半
     local isKnocking = false
     if (isFixed == false and lastDamage > 0 and sourceUnitAttr.knocking_odds > 0 and sourceUnitAttr.knocking_extent > 0) then
-        local targetKnockingOppose = hattr.get(targetUnit, "knocking_oppose")
+        local targetKnockingOppose = hattribute.get(targetUnit, "knocking_oppose")
         sourceUnitAttr.knocking_odds = sourceUnitAttr.knocking_odds - targetKnockingOppose
         if (math.random(1, 100) <= sourceUnitAttr.knocking_odds) then
             isKnocking = true
@@ -524,7 +524,7 @@ hskill.damage = function(options)
         if (lastDamage > 1 and his.alive(targetUnit) and his.punish(targetUnit) == false and hunit.isPunishing(targetUnit)) then
             local cutVal = lastDamage * 1
             local isCut = (targetUnitAttr.punish_current - cutVal <= 0)
-            hattr.set(targetUnit, 0, {
+            hattribute.set(targetUnit, 0, {
                 punish_current = "-" .. cutVal
             })
             if (isCut and his.deleted(targetUnit) == false) then
@@ -542,7 +542,7 @@ hskill.damage = function(options)
                 if (punishEffectMove < 1) then
                     punishEffectMove = 1
                 end
-                hattr.set(targetUnit, punishDuring, {
+                hattribute.set(targetUnit, punishDuring, {
                     attack_speed = "-" .. punishEffectAttackSpeed,
                     move = "-" .. punishEffectMove
                 })

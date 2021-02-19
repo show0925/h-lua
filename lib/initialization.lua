@@ -92,14 +92,14 @@ end
 -- 恢复生命监听器
 hmonitor.create(CONST_MONITOR.LIFE_BACK, 0.5,
     function(object)
-        local val = hattr.get(object, "life_back") or 0
+        local val = hattribute.get(object, "life_back") or 0
         hunit.addCurLife(object, val * 0.5)
     end,
     function(object)
         if (his.dead(object) or his.deleted(object)) then
             return true
         end
-        local val = hattr.get(object, "life_back") or 0
+        local val = hattribute.get(object, "life_back") or 0
         if (val > 0 and hunit.getCurLifePercent(object) >= 100) then
             return true
         end
@@ -110,14 +110,14 @@ hmonitor.create(CONST_MONITOR.LIFE_BACK, 0.5,
 -- 恢复魔法监听器
 hmonitor.create(CONST_MONITOR.MANA_BACK, 0.7,
     function(object)
-        local val = hattr.get(object, "mana_back") or 0
+        local val = hattribute.get(object, "mana_back") or 0
         hunit.addCurMana(object, val * 0.7)
     end,
     function(object)
         if (his.dead(object) or his.deleted(object)) then
             return true
         end
-        local val = hattr.get(object, "mana_back") or 0
+        local val = hattribute.get(object, "mana_back") or 0
         if (val > 0 and hunit.getCurManaPercent(object) >= 100) then
             return true
         end
@@ -128,18 +128,18 @@ hmonitor.create(CONST_MONITOR.MANA_BACK, 0.7,
 -- 硬直监听器（没收到伤害时,每3秒恢复5%硬直）
 hmonitor.create(CONST_MONITOR.PUNISH, 3,
     function(object)
-        local punish_current = hattr.get(object, "punish_current")
-        local punish = hattr.get(object, "punish")
+        local punish_current = hattribute.get(object, "punish_current")
+        local punish = hattribute.get(object, "punish")
         local val = math.floor(0.05 * punish)
         if (punish_current + val > punish) then
-            hattr.set(object, 0, { punish_current = "=" .. punish })
+            hattribute.set(object, 0, { punish_current = "=" .. punish })
         else
-            hattr.set(object, 0, { punish_current = "+" .. val })
+            hattribute.set(object, 0, { punish_current = "+" .. val })
         end
     end,
     function(object)
-        local punish_current = hattr.get(object, "punish_current")
-        local punish = hattr.get(object, "punish")
+        local punish_current = hattribute.get(object, "punish_current")
+        local punish = hattribute.get(object, "punish")
         return punish_current >= punish or his.dead(object) or his.deleted(object) or his.beDamaging(object) or hunit.isPunishing(object) == false
     end
 )

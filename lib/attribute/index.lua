@@ -10,7 +10,7 @@ hattribute = {
         },
     },
     THREE_BUFF = {
-        -- 每一点三围对属性的影响，默认会写一些，可以通过 hattr.setThreeBuff 方法来改变系统构成
+        -- 每一点三围对属性的影响，默认会写一些，可以通过 hattribute.setThreeBuff 方法来改变系统构成
         -- 需要注意的是三围只能影响common内的大部分参数，natural及effect是无效的
         primary = 1, -- 每点主属性提升1点白字攻击（默认例子，这是模拟原生平衡性常数，需要设置平衡性常数为0）
         str = {
@@ -171,7 +171,7 @@ end
 --- @return nil|string buffKey
 hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     local valType = type(val)
-    local params = hattr.get(whichUnit)
+    local params = hattribute.get(whichUnit)
     if (params == nil) then
         return
     end
@@ -568,7 +568,7 @@ hattribute.caleAttribute = function(damageSrc, isAdd, whichUnit, attr, times)
             diff[k] = tempDiff
         end
     end
-    hattr.set(whichUnit, 0, diff)
+    hattribute.set(whichUnit, 0, diff)
     if (#diffPlayer > 0) then
         local p = hunit.getOwner(whichUnit)
         for _, dp in ipairs(diffPlayer) do

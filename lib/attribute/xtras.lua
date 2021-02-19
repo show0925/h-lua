@@ -125,7 +125,7 @@ end
 ---         distance 距离 (* 只有击飞有效)
 ---         height 高度 (* 只有击飞有效)
 --- 惯用例子：
---- hattr.set(unit, 0, {
+--- hattribute.set(unit, 0, {
 --    xtras = {
 --      add = {
 --        { on = CONST_EVENT.attack, action = "triggerUnit.attr.attack_speed", odds = 20.0, val = 1.5, during = 3.0, effect = nil },
@@ -237,7 +237,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                     val = val * (1 - 0.01 * buff_oppose)
                                 end
                                 if (val > 0) then
-                                    hattr.set(targetUnit, x.during, { [actionField] = "+" .. val })
+                                    hattribute.set(targetUnit, x.during, { [actionField] = "+" .. val })
                                     if (type(x.effect) == "string" and string.len(x.effect) > 0) then
                                         heffect.bindUnit(x.effect, targetUnit, "origin", x.during)
                                     end
@@ -249,7 +249,7 @@ hattribute.xtras = function(triggerUnit, eventKey, evtData)
                                     val = val * (1 - 0.01 * debuff_oppose)
                                 end
                                 if (val < 0) then
-                                    hattr.set(targetUnit, x.during, { [actionField] = tostring(val) })
+                                    hattribute.set(targetUnit, x.during, { [actionField] = tostring(val) })
                                     if (type(x.effect) == "string" and string.len(x.effect) > 0) then
                                         heffect.bindUnit(x.effect, targetUnit, "origin", x.during)
                                     end

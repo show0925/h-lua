@@ -24,7 +24,7 @@ hskill.knocking = function(options)
         return
     end
     local targetUnit = options.targetUnit
-    local targetOppose = hattr.get(targetUnit, "knocking_oppose")
+    local targetOppose = hattribute.get(targetUnit, "knocking_oppose")
     odds = odds - targetOppose
     if (odds <= 0) then
         return
@@ -90,7 +90,7 @@ hskill.split = function(options)
         return
     end
     local targetUnit = options.targetUnit
-    local targetOppose = hattr.get(targetUnit, "split_oppose")
+    local targetOppose = hattribute.get(targetUnit, "split_oppose")
     odds = odds - targetOppose
     if (odds <= 0) then
         return
@@ -177,7 +177,7 @@ hskill.broken = function(options)
     local damage = options.damage or 0
     local sourceUnit = options.sourceUnit or nil
     --计算抵抗
-    local oppose = hattr.get(u, "broken_oppose")
+    local oppose = hattribute.get(u, "broken_oppose")
     odds = odds - oppose --(%)
     if (odds <= 0) then
         return
@@ -266,7 +266,7 @@ hskill.swim = function(options)
     local damage = options.damage or 0
     local sourceUnit = options.sourceUnit
     --计算抵抗
-    local oppose = hattr.get(u, "swim_oppose")
+    local oppose = hattribute.get(u, "swim_oppose")
     odds = odds - oppose --(%)
     if (odds <= 0) then
         return
@@ -394,7 +394,7 @@ hskill.silent = function(options)
     local damage = options.damage or 0
     local sourceUnit = options.sourceUnit
     --计算抵抗
-    local oppose = hattr.get(u, "silent_oppose")
+    local oppose = hattribute.get(u, "silent_oppose")
     odds = odds - oppose --(%)
     if (odds <= 0) then
         return
@@ -499,7 +499,7 @@ hskill.unarm = function(options)
     local damage = options.damage or 0
     local sourceUnit = options.sourceUnit
     --计算抵抗
-    local oppose = hattr.get(u, "unarm_oppose")
+    local oppose = hattribute.get(u, "unarm_oppose")
     odds = odds - oppose --(%)
     if (odds <= 0) then
         return
@@ -594,7 +594,7 @@ hskill.fetter = function(options)
     local damage = options.damage or 0
     local sourceUnit = options.sourceUnit or nil
     --计算抵抗
-    local oppose = hattr.get(u, "fetter_oppose")
+    local oppose = hattribute.get(u, "fetter_oppose")
     odds = odds - oppose --(%)
     if (odds <= 0) then
         return
@@ -609,7 +609,7 @@ hskill.fetter = function(options)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
         heffect.bindUnit(options.effect, u, "origin", during)
     end
-    hattr.set(u, during, { move = "-522" })
+    hattribute.set(u, during, { move = "-522" })
     if (damage > 0) then
         hskill.damage(
             {
@@ -701,7 +701,7 @@ hskill.bomb = function(options)
     end
     hgroup.forEach(whichGroup, function(eu)
         --计算抵抗
-        local oppose = hattr.get(eu, "bomb_oppose")
+        local oppose = hattribute.get(eu, "bomb_oppose")
         local tempOdds = odds - oppose --(%)
         local damage = options.damage
         if (tempOdds <= 0) then
@@ -789,7 +789,7 @@ hskill.lightningChain = function(options)
     local odds = options.odds or 100
     local damage = options.damage
     --计算抵抗
-    local oppose = hattr.get(options.targetUnit, "lightning_chain_oppose")
+    local oppose = hattribute.get(options.targetUnit, "lightning_chain_oppose")
     odds = odds - oppose --(%)
     if (odds <= 0) then
         return
@@ -934,7 +934,7 @@ hskill.crackFly = function(options)
     local odds = options.odds or 100
     local damage = options.damage or 0
     --计算抵抗
-    local oppose = hattr.get(options.targetUnit, "crack_fly_oppose")
+    local oppose = hattribute.get(options.targetUnit, "crack_fly_oppose")
     odds = odds - oppose --(%)
     if (odds <= 0) then
         return
@@ -964,7 +964,7 @@ hskill.crackFly = function(options)
     }
     hskill.unarm(tempObj)
     hskill.silent(tempObj)
-    hattr.set(options.targetUnit, during, { move = "-9999" })
+    hattribute.set(options.targetUnit, during, { move = "-9999" })
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
         heffect.bindUnit(options.effect, options.targetUnit, "origin", during)
     end
