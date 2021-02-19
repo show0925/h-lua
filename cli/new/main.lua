@@ -3,15 +3,6 @@
 -- require h-lua
 require "h-lua"
 
--- alias 别称
--- 仅供参考，自行调整
-hlb = hleaderBoard
-hmb = hmultiBoard
-hevt = hevent
-httg = htextTag
-htxt = htexture
-hattr = hattribute
-
--- game codes
+require "scripts.alias"
 require "scripts.setup"
 require "scripts.start"
