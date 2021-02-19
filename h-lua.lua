@@ -21,7 +21,7 @@ require "const.monitor"
 require "const.unit"
 require "const.playerColor"
 require "const.event"
-require "const.hSlkKeys"
+require "const.slk"
 require "const.abilityTarget"
 
 -- 加载foundation
@@ -49,6 +49,8 @@ require "foundation.cmd"
 require "foundation.echo"
 -- 加载Mapping
 require "foundation.Mapping"
+-- 加载hSlk
+require "foundation.slk"
 
 -- 加载Dzapi库
 -- 需要编辑器支持网易平台的DZAPI
