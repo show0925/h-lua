@@ -64,7 +64,6 @@ require "lib.japi"
 -- 加载h-lua库
 require "lib.time"
 require "lib.monitor"
-require "lib.slk"
 require "lib.is"
 require "lib.sound"
 require "lib.texture"

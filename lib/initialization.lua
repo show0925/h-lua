@@ -5,6 +5,9 @@
 --- Updated: 2021/1/22 00:19
 ---
 
+-- hslk 初始化
+hslk_init()
+
 -- 全局秒钟
 cj.TimerStart(cj.CreateTimer(), 1.00, true, htime.clock)
 

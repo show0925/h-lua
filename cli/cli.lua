@@ -1,5 +1,5 @@
-require "cliSlk"
-require "main"
+require 'cliSlk'
+require 'main'
 if (cj ~= nil) then
     local t = cj.CreateTrigger()
     cj.TriggerRegisterTimerEvent(t, 0.1, false)

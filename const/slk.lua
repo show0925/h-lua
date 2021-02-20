@@ -48,7 +48,6 @@ CONST_SLK = {
     },
 }
 
-
 CONST_HSLK = {
     item = { "_id", "_type", "_parent", "_overlie", "_weight", "_active", "_passive", "_attr", "_attr_txt", "_ring", "_cooldown", "_shadow" },
     unit = { "_id", "_type", "_parent", "_attr" },

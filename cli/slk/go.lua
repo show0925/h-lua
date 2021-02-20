@@ -1,4 +1,3 @@
-SLK = require 'slk'
 SLK_GO = {}
 SLK_ID_ALREADY = {}
 
@@ -11,15 +10,6 @@ end
 
 SLK_GO_SET = function(data)
     table.insert(SLK_GO, data)
-end
-
-for id, obj in pairs(SLK.ability) do
-    local data = {}
-    data._id = id
-    for k, v in pairs(obj) do
-        data[k] = v
-    end
-    SLK_GO_SET(data)
 end
 
 local idPrefix = {
