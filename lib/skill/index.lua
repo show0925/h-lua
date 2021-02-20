@@ -1,5 +1,5 @@
 hskill = {
-    SKILL_TOKEN = hslk.unit_token,
+    SKILL_TOKEN = hslk.n2i("H_LUA_SKILL_TOKEN"),
     SKILL_LEAP = hslk.unit_token_leap, --leap的token模式，需导入模型：https://github.com/hunzsig-warcraft3/assets-models/blob/master/interface/interface_token.mdx
     SKILL_BREAK = hslk.skill_break, --table[0.05~0.5]
     SKILL_SWIM_UNLIMIT = hslk.skill_swim_unlimit,

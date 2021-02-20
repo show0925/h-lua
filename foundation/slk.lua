@@ -23,12 +23,18 @@ hslk.n2v = function(name)
     if (type(name) ~= "string") then
         return
     end
-    return HSLK_N2V[id]
+    if (HSLK_N2V[name] == nil or type(HSLK_N2V[name]) ~= "table") then
+        return
+    end
+    if (#HSLK_N2V[name] == 1) then
+        return HSLK_N2V[name][1]
+    end
+    return HSLK_N2V[name]
 end
 
 --- 根据名称获取ID
 --- 根据名称只对应一个ID，返回string
---- 根据名称只对应多个ID，返回table
+--- 根据名称如对应多个ID，返回table
 ---@param name string
 ---@return string|table|nil
 hslk.n2i = function(name)
