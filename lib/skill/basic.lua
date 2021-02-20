@@ -211,7 +211,14 @@ hskill.diy = function(options)
     if (options.life == nil or options.life < 2.00) then
         life = 2.00
     end
-    local token = cj.CreateUnit(options.whichPlayer, hskill.SKILL_TOKEN, x, y, bj_UNIT_FACING)
+    local token = hunit.create({
+        register = false,
+        whichPlayer = options.whichPlayer,
+        unitId = hskill.SKILL_TOKEN,
+        x = options.x,
+        y = options.y,
+        facing = bj_UNIT_FACING,
+    })
     cj.UnitAddAbility(token, options.skillId)
     if (options.targetUnit ~= nil) then
         cj.IssueTargetOrderById(token, options.orderId, options.targetUnit)
