@@ -1,11 +1,11 @@
 hskill = {
-    SKILL_TOKEN = hslk.n2i("H_LUA_SKILL_TOKEN"),
-    SKILL_LEAP = hslk.unit_token_leap, --leap的token模式，需导入模型：https://github.com/hunzsig-warcraft3/assets-models/blob/master/interface/interface_token.mdx
-    SKILL_BREAK = hslk.skill_break, --table[0.05~0.5]
-    SKILL_SWIM_UNLIMIT = hslk.skill_swim_unlimit,
-    SKILL_INVISIBLE = hslk.skill_invisible,
-    SKILL_AVOID_PLUS = hslk.attr.avoid.add,
-    SKILL_AVOID_MIUNS = hslk.attr.avoid.sub,
+    SKILL_TOKEN = string.char2id(hslk.n2i("H_LUA_SKILL_TOKEN")),
+    SKILL_LEAP = string.char2id(hslk.n2i("H_LUA_SKILL_LEAP")), --leap的token模式，需导入模型：https://github.com/hunzsig-warcraft3/assets-models/blob/master/interface/interface_token.mdx
+    SKILL_BREAK = string.char2id(hslk.n2i("H_LUA_SKILL_BREAK")), --table[0.05~0.5]
+    SKILL_SWIM_UNLIMIT = string.char2id(hslk.n2i("H_LUA_SKILL_SWIM_UNLIMIT")),
+    SKILL_INVISIBLE = string.char2id(hslk.n2i("H_LUA_SKILL_INVISIBLE")),
+    SKILL_AVOID_PLUS = string.char2id(hslk.n2i("H_LUA_SKILL_AVOID_PLUS")),
+    SKILL_AVOID_MIUNS = string.char2id(hslk.n2i("H_LUA_SKILL_AVOID_MIUNS")),
     BUFF_SWIM = string.char2id("BPSE"),
     BUFF_INVULNERABLE = string.char2id("Avul")
 }
