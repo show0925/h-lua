@@ -69,12 +69,12 @@ hslk_init = function()
             local jsonFragment = {}
             for k, v in ipairs(data._fragment) do
                 data._fragment[k][2] = math.floor(v[2])
-                local fragmentId = hslk.n2v.item[v[1]]._id or nil
+                local fragmentId = HSLK_N2V[v[1]][1]._id or nil
                 if (fragmentId ~= nil) then
                     table.insert(jsonFragment, { fragmentId, v[2] })
                 end
             end
-            local profitId = hslk.n2v.item[data._profit[1]]._id or nil
+            local profitId = HSLK_N2V[data._profit[1]][1]._id or nil
             if (profitId == nil) then
                 return
             end

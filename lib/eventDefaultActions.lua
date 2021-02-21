@@ -450,11 +450,11 @@ hevent_default_actions = {
                 return
             end
             abilityId = string.id2char(abilityId)
-            local ahs = hskill.getHSlk(abilityId)
+            local ahs = hslk.i2v(abilityId)
             if (ahs == nil) then
                 return
             end
-            local abilityName = ahs._name
+            local abilityName = ahs.Name
             local triggerUnit = cj.GetTriggerUnit()
             local p = hunit.getOwner(triggerUnit)
             if (abilityName == "信使-闪烁") then

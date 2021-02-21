@@ -6,44 +6,17 @@ hring = {
     ACTIVE_EFFECT_TARGET = {},
 }
 
----@private
-hring.getHSlk = function(idOrName)
-    if (idOrName == nil) then
-        return
-    end
-    local id = idOrName
-    if (type(idOrName) == "number") then
-        id = string.id2char(idOrName)
-    end
-    if (hslk.i2v.ring[id]) then
-        return hslk.i2v.ring[id]
-    elseif (hslk.n2v.ring[id]) then
-        return hslk.n2v.ring[id]
-    end
-    return nil
-end
-
---- 根据光环名称获取技能ID字符串
----@param name string
----@return string
-hring.n2i = function(name)
-    if (hslk.n2v.ring[name]) then
-        return hslk.n2v.ring[name]._id
-    end
-    return nil
-end
-
 --- 检查技能ID是否支持光环服务
 --- 成功则返回ID字符串,失败返回false
 ---@private
 ---@param id number|string
 ---@return boolean|string
 hring.check = function(id)
-    local hs = hring.getHSlk(id)
-    if (hs == nil) then
+    local rs = hslk.i2v(id)
+    if (rs == nil) then
         return false
     end
-    return hs._id
+    return rs._id
 end
 
 ---@private
@@ -56,14 +29,14 @@ hring.insert = function(whichUnit, id)
     end
     if (his.deleted(whichUnit) == false) then
         table.insert(hring.ACTIVE_RING, { status = 2, unit = whichUnit, id = id, group = {} })
-        local hs = hring.getHSlk(id)
-        if (hs.effect) then
+        local rs = hslk.i2v(id)
+        if (rs.effect) then
             if (hring.ACTIVE_EFFECT[id] == nil) then
                 hring.ACTIVE_EFFECT[id] = {}
             end
             if (hring.ACTIVE_EFFECT[id][whichUnit] == nil) then
                 hring.ACTIVE_EFFECT[id][whichUnit] = {
-                    effect = heffect.bindUnit(hs.effect, whichUnit, hs.attach or 'origin', -1),
+                    effect = heffect.bindUnit(rs.effect, whichUnit, rs.attach or 'origin', -1),
                     count = 1,
                 }
             else
@@ -94,13 +67,13 @@ hring.insert = function(whichUnit, id)
                 --
                 local g = {}
                 local ringId = ring.id
-                local hs = hring.getHSlk(ringId)
-                if (status == 2 and hs ~= nil) then
-                    if (hs.effectTarget and hring.ACTIVE_EFFECT_TARGET[ringId] == nil) then
+                local rs = hslk.i2v(ringId)
+                if (status == 2 and rs ~= nil) then
+                    if (rs.effectTarget and hring.ACTIVE_EFFECT_TARGET[ringId] == nil) then
                         hring.ACTIVE_EFFECT_TARGET[ringId] = {}
                     end
-                    local radius = math.floor(hs.radius or 0)
-                    local target = hs.target or {}
+                    local radius = math.floor(rs.radius or 0)
+                    local target = rs.target or {}
                     if (radius > 0) then
                         local selector = {
                             air = false, --空中
@@ -230,10 +203,10 @@ hring.insert = function(whichUnit, id)
                     end
                 end
                 -- slk配置的RING属性
-                if (type(hs.attr) == 'table') then
+                if (type(rs.attr) == 'table') then
                     hgroup.forEach(ring.group, function(enumUnit)
                         if (hgroup.includes(g, enumUnit) == false) then
-                            hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, false, enumUnit, hs.attr, 1)
+                            hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, false, enumUnit, rs.attr, 1)
                             if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] ~= nil) then
                                 hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count = hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count - 1
                                 if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count == 0) then
@@ -247,7 +220,7 @@ hring.insert = function(whichUnit, id)
                 if (#g > 0) then
                     local matchAction
                     if (#hmatcher.RING_MATCHER > 0) then
-                        local name = hs._name or -1
+                        local name = rs.Name or -1
                         for _, m in ipairs(hmatcher.RING_MATCHER) do
                             local s, e = string.find(name, m[1])
                             if (s ~= nil and e ~= nil) then
@@ -257,13 +230,13 @@ hring.insert = function(whichUnit, id)
                     end
                     hgroup.forEach(g, function(enumUnit)
                         -- slk配置的RING属性
-                        if (type(hs.attr) == 'table' and false == hgroup.includes(ring.group, enumUnit)) then
-                            hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, true, enumUnit, hs.attr, 1)
-                            if (hs.effectTarget) then
+                        if (type(rs.attr) == 'table' and false == hgroup.includes(ring.group, enumUnit)) then
+                            hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, true, enumUnit, rs.attr, 1)
+                            if (rs.effectTarget) then
                                 if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] == nil) then
                                     hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] = {
                                         count = 1,
-                                        effect = heffect.bindUnit(hs.effectTarget, enumUnit, hs.attachTarget or 'origin', -1)
+                                        effect = heffect.bindUnit(rs.effectTarget, enumUnit, rs.attachTarget or 'origin', -1)
                                     }
                                 else
                                     hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count = hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count + 1
