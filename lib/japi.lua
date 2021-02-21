@@ -1,4 +1,7 @@
-hjapi = {}
+---@class hjapi JAPI
+hjapi = {
+    JAPI_DELAY = string.char2id(hslk.n2i("H_LUA_JAPI_DELAY"))
+}
 
 ---@private
 ---@param methods table<string>
@@ -49,8 +52,8 @@ hjapi.setUnitAttackWhite = function(whichUnit, value)
     end
     return hjapi.check({ 'SetUnitState' }, function()
         japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x12), value)
-        cj.UnitAddAbility(whichUnit, hslk.japi_delay)
-        cj.UnitRemoveAbility(whichUnit, hslk.japi_delay)
+        cj.UnitAddAbility(whichUnit, hjapi.JAPI_DELAY)
+        cj.UnitRemoveAbility(whichUnit, hjapi.JAPI_DELAY)
     end)
 end
 
@@ -122,8 +125,8 @@ hjapi.setUnitDefendWhite = function(whichUnit, value)
     return hjapi.check({ 'SetUnitState' }, function()
         local defend_green = hattribute.get(whichUnit, 'defend_green') or 0
         japi.SetUnitState(whichUnit, cj.ConvertUnitState(0x20), value + defend_green)
-        cj.UnitAddAbility(whichUnit, hslk.japi_delay)
-        cj.UnitRemoveAbility(whichUnit, hslk.japi_delay)
+        cj.UnitAddAbility(whichUnit, hjapi.JAPI_DELAY)
+        cj.UnitRemoveAbility(whichUnit, hjapi.JAPI_DELAY)
     end)
 end
 

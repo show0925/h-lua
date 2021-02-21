@@ -58,11 +58,12 @@ end
 --- 为单位初始化属性系统的对象数据
 --- @private
 hattribute.init = function(whichUnit)
-    if (whichUnit == nil or his.deleted(whichUnit)) then
+    local uid = hunit.getId(whichUnit)
+    if (uid == nil) then
         return false
     end
     -- init
-    local uSlk = hunit.getSlk(whichUnit)
+    local uSlk = hslk.i2v(uid)
     local attribute = {
         primary = uSlk.Primary or "STR",
         life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE),

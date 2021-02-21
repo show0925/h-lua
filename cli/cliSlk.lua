@@ -8,6 +8,8 @@ HSLK_CLI_DATA = {}
 HSLK_I2V = {}
 HSLK_N2V = {}
 HSLK_N2I = {}
+HSLK_CLASS_IDS = {}
+HSLK_TYPE_IDS = {}
 HSLK_SYNTHESIS = {
     profit = {},
     fragment = {},
@@ -48,6 +50,20 @@ hslk_init = function()
             elseif (jass_slk.technology[id] ~= nil) then
                 HSLK_I2V[id] = jass_slk.technology[id]
                 HSLK_I2V[id]._class = HSLK_I2V[id]._class or "technology"
+            end
+            -- 处理_class
+            if (HSLK_I2V[id]._class) then
+                if (HSLK_CLASS_IDS[HSLK_I2V[id]._class] == nil) then
+                    HSLK_CLASS_IDS[HSLK_I2V[id]._class] = {}
+                end
+                table.insert(HSLK_CLASS_IDS[HSLK_I2V[id]._class], id)
+            end
+            -- 处理_type
+            if (HSLK_I2V[id]._type) then
+                if (HSLK_TYPE_IDS[HSLK_I2V[id]._type] == nil) then
+                    HSLK_TYPE_IDS[HSLK_I2V[id]._type] = {}
+                end
+                table.insert(HSLK_TYPE_IDS[HSLK_I2V[id]._type], id)
             end
             -- 处理N2V
             if (HSLK_I2V[id].Name ~= nil) then

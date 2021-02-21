@@ -1,33 +1,16 @@
 ---@class hunit 单位
 hunit = {}
 
---- 数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
----@param uOrId userdata|string|number
----@return table|nil
-hunit.getSlk = function(uOrId)
-    local id = hunit.getId(uOrId)
-    return slk.unit[id]
-end
-
---- 获取单位的 _hslk 自定义数据
----@param uOrIdOrName userdata|string|number
----@return table|nil
-hunit.getHSlk = function(uOrIdOrName)
-    local id = hunit.getId(uOrIdOrName)
-    if (hslk.i2v.unit[id]) then
-        return hslk.i2v.unit[id]
-    elseif (hslk.n2v.unit[id]) then
-        return hslk.n2v.unit[id]
-    end
-    return nil
-end
-
 --- 获取单位的头像
 ---@param uOrId userdata|string|number
 ---@return string
 hunit.getAvatar = function(uOrId)
-    local s = hunit.getSlk(uOrId)
-    return s.Art
+    local id = hunit.getId(uOrId)
+    local s = hslk.i2v(id)
+    if (s and s.Art) then
+        return s.Art
+    end
+    return ""
 end
 
 --- 获取单位的攻击浮动
@@ -35,7 +18,8 @@ end
 ---@param uOrId userdata|string|number
 ---@return number
 hunit.getAttackSides = function(uOrId)
-    local s = hunit.getSlk(uOrId)
+    local id = hunit.getId(uOrId)
+    local s = hslk.i2v(id)
     if (s == nil) then
         return 0
     end
@@ -291,7 +275,11 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
         return
     end
     during = during or 0
-    local uSlk = hunit.getSlk(whichUnit)
+    local uid = hunit.getId(whichUnit)
+    if (uid == nil) then
+        return
+    end
+    local uSlk = hslk.i2v(uid)
     local rgba = hcache.get(whichUnit, CONST_CACHE.UNIT_RGBA)
     if (rgba == nil) then
         rgba = { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0 }
@@ -417,13 +405,8 @@ hunit.embed = function(u, options)
         end)
     end
     -- hslk处理
-    local uhSlk = hunit.getHSlk(id)
-    if (uhSlk ~= nil) then
-        if (uhSlk._type == "courier_hero" or uhSlk._type == "courier") then
-            if (true == uhSlk._auto_skill) then
-                hcourier.embed(u)
-            end
-        end
+    if (his.courier(u, true)) then
+        hcourier.embed(u)
     end
     -- 物品系统
     if (his.hasSlot(u)) then
@@ -648,22 +631,13 @@ hunit.getId = function(uOrId)
     return id
 end
 
---- 根据名称获取单位ID字符串
----@param name string
----@return string
-hunit.n2i = function(name)
-    if (hslk.n2v.unit[name]) then
-        return hslk.n2v.unit[name]._id or nil
-    end
-    return nil
-end
-
 --- 获取单位的名称
 ---@param u userdata
 ---@return string
 hunit.getName = function(u)
     return cj.GetUnitName(u)
 end
+
 --- 获取单位的自定义值
 ---@param u userdata
 ---@return number

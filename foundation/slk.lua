@@ -49,3 +49,45 @@ hslk.n2i = function(name)
     end
     return HSLK_N2I[name]
 end
+
+--- 根据 hslk._class 获取ID集
+---@param class table | {'unit','item'} 输入多个类型自动合并ID
+---@return table
+hslk.classIds = function(class)
+    if (type(class) == "string") then
+        class = { class }
+    end
+    if (type(class) ~= "table") then
+        return {}
+    end
+    local ids = {}
+    for _, c in ipairs(class) do
+        if (HSLK_CLASS_IDS[c] ~= nil) then
+            for _, id in ipairs(HSLK_CLASS_IDS[c]) do
+                table.insert(ids, id)
+            end
+        end
+    end
+    return ids
+end
+
+--- 根据 hslk._type 获取ID集
+---@param type table | {'hero'} 输入多个类型自动合并ID
+---@return table
+hslk.typeIds = function(type)
+    if (type(type) == "string") then
+        type = { type }
+    end
+    if (type(type) ~= "table") then
+        return {}
+    end
+    local ids = {}
+    for _, c in ipairs(type) do
+        if (HSLK_TYPE_IDS[c] ~= nil) then
+            for _, id in ipairs(HSLK_TYPE_IDS[c]) do
+                table.insert(ids, id)
+            end
+        end
+    end
+    return ids
+end

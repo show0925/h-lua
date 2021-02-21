@@ -119,14 +119,42 @@ end
 
 --- 是否英雄
 --- UNIT_TYPE_HERO是对应平衡常数的英雄列表
---- hero和courier_hero是对应slkHelper里面的UNIT_TYPE，是本框架固有用法
+--- hero和courier_hero是对应hslk._type，是本框架固有用法
 ---@param whichUnit userdata
 ---@return boolean
 his.hero = function(whichUnit)
     local uid = hunit.getId(whichUnit)
-    return cj.IsUnitType(whichUnit, UNIT_TYPE_HERO)
-        or table.includes(hslk.unit_type_ids.hero, uid) == true
-        or table.includes(hslk.unit_type_ids.courier_hero, uid) == true
+    if (uid == nil) then
+        return false
+    end
+    local us = hslk.i2v(uid)
+    if (us == nil) then
+        return false
+    end
+    return us._type == "hero" or us._type == "courier_hero" or cj.IsUnitType(whichUnit, UNIT_TYPE_HERO)
+end
+
+--- 是否信使(工人)
+--- UNIT_TYPE_PEON是对应物编的单位类别工人
+--- courier和courier_hero是对应hslk._type，是本框架固有用法
+---@param whichUnit userdata
+---@param checkAutoSkill boolean 是否同时检查自动技能的判定
+---@return boolean
+his.courier = function(whichUnit, checkAutoSkill)
+    checkAutoSkill = checkAutoSkill or false
+    local uid = hunit.getId(whichUnit)
+    if (uid == nil) then
+        return false
+    end
+    local us = hslk.i2v(uid)
+    if (us == nil) then
+        return false
+    end
+    local res = us._type == "courier" or us._type == "courier_hero" or cj.IsUnitType(whichUnit, UNIT_TYPE_PEON)
+    if (res and checkAutoSkill) then
+        res = (res and us._auto_skill == true)
+    end
+    return res
 end
 
 --- 是否建筑

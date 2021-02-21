@@ -2,7 +2,8 @@
 hhero = {
     player_allow_qty = {}, -- 玩家最大单位数量,默认1
     player_heroes = {}, -- 玩家当前英雄
-    build_token = hslk.unit_hero_tavern_token,
+    view_token = string.char2id(hslk.n2i("H_LUA_HERO_VIEW_TOKEN")),
+    tavern_token = string.char2id(hslk.n2i("H_LUA_HERO_TAVERN_TOKEN")),
     --- 英雄出生地
     bornX = 0,
     bornY = 0,
@@ -18,16 +19,21 @@ hhero = {
 --- 先会判断SLK中是否存在，如果没有会将英雄当前的白字属性视为主属性
 --- 如果两个白字属性相等，则以力->敏->智的优先级返回
 ---@param whichHero userdata
----@return string STR|AGI|INT
+---@return string UNK|STR|AGI|INT
 hhero.getPrimary = function(whichHero)
-    local slk = hunit.getSlk(whichHero)
-    local primary = slk.Primary
-    if (primary == nil) then
+    local primary = "UNK"
+    local heroId = hunit.getId(whichHero)
+    if (heroId == nil) then
+        return
+    end
+    local hs = hslk.i2v(whichHero)
+    primary = hs.Primary
+    if (primary == nil or primary == "") then
         primary = "STR"
-        if (slk.AGI > slk.STR) then
+        if (hs.AGI > hs.STR) then
             primary = "AGI"
         end
-        if (slk.INT > slk.STR and slk.INT > slk.AGI) then
+        if (hs.INT > hs.STR and hs.INT > hs.AGI) then
             primary = "INT"
         end
     end
@@ -125,8 +131,7 @@ end
 ---@param ids table <number, string>
 hhero.setHeroIds = function(ids)
     if (type(ids) == "table" and #ids > 0) then
-        -- 这个[.hero]是对应slkHelper里面的UNIT_TYPE的
-        hslk.unit_type_ids.hero = ids
+        HSLK_TYPE_IDS["hero_custom"] = ids
     end
 end
 
@@ -209,7 +214,7 @@ hhero.buildSelector = function(options)
     ]]
     local heroIds = options.heroes
     if (heroIds == nil or #heroIds <= 0) then
-        heroIds = hslk.unit_type_ids.hero or {}
+        heroIds = hslk.typeIds({ "hero", "courier_hero", "hero_custom" })
     end
     if (#heroIds <= 0) then
         return
@@ -312,7 +317,7 @@ hhero.buildSelector = function(options)
                 tavern = hunit.create(
                     {
                         whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
-                        unitId = options.tavernId or hslk.unit_hero_tavern,
+                        unitId = options.tavernId or hhero.tavern_token,
                         x = x,
                         y = y,
                     }
@@ -379,7 +384,7 @@ hhero.buildSelector = function(options)
             local whichHero = hunit.create(
                 {
                     whichPlayer = p,
-                    unitId = hhero.build_token,
+                    unitId = hhero.view_token,
                     x = buildX + buildRowQty * buildDistanceX * 0.5,
                     y = buildY - math.floor(#heroIds / buildRowQty) * buildDistanceY * 0.5,
                     isInvulnerable = true,
