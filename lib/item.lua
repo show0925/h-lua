@@ -228,7 +228,11 @@ end
 hitem.getId = function(itOrId)
     local id
     if (type(itOrId) == "userdata") then
-        id = string.id2char(cj.GetItemTypeId(itOrId))
+        id = cj.GetItemTypeId(itOrId)
+        if (id == 0) then
+            return
+        end
+        id = string.id2char(id)
     elseif (type(itOrId) == "number") then
         id = string.id2char(itOrId)
     elseif (type(itOrId) == "string") then

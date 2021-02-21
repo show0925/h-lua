@@ -616,7 +616,11 @@ end
 hunit.getId = function(uOrId)
     local id
     if (type(uOrId) == "userdata") then
-        id = string.id2char(cj.GetUnitTypeId(uOrId))
+        id = cj.GetUnitTypeId(uOrId)
+        if (id == 0) then
+            return
+        end
+        id = string.id2char(id)
     elseif (type(uOrId) == "number") then
         id = string.id2char(uOrId)
     elseif (type(uOrId) == "string") then

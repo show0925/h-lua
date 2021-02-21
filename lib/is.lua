@@ -100,7 +100,8 @@ end
 ---@param whichUnit userdata
 ---@return boolean
 his.deleted = function(whichUnit)
-    return cj.GetUnitName(whichUnit) == nil
+    print(cj.GetUnitId(nil))
+    return cj.GetUnitId(whichUnit) == 0
 end
 
 --- 是否无敌

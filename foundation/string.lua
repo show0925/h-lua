@@ -244,7 +244,7 @@ end
 
 --- 分隔字符串
 ---@param str string
----@param size number 每隔几字节切一次
+---@param size number 每隔[size]字符切一次
 ---@return string
 string.split = function(str, size)
     local sp = {}
