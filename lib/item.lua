@@ -8,25 +8,25 @@
 hitem = {
     DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认全部认定这个技能为物品栏，如有需要自行更改
     FLEETING_IDS = {
-        GOLD = hslk.item_fleeting[1], -- 默认金币（模型）
-        LUMBER = hslk.item_fleeting[2], -- 默认木头
-        BOOK_YELLOW = hslk.item_fleeting[3], -- 技能书系列
-        BOOK_GREEN = hslk.item_fleeting[4],
-        BOOK_PURPLE = hslk.item_fleeting[5],
-        BOOK_BLUE = hslk.item_fleeting[6],
-        BOOK_RED = hslk.item_fleeting[7],
-        RUNE = hslk.item_fleeting[8], -- 神符（紫色符文）
-        RELIEF = hslk.item_fleeting[9], -- 浮雕（橙色像块炭）
-        EGG = hslk.item_fleeting[10], -- 蛋
-        FRAGMENT = hslk.item_fleeting[11], -- 碎片（蓝色石头）
-        QUESTION = hslk.item_fleeting[12], -- 问号
-        GRASS = hslk.item_fleeting[13], -- 荧光草
-        DOTA2_GOLD = hslk.item_fleeting[14], -- Dota2赏金符
-        DOTA2_DAMAGE = hslk.item_fleeting[15], -- Dota2伤害符
-        DOTA2_CURE = hslk.item_fleeting[16], -- Dota2恢复符
-        DOTA2_SPEED = hslk.item_fleeting[17], -- Dota2极速符
-        DOTA2_VISION = hslk.item_fleeting[18], -- Dota2幻象符
-        DOTA2_INVISIBLE = hslk.item_fleeting[19], -- Dota2隐身符
+        GOLD = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_GOLD")), -- 默认金币（模型）
+        LUMBER = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_LUMBER")), -- 默认木头
+        BOOK_YELLOW = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_BOOK_YELLOW")), -- 技能书系列
+        BOOK_GREEN = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_BOOK_GREEN")),
+        BOOK_PURPLE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_BOOK_PURPLE")),
+        BOOK_BLUE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_BOOK_BLUE")),
+        BOOK_RED = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_BOOK_RED")),
+        RUNE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_RUNE")), -- 神符（紫色符文）
+        RELIEF = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_RELIEF")), -- 浮雕（橙色像块炭）
+        EGG = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_EGG")), -- 蛋
+        FRAGMENT = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_FRAGMENT")), -- 碎片（蓝色石头）
+        QUESTION = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_QUESTION")), -- 问号
+        GRASS = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_GRASS")), -- 荧光草
+        DOTA2_GOLD = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_GOLD")), -- Dota2赏金符
+        DOTA2_DAMAGE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_DAMAGE")), -- Dota2伤害符
+        DOTA2_CURE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_CURE")), -- Dota2恢复符
+        DOTA2_SPEED = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_SPEED")), -- Dota2极速符
+        DOTA2_VISION = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_VISION")), -- Dota2幻象符
+        DOTA2_INVISIBLE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_INVISIBLE")), -- Dota2隐身符
     },
 }
 
@@ -222,16 +222,6 @@ hitem.delFromUnit = function(whichUnit)
     end
 end
 
---- 根据物品名称获取物品ID字符串
----@param name string
----@return string
-hitem.n2i = function(name)
-    if (hslk.n2v.item[name]) then
-        return hslk.n2v.item[name]._id
-    end
-    return nil
-end
-
 --- 获取物品ID字符串
 ---@param itOrId userdata|number|string
 ---@return string|nil
@@ -251,15 +241,13 @@ end
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getName = function(itOrId)
+    local n = ""
     if (type(itOrId) == "userdata") then
-        return cj.GetItemName(itOrId)
+        n = cj.GetItemName(itOrId)
     elseif (type(itOrId) == "string" or type(itOrId) == "number") then
-        local slk = hitem.getSlk(itOrId)
-        if (slk ~= nil) then
-            return slk.Name;
-        end
+        n = hslk.i2v(itOrId, "Name")
     end
-    return ""
+    return n
 end
 
 --- 数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
@@ -284,137 +272,128 @@ hitem.getHSlk = function(itOrIdOrName)
 end
 
 --- 判断一个物品是否影子物品的明面物品
----@param itOrIdOrName userdata|string|number
+---@param itOrId userdata|string|number
 ---@return boolean
-hitem.isShadowFront = function(itOrIdOrName)
-    local hs = hitem.getHSlk(itOrIdOrName)
-    if (hs == nil) then
+hitem.isShadowFront = function(itOrId)
+    local id = hitem.getId(itOrId)
+    local is = hslk.i2v(id)
+    if (is == nil) then
         return false
     end
-    return (hs._shadow_id ~= nil and hs._type == "normal")
+    return (is._shadow_id ~= nil and is._type == "common")
 end
 
 --- 判断一个物品是否影子物品的暗面物品
----@param itOrIdOrName userdata|string|number
+---@param itOrId userdata|string|number
 ---@return boolean
-hitem.isShadowBack = function(itOrIdOrName)
-    local hs = hitem.getHSlk(itOrIdOrName)
-    if (hs == nil) then
+hitem.isShadowBack = function(itOrId)
+    local id = hitem.getId(itOrId)
+    local is = hslk.i2v(id)
+    if (is == nil) then
         return false
     end
-    return (hs._shadow_id ~= nil and hs._type == "shadow")
+    return (is._shadow_id ~= nil and is._type == "shadow")
 end
 
 --- 获取一个物品的影子ID
----@param itOrIdOrName userdata|string|number
+---@param itOrId userdata|string|number
 ---@return string
-hitem.shadowID = function(itOrIdOrName)
-    local hs = hitem.getHSlk(itOrIdOrName)
-    if (hs == nil) then
+hitem.shadowID = function(itOrId)
+    local id = hitem.getId(itOrId)
+    local is = hslk.i2v(id)
+    if (is == nil) then
         print_err("hitem.shadowID")
     end
-    if (hs._shadow_id == nil) then
+    if (is._shadow_id == nil) then
         print_err("hitem.shadowID not shadow item")
     end
-    return hs._shadow_id
+    return is._shadow_id
 end
 
 -- 获取物品的图标路径
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getArt = function(itOrId)
-    local s = hitem.getSlk(itOrId)
-    return s.Art
+    return hslk.i2v(hitem.getId(itOrId), "Art")
 end
 
 --- 获取物品的模型路径
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getFile = function(itOrId)
-    local s = hitem.getSlk(itOrId)
-    return s.file
+    return hslk.i2v(hitem.getId(itOrId), "file")
 end
 
 --- 获取物品的分类
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getClass = function(itOrId)
-    local s = hitem.getSlk(itOrId)
-    return s.class
+    return hslk.i2v(hitem.getId(itOrId), "class")
 end
 
 --- 获取物品所需的金币
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getGoldCost = function(itOrId)
-    local s = hitem.getSlk(itOrId)
-    return math.floor(s.goldcost)
+    return math.floor(hslk.i2v(hitem.getId(itOrId), "goldcost") or 0)
 end
 
 --- 获取物品所需的木头
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getLumberCost = function(itOrId)
-    local s = hitem.getSlk(itOrId)
-    return math.floor(s.lumbercost)
+    return math.floor(hslk.i2v(hitem.getId(itOrId), "lumbercost") or 0)
 end
 
 --- 获取物品是否可以使用
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsUsable = function(itOrId)
-    local s = hitem.getSlk(itOrId)
-    return s.usable == "1"
+    return "1" == hslk.i2v(hitem.getId(itOrId), "usable")
 end
 
 --- 获取物品是否自动使用
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsPowerUp = function(itOrId)
-    local s = hitem.getSlk(itOrId)
-    return s.powerup == "1"
+    return "1" == hslk.i2v(hitem.getId(itOrId), "powerup")
 end
 
 --- 获取物品是否使用后自动消失
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsPerishable = function(itOrId)
-    local s = hitem.getSlk(itOrId)
-    return s.perishable == "1"
+    return "1" == hslk.i2v(hitem.getId(itOrId), "perishable")
 end
 
 --- 获取物品是否可卖
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsSellAble = function(itOrId)
-    local s = hitem.getSlk(itOrId)
-    return s.sellable == "1"
+    return "1" == hslk.i2v(hitem.getId(itOrId), "sellable")
 end
 
 --- 获取物品的最大叠加数(默认是1个,本框架以使用次数作为数量使用)
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getOverlie = function(itOrId)
-    local s = hitem.getHSlk(itOrId)
-    if (s ~= nil) then
-        return s._overlie or 1
-    end
-    return 1
+    return hslk.i2v(hitem.getId(itOrId), "_overlie") or 1
 end
 
 --- 获取物品的重量（默认为0）
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getWeight = function(itOrId, charges)
-    local s = hitem.getHSlk(itOrId)
-    if (s ~= nil) then
+    local id = hitem.getId(itOrId)
+    local is = hslk.get(id)
+    if (is ~= nil) then
         if (charges == nil and type(itOrId) == "userdata") then
             -- 如果没有传次数，并且传入的是物品对象，会直接获取物品的次数，请注意
             charges = hitem.getCharges(itOrId)
         else
             charges = 1
         end
-        return (s._weight or 0) * charges
+        return (is._weight or 0) * charges
     else
         return 0
     end
@@ -423,12 +402,7 @@ end
 ---@param itOrId userdata|string|number
 ---@return table
 hitem.getAttribute = function(itOrId)
-    local s = hitem.getHSlk(itOrId)
-    if (s ~= nil) then
-        return s._attr or {}
-    else
-        return {}
-    end
+    return hslk.i2v(hitem.getId(itOrId), "_attr") or {}
 end
 
 --- 获取物品的等级
@@ -649,14 +623,14 @@ hitem.synthesis = function(whichUnit, items)
     while (matchStack > 0) do
         matchStack = 0
         for _, itId in ipairs(itemKind) do
-            if (hslk.synthesis.fragment[itId] ~= nil) then
-                for _, need in ipairs(hslk.synthesis.fragmentNeeds) do
+            if (HSLK_SYNTHESIS.fragment[itId] ~= nil) then
+                for _, need in ipairs(HSLK_SYNTHESIS.fragmentNeeds) do
                     if ((itemStat.qty[itId] or 0) >= need) then
-                        local maybeProfits = hslk.synthesis.fragment[itId][need]
+                        local maybeProfits = HSLK_SYNTHESIS.fragment[itId][need]
                         for _, mp in ipairs(maybeProfits) do
                             local profitId = mp.profit
                             local profitIndex = mp.index
-                            local whichProfit = hslk.synthesis.profit[profitId][profitIndex]
+                            local whichProfit = HSLK_SYNTHESIS.profit[profitId][profitIndex]
                             local needFragments = whichProfit.fragment
                             local match = true
                             for _, frag in ipairs(needFragments) do
@@ -863,10 +837,10 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
         if (hitem.isShadowBack(id)) then
             id = hitem.shadowID(id)
         end
-        if (hslk.synthesis.profit[id] == nil) then
+        if (HSLK_SYNTHESIS.profit[id] == nil) then
             return "物品不存在公式，无法拆分"
         end
-        local profit = hslk.synthesis.profit[id][formulaIndex] or nil
+        local profit = HSLK_SYNTHESIS.profit[id][formulaIndex] or nil
         if (profit == nil) then
             return "物品找不到公式，无法拆分"
         end
@@ -879,7 +853,7 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
                     end
                 else
                     local qty = frag[2]
-                    local hs = hitem.getHSlk(flagId)
+                    local hs = hslk.i2v(flagId)
                     if (hs ~= nil) then
                         local overlie = hs._overlie or 1
                         while (qty > 0) do
