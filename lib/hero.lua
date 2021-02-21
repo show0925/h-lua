@@ -17,27 +17,11 @@ hhero = {
 }
 
 --- 获取英雄的类型（STR AGI INT）
---- 先会判断SLK中是否存在，如果没有会将英雄当前的白字属性视为主属性
---- 如果两个白字属性相等，则以力->敏->智的优先级返回
+--- 没法获取则为UNK
 ---@param whichHero userdata
 ---@return string UNK|STR|AGI|INT
 hhero.getPrimary = function(whichHero)
-    local primary = "UNK"
-    local heroId = hunit.getId(whichHero)
-    if (heroId == nil) then
-        return
-    end
-    local hs = hslk.i2v(whichHero)
-    primary = hs.Primary
-    if (primary == nil or primary == "") then
-        primary = "STR"
-        if (hs.AGI > hs.STR) then
-            primary = "AGI"
-        end
-        if (hs.INT > hs.STR and hs.INT > hs.AGI) then
-            primary = "INT"
-        end
-    end
+    local primary = hslk.i2v(hunit.getId(whichHero), "Primary") or "UNK"
     return string.upper(primary)
 end
 
