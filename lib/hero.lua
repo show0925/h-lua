@@ -4,6 +4,7 @@ hhero = {
     player_heroes = {}, -- 玩家当前英雄
     view_token = string.char2id(hslk.n2i("H_LUA_HERO_VIEW_TOKEN")),
     tavern_token = string.char2id(hslk.n2i("H_LUA_HERO_TAVERN_TOKEN")),
+    death_token = string.char2id(hslk.n2i("H_LUA_HERO_DEATH_TOKEN")),
     --- 英雄出生地
     bornX = 0,
     bornY = 0,

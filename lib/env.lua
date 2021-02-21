@@ -1,4 +1,147 @@
 henvData = {
+    --- 单位装饰模型
+    unit = {
+        fire = string.char2id(hslk.n2i("H_LUA_ENV_FIRE")), -- 火焰
+        fireblue = string.char2id(hslk.n2i("H_LUA_ENV_FIREBLUE")), --蓝色火焰
+        firetrap = string.char2id(hslk.n2i("H_LUA_ENV_FIRETRAP")), -- 火焰陷阱
+        firetrapblue = string.char2id(hslk.n2i("H_LUA_ENV_FIRETRAPBLUE")), -- 蓝色火焰陷阱
+        lightningbolt = string.char2id(hslk.n2i("H_LUA_ENV_LIGHTNINGBOLT")), -- 季风闪电
+        snowman = string.char2id(hslk.n2i("H_LUA_ENV_SNOWMAN")), -- 雪人
+        bubble_geyser = string.char2id(hslk.n2i("H_LUA_ENV_BUBBLE_GEYSER")), -- 泡沫
+        bubble_geyser_steam = string.char2id(hslk.n2i("H_LUA_ENV_BUBBLE_GEYSER_STEam")), -- 带蒸汽泡沫
+        fish_school = string.char2id(hslk.n2i("H_LUA_ENV_FISH_SCHOOL")), -- 小鱼群
+        fish = string.char2id(hslk.n2i("H_LUA_ENV_FISH")), -- 鱼
+        fish_green = string.char2id(hslk.n2i("H_LUA_ENV_FISH_GREEN")), -- 绿色的鱼
+        fire_hole = string.char2id(hslk.n2i("H_LUA_ENV_FIRE_HOLE")), -- 火焰弹坑
+        bird = string.char2id(hslk.n2i("H_LUA_ENV_BIRD")), -- 鸟
+        bats = string.char2id(hslk.n2i("H_LUA_ENV_BATS")), -- 蝙蝠
+        flies = string.char2id(hslk.n2i("H_LUA_ENV_FLIES")), -- 苍蝇
+        burn_build = string.char2id(hslk.n2i("H_LUA_ENV_BURN_BUILD")), --焚烧毁坏建筑
+        ice0 = string.char2id(hslk.n2i("H_LUA_ENV_ICE0")), -- 冰块
+        ice1 = string.char2id(hslk.n2i("H_LUA_ENV_ICE1")),
+        ice2 = string.char2id(hslk.n2i("H_LUA_ENV_ICE2")),
+        ice3 = string.char2id(hslk.n2i("H_LUA_ENV_ICE3")),
+        seaweed0 = string.char2id(hslk.n2i("H_LUA_ENV_SEAWEED0")), -- 海藻
+        seaweed1 = string.char2id(hslk.n2i("H_LUA_ENV_SEAWEED1")),
+        seaweed2 = string.char2id(hslk.n2i("H_LUA_ENV_SEAWEED2")),
+        seaweed3 = string.char2id(hslk.n2i("H_LUA_ENV_SEAWEED3")),
+        seaweed4 = string.char2id(hslk.n2i("H_LUA_ENV_SEAWEED4")),
+        break_column0 = string.char2id(hslk.n2i("H_LUA_ENV_BREAK_COLUMN0")), --断裂的圆柱
+        break_column1 = string.char2id(hslk.n2i("H_LUA_ENV_BREAK_COLUMN1")),
+        break_column2 = string.char2id(hslk.n2i("H_LUA_ENV_BREAK_COLUMN2")),
+        break_column3 = string.char2id(hslk.n2i("H_LUA_ENV_BREAK_COLUMN3")),
+        burn_body0 = string.char2id(hslk.n2i("H_LUA_ENV_BURN_BODY0")), -- 焚烧尸体
+        burn_body1 = string.char2id(hslk.n2i("H_LUA_ENV_BURN_BODY1")),
+        burn_body2 = string.char2id(hslk.n2i("H_LUA_ENV_BURN_BODY2")),
+        impaled_body0 = string.char2id(hslk.n2i("H_LUA_ENV_IMPALED_BODY0")), -- 叉着的尸体
+        impaled_body1 = string.char2id(hslk.n2i("H_LUA_ENV_IMPALED_BODY1")),
+        rune0 = string.char2id(hslk.n2i("H_LUA_ENV_RUNE0")), --血色符文
+        rune1 = string.char2id(hslk.n2i("H_LUA_ENV_RUNE1")),
+        rune2 = string.char2id(hslk.n2i("H_LUA_ENV_RUNE2")),
+        rune3 = string.char2id(hslk.n2i("H_LUA_ENV_RUNE3")),
+        rune4 = string.char2id(hslk.n2i("H_LUA_ENV_RUNE4")),
+        rune5 = string.char2id(hslk.n2i("H_LUA_ENV_RUNE5")),
+        rune6 = string.char2id(hslk.n2i("H_LUA_ENV_RUNE6")),
+        glowing_rune0 = string.char2id(hslk.n2i("H_LUA_ENV_GLOWING_RUNE0")), --发光符文
+        glowing_rune1 = string.char2id(hslk.n2i("H_LUA_ENV_GLOWING_RUNE1")),
+        glowing_rune2 = string.char2id(hslk.n2i("H_LUA_ENV_GLOWING_RUNE2")),
+        glowing_rune3 = string.char2id(hslk.n2i("H_LUA_ENV_GLOWING_RUNE3")),
+        glowing_rune4 = string.char2id(hslk.n2i("H_LUA_ENV_GLOWING_RUNE4")),
+        glowing_rune5 = string.char2id(hslk.n2i("H_LUA_ENV_GLOWING_RUNE5")),
+        glowing_rune6 = string.char2id(hslk.n2i("H_LUA_ENV_GLOWING_RUNE6")),
+        glowing_rune7 = string.char2id(hslk.n2i("H_LUA_ENV_GLOWING_RUNE7")),
+        glowing_rune8 = string.char2id(hslk.n2i("H_LUA_ENV_GLOWING_RUNE8")),
+        bone0 = string.char2id(hslk.n2i("H_LUA_ENV_BONE0")), -- 岩石
+        bone1 = string.char2id(hslk.n2i("H_LUA_ENV_BONE1")),
+        bone2 = string.char2id(hslk.n2i("H_LUA_ENV_BONE2")),
+        bone3 = string.char2id(hslk.n2i("H_LUA_ENV_BONE3")),
+        bone4 = string.char2id(hslk.n2i("H_LUA_ENV_BONE4")),
+        bone5 = string.char2id(hslk.n2i("H_LUA_ENV_BONE5")),
+        bone6 = string.char2id(hslk.n2i("H_LUA_ENV_BONE6")),
+        bone7 = string.char2id(hslk.n2i("H_LUA_ENV_BONE7")),
+        bone8 = string.char2id(hslk.n2i("H_LUA_ENV_BONE8")),
+        bone9 = string.char2id(hslk.n2i("H_LUA_ENV_BONE9")),
+        bone_ice0 = string.char2id(hslk.n2i("H_LUA_ENV_BONE_ICE0")), -- 冬天岩石
+        bone_ice1 = string.char2id(hslk.n2i("H_LUA_ENV_BONE_ICE1")),
+        bone_ice2 = string.char2id(hslk.n2i("H_LUA_ENV_BONE_ICE2")),
+        bone_ice3 = string.char2id(hslk.n2i("H_LUA_ENV_BONE_ICE3")),
+        bone_ice4 = string.char2id(hslk.n2i("H_LUA_ENV_BONE_ICE4")),
+        bone_ice5 = string.char2id(hslk.n2i("H_LUA_ENV_BONE_ICE5")),
+        bone_ice6 = string.char2id(hslk.n2i("H_LUA_ENV_BONE_ICE6")),
+        bone_ice7 = string.char2id(hslk.n2i("H_LUA_ENV_BONE_ICE7")),
+        bone_ice8 = string.char2id(hslk.n2i("H_LUA_ENV_BONE_ICE8")),
+        bone_ice9 = string.char2id(hslk.n2i("H_LUA_ENV_BONE_ICE9")),
+        stone0 = string.char2id(hslk.n2i("H_LUA_ENV_STONE0")), -- 岩石2
+        stone1 = string.char2id(hslk.n2i("H_LUA_ENV_STONE1")),
+        stone2 = string.char2id(hslk.n2i("H_LUA_ENV_STONE2")),
+        stone3 = string.char2id(hslk.n2i("H_LUA_ENV_STONE3")),
+        stone4 = string.char2id(hslk.n2i("H_LUA_ENV_STONE4")),
+        stone5 = string.char2id(hslk.n2i("H_LUA_ENV_STONE5")),
+        stone6 = string.char2id(hslk.n2i("H_LUA_ENV_STONE6")),
+        stone7 = string.char2id(hslk.n2i("H_LUA_ENV_STONE7")),
+        stone8 = string.char2id(hslk.n2i("H_LUA_ENV_STONE8")),
+        stone9 = string.char2id(hslk.n2i("H_LUA_ENV_STONE9")),
+        stone_show0 = string.char2id(hslk.n2i("H_LUA_ENV_STONE_SHOW0")), -- 雪岩石
+        stone_show1 = string.char2id(hslk.n2i("H_LUA_ENV_STONE_SHOW1")),
+        stone_show2 = string.char2id(hslk.n2i("H_LUA_ENV_STONE_SHOW2")),
+        stone_show3 = string.char2id(hslk.n2i("H_LUA_ENV_STONE_SHOW3")),
+        stone_show4 = string.char2id(hslk.n2i("H_LUA_ENV_STONE_SHOW4")),
+        stone_show5 = string.char2id(hslk.n2i("H_LUA_ENV_STONE_SHOW5")),
+        stone_show6 = string.char2id(hslk.n2i("H_LUA_ENV_STONE_SHOW6")),
+        stone_show7 = string.char2id(hslk.n2i("H_LUA_ENV_STONE_SHOW7")),
+        stone_show8 = string.char2id(hslk.n2i("H_LUA_ENV_STONE_SHOW8")),
+        stone_show9 = string.char2id(hslk.n2i("H_LUA_ENV_STONE_SHOW9")),
+        mushroom0 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM0")), -- 蘑菇
+        mushroom1 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM1")),
+        mushroom2 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM2")),
+        mushroom3 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM3")),
+        mushroom4 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM4")),
+        mushroom5 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM5")),
+        mushroom6 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM6")),
+        mushroom7 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM7")),
+        mushroom8 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM8")),
+        mushroom9 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM9")),
+        mushroom10 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM10")),
+        mushroom11 = string.char2id(hslk.n2i("H_LUA_ENV_MUSHROOM11")),
+        flower0 = string.char2id(hslk.n2i("H_LUA_ENV_FLOWER0")), -- 鲜花
+        flower1 = string.char2id(hslk.n2i("H_LUA_ENV_FLOWER1")),
+        flower2 = string.char2id(hslk.n2i("H_LUA_ENV_FLOWER2")),
+        flower3 = string.char2id(hslk.n2i("H_LUA_ENV_FLOWER3")),
+        flower4 = string.char2id(hslk.n2i("H_LUA_ENV_FLOWER4")),
+        typha0 = string.char2id(hslk.n2i("H_LUA_ENV_TYPHA0")), -- 香蒲
+        typha1 = string.char2id(hslk.n2i("H_LUA_ENV_TYPHA1")),
+        lilypad0 = string.char2id(hslk.n2i("H_LUA_ENV_LILYPAD0")), -- 睡莲
+        lilypad1 = string.char2id(hslk.n2i("H_LUA_ENV_LILYPAD1")),
+        lilypad2 = string.char2id(hslk.n2i("H_LUA_ENV_LILYPAD2")),
+        coral0 = string.char2id(hslk.n2i("H_LUA_ENV_CORAL0")), -- 珊瑚
+        coral1 = string.char2id(hslk.n2i("H_LUA_ENV_CORAL1")),
+        coral2 = string.char2id(hslk.n2i("H_LUA_ENV_CORAL2")),
+        coral3 = string.char2id(hslk.n2i("H_LUA_ENV_CORAL3")),
+        coral4 = string.char2id(hslk.n2i("H_LUA_ENV_CORAL4")),
+        coral5 = string.char2id(hslk.n2i("H_LUA_ENV_CORAL5")),
+        coral6 = string.char2id(hslk.n2i("H_LUA_ENV_CORAL6")),
+        coral7 = string.char2id(hslk.n2i("H_LUA_ENV_CORAL7")),
+        coral8 = string.char2id(hslk.n2i("H_LUA_ENV_CORAL8")),
+        coral9 = string.char2id(hslk.n2i("H_LUA_ENV_CORAL9")),
+        shells0 = string.char2id(hslk.n2i("H_LUA_ENV_SHELLS0")), -- 贝壳
+        shells1 = string.char2id(hslk.n2i("H_LUA_ENV_SHELLS1")),
+        shells2 = string.char2id(hslk.n2i("H_LUA_ENV_SHELLS2")),
+        shells3 = string.char2id(hslk.n2i("H_LUA_ENV_SHELLS3")),
+        shells4 = string.char2id(hslk.n2i("H_LUA_ENV_SHELLS4")),
+        shells5 = string.char2id(hslk.n2i("H_LUA_ENV_SHELLS5")),
+        shells6 = string.char2id(hslk.n2i("H_LUA_ENV_SHELLS6")),
+        shells7 = string.char2id(hslk.n2i("H_LUA_ENV_SHELLS7")),
+        shells8 = string.char2id(hslk.n2i("H_LUA_ENV_SHELLS8")),
+        shells9 = string.char2id(hslk.n2i("H_LUA_ENV_SHELLS9")),
+        skull_pile0 = string.char2id(hslk.n2i("H_LUA_ENV_SKULL_PILE0")), -- 头骨
+        skull_pile1 = string.char2id(hslk.n2i("H_LUA_ENV_SKULL_PILE1")),
+        skull_pile2 = string.char2id(hslk.n2i("H_LUA_ENV_SKULL_PILE2")),
+        skull_pile3 = string.char2id(hslk.n2i("H_LUA_ENV_SKULL_PILE3")),
+        river_rushes0 = string.char2id(hslk.n2i("H_LUA_ENV_RIVER_RUSHES0")), -- 河草
+        river_rushes1 = string.char2id(hslk.n2i("H_LUA_ENV_RIVER_RUSHES1")),
+        river_rushes2 = string.char2id(hslk.n2i("H_LUA_ENV_RIVER_RUSHES2")),
+        river_rushes3 = string.char2id(hslk.n2i("H_LUA_ENV_RIVER_RUSHES3"))
+    },
     --- 装饰物
     doodad = {
         block = {
@@ -275,12 +418,12 @@ henv.random = function(whichRect, typeStr, isInvulnerable, isDestroyRect)
             henvData.doodad.bucket
         }
         unit = {
-            hslk.env_model.flower0,
-            hslk.env_model.flower1,
-            hslk.env_model.flower2,
-            hslk.env_model.flower3,
-            hslk.env_model.flower4,
-            hslk.env_model.bird
+            henvData.unit.flower0,
+            henvData.unit.flower1,
+            henvData.unit.flower2,
+            henvData.unit.flower3,
+            henvData.unit.flower4,
+            henvData.unit.bird
         }
     elseif (typeStr == "autumn") then
         ground = henvData.ground.autumn
@@ -293,9 +436,9 @@ henv.random = function(whichRect, typeStr, isInvulnerable, isDestroyRect)
             henvData.doodad.supportColumn
         }
         unit = {
-            hslk.env_model.flower0,
-            hslk.env_model.typha0,
-            hslk.env_model.typha1
+            henvData.unit.flower0,
+            henvData.unit.typha0,
+            henvData.unit.typha1
         }
     elseif (typeStr == "winter") then
         ground = henvData.ground.winter
@@ -305,15 +448,15 @@ henv.random = function(whichRect, typeStr, isInvulnerable, isDestroyRect)
             henvData.doodad.stoneIce
         }
         unit = {
-            hslk.env_model.stone0,
-            hslk.env_model.stone1,
-            hslk.env_model.stone2,
-            hslk.env_model.stone3,
-            hslk.env_model.stone_show0,
-            hslk.env_model.stone_show1,
-            hslk.env_model.stone_show2,
-            hslk.env_model.stone_show3,
-            hslk.env_model.stone_show4
+            henvData.unit.stone0,
+            henvData.unit.stone1,
+            henvData.unit.stone2,
+            henvData.unit.stone3,
+            henvData.unit.stone_show0,
+            henvData.unit.stone_show1,
+            henvData.unit.stone_show2,
+            henvData.unit.stone_show3,
+            henvData.unit.stone_show4
         }
     elseif (typeStr == "winterDeep") then
         ground = henvData.ground.winterDeep
@@ -322,17 +465,17 @@ henv.random = function(whichRect, typeStr, isInvulnerable, isDestroyRect)
             henvData.doodad.stoneIce
         }
         unit = {
-            hslk.env_model.stone_show5,
-            hslk.env_model.stone_show6,
-            hslk.env_model.stone_show7,
-            hslk.env_model.stone_show8,
-            hslk.env_model.stone_show9,
-            hslk.env_model.ice0,
-            hslk.env_model.ice1,
-            hslk.env_model.ice2,
-            hslk.env_model.ice3,
-            hslk.env_model.bubble_geyser_steam,
-            hslk.env_model.snowman
+            henvData.unit.stone_show5,
+            henvData.unit.stone_show6,
+            henvData.unit.stone_show7,
+            henvData.unit.stone_show8,
+            henvData.unit.stone_show9,
+            henvData.unit.ice0,
+            henvData.unit.ice1,
+            henvData.unit.ice2,
+            henvData.unit.ice3,
+            henvData.unit.bubble_geyser_steam,
+            henvData.unit.snowman
         }
     elseif (typeStr == "dark") then
         ground = henvData.ground.dark
@@ -342,15 +485,15 @@ henv.random = function(whichRect, typeStr, isInvulnerable, isDestroyRect)
             henvData.doodad.cage
         }
         unit = {
-            hslk.env_model.rune0,
-            hslk.env_model.rune1,
-            hslk.env_model.rune2,
-            hslk.env_model.rune3,
-            hslk.env_model.rune4,
-            hslk.env_model.rune5,
-            hslk.env_model.rune6,
-            hslk.env_model.impaled_body0,
-            hslk.env_model.impaled_body1
+            henvData.unit.rune0,
+            henvData.unit.rune1,
+            henvData.unit.rune2,
+            henvData.unit.rune3,
+            henvData.unit.rune4,
+            henvData.unit.rune5,
+            henvData.unit.rune6,
+            henvData.unit.impaled_body0,
+            henvData.unit.impaled_body1
         }
     elseif (typeStr == "poor") then
         ground = henvData.ground.poor
@@ -361,21 +504,21 @@ henv.random = function(whichRect, typeStr, isInvulnerable, isDestroyRect)
             henvData.doodad.box
         }
         unit = {
-            hslk.env_model.bone0,
-            hslk.env_model.bone1,
-            hslk.env_model.bone2,
-            hslk.env_model.bone3,
-            hslk.env_model.bone4,
-            hslk.env_model.bone5,
-            hslk.env_model.bone6,
-            hslk.env_model.bone7,
-            hslk.env_model.bone8,
-            hslk.env_model.bone9,
-            hslk.env_model.flies,
-            hslk.env_model.burn_body0,
-            hslk.env_model.burn_body1,
-            hslk.env_model.burn_body3,
-            hslk.env_model.bats
+            henvData.unit.bone0,
+            henvData.unit.bone1,
+            henvData.unit.bone2,
+            henvData.unit.bone3,
+            henvData.unit.bone4,
+            henvData.unit.bone5,
+            henvData.unit.bone6,
+            henvData.unit.bone7,
+            henvData.unit.bone8,
+            henvData.unit.bone9,
+            henvData.unit.flies,
+            henvData.unit.burn_body0,
+            henvData.unit.burn_body1,
+            henvData.unit.burn_body3,
+            henvData.unit.bats
         }
     elseif (typeStr == "ruins") then
         ground = henvData.ground.ruins
@@ -385,14 +528,14 @@ henv.random = function(whichRect, typeStr, isInvulnerable, isDestroyRect)
             henvData.doodad.cage
         }
         unit = {
-            hslk.env_model.break_column0,
-            hslk.env_model.break_column1,
-            hslk.env_model.break_column2,
-            hslk.env_model.break_column3,
-            hslk.env_model.skull_pile0,
-            hslk.env_model.skull_pile1,
-            hslk.env_model.skull_pile2,
-            hslk.env_model.skull_pile3
+            henvData.unit.break_column0,
+            henvData.unit.break_column1,
+            henvData.unit.break_column2,
+            henvData.unit.break_column3,
+            henvData.unit.skull_pile0,
+            henvData.unit.skull_pile1,
+            henvData.unit.skull_pile2,
+            henvData.unit.skull_pile3
         }
     elseif (typeStr == "fire") then
         ground = henvData.ground.fire
@@ -401,13 +544,13 @@ henv.random = function(whichRect, typeStr, isInvulnerable, isDestroyRect)
             henvData.doodad.stoneRed
         }
         unit = {
-            hslk.env_model.fire_hole,
-            hslk.env_model.burn_body0,
-            hslk.env_model.burn_body1,
-            hslk.env_model.burn_body2,
-            hslk.env_model.firetrap,
-            hslk.env_model.fire,
-            hslk.env_model.burn_build
+            henvData.unit.fire_hole,
+            henvData.unit.burn_body0,
+            henvData.unit.burn_body1,
+            henvData.unit.burn_body2,
+            henvData.unit.firetrap,
+            henvData.unit.fire,
+            henvData.unit.burn_build
         }
     elseif (typeStr == "underground") then
         ground = henvData.ground.underground
@@ -416,53 +559,53 @@ henv.random = function(whichRect, typeStr, isInvulnerable, isDestroyRect)
             henvData.doodad.spiderEggs
         }
         unit = {
-            hslk.env_model.mushroom0,
-            hslk.env_model.mushroom1,
-            hslk.env_model.mushroom2,
-            hslk.env_model.mushroom3,
-            hslk.env_model.mushroom4,
-            hslk.env_model.mushroom5,
-            hslk.env_model.mushroom6,
-            hslk.env_model.mushroom7,
-            hslk.env_model.mushroom8,
-            hslk.env_model.mushroom9,
-            hslk.env_model.mushroom10,
-            hslk.env_model.mushroom11
+            henvData.unit.mushroom0,
+            henvData.unit.mushroom1,
+            henvData.unit.mushroom2,
+            henvData.unit.mushroom3,
+            henvData.unit.mushroom4,
+            henvData.unit.mushroom5,
+            henvData.unit.mushroom6,
+            henvData.unit.mushroom7,
+            henvData.unit.mushroom8,
+            henvData.unit.mushroom9,
+            henvData.unit.mushroom10,
+            henvData.unit.mushroom11
         }
     elseif (typeStr == "sea") then
         ground = henvData.ground.sea
         doodad = {}
         unit = {
-            hslk.env_model.seaweed0,
-            hslk.env_model.seaweed1,
-            hslk.env_model.seaweed2,
-            hslk.env_model.seaweed3,
-            hslk.env_model.seaweed4,
-            hslk.env_model.fish,
-            hslk.env_model.fish_school,
-            hslk.env_model.fish_green,
-            hslk.env_model.bubble_geyser,
-            hslk.env_model.bubble_geyser_steam,
-            hslk.env_model.coral0,
-            hslk.env_model.coral1,
-            hslk.env_model.coral2,
-            hslk.env_model.coral3,
-            hslk.env_model.coral4,
-            hslk.env_model.coral5,
-            hslk.env_model.coral6,
-            hslk.env_model.coral7,
-            hslk.env_model.coral8,
-            hslk.env_model.coral9,
-            hslk.env_model.shells0,
-            hslk.env_model.shells1,
-            hslk.env_model.shells2,
-            hslk.env_model.shells3,
-            hslk.env_model.shells4,
-            hslk.env_model.shells5,
-            hslk.env_model.shells6,
-            hslk.env_model.shells7,
-            hslk.env_model.shells8,
-            hslk.env_model.shells9
+            henvData.unit.seaweed0,
+            henvData.unit.seaweed1,
+            henvData.unit.seaweed2,
+            henvData.unit.seaweed3,
+            henvData.unit.seaweed4,
+            henvData.unit.fish,
+            henvData.unit.fish_school,
+            henvData.unit.fish_green,
+            henvData.unit.bubble_geyser,
+            henvData.unit.bubble_geyser_steam,
+            henvData.unit.coral0,
+            henvData.unit.coral1,
+            henvData.unit.coral2,
+            henvData.unit.coral3,
+            henvData.unit.coral4,
+            henvData.unit.coral5,
+            henvData.unit.coral6,
+            henvData.unit.coral7,
+            henvData.unit.coral8,
+            henvData.unit.coral9,
+            henvData.unit.shells0,
+            henvData.unit.shells1,
+            henvData.unit.shells2,
+            henvData.unit.shells3,
+            henvData.unit.shells4,
+            henvData.unit.shells5,
+            henvData.unit.shells6,
+            henvData.unit.shells7,
+            henvData.unit.shells8,
+            henvData.unit.shells9
         }
     elseif (typeStr == "river") then
         ground = henvData.ground.river
@@ -470,16 +613,16 @@ henv.random = function(whichRect, typeStr, isInvulnerable, isDestroyRect)
             henvData.doodad.stone
         }
         unit = {
-            hslk.env_model.fish,
-            hslk.env_model.fish_school,
-            hslk.env_model.fish_green,
-            hslk.env_model.lilypad0,
-            hslk.env_model.lilypad1,
-            hslk.env_model.lilypad2,
-            hslk.env_model.river_rushes0,
-            hslk.env_model.river_rushes1,
-            hslk.env_model.river_rushes2,
-            hslk.env_model.river_rushes3
+            henvData.unit.fish,
+            henvData.unit.fish_school,
+            henvData.unit.fish_green,
+            henvData.unit.lilypad0,
+            henvData.unit.lilypad1,
+            henvData.unit.lilypad2,
+            henvData.unit.river_rushes0,
+            henvData.unit.river_rushes1,
+            henvData.unit.river_rushes2,
+            henvData.unit.river_rushes3
         }
     else
         return

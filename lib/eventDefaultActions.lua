@@ -494,7 +494,7 @@ hevent_default_actions = {
                     itemId = hitem.shadowID(itemId)
                 end
                 local charges = hitem.getCharges(it)
-                local formulas = hslk.synthesis.profit[itemId]
+                local formulas = HSLK_SYNTHESIS.profit[itemId]
                 local allowFormulaIndex = {}
                 if (formulas ~= nil) then
                     for fi, f in ipairs(formulas) do
