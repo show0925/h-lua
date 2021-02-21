@@ -856,7 +856,7 @@ hevent_default_actions = {
                 return
             end
             local skillId = string.id2char(cj.GetSpellAbilityId())
-            local itId = hslk.item_cooldown_ids[skillId] or nil
+            local itId = HSLK_ICD[skillId] or nil
             if (itId == nil) then
                 return
             end

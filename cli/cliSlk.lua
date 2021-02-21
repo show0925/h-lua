@@ -8,6 +8,7 @@ HSLK_CLI_DATA = {}
 HSLK_I2V = {}
 HSLK_N2V = {}
 HSLK_N2I = {}
+HSLK_ICD = {}
 HSLK_CLASS_IDS = {}
 HSLK_TYPE_IDS = {}
 HSLK_SYNTHESIS = {
@@ -32,6 +33,9 @@ hslk_init = function()
                     if (jass_slk.item[id][slkKey] ~= nil) then
                         HSLK_I2V[id][slkKey] = jass_slk.item[id][slkKey]
                     end
+                end
+                if (HSLK_I2V[id].cooldownID) then
+                    HSLK_ICD[HSLK_I2V[id].cooldownID] = HSLK_I2V[id]._id
                 end
             elseif (jass_slk.unit[id] ~= nil) then
                 HSLK_I2V[id]._class = HSLK_I2V[id]._class or "unit"
