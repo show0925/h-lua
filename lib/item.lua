@@ -250,27 +250,6 @@ hitem.getName = function(itOrId)
     return n
 end
 
---- 数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
----@param itOrId userdata|string|number
----@return table|nil
-hitem.getSlk = function(itOrId)
-    local id = hitem.getId(itOrId)
-    return slk.item[id]
-end
-
---- 获取单位的 _hslk 自定义数据
----@param itOrIdOrName userdata|string|number
----@return table|nil
-hitem.getHSlk = function(itOrIdOrName)
-    local id = hitem.getId(itOrIdOrName)
-    if (hslk.i2v.item[id]) then
-        return hslk.i2v.item[id]
-    elseif (hslk.n2v.item[id]) then
-        return hslk.n2v.item[id]
-    end
-    return nil
-end
-
 --- 判断一个物品是否影子物品的明面物品
 ---@param itOrId userdata|string|number
 ---@return boolean

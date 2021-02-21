@@ -5,12 +5,7 @@ hunit = {}
 ---@param uOrId userdata|string|number
 ---@return string
 hunit.getAvatar = function(uOrId)
-    local id = hunit.getId(uOrId)
-    local s = hslk.i2v(id)
-    if (s and s.Art) then
-        return s.Art
-    end
-    return ""
+    return hslk.i2v(hunit.getId(uOrId), "Art") or ""
 end
 
 --- 获取单位的攻击浮动
@@ -18,8 +13,7 @@ end
 ---@param uOrId userdata|string|number
 ---@return number
 hunit.getAttackSides = function(uOrId)
-    local id = hunit.getId(uOrId)
-    local s = hslk.i2v(id)
+    local s = hslk.i2v(hunit.getId(uOrId))
     if (s == nil) then
         return 0
     end
