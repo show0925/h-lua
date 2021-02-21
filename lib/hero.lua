@@ -142,7 +142,7 @@ end
 ---@param x number
 ---@param y number
 ---@param showDialog boolean 是否显示倒计时窗口
-hhero.rebornAtXY = function(whichHero, delay, invulnerable, x, y, showDialog)
+hhero.reborn = function(whichHero, delay, invulnerable, x, y, showDialog)
     if (his.hero(whichHero)) then
         if (delay < 0.3 and his.deleted(whichHero) == false) then
             cj.ReviveHero(whichHero, x, y, true)
@@ -182,16 +182,6 @@ hhero.rebornAtXY = function(whichHero, delay, invulnerable, x, y, showDialog)
             end, title)
         end
     end
-end
-
---- 在某点复活英雄,只有英雄能被复活,只有调用此方法会触发复活事件
----@param whichHero userdata
----@param delay number
----@param invulnerable number 复活后的无敌时间
----@param loc userdata
----@param showDialog boolean 是否显示倒计时窗口
-hhero.rebornAtLoc = function(whichHero, delay, invulnerable, loc)
-    hhero.rebornAtXY(whichHero, delay, invulnerable, cj.GetLocationX(loc), cj.GetLocationY(loc), showDialog)
 end
 
 --- 开始构建英雄选择
