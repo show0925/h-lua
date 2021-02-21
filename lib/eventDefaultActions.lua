@@ -674,47 +674,44 @@ hevent_default_actions = {
                 hitem.backToLastHolder(it)
                 return
             end
-            -- 如果是hslk物品，得到技术升级
-            if (hitem.getHSlk(itId) ~= nil) then
-                -- 判断超重
-                local newWeight = hattribute.get(u, "weight_current") + hitem.getWeight(itId)
-                if (newWeight > hattribute.get(u, "weight")) then
-                    local exWeight = math.round(newWeight - hattribute.get(u, "weight"))
-                    htextTag.style(
-                        htextTag.create2Unit(u, "超重" .. exWeight .. "kg", 8.00, "ffffff", 1, 1.1, 50.00),
-                        "scale", 0, 0.05
-                    )
-                    -- 判断如果是真实物品并且有影子，转为影子物品
-                    if (hitem.isShadowFront(itId)) then
-                        itId = hitem.shadowID(itId)
-                    end
-                    hitem.del(it)
-                    it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
-                    cj.SetItemCharges(it, charges)
-                    hcache.alloc(it)
-                    hitem.setLastHolder(it, lastHolder)
-                    -- 触发超重事件
-                    hevent.triggerEvent(u, CONST_EVENT.itemOverWeight, {
-                        triggerUnit = u,
-                        triggerItem = it,
-                        value = exWeight
-                    })
-                    return
-                end
-                -- 如果是影子物品
-                if (hitem.isShadowBack(itId)) then
+            -- 判断超重
+            local newWeight = hattribute.get(u, "weight_current") + hitem.getWeight(itId)
+            if (newWeight > hattribute.get(u, "weight")) then
+                local exWeight = math.round(newWeight - hattribute.get(u, "weight"))
+                htextTag.style(
+                    htextTag.create2Unit(u, "超重" .. exWeight .. "kg", 8.00, "ffffff", 1, 1.1, 50.00),
+                    "scale", 0, 0.05
+                )
+                -- 判断如果是真实物品并且有影子，转为影子物品
+                if (hitem.isShadowFront(itId)) then
                     itId = hitem.shadowID(itId)
-                    hitem.del(it)
-                    it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
-                    cj.SetItemCharges(it, charges)
-                    hitem.setLastHolder(it, lastHolder)
-                    if (hitem.getEmptySlot(u) <= 0) then
-                        hitem.synthesis(u, it) -- 看看有没有合成，可能这个实体物品有合成可以收到物品栏
-                    else
-                        cj.UnitAddItem(u, it)
-                    end
-                    return
                 end
+                hitem.del(it)
+                it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
+                cj.SetItemCharges(it, charges)
+                hcache.alloc(it)
+                hitem.setLastHolder(it, lastHolder)
+                -- 触发超重事件
+                hevent.triggerEvent(u, CONST_EVENT.itemOverWeight, {
+                    triggerUnit = u,
+                    triggerItem = it,
+                    value = exWeight
+                })
+                return
+            end
+            -- 如果是影子物品
+            if (hitem.isShadowBack(itId)) then
+                itId = hitem.shadowID(itId)
+                hitem.del(it)
+                it = cj.CreateItem(string.char2id(itId), hunit.x(u), hunit.y(u))
+                cj.SetItemCharges(it, charges)
+                hitem.setLastHolder(it, lastHolder)
+                if (hitem.getEmptySlot(u) <= 0) then
+                    hitem.synthesis(u, it) -- 看看有没有合成，可能这个实体物品有合成可以收到物品栏
+                else
+                    cj.UnitAddItem(u, it)
+                end
+                return
             end
             -- 触发获得物品
             hevent.triggerEvent(u, CONST_EVENT.itemGet, { triggerUnit = u, triggerItem = it })
