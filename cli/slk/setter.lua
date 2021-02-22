@@ -421,10 +421,7 @@ local F6S = {}
 F6S.a = {
     --- 属性系统目标文本修正
     targetLabel = function(target, actionType, actionField, isValue)
-        if (actionType == 'spec'
-            and isValue ~= true
-            and table.includes({ 'split', 'bomb', 'lightning_chain' }, actionField)
-        ) then
+        if (actionType == 'spec' and isValue ~= true and table.includes({ 'split', 'bomb', 'lightning_chain' }, actionField)) then
             if (target == '己') then
                 target = '友军'
             else
@@ -640,6 +637,47 @@ F6S.a = {
         end
         return string.implode(sep, table.merge(str, strTable))
     end,
+    ubertip = {
+        empty = function(v)
+            local d = {}
+            if (v._passive ~= nil) then
+                table.insert(d, hcolor.mixed("被动：" .. v._passive, SLK_CONF.color.abilityPassive))
+            end
+            if (v._attr ~= nil) then
+                table.insert(d, hcolor.mixed(F6S.a.desc(v._attr, "|n"), SLK_CONF.color.abilityAttr))
+            end
+            if (v._desc ~= nil and v._desc ~= "") then
+                table.insert(d, hcolor.mixed(v._desc, SLK_CONF.color.abilityDesc))
+            end
+            return string.implode("|n", d)
+        end,
+        ring = function(v)
+            local d = {}
+            if (v._ring.radius ~= nil) then
+                table.insert(d, hcolor.mixed("光环范围：" .. v._ring.radius, SLK_CONF.color.ringArea))
+            end
+            if (type(v._ring.target) == 'table' and #v._ring.target > 0) then
+                local labels = {}
+                for _, t in ipairs(v._ring.target) do
+                    table.insert(labels, CONST_TARGET_LABEL[t])
+                end
+                table.insert(d, hcolor.mixed("光环目标：" .. string.implode(',', labels), SLK_CONF.color.ringTarget))
+                labels = nil
+            end
+            if (v._ring.attr ~= nil) then
+                table.insert(d, hcolor.mixed("光环效果：|n" .. F6S.a.desc(v._ring.attr, "|n", ' - '), SLK_CONF.color.ringTarget))
+            end
+            if (v._attr ~= nil) then
+                table.insert(d, hcolor.mixed("独占效果：", SLK_CONF.color.abilityAttr))
+                table.insert(d, hcolor.mixed(F6S.a.desc(v._attr, "|n", ' - '), SLK_CONF.color.abilityAttr))
+                table.insert(d, "|n")
+            end
+            if (v._desc ~= nil and v._desc ~= "") then
+                table.insert(d, hcolor.mixed(v._desc, SLK_CONF.color.ringDesc))
+            end
+            return string.implode("|n", d)
+        end
+    },
 }
 F6S.i = {
     desc = function(_v)
