@@ -1,3 +1,4 @@
+require 'cliSetter'
 require 'cliSlk'
 require 'main'
 if (cj ~= nil) then

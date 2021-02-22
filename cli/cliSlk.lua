@@ -130,6 +130,18 @@ local hslk_cli_set = function(_v)
     HSLK_CLI_H_IDI = HSLK_CLI_H_IDI + 1
 end
 
+hslk_item_synthesis = function(formula)
+    hslk_cli_synthesis = F6V_I_SYNTHESIS(formula)
+end
+
 hslk_item = function(_v)
-    hslk_cli_set(_v)
+    hslk_cli_set(F6V_I(_v))
+end
+
+hslk_ability = function(_v)
+    hslk_cli_set(F6V_A(_v))
+end
+
+hslk_unit = function(_v)
+    hslk_cli_set(F6V_U(_v))
 end

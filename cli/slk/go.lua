@@ -19,7 +19,12 @@ local idPrefix = {
 local idLimit = 46655 -- zzz
 
 SLK_ID_COUNT = {}
-SLK_ID = function(class)
+SLK_ID = function(class, oldId)
+    -- 如果自定义的ID可用，返回设定的ID
+    if (oldId ~= nil and string.len(oldId) == 4 and false == SLK_ID_ALREADY[oldId]) then
+        SLK_ID_ALREADY[oldId] = true
+        return oldId
+    end
     local prefix = idPrefix[class]
     if (prefix == nil) then
         prefix = "X"
