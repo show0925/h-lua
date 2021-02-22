@@ -138,6 +138,7 @@ F6_DEF = {
         _attr_txt = nil,
         _ring = nil,
         _cooldown = nil,
+        _cooldownTarget = nil,
         _shadow = false,
     },
     u = {
@@ -852,6 +853,43 @@ F6V_A_E = function(_v)
     return F6V_A(_v)
 end
 
+F6V_A_R = function(_v)
+    _v._parent = "Aamk"
+    _v._type = "ring"
+    if (_v.Name == nil) then
+        _v.Name = F6_NAME("未命名光环")
+    end
+    if (_v.Hotkey ~= nil) then
+        _v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos1 or 0
+        _v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos2 or 0
+        _v.Tip = _v.Name .. "[" .. hcolor.mixed(_v.Hotkey, SLK_CONF.color.hotKey) .. "]"
+        _v.Name = _v.Name .. _v.Hotkey
+    else
+        _v.Tip = _v.Name
+    end
+    if (_v.Ubertip == nil) then
+        _v.Ubertip = F6S.a.ubertip.ring(_v)
+    end
+    if (_v._ring ~= nil) then
+        _v._ring.effect = _v._ring.effect or nil
+        _v._ring.effectTarget = _v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
+        _v._ring.attach = _v._ring.attach or "origin"
+        _v._ring.attachTarget = _v._ring.attachTarget or "origin"
+        _v._ring.radius = _v._ring.radius or 600
+        -- target请参考物编的目标允许
+        local target
+        if (type(_v._ring.target) == 'table' and #_v._ring.target > 0) then
+            target = _v._ring.target
+        elseif (type(_v._ring.target) == 'string' and string.len(_v._ring.target) > 0) then
+            target = string.explode(',', _v._ring.target)
+        else
+            target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
+        end
+        _v._ring.target = target
+    end
+    return F6V_A(_v)
+end
+
 F6V_U = function(_v)
     _v._class = "unit"
     for k, v in pairs(F6_DEF.u) do
@@ -865,8 +903,135 @@ F6V_U = function(_v)
     return _v
 end
 
+F6V_A_CD_0 = nil
+F6V_I_CD_0 = function()
+    if (F6V_A_CD_0 == nil) then
+        local av = hslk_ability({
+            _parent = "AIgo",
+            Name = "H_LUA_ICD0",
+            Tip = "H_LUA_ICD0",
+            Ubertip = "H_LUA_ICD0",
+            Effectsound = "",
+            Art = "",
+            TargetArt = "",
+            Targetattach = "",
+            DataA1 = 0,
+            CasterArt = "",
+            Cool = 0,
+        })
+        print(av)
+        F6V_A_CD_0 = av._id
+    end
+    return F6V_A_CD_0
+end
+
+F6V_I_CD = function(_v)
+    if (_v._cooldown == nil) then
+        return "AIat"
+    end
+    if (_v._cooldown < 0) then
+        _v._cooldown = 0
+    end
+    if (_v._cooldown == 0) then
+        return F6V_I_CD_0()
+    end
+    local adTips = "H_LUA_ICD_" .. _v.Name
+    local cdID
+    local ad = {
+        Effectsound = "",
+        Name = adTips,
+        Tip = adTips,
+        Ubertip = adTips,
+        TargetArt = _v.TargetArt or "",
+        Targetattach = _v.Targetattach or "",
+        Animnames = _v.Animnames or "spell",
+        CasterArt = _v.CasterArt or "",
+        Art = "",
+        item = 1,
+        Cast1 = _v._cast or 0,
+        Cost1 = _v._cost or 0,
+        Cool1 = _v._cooldown,
+        Requires = "",
+        Hotkey = "",
+        Buttonpos1 = "0",
+        Buttonpos2 = "0",
+        race = "other",
+    }
+    if (_v._cooldownTarget == CONST_ABILITY_TARGET.location.value) then
+        -- 对点（模版：照明弹）
+        ad._parent = "Afla"
+        ad.DataA1 = 0
+        ad.EfctID1 = ""
+        ad.Dur1 = 0.01
+        ad.HeroDur1 = 0.01
+        ad.Rng1 = _v.Rng1 or 600
+        ad.Area1 = 0
+        ad.DataA1 = 0
+        ad.DataB1 = 0
+        local av = hslk_ability(ad)
+        print(av)
+        cdID = av._id
+    elseif (_v.cooldownTarget == CONST_ABILITY_TARGET.range.value) then
+        -- 对点范围（模版：暴风雪）
+        ad._parent = "ACbz"
+        ad.BuffID1 = ""
+        ad.EfctID1 = ""
+        ad.Rng1 = _v.Rng1 or 300
+        ad.Area1 = _v.Area1 or 300
+        ad.DataA1 = 0
+        ad.DataB1 = 0
+        ad.DataC1 = 0
+        ad.DataD1 = 0
+        ad.DataE1 = 0
+        ad.DataF1 = 0
+        local av = hslk_ability(ad)
+        print(av)
+        cdID = av._id
+    elseif (_v._cooldownTarget == CONST_ABILITY_TARGET.unit.value) then
+        -- 对单位（模版：霹雳闪电）
+        ad._parent = "ACfb"
+        ad.Missileart = _v.Missileart or "Abilities\\Weapons\\FireBallMissile\\FireBallMissile.mdl"
+        ad.Missilespeed = _v.Missilespeed or 1000
+        ad.Missilearc = _v.Missilearc or 0
+        ad.targs1 = _v.targs1 or "air,ground,organic,enemy,neutral"
+        ad.Rng1 = _v.Rng1 or 800
+        ad.Area1 = _v.Area1 or 0
+        ad.DataA1 = 0
+        ad.Dur1 = 0.01
+        ad.HeroDur1 = 0.01
+        local av = hslk_ability(ad)
+        print(av)
+        cdID = av._id
+    else
+        -- 立刻（模版：金箱子）
+        ad._parent = "AIgo"
+        ad.DataA1 = 0
+        local av = hslk_ability(ad)
+        print(av)
+        cdID = av._id
+    end
+    return cdID
+end
+
 F6V_I = function(_v)
     _v._class = "item"
+    local cd = F6V_I_CD(_v)
+    if (cd ~= "AIat") then
+        _v.abilList = cd
+        _v.usable = 1
+        if (_v.perishable == nil) then
+            _v.perishable = 1
+        end
+        _v.class = "Charged"
+        if (cd == F6V_A_CD_0) then
+            _v.ignoreCD = 1
+        end
+    else
+        if (_v.perishable == nil) then
+            _v.perishable = 0
+        end
+        _v.class = "Permanent"
+    end
     for k, v in pairs(F6_DEF.i) do
         if (_v[k] == nil and v ~= nil) then
             _v[k] = v
@@ -894,7 +1059,6 @@ F6V_I = function(_v)
         end
         _v._ring.target = target
     end
-    -- slk
     if (_v.Description == nil) then
         _v.Description = F6S.i.desc(_v)
     end
