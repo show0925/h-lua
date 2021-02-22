@@ -38,11 +38,9 @@ SLK_CONF = {
         itemRemarks = "969696", -- 物品备注
         itemProfit = "ffd88c", -- 物品合成品
         itemFragment = hcolor.orange, -- 物品零部件
-        abilityActive = "fae470", -- 技能主动
-        abilityPassive = "6ab2f6", -- 技能被动
+        abilityDesc = "fae470", -- 技能描述
         abilityCoolDown = "ccffff", -- 技能冷却时间
         abilityAttr = "b0f26e", -- 技能属性
-        abilityDesc = "c0c0c0", -- 技能描述
         ringArea = "99ccff", -- 光环范围
         ringTarget = "99ccff", -- 光环作用目标
         ringDesc = hcolor.white, -- 光环描述
@@ -73,6 +71,12 @@ end
 
 hslk_ability = function(_v)
     _v = F6V_A(_v)
+    _v._id = SLK_ID(_v._class, _v._id)
+    SLK_GO_SET(_v)
+end
+
+hslk_ability_empty = function(_v)
+    _v = F6V_A_E(_v)
     _v._id = SLK_ID(_v._class, _v._id)
     SLK_GO_SET(_v)
 end

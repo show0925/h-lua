@@ -142,6 +142,10 @@ hslk_ability = function(_v)
     hslk_cli_set(F6V_A(_v))
 end
 
+hslk_ability_empty = function(_v)
+    hslk_cli_set(F6V_A_E(_v))
+end
+
 hslk_unit = function(_v)
     hslk_cli_set(F6V_U(_v))
 end

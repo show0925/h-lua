@@ -407,9 +407,9 @@ F6_DEF = {
 }
 
 local F6_IDX = 0
-local F6_NAME = function()
+local F6_NAME = function(name)
     F6_IDX = F6_IDX + 1
-    return "h-lua-rand-name-" .. F6_IDX
+    return (name or "HL-NAME") .. "-" .. F6_IDX
 end
 
 local F6V_I_SYNTHESIS_TMP = {
@@ -638,16 +638,23 @@ F6S.a = {
         return string.implode(sep, table.merge(str, strTable))
     end,
     ubertip = {
-        empty = function(v)
+        common = function(v)
             local d = {}
-            if (v._passive ~= nil) then
-                table.insert(d, hcolor.mixed("被动：" .. v._passive, SLK_CONF.color.abilityPassive))
+            if (v._desc ~= nil and v._desc ~= "") then
+                table.insert(d, hcolor.mixed(v._desc, SLK_CONF.color.abilityDesc))
             end
             if (v._attr ~= nil) then
                 table.insert(d, hcolor.mixed(F6S.a.desc(v._attr, "|n"), SLK_CONF.color.abilityAttr))
             end
+            return string.implode("|n", d)
+        end,
+        empty = function(v)
+            local d = {}
             if (v._desc ~= nil and v._desc ~= "") then
                 table.insert(d, hcolor.mixed(v._desc, SLK_CONF.color.abilityDesc))
+            end
+            if (v._attr ~= nil) then
+                table.insert(d, hcolor.mixed(F6S.a.desc(v._attr, "|n"), SLK_CONF.color.abilityAttr))
             end
             return string.implode("|n", d)
         end,
@@ -817,9 +824,32 @@ F6V_A = function(_v)
         end
     end
     if (_v.Name == nil) then
-        _v.Name = F6_NAME()
+        _v.Name = F6_NAME("未命名技能")
+    end
+    if (_v.Ubertip == nil) then
+        _v.Ubertip = F6S.a.ubertip.common(_v)
     end
     return _v
+end
+
+F6V_A_E = function(_v)
+    _v._parent = "Aamk"
+    _v._type = "empty"
+    if (_v.Name == nil) then
+        _v.Name = F6_NAME("未命名被动")
+    end
+    if (_v.Hotkey ~= nil) then
+        _v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos1 or 0
+        _v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos2 or 0
+        _v.Tip = _v.Name .. "[" .. hcolor.mixed(_v.Hotkey, SLK_CONF.color.hotKey) .. "]"
+        _v.Name = _v.Name .. _v.Hotkey
+    else
+        _v.Tip = _v.Name
+    end
+    if (_v.Ubertip == nil) then
+        _v.Ubertip = F6S.a.ubertip.empty(_v)
+    end
+    return F6V_A(_v)
 end
 
 F6V_U = function(_v)
@@ -830,7 +860,7 @@ F6V_U = function(_v)
         end
     end
     if (_v.Name == nil) then
-        _v.Name = F6_NAME()
+        _v.Name = F6_NAME("未命名单位")
     end
     return _v
 end
@@ -841,6 +871,9 @@ F6V_I = function(_v)
         if (_v[k] == nil and v ~= nil) then
             _v[k] = v
         end
+    end
+    if (_v.Name == nil) then
+        _v.Name = F6_NAME("未命名物品")
     end
     if (_v._overlie < _v.uses) then
         _v._overlie = _v.uses
@@ -873,9 +906,6 @@ F6V_I = function(_v)
     end
     if (_v.oldLevel == nil) then
         _v.oldLevel = _v.Level
-    end
-    if (_v.Name == nil) then
-        _v.Name = F6_NAME()
     end
     if (_v.Hotkey ~= nil) then
         _v.Buttonpos1 = CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos1 or 0
