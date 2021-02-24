@@ -1304,6 +1304,19 @@ F6V_I_CD = function(_v)
     return cdID
 end
 
+F6V_I_SHADOW = function(_v)
+    _v._class = "item"
+    _v._type = "shadow"
+    _v.Name = "　" .. _v.Name .. "　"
+    _v.class = "Charged"
+    _v.abilList = ""
+    _v.ignoreCD = 1
+    _v.perishable = 1
+    _v.usable = 1
+    _v.powerup = 1
+    return _v
+end
+
 F6V_I = function(_v)
     _v._class = "item"
     local cd = F6V_I_CD(_v)
@@ -1334,6 +1347,11 @@ F6V_I = function(_v)
     if (_v._overlie < _v.uses) then
         _v._overlie = _v.uses
     end
+    -- 处理 _shadow
+    if (type(_v._shadow) ~= 'boolean') then
+        _v._shadow = (SLK_CONF.autoShadowItem == true and _v.powerup == 0)
+    end
+    -- 处理 _ring光环
     if (_v._ring ~= nil) then
         _v._ring.effectTarget = _v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
         _v._ring.attach = _v._ring.attach or "origin"

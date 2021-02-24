@@ -1,6 +1,6 @@
 --- 默认配置项
 SLK_CONF = {
-    itemAutoShadow = false, -- 是否自动启用影子物品
+    autoShadowItem = false, -- 是否自动启用影子物品
     courierSkill = {
         -- 信使技能-名称、热键、图标位置、冷却
         blink = {
@@ -97,5 +97,14 @@ end
 hslk_item = function(_v)
     _v = F6V_I(_v)
     _v._id = SLK_ID(_v._class, _v._id)
-    SLK_GO_SET(_v)
+    if (type(_v._shadow) == "boolean" and true == _v._shadow) then
+        local _vs = F6V_I_SHADOW(_v)
+        _vs._id = SLK_ID(_vs._class, _vs._id)
+        _v._shadow_id = _vs._id
+        _vs._shadow_id = _v._id
+        SLK_GO_SET(_v)
+        SLK_GO_SET(_vs)
+    else
+        SLK_GO_SET(_v)
+    end
 end

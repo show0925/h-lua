@@ -152,5 +152,14 @@ hslk_item_synthesis = function(formula)
 end
 
 hslk_item = function(_v)
-    hslk_cli_set(F6V_I(_v))
+    _v = F6V_I(_v)
+    if (type(_v._shadow) == "boolean" and true == _v._shadow) then
+        local _vs = F6V_I_SHADOW(_v)
+        _v._shadow_id = HSLK_CLI_H_IDS[HSLK_CLI_H_IDI + 1]
+        _vs._shadow_id = HSLK_CLI_H_IDS[HSLK_CLI_H_IDI]
+        hslk_cli_set(_v)
+        hslk_cli_set(_vs)
+    else
+        hslk_cli_set(_v)
+    end
 end
