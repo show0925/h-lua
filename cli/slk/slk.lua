@@ -53,6 +53,7 @@ SLK_CONF = {
     },
 }
 
+---@param _v{checkDep,Requires,Requiresamount,Effectsound,Effectsoundlooped,EditorSuffix,Name,Untip,Unubertip,Tip,Ubertip,Researchtip,Researchubertip,Unorder,Orderon,Order,Orderoff,Unhotkey,Hotkey,Researchhotkey,UnButtonpos1,UnButtonpos2,Buttonpos1,Buttonpos2,Researchbuttonpos1,Researchbuttonpos2,Unart,Researchart,Art,SpecialArt,Specialattach,Missileart,Missilespeed,Missilearc,MissileHoming,LightningEffect,EffectArt,TargetArt,Targetattachcount,Targetattach,Targetattach1,Targetattach2,Targetattach3,Targetattach4,Targetattach5,Areaeffectart,Animnames,CasterArt,Casterattachcount,Casterattach,Casterattach1,hero,item,race,levels,reqLevel,priority,BuffID1,EfctID1,Tip1,Ubertip1,targs1,DataA1,DataB1,DataC1,DataD1,DataE1,DataF1,Cast1,Cool1,Dur1,HeroDur1,Cost1,Rng1,Area1,_id,_class,_type,_parent,_desc,_attr,_attr_txt,_ring}
 hslk_ability = function(_v)
     _v = F6V_A(_v)
     _v._id = SLK_ID(_v._class, _v._id)
@@ -60,6 +61,7 @@ hslk_ability = function(_v)
     return _v
 end
 
+---@param _v{checkDep,Requires,Requiresamount,Effectsound,Effectsoundlooped,EditorSuffix,Name,Untip,Unubertip,Tip,Ubertip,Researchtip,Researchubertip,Unorder,Orderon,Order,Orderoff,Unhotkey,Hotkey,Researchhotkey,UnButtonpos1,UnButtonpos2,Buttonpos1,Buttonpos2,Researchbuttonpos1,Researchbuttonpos2,Unart,Researchart,Art,SpecialArt,Specialattach,Missileart,Missilespeed,Missilearc,MissileHoming,LightningEffect,EffectArt,TargetArt,Targetattachcount,Targetattach,Targetattach1,Targetattach2,Targetattach3,Targetattach4,Targetattach5,Areaeffectart,Animnames,CasterArt,Casterattachcount,Casterattach,Casterattach1,hero,item,race,levels,reqLevel,priority,BuffID1,EfctID1,Tip1,Ubertip1,targs1,DataA1,DataB1,DataC1,DataD1,DataE1,DataF1,Cast1,Cool1,Dur1,HeroDur1,Cost1,Rng1,Area1,_id,_class,_desc,_attr,_attr_txt,_ring}
 hslk_ability_empty = function(_v)
     _v = F6V_A_E(_v)
     _v._id = SLK_ID(_v._class, _v._id)
@@ -67,6 +69,7 @@ hslk_ability_empty = function(_v)
     return _v
 end
 
+---@param _v{checkDep,Requires,Requiresamount,Effectsound,Effectsoundlooped,EditorSuffix,Name,Untip,Unubertip,Tip,Ubertip,Researchtip,Researchubertip,Unorder,Orderon,Order,Orderoff,Unhotkey,Hotkey,Researchhotkey,UnButtonpos1,UnButtonpos2,Buttonpos1,Buttonpos2,Researchbuttonpos1,Researchbuttonpos2,Unart,Researchart,Art,SpecialArt,Specialattach,Missileart,Missilespeed,Missilearc,MissileHoming,LightningEffect,EffectArt,TargetArt,Targetattachcount,Targetattach,Targetattach1,Targetattach2,Targetattach3,Targetattach4,Targetattach5,Areaeffectart,Animnames,CasterArt,Casterattachcount,Casterattach,Casterattach1,hero,item,race,levels,reqLevel,priority,BuffID1,EfctID1,Tip1,Ubertip1,targs1,DataA1,DataB1,DataC1,DataD1,DataE1,DataF1,Cast1,Cool1,Dur1,HeroDur1,Cost1,Rng1,Area1,_id,_class,_desc,_attr,_attr_txt,_ring}
 hslk_ability_ring = function(_v)
     _v = F6V_A_R(_v)
     _v._id = SLK_ID(_v._class, _v._id)
