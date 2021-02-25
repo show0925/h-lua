@@ -27,6 +27,30 @@ hslk_unit({
     upgrades = "",
 })
 
-hslk_item({
-    F6TIPS.Name
+--- 冲击单位
+--- #token
+hslk_unit({
+    _parent = "ogru",
+    EditorSuffix = "#h-lua",
+    Name = "Token - leap",
+    special = 1,
+    abilList = "Avul,Aloc",
+    upgrade = "",
+    file = "h-lua\\interface_token.mdx",
+    unitShadow = "",
+    collision = 0,
+    Art = "",
+    modelScale = 1.00,
+    movetp = "fly",
+    moveHeight = 0.00,
+    moveFloor = 0.00,
+    spd = 0,
+    turnRate = 3.00,
+    weapsOn = 0,
+    race = "other",
+    fused = 0,
+    sight = 250,
+    nsight = 250,
+    Builds = "",
+    upgrades = "",
 })
