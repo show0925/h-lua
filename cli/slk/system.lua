@@ -5,7 +5,7 @@
 hslk_unit({
     _parent = "ogru",
     EditorSuffix = "#h-lua",
-    Name = "Token",
+    Name = "H_LUA_UNIT_TOKEN",
     special = 1,
     abilList = "Avul,Aloc",
     upgrade = "",
@@ -32,7 +32,7 @@ hslk_unit({
 hslk_unit({
     _parent = "ogru",
     EditorSuffix = "#h-lua",
-    Name = "Token - leap",
+    Name = "H_LUA_UNIT_TOKEN_LEAP",
     special = 1,
     abilList = "Avul,Aloc",
     upgrade = "",

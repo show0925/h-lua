@@ -1,11 +1,11 @@
 HL_ID = {
     buff_swim = string.char2id("BPSE"), -- 默认眩晕状态
-    buff_invulnerable = string.char2id("Avul"), -- 默认无敌技能
-    buff_item_slot = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认全部认定这个技能为物品栏，如有需要自行更改
-    skill_token = string.char2id(hslk.n2i("H_LUA_SKILL_TOKEN")),
-    skill_leap = string.char2id(hslk.n2i("H_LUA_SKILL_LEAP")), --leap的token模式，需导入模型：https://github.com/hunzsig-warcraft3/assets-models/blob/master/interface/interface_token.mdx
+    unit_token = string.char2id(hslk.n2i("H_LUA_UNIT_TOKEN")),
+    unit_token_leap = string.char2id(hslk.n2i("H_LUA_UNIT_TOKEN_LEAP")), --leap的token模式，需导入模型：https://github.com/hunzsig-warcraft3/assets-models/blob/master/interface/interface_token.mdx
+    skill_invulnerable = string.char2id("Avul"), -- 默认无敌技能
+    skill_item_slot = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认全部认定这个技能为物品栏，如有需要自行更改
     skill_break = string.char2id(hslk.n2i("H_LUA_SKILL_BREAK")), --table[0.05~0.5]
-    skill_swim_unlimit = string.char2id(hslk.n2i("H_LUA_SKILL_SWIM_UNLIMIT")),
+    skill_swim_un_limit = string.char2id(hslk.n2i("H_LUA_SKILL_SWIM_UNLIMIT")),
     skill_invisible = string.char2id(hslk.n2i("H_LUA_SKILL_INVISIBLE")),
     skill_avoid_plus = string.char2id(hslk.n2i("H_LUA_SKILL_AVOID_PLUS")),
     skill_avoid_miuns = string.char2id(hslk.n2i("H_LUA_SKILL_AVOID_MIUNS")),

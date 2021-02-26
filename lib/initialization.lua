@@ -12,7 +12,7 @@ hslk_init()
 cj.TimerStart(cj.CreateTimer(), 1.00, true, htime.clock)
 
 -- 预读 preReadUnit
-local preReadUnit = cj.CreateUnit(hplayer.player_passive, HL_ID.skill_token, 0, 0, 0)
+local preReadUnit = cj.CreateUnit(hplayer.player_passive, HL_ID.unit_token, 0, 0, 0)
 hattributeSetter.relyRegister(preReadUnit)
 hunit.del(preReadUnit)
 

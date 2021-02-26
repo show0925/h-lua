@@ -77,7 +77,7 @@ end
 ---@return boolean
 his.hasSlot = function(whichUnit, slotId)
     if (slotId == nil) then
-        slotId = HL_ID.buff_item_slot
+        slotId = HL_ID.skill_item_slot
     end
     return cj.GetUnitAbilityLevel(whichUnit, slotId) >= 1
 end
@@ -108,7 +108,7 @@ end
 ---@param whichUnit userdata
 ---@return boolean
 his.invincible = function(whichUnit)
-    return cj.GetUnitAbilityLevel(whichUnit, HL_ID.buff_invulnerable) > 0
+    return cj.GetUnitAbilityLevel(whichUnit, HL_ID.skill_invulnerable) > 0
 end
 
 --- 是否隐身中

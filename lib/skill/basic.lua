@@ -23,13 +23,13 @@ hskill.invulnerable = function(whichUnit, during, effect)
     if (during < 0) then
         during = 0.00 -- 如果设置持续时间错误，则0秒无敌，跟回避效果相同
     end
-    cj.UnitAddAbility(whichUnit, HL_ID.buff_invulnerable)
+    cj.UnitAddAbility(whichUnit, HL_ID.skill_invulnerable)
     if (during > 0 and effect ~= nil) then
         heffect.bindUnit(effect, whichUnit, "origin", during)
     end
     htime.setTimeout(during, function(t)
         htime.delTimer(t)
-        cj.UnitRemoveAbility(whichUnit, HL_ID.buff_invulnerable)
+        cj.UnitRemoveAbility(whichUnit, HL_ID.skill_invulnerable)
     end)
 end
 
@@ -214,7 +214,7 @@ hskill.diy = function(options)
     local token = hunit.create({
         register = false,
         whichPlayer = options.whichPlayer,
-        unitId = HL_ID.skill_token,
+        unitId = HL_ID.unit_token,
         x = options.x,
         y = options.y,
         facing = bj_UNIT_FACING,

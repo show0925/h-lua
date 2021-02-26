@@ -189,7 +189,7 @@ hskill.broken = function(options)
     end
     local cu = hunit.create({
         register = false,
-        unitId = HL_ID.skill_token,
+        unitId = HL_ID.unit_token,
         whichPlayer = hplayer.player_passive,
         x = hunit.x(u),
         y = hunit.y(u)
@@ -293,7 +293,7 @@ hskill.swim = function(options)
     end
     local cu = hunit.create({
         register = false,
-        unitId = HL_ID.skill_token,
+        unitId = HL_ID.unit_token,
         whichPlayer = hplayer.player_passive,
         x = hunit.x(u),
         y = hunit.y(u)
@@ -314,8 +314,8 @@ hskill.swim = function(options)
         hunit.del(cu, 0.4)
     else
         --无限法
-        cj.UnitAddAbility(cu, HL_ID.skill_swim_unlimit)
-        cj.SetUnitAbilityLevel(cu, HL_ID.skill_swim_unlimit, 1)
+        cj.UnitAddAbility(cu, HL_ID.skill_swim_un_limit)
+        cj.SetUnitAbilityLevel(cu, HL_ID.skill_swim_un_limit, 1)
         cj.IssueTargetOrder(cu, "thunderbolt", u)
         hunit.del(cu, 0.4)
         hcache.set(
@@ -1371,7 +1371,7 @@ hskill.leap = function(options)
         arrowUnit = hunit.create({
             register = false,
             whichPlayer = hunit.getOwner(sourceUnit),
-            unitId = HL_ID.skill_leap,
+            unitId = HL_ID.unit_token_leap,
             x = cxy.x,
             y = cxy.y,
             facing = initFacing,
@@ -1845,7 +1845,7 @@ hskill.rectangleStrike = function(options)
                 local effUnit = hunit.create({
                     register = false,
                     whichPlayer = hplayer.player_passive,
-                    unitId = HL_ID.skill_leap,
+                    unitId = HL_ID.unit_token_leap,
                     x = txy.x,
                     y = txy.y,
                     facing = options.deg,
@@ -1894,7 +1894,7 @@ hskill.rectangleStrike = function(options)
                 local effUnit = hunit.create({
                     register = false,
                     whichPlayer = hplayer.player_passive,
-                    unitId = HL_ID.skill_leap,
+                    unitId = HL_ID.unit_token_leap,
                     x = txy.x,
                     y = txy.y,
                     facing = options.deg,
