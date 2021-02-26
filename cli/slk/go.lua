@@ -9,11 +9,19 @@ SLK_GO_INI = function(ini)
 end
 
 SLK_GO_SET = function(data)
+    for k, v in pairs(data) do
+        if (type(v) == "function") then
+            data[k] = nil
+        end
+    end
     table.insert(SLK_GO, data)
 end
 
 local idPrefix = {
+    ability = "K",
     item = "I",
+    unit = "V",
+    upgrade = "U",
 }
 
 local idLimit = 46655 -- zzz

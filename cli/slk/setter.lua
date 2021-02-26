@@ -1,703 +1,4 @@
--- 物编 - 物品默认设定
----@protected
-F6_DEF = {
-    a = {
-        checkDep = 1,
-        Requires = "",
-        Requiresamount = "",
-        Effectsound = "",
-        Effectsoundlooped = "",
-        EditorSuffix = "",
-        Name = nil,
-        Untip = nil,
-        Unubertip = nil,
-        Tip = nil,
-        Ubertip = nil,
-        Researchtip = nil,
-        Researchubertip = nil,
-        Unorder = nil,
-        Orderon = nil,
-        Order = nil,
-        Orderoff = nil,
-        Unhotkey = nil,
-        Hotkey = nil,
-        Researchhotkey = nil,
-        UnButtonpos1 = 0,
-        UnButtonpos2 = 0,
-        Buttonpos1 = 0,
-        Buttonpos2 = 0,
-        Researchbuttonpos1 = 0,
-        Researchbuttonpos2 = 0,
-        Unart = nil,
-        Researchart = nil,
-        Art = nil,
-        SpecialArt = nil,
-        Specialattach = nil,
-        Missileart = nil,
-        Missilespeed = 1000,
-        Missilearc = 0,
-        MissileHoming = 1,
-        LightningEffect = nil,
-        EffectArt = nil,
-        TargetArt = nil,
-        Targetattachcount = 0,
-        Targetattach = nil,
-        Targetattach1 = nil,
-        Targetattach2 = nil,
-        Targetattach3 = nil,
-        Targetattach4 = nil,
-        Targetattach5 = nil,
-        Areaeffectart = nil,
-        Animnames = "spell",
-        CasterArt = nil,
-        Casterattachcount = 0,
-        Casterattach = nil,
-        Casterattach1 = nil,
-        hero = 0,
-        item = 0,
-        race = "other",
-        levels = 1,
-        reqLevel = 1,
-        priority = 0,
-        BuffID1 = nil,
-        EfctID1 = nil,
-        Tip1 = nil,
-        Ubertip1 = nil,
-        targs1 = "ground,air,friend,vuln,invu",
-        DataA1 = 0,
-        DataB1 = 0,
-        DataC1 = 0,
-        DataD1 = 0,
-        DataE1 = 0,
-        DataF1 = 0,
-        Cast1 = nil,
-        Cool1 = nil,
-        Dur1 = nil,
-        HeroDur1 = nil,
-        Cost1 = nil,
-        Rng1 = nil,
-        Area1 = nil,
-        _id = nil,
-        _class = "ability",
-        _type = "common",
-        _parent = "auto",
-        _desc = nil,
-        _attr = nil,
-        _attr_txt = nil,
-        _ring = nil,
-    },
-    i = {
-        abilList = "",
-        Requires = "",
-        Requiresamount = "",
-        Name = nil,
-        Description = nil,
-        Tip = "",
-        Ubertip = nil,
-        Hotkey = nil,
-        Art = "ReplaceableTextures\\CommandButtons\\BTNSelectHeroOn.blp",
-        scale = 1.00,
-        file = "Objects\\InventoryItems\\TreasureChest\\treasurechest.mdl",
-        Buttonpos1 = 0,
-        Buttonpos2 = 0,
-        selSize = 0.00,
-        colorR = 255,
-        colorG = 255,
-        colorB = 255,
-        armor = "Wood",
-        Level = nil,
-        oldLevel = nil,
-        class = "Permanent",
-        goldcost = 1000000,
-        lumbercost = 1000000,
-        HP = 100,
-        stockStart = 0,
-        stockRegen = 0,
-        stockMax = 1,
-        prio = 0,
-        cooldownID = "Alat",
-        ignoreCD = 0,
-        morph = 0,
-        drop = 0,
-        powerup = 0,
-        sellable = 1,
-        pawnable = 1,
-        droppable = 1,
-        pickRandom = 1,
-        uses = 1,
-        perishable = 0,
-        usable = 0,
-        _id = nil,
-        _class = "item",
-        _type = "common",
-        _parent = "rat9",
-        _overlie = 1,
-        _weight = 0,
-        _active = nil,
-        _passive = nil,
-        _attr = nil,
-        _attr_txt = nil,
-        _ring = nil,
-        _cooldown = nil,
-        _cooldownTarget = nil,
-        _shadow = false,
-    },
-    u = {
-        -- 主体
-        Name = nil,
-        Description = "",
-        Tip = nil,
-        Ubertip = nil,
-        Hotkey = nil,
-        level = nil,
-        race = "other",
-        type = nil,
-        goldcost = 0,
-        lumbercost = 0,
-        manaN = 0,
-        regenMana = 0,
-        mana0 = 0,
-        HP = 100,
-        regenHP = 0,
-        regenType = 0,
-        fmade = 0,
-        fused = 0,
-        stockStart = nil,
-        stockRegen = nil,
-        stockMax = nil,
-        sight = 1400,
-        nsight = 800,
-        -- 模型相关
-        collision = 16,
-        modelScale = 1,
-        file = "units\\human\\Peasant\\Peasant",
-        fileVerFlags = 0,
-        scaleBull = 1,
-        scale = 1,
-        selZ = 0,
-        selCircOnWater = 0,
-        red = 255,
-        green = 255,
-        blue = 255,
-        occH = 0, -- 闭塞高度
-        maxPitch = nil,
-        maxRoll = nil,
-        impactZ = nil,
-        impactSwimZ = nil,
-        launchX = nil,
-        launchY = nil,
-        launchZ = nil,
-        launchSwimZ = nil,
-        -- 声音相关
-        unitSound = "",
-        RandomSoundLabel = "",
-        MovementSoundLabel = "",
-        LoopingSoundFadeOut = 0,
-        LoopingSoundFadeIn = 0,
-        -- 技能相关
-        auto = "_",
-        abilList = "",
-        -- 商店相关
-        Sellitems = "",
-        Sellunits = "",
-        Markitems = "",
-        Builds = "",
-        -- 图标
-        Buttonpos1 = 0,
-        Buttonpos2 = 0,
-        Art = nil,
-        Specialart = nil,
-        -- 阴影相关
-        unitShadow = "ShadowFlyer",
-        buildingShadow = nil,
-        shadowH = nil,
-        shadowW = nil,
-        shadowX = nil,
-        shadowY = nil,
-        shadowOnWater = nil,
-        -- 死亡相关
-        death = nil,
-        deathType = 3,
-        -- 移动相关
-        movetp = "foot",
-        moveHeight = 0,
-        moveFloor = nil,
-        spd = 100,
-        maxSpd = nil,
-        minSpd = nil,
-        turnRate = 0.5,
-        -- 攻击相关
-        acquire = 500,
-        minRange = 0,
-        weapsOn = nil,
-        -- 攻击1
-        Missileart = nil,
-        Missilespeed = 1000,
-        Missilearc = 0,
-        MissileHoming = 1,
-        targs1 = "ground,air,structure,debris,item,ward",
-        atkType1 = nil,
-        weapTp1 = nil,
-        weapType1 = nil,
-        spillRadius1 = nil,
-        spillDist1 = nil,
-        damageLoss1 = nil,
-        showUI1 = nil,
-        backSw1 = nil,
-        dmgpt1 = nil,
-        rangeN1 = nil,
-        RngBuff1 = nil,
-        dmgplus1 = nil,
-        dmgUp1 = nil,
-        sides1 = nil,
-        dice1 = nil,
-        splashTargs1 = nil,
-        cool1 = nil,
-        Farea1 = nil,
-        targCount1 = nil,
-        Qfact1 = nil,
-        Qarea1 = nil,
-        Hfact1 = nil,
-        Harea1 = nil,
-        -- 攻击2
-        Missileart2 = nil,
-        Missilespeed2 = 1000,
-        Missilearc2 = 0,
-        MissileHoming2 = 1,
-        targs2 = "ground,air,structure,debris,item,ward",
-        atkType2 = nil,
-        weapTp2 = nil,
-        weapType2 = nil,
-        spillRadius2 = nil,
-        spillDist2 = nil,
-        damageLoss2 = nil,
-        showUI2 = nil,
-        backSw2 = nil,
-        dmgpt2 = nil,
-        rangeN2 = nil,
-        RngBuff2 = nil,
-        dmgplus2 = nil,
-        dmgUp2 = nil,
-        sides2 = nil,
-        dice2 = nil,
-        splashTargs2 = nil,
-        cool2 = nil,
-        Farea2 = nil,
-        targCount2 = nil,
-        Qfact2 = nil,
-        Qarea2 = nil,
-        Hfact2 = nil,
-        Harea2 = nil,
-        -- 防御相关
-        defType = "normal",
-        defUp = nil,
-        def = 0,
-        armor = "Flesh",
-        targType = "ground",
-        -- 英雄专用
-        Propernames = nil,
-        nameCount = nil,
-        Awakentip = nil,
-        Revivetip = nil,
-        Primary = "STR",
-        STR = 1,
-        STRplus = 0,
-        AGI = 1,
-        AGIplus = 0,
-        INT = 1,
-        INTplus = 0,
-        heroAbilList = nil,
-        hideHeroMinimap = nil,
-        hideHeroBar = nil,
-        hideHeroDeathMsg = nil,
-        Requiresacount = nil,
-        Requires1 = nil,
-        Requires2 = nil,
-        Requires3 = nil,
-        Requires4 = nil,
-        Requires5 = nil,
-        Requires6 = nil,
-        Requires7 = nil,
-        Requires8 = nil,
-        Reviveat = nil,
-        -- 建筑物专用
-        buffRadius = 0,
-        buffType = "_",
-        Revive = nil,
-        Trains = nil,
-        Upgrade = nil,
-        requirePlace = nil,
-        preventPlace = nil,
-        requireWaterRadius = nil,
-        pathTex = nil,
-        uberSplat = nil,
-        nbrandom = nil,
-        nbmmlcon = nil,
-        canBuildOn = nil,
-        isBuildOn = nil,
-        --
-        tilesets = nil,
-        special = nil,
-        campaign = nil,
-        inEditor = nil,
-        dropItems = nil,
-        hostilePal = nil,
-        useClickHelper = nil,
-        tilesetSpecific = nil,
-        Requires = nil,
-        Requiresamount = nil,
-        DependencyOr = nil,
-        Researches = nil,
-        upgrades = nil,
-        EditorSuffix = nil,
-        Casterupgradename = nil,
-        Casterupgradetip = nil,
-        Castrerupgradeart = nil,
-        ScoreScreenIcon = nil,
-        animProps = nil,
-        Attachmentanimprops = nil,
-        Attachmentlinkprops = nil,
-        Boneprops = nil,
-        castpt = nil,
-        castbsw = nil,
-        blend = nil,
-        run = nil,
-        walk = nil,
-        propWin = nil,
-        orientInterp = nil,
-        teamColor = nil,
-        customTeamColor = nil,
-        elevPts = nil,
-        elevRad = nil,
-        fogRad = nil,
-        fatLOS = nil,
-        repulse = nil,
-        repulsePrio = nil,
-        repulseParam = nil,
-        repulseGroup = nil,
-        isbldg = nil,
-        bldtm = nil,
-        bountyplus = nil,
-        bountysides = nil,
-        bountydice = nil,
-        goldRep = nil,
-        lumberRep = nil,
-        reptm = nil,
-        lumberbountyplus = nil,
-        lumberbountysides = nil,
-        lumberbountydice = nil,
-        cargoSize = nil,
-        hideOnMinimap = nil,
-        points = nil,
-        prio = nil,
-        formation = nil,
-        canFlee = 1,
-        canSleep = 0,
-        --
-        _id = nil,
-        _class = "unit",
-        _type = "common",
-        _parent = "auto",
-        _attr = nil,
-    },
-}
-
-F6TIPS = {
-    abilList = "主动技能ID列表",
-    Requires = "科技树",
-    Requiresamount = "科技树-需求值",
-    Name = "名称",
-    Description = "描述",
-    Tip = "描述标题",
-    Ubertip = "说明",
-    Hotkey = "热键",
-    Art = "图标",
-    scale = "模型大小",
-    file = "模型文件路径",
-    Buttonpos1 = "X坐标",
-    Buttonpos2 = "Y坐标",
-    selSize = "选择圈大小",
-    colorR = "红",
-    colorG = "绿",
-    colorB = "蓝",
-    armor = "装甲类型",
-    Level = "等级",
-    oldLevel = "等级(旧)",
-    class = "分类",
-    goldcost = "黄金",
-    lumbercost = "木头",
-    HP = "生命",
-    stockStart = "开始库存",
-    stockRegen = "补货周期",
-    stockMax = "最大库存",
-    prio = "优先权",
-    morph = "有效的物品转换目标",
-    drop = "死亡时掉落",
-    powerup = "捡到时自动使用",
-    sellable = "可以出售",
-    pawnable = "可以抵押",
-    droppable = "可以丢弃",
-    pickRandom = "可以作为随机物品",
-    uses = "使用次数",
-    perishable = "使用后完全消失",
-    usable = "主动使用",
-    level = "等级",
-    race = "种族",
-    type = "类别",
-    manaN = "最大魔法值",
-    regenMana = "魔法恢复",
-    mana0 = "初始魔法",
-    regenHP = "生命恢复",
-    regenType = "生命恢复类型",
-    fmade = "提供人口",
-    fused = "占用人口",
-    stockStart = "雇佣开始时间",
-    stockRegen = "雇佣开始间隔",
-    stockMax = "最大库存",
-    sight = "白天视野",
-    nsight = "夜晚视野",
-    collision = "接触体积",
-    modelScale = "模型缩放",
-    fileVerFlags = "模型文件版本",
-    scaleBull = "缩放投射物",
-    scale = "选择圈缩放",
-    selZ = "选择圈高度",
-    selCircOnWater = "选择圈在水面上",
-    red = "红",
-    green = "绿",
-    blue = "蓝",
-    occH = "闭塞高度",
-    maxPitch = "X轴最大旋转角度",
-    maxRoll = "Y轴最大旋转角度",
-    impactZ = "射弹碰撞偏移Z",
-    impactSwimZ = "射弹碰撞偏移Z深水",
-    launchX = "射弹偏移X",
-    launchY = "射弹偏移Y",
-    launchZ = "射弹偏移Z",
-    launchSwimZ = "射弹偏移Z深水",
-    unitSound = "单位声音",
-    RandomSoundLabel = "声音随机",
-    MovementSoundLabel = "声音移动",
-    LoopingSoundFadeOut = "声音渐出",
-    LoopingSoundFadeIn = "声音渐入",
-    auto = "主动自动技能ID",
-    Sellitems = "售出物品",
-    Sellunits = "售出单位",
-    Markitems = "制造物品",
-    Builds = "可建造单位",
-    Buttonpos1 = "图标X坐标",
-    Buttonpos2 = "图标Y坐标",
-    Specialart = "特殊效果",
-    unitShadow = "单位阴影",
-    buildingShadow = "建筑阴影",
-    shadowH = "阴影H",
-    shadowW = "阴影W",
-    shadowX = "阴影X",
-    shadowY = "阴影Y",
-    shadowOnWater = "深水有阴影",
-    death = "死亡时间",
-    deathType = "死亡类型",
-    movetp = "移动类型",
-    moveHeight = "移动高度",
-    moveFloor = "最小高度",
-    spd = "基础速度",
-    maxSpd = "最大速度",
-    minSpd = "最小速度",
-    turnRate = "转身速率",
-    acquire = "主动攻击范围",
-    minRange = "最小攻击范围",
-    weapsOn = "允许攻击",
-    Missileart = "箭矢模型",
-    Missilespeed = "箭矢速度",
-    Missilearc = "箭矢弧度",
-    MissileHoming = "箭矢自导",
-    targs1 = "目标允许",
-    atkType1 = "攻击类型",
-    weapTp1 = "武器类型",
-    weapType1 = "武器声音",
-    spillRadius1 = "穿透伤害范围",
-    spillDist1 = "穿透距离",
-    damageLoss1 = "伤害衰减参数",
-    showUI1 = "显示攻击UI",
-    backSw1 = "攻击后摇",
-    dmgpt1 = "攻击前摇",
-    rangeN1 = "攻击范围",
-    RngBuff1 = "攻击范围缓冲",
-    dmgplus1 = "基础伤害",
-    dmgUp1 = "攻击科技升级",
-    sides1 = "伤害骰子面数",
-    dice1 = "伤害骰子数量",
-    splashTargs1 = "范围影响目标",
-    cool1 = "攻击间隔",
-    Farea1 = "全伤害范围",
-    targCount1 = "最大目标数",
-    Qfact1 = "小伤害参数",
-    Qarea1 = "小伤害范围",
-    Hfact1 = "中伤害参数",
-    Harea1 = "中伤害范围",
-    defType = "护甲类型",
-    defUp = "护甲科技升级",
-    def = "基础护甲",
-    armor = "装甲类型（被击声音）",
-    targType = "作为目标类型",
-    Propernames = "英雄称谓",
-    nameCount = "英雄称谓个数",
-    Awakentip = "英雄唤醒提示",
-    Revivetip = "英雄重生提示",
-    Primary = "主属性",
-    STR = "力量",
-    STRplus = "力量成长",
-    AGI = "敏捷",
-    AGIplus = "敏捷成长",
-    INT = "智力",
-    INTplus = "智力成长",
-    heroAbilList = "英雄技能ID列表",
-    hideHeroMinimap = "隐藏英雄小地图",
-    hideHeroBar = "隐藏英雄栏图标",
-    hideHeroDeathMsg = "隐藏英雄死亡信息",
-    Requiresacount = "科技树-使用等级数",
-    Requires1 = "科技树-等级2",
-    Reviveat = "指定复活点",
-    buffRadius = "路径-AI放置范围",
-    buffType = "路径-AI放置类型",
-    Revive = "可复活单位",
-    Trains = "可训练单位",
-    Upgrade = "可升级建筑",
-    requirePlace = "路径-放置不允许",
-    preventPlace = "路径-放置要求",
-    requireWaterRadius = "路径-放置要求距离水的范围",
-    pathTex = "路径纹理",
-    uberSplat = "建筑地面纹理",
-    nbrandom = "中立-可作为随机建筑",
-    nbmmlcon = "中立-显示小地图",
-    canBuildOn = "能被其他建筑建造",
-    isBuildOn = "能建造在其他建筑上",
-    tilesets = "大地图-地形设置",
-    special = "大地图-分类-特殊",
-    campaign = "大地图-分类-战役",
-    inEditor = "大地图-可放置",
-    dropItems = "大地图-死亡掉落物品",
-    hostilePal = "大地图-可作为中立敌对",
-    useClickHelper = "大地图-使用点击帮助",
-    tilesetSpecific = "大地图-有地形指定数据",
-    DependencyOr = "科技树-从属等价物",
-    Researches = "科技树-可研究项目",
-    upgrades = "使用的科技",
-    EditorSuffix = "编辑器后缀",
-    Casterupgradename = "魔法升级名字",
-    Casterupgradetip = "魔法升级说明",
-    Castrerupgradeart = "魔法升级图标",
-    ScoreScreenIcon = "图标-记分屏",
-    animProps = "要求动画名",
-    Attachmentanimprops = "要求动画名-附加动画",
-    Attachmentlinkprops = "要求动画名-链接名",
-    Boneprops = "要求骨骼名",
-    castpt = "动画-施法前摇",
-    castbsw = "动画-施法后摇",
-    blend = "动画-混合时间（秒）",
-    run = "动画-跑步",
-    walk = "动画-行走",
-    propWin = "动画-转向角度",
-    orientInterp = "动画-转向补正",
-    teamColor = "队伍颜色",
-    customTeamColor = "允许更改队伍颜色",
-    elevPts = "高度变化-采样点数量",
-    elevRad = "高度变化-采样范围",
-    fogRad = "战争迷雾-采样范围",
-    fatLOS = "不可见区域显示单位",
-    repulse = "组群分离-允许",
-    repulsePrio = "组群分离-优先",
-    repulseParam = "组群分离-参数",
-    repulseGroup = "组群分离-组号",
-    isbldg = "是一个建筑",
-    bldtm = "建造时间",
-    bountyplus = "黄金奖励-值",
-    bountysides = "黄金奖励-骰子面数",
-    bountydice = "黄金奖励-骰子数量",
-    goldRep = "修理黄金消耗",
-    lumberRep = "修理木材消耗",
-    reptm = "修理时间",
-    lumberbountyplus = "木材奖励-值",
-    lumberbountysides = "木材奖励-骰子面数",
-    lumberbountydice = "木材奖励-骰子数量",
-    cargoSize = "运输尺寸",
-    hideOnMinimap = "隐藏小地图显示",
-    points = "单位附加值",
-    prio = "编队优先权",
-    formation = "队形排列",
-    canFlee = "可以逃跑",
-    canSleep = "可以睡眠",
-    checkDep = "科技树-检查等价所属",
-    Effectsound = "声效-音效",
-    Effectsoundlooped = "声效-音效（循环）",
-    Researchtip = "学习技能提示",
-    Researchubertip = "学习技能描述",
-    Unorder = "命令-关闭",
-    Orderon = "命令-激活",
-    Order = "命令串",
-    Orderoff = "命令-取消激活",
-    Unhotkey = "热键-关闭",
-    Researchhotkey = "热键-学习",
-    UnButtonpos1 = "X坐标-关闭",
-    UnButtonpos2 = "Y坐标-关闭",
-    Researchbuttonpos1 = "X坐标-学习",
-    Researchbuttonpos2 = "Y坐标-学习",
-    Unart = "图标-关闭",
-    Researchart = "图标-学习",
-    SpecialArt = "效果-特殊",
-    Specialattach = "效果-特殊附加点",
-    LightningEffect = "效果-闪电效果",
-    EffectArt = "效果-目标点",
-    TargetArt = "效果-目标",
-    Targetattachcount = "效果-目标-附加数量",
-    Targetattach = "效果-目标-附加1",
-    Targetattach1 = "效果-目标-附加2",
-    Areaeffectart = "效果-区域",
-    Animnames = "施法动作",
-    CasterArt = "效果-施法者",
-    Casterattachcount = "效果-施法者-附加数量",
-    Casterattach = "效果-施法者-附加1",
-    Casterattach1 = "效果-施法者-附加2",
-    hero = "是否英雄技能",
-    item = "是否物品技能",
-    levels = "等级",
-    reqLevel = "等级要求",
-    levelSkip = "学习跳等级",
-    priority = "魔法偷取优先级",
-    BuffID1 = "魔法效果",
-    EfctID1 = "区域持续效果",
-    DataA1 = "数据A",
-    DataB1 = "数据B",
-    DataC1 = "数据C",
-    DataD1 = "数据D",
-    DataE1 = "数据E",
-    DataF1 = "数据F",
-    Cast1 = "施法时间",
-    Cool1 = "冷却时间",
-    Dur1 = "持续时间",
-    HeroDur1 = "持续时间（英雄）",
-    Cost1 = "魔法消耗",
-    Rng1 = "施法距离",
-    Area1 = "施法范围",
-    --
-    _id = "物编ID",
-    _class = "hslk数据类别",
-    _type = "hslk数据形式",
-    _parent = "模版物编ID",
-    _overlie = "叠加",
-    _weight = "重量",
-    _desc = "描述",
-    _active = "主动",
-    _passive = "被动",
-    _attr = "属性",
-    _attr_txt = "属性(无效)",
-    _ring = "光环",
-    _cooldown = "冷却时间",
-    _cooldownTarget = "冷却技能目标",
-    _shadow = "强制使用影子物品"
-
-}
-
+--- F6 物编
 local F6_IDX = 0
 local F6_NAME = function(name)
     F6_IDX = F6_IDX + 1
@@ -1110,10 +411,8 @@ end
 
 F6V_A = function(_v)
     _v._class = "ability"
-    for k, v in pairs(F6_DEF.a) do
-        if (_v[k] == nil and v ~= nil) then
-            _v[k] = v
-        end
+    if (_v._parent == nil) then
+        _v._parent = "ANcl"
     end
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名技能")
@@ -1128,7 +427,7 @@ F6V_A_E = function(_v)
     _v._parent = "Aamk"
     _v._type = "empty"
     if (_v.Name == nil) then
-        _v.Name = F6_NAME("未命名被动")
+        _v.Name = F6_NAME("未命名空被动")
     end
     if (_v.Hotkey ~= nil) then
         _v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos1 or 0
@@ -1148,7 +447,7 @@ F6V_A_R = function(_v)
     _v._parent = "Aamk"
     _v._type = "ring"
     if (_v.Name == nil) then
-        _v.Name = F6_NAME("未命名光环")
+        _v.Name = F6_NAME("未命名空光环")
     end
     if (_v.Hotkey ~= nil) then
         _v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos1 or 0
@@ -1183,10 +482,8 @@ end
 
 F6V_U = function(_v)
     _v._class = "unit"
-    for k, v in pairs(F6_DEF.u) do
-        if (_v[k] == nil and v ~= nil) then
-            _v[k] = v
-        end
+    if (_v._parent == nil) then
+        _v._parent = "hpea"
     end
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名单位")
@@ -1283,6 +580,7 @@ F6V_I_CD = function(_v)
 end
 
 F6V_I_SHADOW = function(_v)
+    _v._parent = "gold"
     _v._class = "item"
     _v._type = "shadow"
     _v.Name = "　" .. _v.Name .. "　"
@@ -1304,7 +602,14 @@ F6V_I = function(_v)
         if (_v.perishable == nil) then
             _v.perishable = 1
         end
-        _v.class = "Charged"
+        if (_v.powerup == nil) then
+            _v.powerup = 0
+        end
+        if (_v.powerup == 0) then
+            _v.class = "Charged"
+        else
+            _v.class = "PowerUp"
+        end
         if (cd == H_LUA_ABILITY_CD0) then
             _v.ignoreCD = 1
         end
@@ -1314,15 +619,22 @@ F6V_I = function(_v)
         end
         _v.class = "Permanent"
     end
-    for k, v in pairs(F6_DEF.i) do
-        if (_v[k] == nil and v ~= nil) then
-            _v[k] = v
+    if (_v._parent == nil) then
+        if (_v.class == "Charged") then
+            _v._parent = "hlst"
+        elseif (_v.class == "PowerUp") then
+            _v._parent = "gold"
+        else
+            _v._parent = "rat9"
         end
     end
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名物品")
     end
-    if (_v._overlie < _v.uses) then
+    if (_v.uses == nil) then
+        _v.uses = 1
+    end
+    if (_v._overlie == nil or _v._overlie < _v.uses) then
         _v._overlie = _v.uses
     end
     -- 处理 _shadow
@@ -1352,20 +664,34 @@ F6V_I = function(_v)
     if (_v.Ubertip == nil) then
         _v.Ubertip = F6S.i.ubertip(_v)
     end
+    if (_v.goldcost == nil) then
+        _v.goldcost = 1000000
+    end
+    if (_v.lumbercost == nil) then
+        _v.lumbercost = 0
+    end
     if (_v.Level == nil) then
-        _v.Level = math.floor(((_v.goldcost or def.goldcost) + (_v.lumbercost or def.lumbercost)) / 500)
+        _v.Level = math.floor((_v.goldcost + _v.lumbercost) / 500)
     end
     if (_v.oldLevel == nil) then
         _v.oldLevel = _v.Level
     end
     if (_v.Hotkey ~= nil) then
-        _v.Buttonpos1 = CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos1 or 0
-        _v.Buttonpos2 = CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos2 or 0
+        _v.Buttonpos_1 = CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos1 or 0
+        _v.Buttonpos_2 = CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos2 or 0
         _v.Tip = "获得" .. _v.Name .. "(" .. hcolor.mixed(_v.Hotkey, SLK_CONF.color.hotKey) .. ")"
     else
-        _v.Buttonpos1 = _v.Buttonpos1 or 0
-        _v.Buttonpos2 = _v.Buttonpos2 or 0
+        _v.Buttonpos_1 = _v.Buttonpos_1 or 0
+        _v.Buttonpos_2 = _v.Buttonpos_2 or 0
         _v.Tip = "获得" .. _v.Name
+    end
+    return _v
+end
+
+F6V_UP = function(_v)
+    _v._class = "upgrade"
+    if (_v.Name == nil) then
+        _v.Name = F6_NAME("未命名科技")
     end
     return _v
 end

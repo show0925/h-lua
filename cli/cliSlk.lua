@@ -163,3 +163,7 @@ hslk_item = function(_v)
         hslk_cli_set(_v)
     end
 end
+
+hslk_upgrade = function(formula)
+    hslk_cli_synthesis = F6V_UP(formula)
+end
