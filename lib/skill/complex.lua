@@ -194,8 +194,8 @@ hskill.broken = function(options)
         x = hunit.x(u),
         y = hunit.y(u)
     })
-    cj.UnitAddAbility(cu, HL_ID.skill_break[0.05])
-    cj.SetUnitAbilityLevel(cu, HL_ID.skill_break[0.05], 1)
+    cj.UnitAddAbility(cu, HL_ID.ability_break[0.05])
+    cj.SetUnitAbilityLevel(cu, HL_ID.ability_break[0.05], 1)
     cj.IssueTargetOrder(cu, "thunderbolt", u)
     hunit.del(cu, 0.3)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
@@ -308,14 +308,14 @@ hskill.swim = function(options)
     end
     if (during <= 0.5) then
         during = 0.05 * math.floor(during / 0.05) --必须是0.05的倍数
-        cj.UnitAddAbility(cu, HL_ID.skill_break[during])
-        cj.SetUnitAbilityLevel(cu, HL_ID.skill_break[during], 1)
+        cj.UnitAddAbility(cu, HL_ID.ability_break[during])
+        cj.SetUnitAbilityLevel(cu, HL_ID.ability_break[during], 1)
         cj.IssueTargetOrder(cu, "thunderbolt", u)
         hunit.del(cu, 0.4)
     else
         --无限法
-        cj.UnitAddAbility(cu, HL_ID.skill_swim_un_limit)
-        cj.SetUnitAbilityLevel(cu, HL_ID.skill_swim_un_limit, 1)
+        cj.UnitAddAbility(cu, HL_ID.ability_swim_un_limit)
+        cj.SetUnitAbilityLevel(cu, HL_ID.ability_swim_un_limit, 1)
         cj.IssueTargetOrder(cu, "thunderbolt", u)
         hunit.del(cu, 0.4)
         hcache.set(

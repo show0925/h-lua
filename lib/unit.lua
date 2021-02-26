@@ -228,10 +228,10 @@ hunit.setInvulnerable = function(u, flag)
     if (flag == nil) then
         flag = true
     end
-    if (flag == true and cj.GetUnitAbilityLevel(u, HL_ID.skill_invulnerable) < 1) then
-        cj.UnitAddAbility(u, HL_ID.skill_invulnerable)
+    if (flag == true and cj.GetUnitAbilityLevel(u, HL_ID.ability_invulnerable) < 1) then
+        cj.UnitAddAbility(u, HL_ID.ability_invulnerable)
     else
-        cj.UnitRemoveAbility(u, HL_ID.skill_invulnerable)
+        cj.UnitRemoveAbility(u, HL_ID.ability_invulnerable)
     end
 end
 
@@ -406,7 +406,7 @@ hunit.embed = function(u, options)
     if (his.hasSlot(u)) then
         hitem.embed(u)
     elseif (options.isOpenSlot == true) then
-        hskill.add(u, HL_ID.skill_item_slot, 0)
+        hskill.add(u, HL_ID.ability_item_slot, 0)
         hitem.embed(u)
     end
     -- 如果是英雄，注册事件和计算初次属性

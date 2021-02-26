@@ -1,14 +1,14 @@
 --- 回避
 ---@param whichUnit userdata
 hskill.avoid = function(whichUnit)
-    cj.UnitAddAbility(whichUnit, HL_ID.skill_avoid_plus)
-    cj.SetUnitAbilityLevel(whichUnit, HL_ID.skill_avoid_plus, 2)
-    cj.UnitRemoveAbility(whichUnit, HL_ID.skill_avoid_plus)
+    cj.UnitAddAbility(whichUnit, HL_ID.avoid.add)
+    cj.SetUnitAbilityLevel(whichUnit, HL_ID.avoid.add, 2)
+    cj.UnitRemoveAbility(whichUnit, HL_ID.avoid.add)
     htime.setTimeout(0, function(t)
         htime.delTimer(t)
-        cj.UnitAddAbility(whichUnit, HL_ID.skill_avoid_miuns)
-        cj.SetUnitAbilityLevel(whichUnit, HL_ID.skill_avoid_miuns, 2)
-        cj.UnitRemoveAbility(whichUnit, HL_ID.skill_avoid_miuns)
+        cj.UnitAddAbility(whichUnit, HL_ID.avoid.sub)
+        cj.SetUnitAbilityLevel(whichUnit, HL_ID.avoid.sub, 2)
+        cj.UnitRemoveAbility(whichUnit, HL_ID.avoid.sub)
     end)
 end
 
@@ -23,13 +23,13 @@ hskill.invulnerable = function(whichUnit, during, effect)
     if (during < 0) then
         during = 0.00 -- 如果设置持续时间错误，则0秒无敌，跟回避效果相同
     end
-    cj.UnitAddAbility(whichUnit, HL_ID.skill_invulnerable)
+    cj.UnitAddAbility(whichUnit, HL_ID.ability_invulnerable)
     if (during > 0 and effect ~= nil) then
         heffect.bindUnit(effect, whichUnit, "origin", during)
     end
     htime.setTimeout(during, function(t)
         htime.delTimer(t)
-        cj.UnitRemoveAbility(whichUnit, HL_ID.skill_invulnerable)
+        cj.UnitRemoveAbility(whichUnit, HL_ID.ability_invulnerable)
     end)
 end
 
@@ -133,10 +133,10 @@ hskill.invisible = function(whichUnit, during, transition, effect)
     if (transition > 0) then
         htime.setTimeout(transition, function(t)
             htime.delTimer(t)
-            hskill.add(whichUnit, HL_ID.skill_invisible, during)
+            hskill.add(whichUnit, HL_ID.ability_invisible, during)
         end)
     else
-        hskill.add(whichUnit, HL_ID.skill_invisible, during)
+        hskill.add(whichUnit, HL_ID.ability_invisible, during)
     end
 end
 
@@ -159,10 +159,10 @@ hskill.visible = function(whichUnit, during, transition, effect)
     if (transition > 0) then
         htime.setTimeout(transition, function(t)
             htime.delTimer(t)
-            hskill.del(whichUnit, HL_ID.skill_invisible, during)
+            hskill.del(whichUnit, HL_ID.ability_invisible, during)
         end)
     else
-        hskill.del(whichUnit, HL_ID.skill_invisible, during)
+        hskill.del(whichUnit, HL_ID.ability_invisible, during)
     end
 end
 

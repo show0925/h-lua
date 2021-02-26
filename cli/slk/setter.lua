@@ -1202,7 +1202,7 @@ F6V_I_CD = function(_v)
         _v._cooldown = 0
     end
     if (_v._cooldown == 0) then
-        return H_LUA_SKILL_CD0
+        return H_LUA_ABILITY_CD0
     end
     local adTips = "H_LUA_ICD_" .. _v.Name
     local cdID
@@ -1305,7 +1305,7 @@ F6V_I = function(_v)
             _v.perishable = 1
         end
         _v.class = "Charged"
-        if (cd == H_LUA_SKILL_CD0) then
+        if (cd == H_LUA_ABILITY_CD0) then
             _v.ignoreCD = 1
         end
     else

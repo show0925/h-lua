@@ -59,7 +59,7 @@ for during = 1, 10, 1 do
     hslk_ability({
         _parent = "AHtb",
         EditorSuffix = "#h-lua",
-        Name = "H_LUA_SKILL_BREAK_" .. swDur,
+        Name = "H_LUA_ABILITY_BREAK_" .. swDur,
         DataA1 = 0.00,
         Tip = "眩晕" .. swDur .. "秒",
         Ubertip = "眩晕" .. swDur .. "秒",
@@ -83,7 +83,7 @@ end
 hslk_ability({
     _parent = "AHtb",
     EditorSuffix = "#h-lua",
-    Name = "H_LUA_SKILL_SWIM_UN_LIMIT",
+    Name = "H_LUA_ABILITY_SWIM_UN_LIMIT",
     DataA1 = 0.00,
     Tip = "无限眩晕",
     Ubertip = "无限眩晕",
@@ -107,7 +107,7 @@ hslk_ability({
 hslk_ability({
     _parent = "Apiv",
     EditorSuffix = "#h-lua",
-    Name = "H_LUA_SKILL_INVISIBLE",
+    Name = "H_LUA_ABILITY_INVISIBLE",
     DataA1 = 0.00,
     Tip = "隐身",
     Ubertip = "隐身",
@@ -118,31 +118,11 @@ hslk_ability({
     HeroDur1 = 0,
 })
 
--- #回避 A/M
-hslk_ability({
-    _parent = "AIlf",
-    EditorSuffix = "#h-lua",
-    Name = "H_LUA_SKILL_AVOID_PLUS",
-    Art = "",
-    levels = 2,
-    DataA1 = 0,
-    DataA2 = -10000000,
-})
-hslk_ability({
-    _parent = "AIlf",
-    EditorSuffix = "#h-lua",
-    Name = "H_LUA_SKILL_AVOID_MIUNS",
-    Art = "",
-    levels = 2,
-    DataA1 = 0,
-    DataA2 = 10000000,
-})
-
-H_LUA_SKILL_CD0 = hslk_ability({
+H_LUA_ABILITY_CD0 = hslk_ability({
     _parent = "AIgo",
-    Name = "H_LUA_SKILL_ICD0",
-    Tip = "H_LUA_SKILL_ICD0",
-    Ubertip = "H_LUA_SKILL_ICD0",
+    Name = "H_LUA_ABILITY_ICD0",
+    Tip = "H_LUA_ABILITY_ICD0",
+    Ubertip = "H_LUA_ABILITY_ICD0",
     Effectsound = "",
     Art = "",
     TargetArt = "",
@@ -153,10 +133,10 @@ H_LUA_SKILL_CD0 = hslk_ability({
 })._id
 
 --- #选择英雄技能
-H_LUA_SKILL_HERO_SELECTION = hslk_ability({
+H_LUA_ABILITY_SELECT_HERO = hslk_ability({
     _parent = "Aneu",
     EditorSuffix = "#h-lua",
-    Name = "H_LUA_SKILL_HERO_SELECTION",
+    Name = "H_LUA_ABILITY_SELECT_HERO",
     DataA1 = 1000.00,
     DataB1 = 4,
     DataC1 = 0,
@@ -225,7 +205,7 @@ hslk_unit({
     _parent = "ntav",
     EditorSuffix = "#h-lua",
     Name = "H_LUA_HERO_TAVERN_TOKEN",
-    abilList = "Avul,Asud," .. H_LUA_SKILL_HERO_SELECTION,
+    abilList = "Avul,Asud," .. H_LUA_ABILITY_SELECT_HERO,
     Sellunits = "",
     pathTex = "",
     collision = "",
@@ -541,6 +521,7 @@ end
 --- #属性系统
 for i = 1, 9 do
     local val = math.floor(10 ^ (i - 1))
+    -------------------------------------------------------
     local tmp = {
         _parent = "Aamk",
         EditorSuffix = "#h-lua",
@@ -550,7 +531,7 @@ for i = 1, 9 do
         item = 1,
         levels = 10,
     }
-    -- #力量+
+    -- #力量绿+
     tmp.Name = "H_LUA_A_STR_G_ADD_" .. val
     for j = 0, 9 do
         tmp["DataA" .. (j + 1)] = 0
@@ -559,7 +540,7 @@ for i = 1, 9 do
         tmp["DataD" .. (j + 1)] = 1
     end
     hslk_ability(tmp)
-    -- #力量-
+    -- #力量绿-
     tmp.Name = "H_LUA_A_STR_G_SUB_" .. val
     for j = 0, 9 do
         tmp["DataA" .. (j + 1)] = 0
@@ -567,7 +548,7 @@ for i = 1, 9 do
         tmp["DataC" .. (j + 1)] = -1 * val * j
         tmp["DataD" .. (j + 1)] = 1
     end
-    -- #敏捷+
+    -- #敏捷绿+
     tmp.Name = "H_LUA_A_AGI_G_ADD_" .. val
     for j = 0, 9 do
         tmp["DataA" .. (j + 1)] = 1 * val * j
@@ -576,7 +557,7 @@ for i = 1, 9 do
         tmp["DataD" .. (j + 1)] = 1
     end
     hslk_ability(tmp)
-    -- #敏捷-
+    -- #敏捷绿-
     tmp.Name = "H_LUA_A_AGI_G_SUB_" .. val
     for j = 0, 9 do
         tmp["DataA" .. (j + 1)] = -1 * val * j
@@ -585,7 +566,7 @@ for i = 1, 9 do
         tmp["DataD" .. (j + 1)] = 1
     end
     hslk_ability(tmp)
-    -- #智力+
+    -- #智力绿+
     tmp.Name = "H_LUA_A_INT_G_ADD_" .. val
     for j = 0, 9 do
         tmp["DataA" .. (j + 1)] = 0
@@ -594,7 +575,7 @@ for i = 1, 9 do
         tmp["DataD" .. (j + 1)] = 1
     end
     hslk_ability(tmp)
-    -- #智力-
+    -- #智力绿-
     tmp.Name = "H_LUA_A_INT_G_SUB_" .. val
     for j = 0, 9 do
         tmp["DataA" .. (j + 1)] = 0
@@ -602,5 +583,199 @@ for i = 1, 9 do
         tmp["DataC" .. (j + 1)] = 0
         tmp["DataD" .. (j + 1)] = 1
     end
+    -------------------------------------------------------
+    tmp = {
+        _parent = "AItg",
+        EditorSuffix = "#h-lua",
+        Art = "",
+        levels = 10,
+    }
+    -- #攻击力绿+
+    tmp.Name = "H_LUA_A_ACK_G_ADD_" .. val
+    for j = 0, 9 do
+        tmp["DataA" .. (j + 1)] = 1 * val * j
+    end
     hslk_ability(tmp)
+    -- #攻击力绿-
+    tmp.Name = "H_LUA_A_ACK_G_SUB_" .. val
+    for j = 0, 9 do
+        tmp["DataA" .. (j + 1)] = -1 * val * j
+    end
+    hslk_ability(tmp)
+    -------------------------------------------------------
+    -- #攻击力白+
+    hslk_item({
+        _parent = "manh",
+        EditorSuffix = "#h-lua",
+        Name = "H_LUA_A_ACK_IT_W_ADD_" .. val,
+        Tip = "",
+        Ubertip = "",
+        Art = "",
+        scale = 0.10,
+        file = ".mdl",
+        goldcost = 0,
+        stockRegen = 0,
+        cooldownID = "",
+        abilList = hslk_ability({
+            _parent = "AIaa",
+            EditorSuffix = "#h-lua",
+            Name = "H_LUA_A_ACK_W_ADD_" .. val,
+            Art = "",
+            levels = 1,
+            CasterArt = "",
+            Casterattach = "",
+            DataA1 = 1 * val,
+        })._id
+    })
+    -- #攻击力白-
+    hslk_item({
+        _parent = "manh",
+        EditorSuffix = "#h-lua",
+        Name = "H_LUA_A_ACK_IT_W_SUB_" .. val,
+        Tip = "",
+        Ubertip = "",
+        Art = "",
+        scale = 0.10,
+        file = ".mdl",
+        goldcost = 0,
+        stockRegen = 0,
+        cooldownID = "",
+        abilList = hslk_ability({
+            _parent = "AIaa",
+            EditorSuffix = "#h-lua",
+            Name = "H_LUA_A_ACK_W_SUB_" .. val,
+            Art = "",
+            levels = 1,
+            CasterArt = "",
+            Casterattach = "",
+            DataA1 = -1 * val,
+        })._id
+    })
+    -------------------------------------------------------
+    tmp = {
+        _parent = "AIsx",
+        EditorSuffix = "#h-lua",
+        Art = "",
+        levels = 10,
+    }
+    -- #攻击速度+
+    tmp.Name = "H_LUA_A_ACK_SPD_ADD_" .. val
+    for j = 0, 9 do
+        tmp["DataA" .. (j + 1)] = 0.01 * val * j
+    end
+    hslk_ability(tmp)
+    -- #攻击速度-
+    tmp.Name = "H_LUA_A_ACK_SPD_SUB_" .. val
+    for j = 0, 9 do
+        tmp["DataA" .. (j + 1)] = -0.01 * val * j
+    end
+    hslk_ability(tmp)
+    -------------------------------------------------------
+    tmp = {
+        _parent = "AId1",
+        EditorSuffix = "#h-lua",
+        Art = "",
+        levels = 10,
+    }
+    -- #护甲绿+
+    tmp.Name = "H_LUA_A_DEF_ADD_" .. val
+    for j = 0, 9 do
+        tmp["DataA" .. (j + 1)] = 1 * val * j
+    end
+    hslk_ability(tmp)
+    -- #护甲绿-
+    tmp.Name = "H_LUA_A_DEF_SUB_" .. val
+    for j = 0, 9 do
+        tmp["DataA" .. (j + 1)] = -1 * val * j
+    end
+    hslk_ability(tmp)
+    -------------------------------------------------------
+    -- #生命+
+    hslk_ability({
+        _parent = "AIlf",
+        EditorSuffix = "#h-lua",
+        Name = "H_LUA_A_LIFE_ADD_" .. val,
+        Art = "",
+        levels = 2,
+        DataA1 = 0,
+        DataA2 = -1 * val,
+    })
+    -- #生命-
+    hslk_ability({
+        _parent = "AIlf",
+        EditorSuffix = "#h-lua",
+        Name = "H_LUA_A_LIFE_SUB_" .. val,
+        Art = "",
+        levels = 2,
+        DataA1 = 0,
+        DataA2 = 1 * val,
+    })
+    -- #魔法+
+    hslk_ability({
+        _parent = "AImv",
+        EditorSuffix = "#h-lua",
+        Name = "H_LUA_A_MANA_ADD_" .. val,
+        Art = "",
+        levels = 2,
+        DataA1 = 0,
+        DataA2 = -1 * val,
+    })
+    -- #魔法-
+    hslk_ability({
+        _parent = "AImv",
+        EditorSuffix = "#h-lua",
+        Name = "H_LUA_A_MANA_SUB_" .. val,
+        Art = "",
+        levels = 2,
+        DataA1 = 0,
+        DataA2 = 1 * val,
+    })
+end
+
+--- #回避(伤害)+
+hslk_ability({
+    _parent = "AIlf",
+    EditorSuffix = "#h-lua",
+    Name = "H_LUA_A_AVOID_ADD",
+    Art = "",
+    levels = 2,
+    DataA1 = 0,
+    DataA2 = -10000000,
+})
+--- #回避(伤害)-
+hslk_ability({
+    _parent = "AIlf",
+    EditorSuffix = "#h-lua",
+    Name = "H_LUA_A_AVOID_SUB",
+    Art = "",
+    levels = 2,
+    DataA1 = 0,
+    DataA2 = 10000000,
+})
+
+--- #视野
+local sightBase = { 1, 2, 3, 4, 5 }
+local i = 1
+while (i <= 10000) do
+    for _, v in ipairs(sightBase) do
+        v = math.floor(v * i)
+        -- #视野+
+        hslk_ability({
+            _parent = "AIsi",
+            EditorSuffix = "#h-lua",
+            Name = "H_LUA_A_SIGHT_ADD_" .. v,
+            Art = "",
+            levels = 1,
+            DataA1 = 1 * v,
+        })
+        -- #视野-
+        hslk_ability({
+            _parent = "AIsi",
+            EditorSuffix = "#h-lua",
+            Name = "H_LUA_A_SIGHT_SUB_" .. v,
+            Art = "",
+            levels = 1,
+            DataA1 = -1 * v,
+        })
+    end
 end
