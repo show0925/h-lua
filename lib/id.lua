@@ -224,15 +224,15 @@ HL_ID = {
             river_rushes3 = string.char2id(hslk.n2i("H_LUA_ENV_RIVER_RUSHES3")),
         },
     },
+    str_green = {
+        add = {},
+        sub = {}
+    },
     agi_green = {
         add = {},
         sub = {}
     },
     int_green = {
-        add = {},
-        sub = {}
-    },
-    str_green = {
         add = {},
         sub = {}
     },
