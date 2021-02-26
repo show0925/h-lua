@@ -1,5 +1,6 @@
 require 'cliSetter'
 require 'cliSlk'
+require 'cliSystem'
 require 'main'
 if (cj ~= nil) then
     local t = cj.CreateTrigger()

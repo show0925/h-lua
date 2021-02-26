@@ -4,17 +4,18 @@ HL_ID = {
     unit_token_leap = string.char2id(hslk.n2i("H_LUA_UNIT_TOKEN_LEAP")), --leap的token模式，需导入模型：https://github.com/hunzsig-warcraft3/assets-models/blob/master/interface/interface_token.mdx
     skill_invulnerable = string.char2id("Avul"), -- 默认无敌技能
     skill_item_slot = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认全部认定这个技能为物品栏，如有需要自行更改
-    skill_break = string.char2id(hslk.n2i("H_LUA_SKILL_BREAK")), --table[0.05~0.5]
-    skill_swim_un_limit = string.char2id(hslk.n2i("H_LUA_SKILL_SWIM_UNLIMIT")),
+    skill_break = {}, --眩晕[0.05~0.5]
+    skill_swim_un_limit = string.char2id(hslk.n2i("H_LUA_SKILL_SWIM_UN_LIMIT")),
     skill_invisible = string.char2id(hslk.n2i("H_LUA_SKILL_INVISIBLE")),
     skill_avoid_plus = string.char2id(hslk.n2i("H_LUA_SKILL_AVOID_PLUS")),
     skill_avoid_miuns = string.char2id(hslk.n2i("H_LUA_SKILL_AVOID_MIUNS")),
-    skill_cd0 = string.char2id(hslk.n2i("H_LUA_ICD0")),
-    japi_delay = string.char2id(hslk.n2i("H_LUA_JAPI_DELAY")),
+    skill_cd0 = string.char2id(hslk.n2i("H_LUA_SKILL_ICD0")),
+    skill_hero_selection = string.char2id(hslk.n2i("H_LUA_SKILL_HERO_SELECTION")),
     texture_alert_circle_token = string.char2id(hslk.n2i("H_LUA_TEXTURE_ALERT_CIRCLE_TOKEN")), --- 警示圈模型
     hero_view_token = string.char2id(hslk.n2i("H_LUA_HERO_VIEW_TOKEN")),
     hero_tavern_token = string.char2id(hslk.n2i("H_LUA_HERO_TAVERN_TOKEN")),
     hero_death_token = string.char2id(hslk.n2i("H_LUA_HERO_DEATH_TOKEN")),
+    japi_delay = string.char2id(hslk.n2i("H_LUA_JAPI_DELAY")),
     item_fleeting = {
         gold = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_GOLD")), -- 默认金币（模型）
         lumber = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_LUMBER")), -- 默认木头
@@ -38,6 +39,7 @@ HL_ID = {
     },
     --- 环境装饰
     env = {
+        tree = string.char2id(hslk.n2i("H_LUA_ENV_TREE")), --h-lua特色摇摆树
         --- 地表纹理
         ground = {
             summer = string.char2id("Lgrs"), -- 洛丹伦 - 夏 - 草地
@@ -275,6 +277,11 @@ HL_ID = {
     sight_gradient = {}
 }
 
+-- 眩晕[0.05-0.5]
+for during = 1, 10, 1 do
+    local swDur = during * 0.05
+    HL_ID.skill_break[swDur] = string.char2id(hslk.n2i("H_LUA_SKILL_BREAK_" .. swDur))
+end
 -- 属性系统
 for i = 1, 9 do
     local v = math.floor(10 ^ (i - 1))

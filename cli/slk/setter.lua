@@ -1194,28 +1194,6 @@ F6V_U = function(_v)
     return _v
 end
 
-F6V_A_CD_0 = nil
-F6V_I_CD_0 = function()
-    if (F6V_A_CD_0 == nil) then
-        local av = hslk_ability({
-            _parent = "AIgo",
-            Name = "H_LUA_ICD0",
-            Tip = "H_LUA_ICD0",
-            Ubertip = "H_LUA_ICD0",
-            Effectsound = "",
-            Art = "",
-            TargetArt = "",
-            Targetattach = "",
-            DataA1 = 0,
-            CasterArt = "",
-            Cool = 0,
-        })
-        print(av)
-        F6V_A_CD_0 = av._id
-    end
-    return F6V_A_CD_0
-end
-
 F6V_I_CD = function(_v)
     if (_v._cooldown == nil) then
         return "AIat"
@@ -1224,7 +1202,7 @@ F6V_I_CD = function(_v)
         _v._cooldown = 0
     end
     if (_v._cooldown == 0) then
-        return F6V_I_CD_0()
+        return H_LUA_SKILL_CD0
     end
     local adTips = "H_LUA_ICD_" .. _v.Name
     local cdID
@@ -1327,7 +1305,7 @@ F6V_I = function(_v)
             _v.perishable = 1
         end
         _v.class = "Charged"
-        if (cd == F6V_A_CD_0) then
+        if (cd == H_LUA_SKILL_CD0) then
             _v.ignoreCD = 1
         end
     else
