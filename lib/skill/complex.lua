@@ -189,13 +189,13 @@ hskill.broken = function(options)
     end
     local cu = hunit.create({
         register = false,
-        unitId = hskill.SKILL_TOKEN,
+        unitId = HL_ID.skill_token,
         whichPlayer = hplayer.player_passive,
         x = hunit.x(u),
         y = hunit.y(u)
     })
-    cj.UnitAddAbility(cu, hskill.SKILL_BREAK[0.05])
-    cj.SetUnitAbilityLevel(cu, hskill.SKILL_BREAK[0.05], 1)
+    cj.UnitAddAbility(cu, HL_ID.skill_break[0.05])
+    cj.SetUnitAbilityLevel(cu, HL_ID.skill_break[0.05], 1)
     cj.IssueTargetOrder(cu, "thunderbolt", u)
     hunit.del(cu, 0.3)
     if (type(options.effect) == "string" and string.len(options.effect) > 0) then
@@ -286,14 +286,14 @@ hskill.swim = function(options)
         else
             htime.delTimer(swimTimer)
             hcache.set(u, CONST_CACHE.SKILL_SWIM_TIMER, nil)
-            cj.UnitRemoveAbility(u, hskill.BUFF_SWIM)
+            cj.UnitRemoveAbility(u, HL_ID.buff_swim)
             damageString = "劲眩"
             damageStringColor = "64e3f2"
         end
     end
     local cu = hunit.create({
         register = false,
-        unitId = hskill.SKILL_TOKEN,
+        unitId = HL_ID.skill_token,
         whichPlayer = hplayer.player_passive,
         x = hunit.x(u),
         y = hunit.y(u)
@@ -308,21 +308,21 @@ hskill.swim = function(options)
     end
     if (during <= 0.5) then
         during = 0.05 * math.floor(during / 0.05) --必须是0.05的倍数
-        cj.UnitAddAbility(cu, hskill.SKILL_BREAK[during])
-        cj.SetUnitAbilityLevel(cu, hskill.SKILL_BREAK[during], 1)
+        cj.UnitAddAbility(cu, HL_ID.skill_break[during])
+        cj.SetUnitAbilityLevel(cu, HL_ID.skill_break[during], 1)
         cj.IssueTargetOrder(cu, "thunderbolt", u)
         hunit.del(cu, 0.4)
     else
         --无限法
-        cj.UnitAddAbility(cu, hskill.SKILL_SWIM_UNLIMIT)
-        cj.SetUnitAbilityLevel(cu, hskill.SKILL_SWIM_UNLIMIT, 1)
+        cj.UnitAddAbility(cu, HL_ID.skill_swim_unlimit)
+        cj.SetUnitAbilityLevel(cu, HL_ID.skill_swim_unlimit, 1)
         cj.IssueTargetOrder(cu, "thunderbolt", u)
         hunit.del(cu, 0.4)
         hcache.set(
             u, CONST_CACHE.SKILL_SWIM_TIMER,
             htime.setTimeout(during, function(t)
                 htime.delTimer(t)
-                cj.UnitRemoveAbility(u, hskill.BUFF_SWIM)
+                cj.UnitRemoveAbility(u, HL_ID.buff_swim)
                 hcache.set(u, CONST_CACHE.SKILL_SWIM, false)
             end)
         )
@@ -1371,7 +1371,7 @@ hskill.leap = function(options)
         arrowUnit = hunit.create({
             register = false,
             whichPlayer = hunit.getOwner(sourceUnit),
-            unitId = hskill.SKILL_LEAP,
+            unitId = HL_ID.skill_leap,
             x = cxy.x,
             y = cxy.y,
             facing = initFacing,
@@ -1845,7 +1845,7 @@ hskill.rectangleStrike = function(options)
                 local effUnit = hunit.create({
                     register = false,
                     whichPlayer = hplayer.player_passive,
-                    unitId = hskill.SKILL_LEAP,
+                    unitId = HL_ID.skill_leap,
                     x = txy.x,
                     y = txy.y,
                     facing = options.deg,
@@ -1894,7 +1894,7 @@ hskill.rectangleStrike = function(options)
                 local effUnit = hunit.create({
                     register = false,
                     whichPlayer = hplayer.player_passive,
-                    unitId = hskill.SKILL_LEAP,
+                    unitId = HL_ID.skill_leap,
                     x = txy.x,
                     y = txy.y,
                     facing = options.deg,

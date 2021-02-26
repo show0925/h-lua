@@ -1,14 +1,14 @@
 --- 回避
 ---@param whichUnit userdata
 hskill.avoid = function(whichUnit)
-    cj.UnitAddAbility(whichUnit, hskill.SKILL_AVOID_PLUS)
-    cj.SetUnitAbilityLevel(whichUnit, hskill.SKILL_AVOID_PLUS, 2)
-    cj.UnitRemoveAbility(whichUnit, hskill.SKILL_AVOID_PLUS)
+    cj.UnitAddAbility(whichUnit, HL_ID.skill_avoid_plus)
+    cj.SetUnitAbilityLevel(whichUnit, HL_ID.skill_avoid_plus, 2)
+    cj.UnitRemoveAbility(whichUnit, HL_ID.skill_avoid_plus)
     htime.setTimeout(0, function(t)
         htime.delTimer(t)
-        cj.UnitAddAbility(whichUnit, hskill.SKILL_AVOID_MIUNS)
-        cj.SetUnitAbilityLevel(whichUnit, hskill.SKILL_AVOID_MIUNS, 2)
-        cj.UnitRemoveAbility(whichUnit, hskill.SKILL_AVOID_MIUNS)
+        cj.UnitAddAbility(whichUnit, HL_ID.skill_avoid_miuns)
+        cj.SetUnitAbilityLevel(whichUnit, HL_ID.skill_avoid_miuns, 2)
+        cj.UnitRemoveAbility(whichUnit, HL_ID.skill_avoid_miuns)
     end)
 end
 
@@ -23,13 +23,13 @@ hskill.invulnerable = function(whichUnit, during, effect)
     if (during < 0) then
         during = 0.00 -- 如果设置持续时间错误，则0秒无敌，跟回避效果相同
     end
-    cj.UnitAddAbility(whichUnit, hskill.BUFF_INVULNERABLE)
+    cj.UnitAddAbility(whichUnit, HL_ID.buff_invulnerable)
     if (during > 0 and effect ~= nil) then
         heffect.bindUnit(effect, whichUnit, "origin", during)
     end
     htime.setTimeout(during, function(t)
         htime.delTimer(t)
-        cj.UnitRemoveAbility(whichUnit, hskill.BUFF_INVULNERABLE)
+        cj.UnitRemoveAbility(whichUnit, HL_ID.buff_invulnerable)
     end)
 end
 
@@ -133,10 +133,10 @@ hskill.invisible = function(whichUnit, during, transition, effect)
     if (transition > 0) then
         htime.setTimeout(transition, function(t)
             htime.delTimer(t)
-            hskill.add(whichUnit, hskill.SKILL_INVISIBLE, during)
+            hskill.add(whichUnit, HL_ID.skill_invisible, during)
         end)
     else
-        hskill.add(whichUnit, hskill.SKILL_INVISIBLE, during)
+        hskill.add(whichUnit, HL_ID.skill_invisible, during)
     end
 end
 
@@ -159,10 +159,10 @@ hskill.visible = function(whichUnit, during, transition, effect)
     if (transition > 0) then
         htime.setTimeout(transition, function(t)
             htime.delTimer(t)
-            hskill.del(whichUnit, hskill.SKILL_INVISIBLE, during)
+            hskill.del(whichUnit, HL_ID.skill_invisible, during)
         end)
     else
-        hskill.del(whichUnit, hskill.SKILL_INVISIBLE, during)
+        hskill.del(whichUnit, HL_ID.skill_invisible, during)
     end
 end
 
@@ -214,7 +214,7 @@ hskill.diy = function(options)
     local token = hunit.create({
         register = false,
         whichPlayer = options.whichPlayer,
-        unitId = hskill.SKILL_TOKEN,
+        unitId = HL_ID.skill_token,
         x = options.x,
         y = options.y,
         facing = bj_UNIT_FACING,

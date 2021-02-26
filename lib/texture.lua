@@ -1,7 +1,5 @@
 ---@class htexture 纹理（遮罩/警示圈）
 htexture = {
-    --- 警示圈模型
-    TEXTURE_ALERT_CIRCLE_TOKEN = string.char2id(hslk.n2i("H_LUA_TEXTURE_ALERT_CIRCLE_TOKEN")),
     --- 系统自带遮罩
     DEFAULT_MARKS = {
         WHITE = "ReplaceableTextures\\CameraMasks\\White_mask.blp", --白色迷雾
@@ -121,7 +119,7 @@ htexture.alertCircle = function(diameter, x, y, during)
         during = 3
     end
     local modelScale = math.round(diameter / 64)
-    local u = cj.CreateUnit(hplayer.player_passive, htexture.TEXTURE_ALERT_CIRCLE_TOKEN, x, y, bj_UNIT_FACING)
+    local u = cj.CreateUnit(hplayer.player_passive, HL_ID.texture_alert_circle_token, x, y, bj_UNIT_FACING)
     cj.SetUnitScale(u, modelScale, modelScale, modelScale)
     cj.SetUnitTimeScale(u, 1 / during)
     hunit.del(u, during)

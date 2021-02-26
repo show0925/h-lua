@@ -5,30 +5,7 @@
     支持满背包合成
     物品存在重量，背包有负重，超过负重即使存在合成关系，也会被暂时禁止合成
 ]]
-hitem = {
-    DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认全部认定这个技能为物品栏，如有需要自行更改
-    FLEETING_IDS = {
-        GOLD = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_GOLD")), -- 默认金币（模型）
-        LUMBER = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_LUMBER")), -- 默认木头
-        BOOK_YELLOW = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_BOOK_YELLOW")), -- 技能书系列
-        BOOK_GREEN = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_BOOK_GREEN")),
-        BOOK_PURPLE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_BOOK_PURPLE")),
-        BOOK_BLUE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_BOOK_BLUE")),
-        BOOK_RED = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_BOOK_RED")),
-        RUNE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_RUNE")), -- 神符（紫色符文）
-        RELIEF = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_RELIEF")), -- 浮雕（橙色像块炭）
-        EGG = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_EGG")), -- 蛋
-        FRAGMENT = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_FRAGMENT")), -- 碎片（蓝色石头）
-        QUESTION = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_QUESTION")), -- 问号
-        GRASS = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_GRASS")), -- 荧光草
-        DOTA2_GOLD = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_GOLD")), -- Dota2赏金符
-        DOTA2_DAMAGE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_DAMAGE")), -- Dota2伤害符
-        DOTA2_CURE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_CURE")), -- Dota2恢复符
-        DOTA2_SPEED = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_SPEED")), -- Dota2极速符
-        DOTA2_VISION = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_VISION")), -- Dota2幻象符
-        DOTA2_INVISIBLE = string.char2id(hslk.n2i("H_LUA_ITEM_FLEETING_DOTA2_INVISIBLE")), -- Dota2隐身符
-    },
-}
+hitem = {}
 
 -- 单位嵌入到物品到框架系统
 ---@protected

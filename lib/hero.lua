@@ -2,9 +2,6 @@
 hhero = {
     player_allow_qty = {}, -- 玩家最大单位数量,默认1
     player_heroes = {}, -- 玩家当前英雄
-    view_token = string.char2id(hslk.n2i("H_LUA_HERO_VIEW_TOKEN")),
-    tavern_token = string.char2id(hslk.n2i("H_LUA_HERO_TAVERN_TOKEN")),
-    death_token = string.char2id(hslk.n2i("H_LUA_HERO_DEATH_TOKEN")),
     --- 英雄出生地
     bornX = 0,
     bornY = 0,
@@ -292,7 +289,7 @@ hhero.buildSelector = function(options)
                 tavern = hunit.create(
                     {
                         whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
-                        unitId = options.tavernId or hhero.tavern_token,
+                        unitId = options.tavernId or HL_ID.hero_tavern_token,
                         x = x,
                         y = y,
                     }
@@ -359,7 +356,7 @@ hhero.buildSelector = function(options)
             local whichHero = hunit.create(
                 {
                     whichPlayer = p,
-                    unitId = hhero.view_token,
+                    unitId = HL_ID.hero_view_token,
                     x = buildX + buildRowQty * buildDistanceX * 0.5,
                     y = buildY - math.floor(#heroIds / buildRowQty) * buildDistanceY * 0.5,
                     isInvulnerable = true,
