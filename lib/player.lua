@@ -201,12 +201,9 @@ hplayer.hideUnit = function(whichPlayer)
     if (whichPlayer == nil) then
         return
     end
-    local g = hgroup.createByRect(
-        hrect.WORLD_BOUND,
-        function(filterUnit)
-            return hunit.getOwner(filterUnit) == whichPlayer
-        end
-    )
+    local g = hgroup.createByRect(HG_RECT.WORLD.RECT, function(filterUnit)
+        return hunit.getOwner(filterUnit) == whichPlayer
+    end)
     hgroup.forEach(g, function(enumUnit)
         cj.ShowUnit(enumUnit, false)
     end)
@@ -218,12 +215,9 @@ hplayer.clearUnit = function(whichPlayer)
     if (whichPlayer == nil) then
         return
     end
-    local g = hgroup.createByRect(
-        hrect.WORLD_BOUND,
-        function(filterUnit)
-            return hunit.getOwner(filterUnit) == whichPlayer
-        end
-    )
+    local g = hgroup.createByRect(HG_RECT.WORLD.RECT, function(filterUnit)
+        return hunit.getOwner(filterUnit) == whichPlayer
+    end)
     hgroup.clear(g, true, true)
 end
 

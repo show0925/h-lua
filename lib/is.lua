@@ -407,7 +407,7 @@ end
 ---@param y number
 ---@return boolean
 his.borderMap = function(x, y)
-    return his.borderRect(hrect.MAP_INITIAL_PLAYABLE_AREA, x, y)
+    return his.borderRect(HG_RECT.PLAYABLE.RECT, x, y)
 end
 
 --- 是否超出镜头边界
@@ -415,7 +415,7 @@ end
 ---@param y number
 ---@return boolean
 his.borderCamera = function(x, y)
-    return his.borderRect(his.MAP_CAMERA_AREA, x, y)
+    return his.borderRect(HG_RECT.CAMERA.RECT, x, y)
 end
 
 --- 物品是否已被销毁

@@ -33,19 +33,15 @@ end
 math.polarProjection = function(x, y, dist, angle)
     local tx = x + dist * math.cos(angle * bj_DEGTORAD)
     local ty = y + dist * math.sin(angle * bj_DEGTORAD)
-    local minX = cj.GetRectMinX(hrect.MAP_INITIAL_PLAYABLE_AREA)
-    local minY = cj.GetRectMinY(hrect.MAP_INITIAL_PLAYABLE_AREA)
-    local maxX = cj.GetRectMaxX(hrect.MAP_INITIAL_PLAYABLE_AREA)
-    local maxY = cj.GetRectMaxY(hrect.MAP_INITIAL_PLAYABLE_AREA)
-    if (tx < minX) then
-        tx = minX
-    elseif (tx > maxX) then
-        tx = maxX
+    if (tx < HG_RECT.PLAYABLE.MIN_X) then
+        tx = HG_RECT.PLAYABLE.MIN_X
+    elseif (tx > HG_RECT.PLAYABLE.MAX_X) then
+        tx = HG_RECT.PLAYABLE.MAX_X
     end
-    if (ty < minY) then
-        ty = minY
-    elseif (ty > maxY) then
-        ty = maxY
+    if (ty < HG_RECT.PLAYABLE.MIN_Y) then
+        ty = HG_RECT.PLAYABLE.MIN_Y
+    elseif (ty > HG_RECT.PLAYABLE.MAX_Y) then
+        ty = HG_RECT.PLAYABLE.MAX_Y
     end
     return { x = tx, y = ty }
 end
@@ -104,17 +100,6 @@ math.getDegBetweenXY = function(x1, y1, x2, y2)
     return bj_RADTODEG * cj.Atan2(y2 - y1, x2 - x1)
 end
 
---- 获取两个点间角度，如果其中一个单位为空 返回0
----@param l1 number
----@param l2 number
----@return number
-math.getDegBetweenLoc = function(l1, l2)
-    if (l1 == nil or l2 == nil) then
-        return 0
-    end
-    return math.getDegBetweenXY(cj.GetLocationX(l1), cj.GetLocationY(l1), cj.GetLocationX(l2), cj.GetLocationY(l2))
-end
-
 --- 获取两个单位间角度，如果其中一个单位为空 返回0
 ---@param u1 userdata
 ---@param u2 userdata
@@ -136,14 +121,6 @@ math.getDistanceBetweenXY = function(x1, y1, x2, y2)
     local dx = x2 - x1
     local dy = y2 - y1
     return cj.SquareRoot(dx * dx + dy * dy)
-end
-
---- 获取两个点距离
----@param l1 number
----@param l2 number
----@return number
-math.getDistanceBetweenLoc = function(l1, l2)
-    return math.getDistanceBetweenXY(cj.GetLocationX(l1), cj.GetLocationY(l1), cj.GetLocationX(l2), cj.GetLocationY(l2))
 end
 
 --- 获取两个单位距离

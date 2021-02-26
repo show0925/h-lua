@@ -1,19 +1,38 @@
----@class hrect
-hrect = {
-    WORLD_BOUND = cj.GetWorldBounds(),
-    MAP_INITIAL_PLAYABLE_AREA = cj.Rect(
-        cj.GetCameraBoundMinX() - cj.GetCameraMargin(CAMERA_MARGIN_LEFT),
-        cj.GetCameraBoundMinY() - cj.GetCameraMargin(CAMERA_MARGIN_BOTTOM),
-        cj.GetCameraBoundMaxX() + cj.GetCameraMargin(CAMERA_MARGIN_RIGHT),
-        cj.GetCameraBoundMaxY() + cj.GetCameraMargin(CAMERA_MARGIN_TOP)
-    ),
-    MAP_CAMERA_AREA = cj.Rect(
-        cj.GetCameraBoundMinX(),
-        cj.GetCameraBoundMinY(),
-        cj.GetCameraBoundMaxX(),
-        cj.GetCameraBoundMaxY()
-    )
+--- 默认常用地图定义
+HG_RECT = {
+    WORLD = {
+        RECT = cj.GetWorldBounds()
+    },
+    CAMERA = {
+        RECT = cj.Rect(
+            cj.GetCameraBoundMinX(), cj.GetCameraBoundMinY(),
+            cj.GetCameraBoundMaxX(), cj.GetCameraBoundMaxY()
+        )
+    },
+    PLAYABLE = {
+        RECT = cj.Rect(
+            cj.GetCameraBoundMinX() - cj.GetCameraMargin(CAMERA_MARGIN_LEFT),
+            cj.GetCameraBoundMinY() - cj.GetCameraMargin(CAMERA_MARGIN_BOTTOM),
+            cj.GetCameraBoundMaxX() + cj.GetCameraMargin(CAMERA_MARGIN_RIGHT),
+            cj.GetCameraBoundMaxY() + cj.GetCameraMargin(CAMERA_MARGIN_TOP)
+        ),
+    }
 }
+HG_RECT.WORLD.MIN_X = cj.GetRectMinX(HG_RECT.WORLD.RECT)
+HG_RECT.WORLD.MIN_Y = cj.GetRectMinX(HG_RECT.WORLD.RECT)
+HG_RECT.WORLD.MAX_X = cj.GetRectMinX(HG_RECT.WORLD.RECT)
+HG_RECT.WORLD.MAX_Y = cj.GetRectMinX(HG_RECT.WORLD.RECT)
+HG_RECT.CAMERA.MIN_X = cj.GetRectMinX(HG_RECT.CAMERA.RECT)
+HG_RECT.CAMERA.MIN_Y = cj.GetRectMinX(HG_RECT.CAMERA.RECT)
+HG_RECT.CAMERA.MAX_X = cj.GetRectMinX(HG_RECT.CAMERA.RECT)
+HG_RECT.CAMERA.MAX_Y = cj.GetRectMinX(HG_RECT.CAMERA.RECT)
+HG_RECT.PLAYABLE.MIN_X = cj.GetRectMinX(HG_RECT.PLAYABLE.RECT)
+HG_RECT.PLAYABLE.MIN_Y = cj.GetRectMinX(HG_RECT.PLAYABLE.RECT)
+HG_RECT.PLAYABLE.MAX_X = cj.GetRectMinX(HG_RECT.PLAYABLE.RECT)
+HG_RECT.PLAYABLE.MAX_Y = cj.GetRectMinX(HG_RECT.PLAYABLE.RECT)
+
+---@class hrect
+hrect = {}
 
 --- 创建一个设定中心（x,y）创建一个长w宽h的矩形区域
 ---@param x number
