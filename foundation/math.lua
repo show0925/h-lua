@@ -46,14 +46,16 @@ math.polarProjection = function(x, y, dist, angle)
     return { x = tx, y = ty }
 end
 
---- 四舍五入
+--- 数字四舍五入
 ---@param decimal number
+---@param n number 小数最大截断位，默认2位
 ---@return number
-math.round = function(decimal)
-    if (decimal == nil) then
-        return 0.00
+math.round = function(decimal, n)
+    n = math.floor(n or 2)
+    if (n < 1) then
+        return math.floor(decimal)
     end
-    return math.floor((decimal * 100) + 0.5) * 0.01
+    return tonumber(string.format('%.' .. n .. 'f', decimal))
 end
 
 --- 数字格式化
