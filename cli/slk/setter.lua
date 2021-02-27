@@ -11,6 +11,14 @@ local F6V_I_SYNTHESIS_TMP = {
 }
 
 local F6S = {}
+F6S.txt = function(v, key, txt, sep)
+    sep = sep or "|n"
+    if (v[key] == nil) then
+        v[key] = txt
+    else
+        v[key] = v[key] .. sep .. txt
+    end
+end
 F6S.a = {
     --- 属性系统目标文本修正
     targetLabel = function(target, actionType, actionField, isValue)
@@ -66,7 +74,8 @@ F6S.a = {
         end
         return false
     end,
-    desc = function(attr, sep, indent)
+    --- _attr文本构建
+    attr = function(attr, sep, indent)
         indent = indent or ""
         local str = {}
         local strTable = {}
@@ -231,25 +240,10 @@ F6S.a = {
         return string.implode(sep, table.merge(str, strTable))
     end,
     ubertip = {
-        common = function(v)
-            local d = {}
-            if (v._desc ~= nil and v._desc ~= "") then
-                table.insert(d, hcolor.mixed(v._desc, SLK_CONF.color.abilityDesc))
-            end
+        attr = function(v)
             if (v._attr ~= nil) then
-                table.insert(d, hcolor.mixed(F6S.a.desc(v._attr, "|n"), SLK_CONF.color.abilityAttr))
+                F6S.txt(v, "Ubertip", hcolor.mixed(F6S.a.attr(v._attr, "|n"), SLK_CONF.color.abilityAttr))
             end
-            return string.implode("|n", d)
-        end,
-        empty = function(v)
-            local d = {}
-            if (v._desc ~= nil and v._desc ~= "") then
-                table.insert(d, hcolor.mixed(v._desc, SLK_CONF.color.abilityDesc))
-            end
-            if (v._attr ~= nil) then
-                table.insert(d, hcolor.mixed(F6S.a.desc(v._attr, "|n"), SLK_CONF.color.abilityAttr))
-            end
-            return string.implode("|n", d)
         end,
         ring = function(v)
             local d = {}
@@ -265,11 +259,11 @@ F6S.a = {
                 labels = nil
             end
             if (v._ring.attr ~= nil) then
-                table.insert(d, hcolor.mixed("光环效果：|n" .. F6S.a.desc(v._ring.attr, "|n", ' - '), SLK_CONF.color.ringTarget))
+                table.insert(d, hcolor.mixed("光环效果：|n" .. F6S.a.attr(v._ring.attr, "|n", ' - '), SLK_CONF.color.ringTarget))
             end
             if (v._attr ~= nil) then
                 table.insert(d, hcolor.mixed("独占效果：", SLK_CONF.color.abilityAttr))
-                table.insert(d, hcolor.mixed(F6S.a.desc(v._attr, "|n", ' - '), SLK_CONF.color.abilityAttr))
+                table.insert(d, hcolor.mixed(F6S.a.attr(v._attr, "|n", ' - '), SLK_CONF.color.abilityAttr))
                 table.insert(d, "|n")
             end
             if (v._desc ~= nil and v._desc ~= "") then
@@ -280,78 +274,109 @@ F6S.a = {
     },
 }
 F6S.i = {
-    desc = function(_v)
-        local d = {}
-        if (_v._active ~= nil) then
-            table.insert(d, "主动：" .. _v._active)
-        end
-        if (_v._passive ~= nil) then
-            table.insert(d, "被动：" .. _v._passive)
-        end
-        if (_v._attr ~= nil) then
-            table.insert(d, F6S.a.desc(_v._attr, ";"))
-        end
-        -- 仅文本无效果，适用于例如技能书这类的物品
-        if (_v._attr_txt ~= nil) then
-            table.insert(d, F6S.a.desc(_v._attr_txt, ";"))
-        end
-        local overlie = _v._overlie or 1
-        local weight = _v._weight or 0
-        weight = tostring(math.round(weight))
-        table.insert(d, "叠加：" .. overlie .. ";重量：" .. weight .. "Kg")
-        if (_v._remarks ~= nil and _v._remarks ~= "") then
-            table.insert(d, _v._remarks)
-        end
-        return string.implode("|n", d)
-    end,
-    ubertip = function(_v)
-        local d = {}
-        if (_v._active ~= nil) then
-            table.insert(d, hcolor.mixed("主动：" .. _v._active, SLK_CONF.color.itemActive))
-            if (_v.cooldown ~= nil and _v.cooldown > 0) then
-                table.insert(d, hcolor.mixed("冷却：" .. _v.cooldown .. "秒", SLK_CONF.color.itemCoolDown))
+    description = {
+        _active = function(v)
+            if (v._active ~= nil) then
+                F6S.txt(v, "Description", "主动：" .. v._active, ';')
             end
-        end
-        if (_v._passive ~= nil) then
-            table.insert(d, hcolor.mixed("被动：" .. _v._passive, SLK_CONF.color.itemPassive))
-        end
-        if (_v._ring ~= nil) then
-            if (_v._ring.attr ~= nil and _v._ring.radius ~= nil and (type(_v._ring.target) == 'table' and #_v._ring.target > 0)) then
-                local txt = "光环：[" .. _v._ring.radius .. "px|n"
-                table.insert(d, hcolor.mixed(txt .. F6S.a.desc(_v._ring.attr, "|n", ' - '), SLK_CONF.color.ringTarget))
+        end,
+        _passive = function(v)
+            if (v._passive ~= nil) then
+                F6S.txt(v, "Description", "被动：" .. v._passive, ';')
             end
-        end
-        if (_v._attr ~= nil) then
-            table.insert(d, hcolor.mixed(F6S.a.desc(_v._attr, "|n"), SLK_CONF.color.itemAttr))
-        end
-        -- 仅文本无效果，适用于例如技能书这类的物品
-        if (_v._attr_txt ~= nil) then
-            table.insert(d, hcolor.mixed(F6S.a.desc(_v._attr_txt, "|n"), SLK_CONF.color.itemAttr))
-        end
-        -- 作为零件
-        if (F6V_I_SYNTHESIS_TMP.fragment[_v.Name] ~= nil
-            and #F6V_I_SYNTHESIS_TMP.fragment[_v.Name] > 0) then
-            table.insert(d, hcolor.mixed("可以合成：" .. string.implode(
-                '、',
-                F6V_I_SYNTHESIS_TMP.fragment[_v.Name]),
-                SLK_CONF.color.itemFragment
-            ))
-        end
-        -- 合成公式
-        if (F6V_I_SYNTHESIS_TMP.profit[_v.Name] ~= nil) then
-            table.insert(d, hcolor.mixed("需要零件：" .. F6V_I_SYNTHESIS_TMP.profit[_v.Name], SLK_CONF.color.itemProfit))
-        end
-        local overlie = _v._overlie or 1
-        table.insert(d, hcolor.mixed("叠加：" .. overlie, SLK_CONF.color.itemOverlie))
-        local weight = _v._weight or 0
-        weight = tostring(math.round(weight))
-        table.insert(d, hcolor.mixed("重量：" .. weight .. "Kg", SLK_CONF.color.itemWeight))
-        if (_v._remarks ~= nil and _v._remarks ~= "") then
-            table.insert(d, hcolor.mixed(_v._remarks, SLK_CONF.color.itemRemarks))
-        end
-        return string.implode("|n", d)
-    end
+        end,
+        _attr = function(v)
+            if (v._attr ~= nil) then
+                F6S.txt(v, "Description", F6S.a.attr(v._attr, ","), ';')
+            end
+        end,
+        _attr_txt = function(v)
+            if (v._attr_txt ~= nil) then
+                F6S.txt(v, "Description", F6S.a.attr(v._attr_txt, ","), ';')
+            end
+        end,
+        _overlie = function(v)
+            if (v._overlie ~= nil and v._overlie > 0) then
+                local o = tostring(math.floor(v._overlie))
+                F6S.txt(v, "Description", "叠加：" .. o, ';')
+            end
+        end,
+        _weight = function(v)
+            if (v._weight ~= nil) then
+                local w = tostring(math.round(v._weight))
+                F6S.txt(v, "Description", "重量：" .. w .. "Kg", ';')
+            end
+        end,
+        _remarks = function(v)
+            if (v._remarks ~= nil and v._remarks ~= "") then
+                F6S.txt(v, "Description", v._remarks, ';')
+            end
+        end,
+    },
+    ubertip = {
+        _active = function(v)
+            if (v._active ~= nil) then
+                F6S.txt(v, "Ubertip", hcolor.mixed("主动：" .. v._active, SLK_CONF.color.itemActive))
+                if (v._cooldown ~= nil and v._cooldown > 0) then
+                    F6S.txt(v, "Ubertip", hcolor.mixed("冷却：" .. v._cooldown .. "秒", SLK_CONF.color.itemCoolDown))
+                end
+            end
+        end,
+        _passive = function(v)
+            if (v._passive ~= nil) then
+                F6S.txt(v, "Ubertip", hcolor.mixed("被动：" .. v._passive, SLK_CONF.color.itemPassive))
+            end
+        end,
+        _ring = function(v)
+            if (v._ring ~= nil) then
+                if (v._ring.attr ~= nil and v._ring.radius ~= nil and (type(v._ring.target) == 'table' and #v._ring.target > 0)) then
+                    local txt = "光环：[" .. v._ring.radius .. "px|n"
+                    F6S.txt(v, "Ubertip", hcolor.mixed(txt .. F6S.a.attr(v._ring.attr, "|n", ' - '), SLK_CONF.color.ringTarget))
+                end
+            end
+        end,
+        _attr = function(v)
+            if (v._attr ~= nil) then
+                F6S.txt(v, "Ubertip", hcolor.mixed(F6S.a.attr(v._attr, "|n"), SLK_CONF.color.itemAttr))
+            end
+        end,
+        _attr_txt = function(v)
+            if (v._attr_txt ~= nil) then
+                F6S.txt(v, "Ubertip", hcolor.mixed(F6S.a.attr(v._attr_txt, "|n"), SLK_CONF.color.itemAttr))
+            end
+        end,
+        _fragment = function(v)
+            if (F6V_I_SYNTHESIS_TMP.fragment[v.Name] ~= nil and #F6V_I_SYNTHESIS_TMP.fragment[v.Name] > 0) then
+                local txt = "可以合成：" .. string.implode('、', F6V_I_SYNTHESIS_TMP.fragment[v.Name])
+                F6S.txt(v, "Ubertip", hcolor.mixed(txt, SLK_CONF.color.itemFragment))
+            end
+        end,
+        _profit = function(v)
+            if (F6V_I_SYNTHESIS_TMP.profit[v.Name] ~= nil) then
+                local txt = "需要零件：" .. F6V_I_SYNTHESIS_TMP.profit[v.Name]
+                F6S.txt(v, "Ubertip", hcolor.mixed(txt, SLK_CONF.color.itemProfit))
+            end
+        end,
+        _overlie = function(v)
+            if (v._overlie ~= nil and v._overlie > 0) then
+                local o = tostring(math.floor(v._overlie))
+                F6S.txt(v, "Ubertip", hcolor.mixed("叠加：" .. o, SLK_CONF.color.itemOverlie))
+            end
+        end,
+        _weight = function(v)
+            if (v._weight ~= nil) then
+                local w = tostring(math.round(v._weight))
+                F6S.txt(v, "Ubertip", hcolor.mixed("重量：" .. w .. "Kg", SLK_CONF.color.itemWeight))
+            end
+        end,
+        _remarks = function(v)
+            if (v._remarks ~= nil and v._remarks ~= "") then
+                F6S.txt(v, "Ubertip", hcolor.mixed(v._remarks, SLK_CONF.color.itemRemarks))
+            end
+        end,
+    },
 }
+F6S.u = {}
 
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
@@ -411,15 +436,22 @@ end
 
 F6V_A = function(_v)
     _v._class = "ability"
+    _v._type = "common"
     if (_v._parent == nil) then
         _v._parent = "ANcl"
     end
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名技能")
     end
-    if (_v.Ubertip == nil) then
-        _v.Ubertip = F6S.a.ubertip.common(_v)
+    if (_v.Hotkey ~= nil) then
+        _v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos1 or 0
+        _v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos2 or 0
+        _v.Tip = _v.Tip or (_v.Name .. "[" .. hcolor.mixed(_v.Hotkey, SLK_CONF.color.hotKey) .. "]")
+        _v.Name = _v.Name .. _v.Hotkey
+    else
+        _v.Tip = _v.Tip or (_v.Name)
     end
+    F6S.a.ubertip.attr(_v)
     return _v
 end
 
@@ -429,17 +461,6 @@ F6V_A_E = function(_v)
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名空被动")
     end
-    if (_v.Hotkey ~= nil) then
-        _v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos1 or 0
-        _v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos2 or 0
-        _v.Tip = _v.Name .. "[" .. hcolor.mixed(_v.Hotkey, SLK_CONF.color.hotKey) .. "]"
-        _v.Name = _v.Name .. _v.Hotkey
-    else
-        _v.Tip = _v.Name
-    end
-    if (_v.Ubertip == nil) then
-        _v.Ubertip = F6S.a.ubertip.empty(_v)
-    end
     return F6V_A(_v)
 end
 
@@ -448,17 +469,6 @@ F6V_A_R = function(_v)
     _v._type = "ring"
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名空光环")
-    end
-    if (_v.Hotkey ~= nil) then
-        _v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos1 or 0
-        _v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos2 or 0
-        _v.Tip = _v.Name .. "[" .. hcolor.mixed(_v.Hotkey, SLK_CONF.color.hotKey) .. "]"
-        _v.Name = _v.Name .. _v.Hotkey
-    else
-        _v.Tip = _v.Name
-    end
-    if (_v.Ubertip == nil) then
-        _v.Ubertip = F6S.a.ubertip.ring(_v)
     end
     if (_v._ring ~= nil) then
         _v._ring.effect = _v._ring.effect or nil
@@ -482,6 +492,7 @@ end
 
 F6V_U = function(_v)
     _v._class = "unit"
+    _v._type = "common"
     if (_v._parent == nil) then
         _v._parent = "hpea"
     end
@@ -514,44 +525,42 @@ F6V_I_CD = function(_v)
         CasterArt = _v.CasterArt or "",
         Art = "",
         item = 1,
-        Cast1 = _v._cast or 0,
-        Cost1 = _v._cost or 0,
-        Cool1 = _v._cooldown,
         Requires = "",
         Hotkey = "",
-        Buttonpos1 = "0",
-        Buttonpos2 = "0",
+        Buttonpos1 = 0,
+        Buttonpos2 = 0,
         race = "other",
+        Cast = { _v._cast or 0 },
+        Cost = { _v._cost or 0 },
+        Cool = { _v._cooldown },
     }
     if (_v._cooldownTarget == CONST_ABILITY_TARGET.location.value) then
         -- 对点（模版：照明弹）
         ad._parent = "Afla"
-        ad.DataA1 = 0
-        ad.EfctID1 = ""
-        ad.Dur1 = 0.01
-        ad.HeroDur1 = 0.01
-        ad.Rng1 = _v.Rng1 or 600
-        ad.Area1 = 0
-        ad.DataA1 = 0
-        ad.DataB1 = 0
+        ad.DataA = { 0 }
+        ad.EfctID = { "" }
+        ad.Dur = { 0.01 }
+        ad.HeroDur = { 0.01 }
+        ad.Rng = _v.Rng or { 600 }
+        ad.Area = { 0 }
+        ad.DataA = { 0 }
+        ad.DataB = { 0 }
         local av = hslk_ability(ad)
-        print(av)
         cdID = av._id
     elseif (_v.cooldownTarget == CONST_ABILITY_TARGET.range.value) then
         -- 对点范围（模版：暴风雪）
         ad._parent = "ACbz"
-        ad.BuffID1 = ""
-        ad.EfctID1 = ""
-        ad.Rng1 = _v.Rng1 or 300
-        ad.Area1 = _v.Area1 or 300
-        ad.DataA1 = 0
-        ad.DataB1 = 0
-        ad.DataC1 = 0
-        ad.DataD1 = 0
-        ad.DataE1 = 0
-        ad.DataF1 = 0
+        ad.BuffID = { "" }
+        ad.EfctID = { "" }
+        ad.Rng = _v.Rng or { 300 }
+        ad.Area = _v.Area or { 300 }
+        ad.DataA = { 0 }
+        ad.DataB = { 0 }
+        ad.DataC = { 0 }
+        ad.DataD = { 0 }
+        ad.DataE = { 0 }
+        ad.DataF = { 0 }
         local av = hslk_ability(ad)
-        print(av)
         cdID = av._id
     elseif (_v._cooldownTarget == CONST_ABILITY_TARGET.unit.value) then
         -- 对单位（模版：霹雳闪电）
@@ -559,21 +568,19 @@ F6V_I_CD = function(_v)
         ad.Missileart = _v.Missileart or "Abilities\\Weapons\\FireBallMissile\\FireBallMissile.mdl"
         ad.Missilespeed = _v.Missilespeed or 1000
         ad.Missilearc = _v.Missilearc or 0
-        ad.targs1 = _v.targs1 or "air,ground,organic,enemy,neutral"
-        ad.Rng1 = _v.Rng1 or 800
-        ad.Area1 = _v.Area1 or 0
-        ad.DataA1 = 0
-        ad.Dur1 = 0.01
-        ad.HeroDur1 = 0.01
+        ad.targs = _v.targs or { "air,ground,organic,enemy,neutral" }
+        ad.Rng = _v.Rng or { 800 }
+        ad.Area = _v.Area or { 0 }
+        ad.DataA = { 0 }
+        ad.Dur = { 0.01 }
+        ad.HeroDur = { 0.01 }
         local av = hslk_ability(ad)
-        print(av)
         cdID = av._id
     else
         -- 立刻（模版：金箱子）
         ad._parent = "AIgo"
-        ad.DataA1 = 0
+        ad.DataA = { 0 }
         local av = hslk_ability(ad)
-        print(av)
         cdID = av._id
     end
     return cdID
@@ -595,6 +602,7 @@ end
 
 F6V_I = function(_v)
     _v._class = "item"
+    _v._type = "common"
     local cd = F6V_I_CD(_v)
     if (cd ~= "AIat") then
         _v.abilList = cd
@@ -631,15 +639,9 @@ F6V_I = function(_v)
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名物品")
     end
-    if (_v.uses == nil) then
-        _v.uses = 1
-    end
-    if (_v._overlie == nil or _v._overlie < _v.uses) then
-        _v._overlie = _v.uses
-    end
     -- 处理 _shadow
     if (type(_v._shadow) ~= 'boolean') then
-        _v._shadow = (SLK_CONF.autoShadowItem == true and _v.powerup == 0)
+        _v._shadow = (SLK_CONF.autoShadow == true and _v.powerup == 0)
     end
     -- 处理 _ring光环
     if (_v._ring ~= nil) then
@@ -658,11 +660,28 @@ F6V_I = function(_v)
         end
         _v._ring.target = target
     end
-    if (_v.Description == nil) then
-        _v.Description = F6S.i.desc(_v)
+    F6S.i.description._active(_v)
+    F6S.i.description._passive(_v)
+    F6S.i.description._attr(_v)
+    F6S.i.description._attr_txt(_v)
+    F6S.i.description._overlie(_v)
+    F6S.i.description._weight(_v)
+    F6S.i.description._remarks(_v)
+    F6S.i.ubertip._active(_v)
+    F6S.i.ubertip._passive(_v)
+    F6S.i.ubertip._ring(_v)
+    F6S.i.ubertip._attr(_v)
+    F6S.i.ubertip._attr_txt(_v)
+    F6S.i.ubertip._fragment(_v)
+    F6S.i.ubertip._profit(_v)
+    F6S.i.ubertip._overlie(_v)
+    F6S.i.ubertip._weight(_v)
+    F6S.i.ubertip._remarks(_v)
+    if (_v.uses == nil) then
+        _v.uses = 1
     end
-    if (_v.Ubertip == nil) then
-        _v.Ubertip = F6S.i.ubertip(_v)
+    if (_v._overlie == nil or _v._overlie < _v.uses) then
+        _v._overlie = _v.uses
     end
     if (_v.goldcost == nil) then
         _v.goldcost = 1000000
@@ -690,6 +709,7 @@ end
 
 F6V_UP = function(_v)
     _v._class = "upgrade"
+    _v._type = "common"
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名科技")
     end

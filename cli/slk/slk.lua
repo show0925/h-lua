@@ -1,6 +1,6 @@
 --- 默认配置项
 SLK_CONF = {
-    autoShadowItem = false, -- 是否自动启用影子物品
+    autoShadow = false, -- 是否自动启用影子物品
     courierSkill = {
         -- 信使技能-名称、热键、图标位置、冷却
         blink = {
@@ -36,8 +36,8 @@ SLK_CONF = {
         itemOverlie = "ff59ff", -- 物品叠加
         itemWeight = "ee82ee", -- 物品重量
         itemRemarks = "969696", -- 物品备注
-        itemProfit = "ffd88c", -- 物品合成品
         itemFragment = hcolor.orange, -- 物品零部件
+        itemProfit = "ffd88c", -- 物品合成品
         abilityDesc = "fae470", -- 技能描述
         abilityCoolDown = "ccffff", -- 技能冷却时间
         abilityAttr = "b0f26e", -- 技能属性
@@ -93,7 +93,7 @@ hslk_item_synthesis = function(formula)
     F6V_I_SYNTHESIS(formula)
 end
 
----@param _v{abiList,Requires,Requiresamount,Name,Description,Tip,Ubertip,Hotkey,Art,scale,file,Buttonpos1,Buttonpos2,selSize,colorR,colorG,colorB,armor,Level,oldLevel,class,goldcost,lumbercost,HP,stockStart,stockRegen,stockMax,prio,morph,drop,powerup,sellable,pawnable,droppable,pickRandom,uses,perishable,usable,_id,_class,_type,_parent,_overlie,_weight,_active,_passive,_attr,_attr_txt,_ring,_cooldown,_cooldownTarget,_shadow}
+---@param _v{abiList,Requires,Requiresamount,Name,Description,Tip,Ubertip,Hotkey,Art,scale,file,Buttonpos1,Buttonpos2,selSize,colorR,colorG,colorB,armor,Level,oldLevel,class,goldcost,lumbercost,HP,stockStart,stockRegen,stockMax,prio,morph,drop,powerup,sellable,pawnable,droppable,pickRandom,uses,perishable,usable,_id,_class,_type,_parent,_overlie,_weight,_active,_passive,_attr,_attr_txt,_ring,_remarks,_cooldown,_cooldownTarget,_shadow}
 hslk_item = function(_v)
     _v = F6V_I(_v)
     _v._id = SLK_ID(_v._class, _v._id)

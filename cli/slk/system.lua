@@ -1,6 +1,7 @@
 --- #单位 token
 hslk_unit({
     _parent = "ogru",
+    _type = "system",
     EditorSuffix = "#h-lua",
     Name = "H_LUA_UNIT_TOKEN",
     special = 1,
@@ -27,12 +28,13 @@ hslk_unit({
 --- #冲击单位 token
 hslk_unit({
     _parent = "ogru",
+    _type = "system",
     EditorSuffix = "#h-lua",
     Name = "H_LUA_UNIT_TOKEN_LEAP",
     special = 1,
     abilList = "Avul,Aloc",
     upgrade = "",
-    file = "h-lua\\interface_token.mdx",
+    file = "war3mapImported\\interface_token.mdx",
     unitShadow = "",
     collision = 0,
     Art = "",
@@ -56,6 +58,7 @@ for during = 1, 10, 1 do
     local swDur = math.round(during * 0.05)
     hslk_ability({
         _parent = "AHtb",
+        _type = "system",
         EditorSuffix = "#h-lua",
         Name = "H_LUA_ABILITY_BREAK_" .. swDur,
         Tip = "眩晕" .. swDur .. "秒",
@@ -66,280 +69,288 @@ for during = 1, 10, 1 do
         Animnames = "",
         hero = 0,
         race = "other",
-        levels = 2,
-        DataA = { 0, 1 },
-        Cool = { 10, 10 },
-        Dur = { swDur, swDur },
-        HeroDur = { swDur, swDur },
-        Cost = { 0, 0 },
-        Rng = { 9999, 9999 },
-        targs = {
-            "neutral,vulnerable,ground,enemies,invulnerable,organic,debris,air,friend,self",
-            "neutral,vulnerable,ground,enemies,invulnerable,organic,debris",
-        },
+        levels = 1,
+        DataA = { 0 },
+        Cool = { 10 },
+        Dur = { swDur },
+        HeroDur = { swDur },
+        Cost = { 0 },
+        Rng = { 9999 },
+        targs = { "neutral,vulnerable,ground,enemies,invulnerable,organic,debris,air,friend,self" },
     })
 end
 
----- #无限眩晕
---hslk_ability({
---    _parent = "AHtb",
---    EditorSuffix = "#h-lua",
---    Name = "H_LUA_ABILITY_SWIM_UN_LIMIT",
---    DataA1 = 0.00,
---    Tip = "无限眩晕",
---    Ubertip = "无限眩晕",
---    Art = "",
---    Missileart = "",
---    Missilespeed = 999999,
---    Missilearc = 0,
---    Animnames = "",
---    hero = 0,
---    race = "other",
---    levels = 1,
---    Cool1 = 10,
---    targs1 = "neutral,vulnerable,ground,enemies,invulnerable,organic,debris,air,friend,self",
---    Dur1 = 0,
---    HeroDur1 = 0,
---    Cost1 = 0,
---    Rng1 = 9999,
---})
---
----- #隐身
---hslk_ability({
---    _parent = "Apiv",
---    EditorSuffix = "#h-lua",
---    Name = "H_LUA_ABILITY_INVISIBLE",
---    DataA1 = 0.00,
---    Tip = "隐身",
---    Ubertip = "隐身",
---    Art = "",
---    hero = 0,
---    race = "other",
---    Dur1 = 0,
---    HeroDur1 = 0,
---})
---
---H_LUA_ABILITY_CD0 = hslk_ability({
---    _parent = "AIgo",
---    Name = "H_LUA_ABILITY_ICD0",
---    Tip = "H_LUA_ABILITY_ICD0",
---    Ubertip = "H_LUA_ABILITY_ICD0",
---    Effectsound = "",
---    Art = "",
---    TargetArt = "",
---    Targetattach = "",
---    DataA1 = 0,
---    CasterArt = "",
---    Cool = 0,
---})._id
---
------ #选择英雄技能
---H_LUA_ABILITY_SELECT_HERO = hslk_ability({
---    _parent = "Aneu",
---    EditorSuffix = "#h-lua",
---    Name = "H_LUA_ABILITY_SELECT_HERO",
---    DataA1 = 1000.00,
---    DataB1 = 4,
---    DataC1 = 0,
---    DataD1 = 0,
---    Rng1 = 900.00,
---})._id
---
------ #警示圈 直径64px
---hslk_unit({
---    _parent = "ogru",
---    EditorSuffix = "#h-lua",
---    Name = "H_LUA_TEXTURE_ALERT_CIRCLE_TOKEN",
---    special = 1,
---    abilList = "Avul,Aloc",
---    upgrade = "",
---    file = "UI\\Feedback\\Target\\Target.mdl",
---    unitShadow = "",
---    collision = 0,
---    Art = "",
---    modelScale = 0.90,
---    movetp = "",
---    moveHeight = 0,
---    moveFloor = 0.00,
---    spd = 0,
---    turnRate = 3.00,
---    weapsOn = 0,
---    race = "other",
---    fused = 0,
---    sight = 250,
---    nsight = 250,
---    Builds = "",
---    upgrades = "",
---    red = 255,
---    blue = 0,
---    green = 0,
---})
---
------ #英雄视野 view
---hslk_unit({
---    _parent = "ogru",
---    EditorSuffix = "#h-lua",
---    Name = "H_LUA_HERO_VIEW_TOKEN",
---    special = 1,
---    abilList = "Avul,AInv",
---    upgrade = "",
---    collision = 0.00,
---    file = ".mdl",
---    unitShadow = "",
---    Art = "",
---    movetp = "fly",
---    moveHeight = 25.00,
---    spd = 522,
---    turnRate = 3.00,
---    moveFloor = 25.00,
---    weapsOn = 0,
---    race = "other",
---    fused = 0,
---    sight = 1250,
---    nsight = 1250,
---    Builds = "",
---    upgrades = "",
---})
---
------ #英雄酒馆演示 tavern
---hslk_unit({
---    _parent = "ntav",
---    EditorSuffix = "#h-lua",
---    Name = "H_LUA_HERO_TAVERN_TOKEN",
---    abilList = "Avul,Asud," .. H_LUA_ABILITY_SELECT_HERO,
---    Sellunits = "",
---    pathTex = "",
---    collision = "",
---    modelScale = 0.80,
---    scale = 2.80,
---    uberSplat = "",
---    teamColor = 12,
---})
---
------ #英雄死亡标志
---hslk_unit({
---    _parent = "nban",
---    Name = "H_LUA_HERO_DEATH_TOKEN",
---    tilesets = "*",
---    special = 1,
---    hostilePal = 0,
---    abilList = "Avul,Alnv,Aloc",
---    upgrade = "",
---    collision = 0.00,
---    unitSound = 0.00,
---    modelScale = 0.75,
---    scale = 0.75,
---    file = "h-lua\\eff_ClockRune.mdl",
---    red = 255,
---    blue = 255,
---    green = 255,
---    maxPitch = 0.00,
---    maxRoll = 0.00,
---    impactZ = 0.00,
---    unitShadow = "",
---    Art = "",
---    movetp = "fly",
---    spd = 0,
---    turnRate = 3.00,
---    moveFloor = 25.00,
---    weapsOn = 0,
---    race = "other",
---    fused = 0,
---    sight = 250,
---    nsight = 250,
---    Builds = "",
---    upgrades = "",
---})
---
------ #JAPI_DELAY
---hslk_ability({
---    _parent = "Aamk",
---    EditorSuffix = "#h-lua",
---    Name = "H_LUA_JAPI_DELAY",
---    Art = "",
---    hero = 0,
---    race = "other",
---    item = 1,
---    levels = 1,
---    DataA1 = 0,
---    DataB1 = 0,
---    DataC1 = 0,
---    DataD1 = 1,
---})
---
------ #瞬逝物（地上自动捡拾物）
---local fleeting = {
---    { Name = "GOLD", _n = "金币", file = "Objects\\InventoryItems\\PotofGold\\PotofGold.mdl", modelScale = 1.00, moveHeight = -30 },
---    { Name = "LUMBER", _n = "木材", file = "Objects\\InventoryItems\\BundleofLumber\\BundleofLumber.mdl", modelScale = 1.00, moveHeight = -30 },
---    { Name = "BOOK_YELLOW", _n = "黄色书", file = "Objects\\InventoryItems\\tomeBrown\\tomeBrown.mdl", modelScale = 1.00, moveHeight = -20 },
---    { Name = "BOOK_GREEN", _n = "绿色书", file = "Objects\\InventoryItems\\tomeGreen\\tomeGreen.mdl", modelScale = 1.00, moveHeight = -20 },
---    { Name = "BOOK_PURPLE", _n = "紫色书", file = "Objects\\InventoryItems\\tome\\tome.mdl", modelScale = 1.00, moveHeight = -20 },
---    { Name = "BOOK_BLUE", _n = "蓝色书", file = "Objects\\InventoryItems\\tomeBlue\\tomeBlue.mdl", modelScale = 1.00, moveHeight = -20 },
---    { Name = "BOOK_RED", _n = "红色书", file = "Objects\\InventoryItems\\tomeRed\\tomeRed.mdl", modelScale = 1.00, moveHeight = -20 },
---    { Name = "RUNE", _n = "神符", file = "Objects\\InventoryItems\\runicobject\\runicobject.mdl", modelScale = 0.80, moveHeight = -10 },
---    { Name = "RELIEF", _n = "浮雕", file = "Objects\\InventoryItems\\Glyph\\Glyph.mdl", modelScale = 0.60, moveHeight = 0 },
---    { Name = "EGG", _n = "蛋", file = "Objects\\InventoryItems\\ThunderLizardEgg\\ThunderLizardEgg.mdl", modelScale = 1.30, moveHeight = 20 },
---    { Name = "FRAGMENT", _n = "碎片", file = "Objects\\InventoryItems\\CrystalShard\\CrystalShard.mdl", modelScale = 1.00, moveHeight = -20 },
---    { Name = "QUESTION", _n = "问号", file = "Objects\\InventoryItems\\QuestionMark\\QuestionMark.mdl", modelScale = 0.60, moveHeight = 0 },
---    { Name = "GRASS", _n = "荧光草", file = "Objects\\InventoryItems\\Shimmerweed\\Shimmerweed.mdl", modelScale = 0.80, moveHeight = 0 },
---    { Name = "DOTA2_GOLD", _n = "Dota2赏金符", file = "h-lua\\item_Dota2.Runes.Bounty.mdl", modelScale = 0.80, moveHeight = -10 },
---    { Name = "DOTA2_DAMAGE", _n = "Dota2伤害符", file = "h-lua\\item_Dota2.Runes.DoubleDamage.mdl", modelScale = 0.80, moveHeight = -10 },
---    { Name = "DOTA2_CURE", _n = "Dota2恢复符", file = "h-lua\\item_Dota2.Runes.Regeneration.mdl", modelScale = 0.80, moveHeight = -10 },
---    { Name = "DOTA2_SPEED", _n = "Dota2极速符", file = "h-lua\\item_Dota2.Runes.Haste.mdl", modelScale = 0.80, moveHeight = -10 },
---    { Name = "DOTA2_VISION", _n = "Dota2幻象符", file = "h-lua\\item_Dota2.Runes.Illusion.mdl", modelScale = 0.80, moveHeight = -10 },
---    { Name = "DOTA2_INVISIBLE", _n = "Dota2隐身符", file = "h-lua\\item_Dota2.Runes.Invisibility.mdl", modelScale = 0.80, moveHeight = -10 }
---}
---for _, v in ipairs(fleeting) do
---    hslk_unit({
---        _parent = "ogru",
---        EditorSuffix = "#h-lua",
---        Name = "H_LUA_ITEM_FLEETING_" .. v.Name,
---        special = 1,
---        abilList = "Avul,Aloc",
---        upgrade = "",
---        collision = 0.00,
---        modelScale = v.modelScale,
---        file = v.file,
---        unitShadow = "",
---        Art = "",
---        movetp = "",
---        moveHeight = v.moveHeight,
---        spd = 0,
---        turnRate = 0.1,
---        weapsOn = 0,
---        race = "other",
---        fused = 0,
---        sight = 0,
---        nsight = 0,
---    })
---end
---
------ #摇摆树 token
---hslk_unit({
---    _parent = "ogru",
---    EditorSuffix = "#h-lua",
---    Name = "H_LUA_ENV_TREE",
---    special = 1,
---    abilList = "Avul,Aloc",
---    upgrade = "",
---    file = "h-lua\\deco_NewBirch.mdl",
---    unitShadow = "ShadowFlyer",
---    collision = 0,
---    Art = "ReplaceableTextures\\WorldEditUI\\Doodad-Destructible.blp",
---    movetp = "",
---    moveHeight = 0,
---    spd = 0,
---    turnRate = 0,
---    moveFloor = 0,
---    weapsOn = 0,
---    race = "other",
---    fused = 0,
---    sight = 0,
---    nsight = 0,
---    Builds = "",
---    upgrades = "",
---})
---
+-- #无限眩晕
+hslk_ability({
+    _parent = "AHtb",
+    _type = "system",
+    EditorSuffix = "#h-lua",
+    Name = "H_LUA_ABILITY_SWIM_UN_LIMIT",
+    Tip = "无限眩晕",
+    Ubertip = "无限眩晕",
+    Art = "",
+    Missileart = "",
+    Missilespeed = 999999,
+    Missilearc = 0,
+    Animnames = "",
+    hero = 0,
+    race = "other",
+    levels = 1,
+    DataA = { 0 },
+    Cool = { 10 },
+    Dur = { 0 },
+    HeroDur = { 0 },
+    Cost = { 0 },
+    Rng = { 9999 },
+    targs = { "neutral,vulnerable,ground,enemies,invulnerable,organic,debris,air,friend,self" },
+})
+
+-- #隐身
+hslk_ability({
+    _parent = "Apiv",
+    _type = "system",
+    EditorSuffix = "#h-lua",
+    Name = "H_LUA_ABILITY_INVISIBLE",
+    Tip = "隐身",
+    Ubertip = "隐身",
+    Art = "",
+    hero = 0,
+    race = "other",
+    DataA = { 0 },
+    Dur = { 0 },
+    HeroDur = { 0 },
+})
+
+H_LUA_ABILITY_CD0 = hslk_ability({
+    _parent = "AIgo",
+    _type = "system",
+    Name = "H_LUA_ABILITY_ICD0",
+    Tip = "H_LUA_ABILITY_ICD0",
+    Ubertip = "H_LUA_ABILITY_ICD0",
+    Effectsound = "",
+    Art = "",
+    TargetArt = "",
+    Targetattach = "",
+    CasterArt = "",
+    DataA = { 0 },
+    Cool = { 0 },
+})._id
+
+--- #选择英雄技能
+H_LUA_ABILITY_SELECT_HERO = hslk_ability({
+    _parent = "Aneu",
+    _type = "system",
+    EditorSuffix = "#h-lua",
+    Name = "H_LUA_ABILITY_SELECT_HERO",
+    DataA = { 1000.00 },
+    DataB = { 4 },
+    DataC = { 0 },
+    DataD = { 0 },
+    Rng = { 900.00 },
+})._id
+
+--- #警示圈 直径64px
+hslk_unit({
+    _parent = "ogru",
+    _type = "system",
+    EditorSuffix = "#h-lua",
+    Name = "H_LUA_TEXTURE_ALERT_CIRCLE_TOKEN",
+    special = 1,
+    abilList = "Avul,Aloc",
+    upgrade = "",
+    file = "UI\\Feedback\\Target\\Target.mdl",
+    unitShadow = "",
+    collision = 0,
+    Art = "",
+    modelScale = 0.90,
+    movetp = "",
+    moveHeight = 0,
+    moveFloor = 0.00,
+    spd = 0,
+    turnRate = 3.00,
+    weapsOn = 0,
+    race = "other",
+    fused = 0,
+    sight = 250,
+    nsight = 250,
+    Builds = "",
+    upgrades = "",
+    red = 255,
+    blue = 0,
+    green = 0,
+})
+
+--- #英雄视野 view
+hslk_unit({
+    _parent = "ogru",
+    _type = "system",
+    EditorSuffix = "#h-lua",
+    Name = "H_LUA_HERO_VIEW_TOKEN",
+    special = 1,
+    abilList = "Avul,AInv",
+    upgrade = "",
+    collision = 0.00,
+    file = ".mdl",
+    unitShadow = "",
+    Art = "",
+    movetp = "fly",
+    moveHeight = 25.00,
+    spd = 522,
+    turnRate = 3.00,
+    moveFloor = 25.00,
+    weapsOn = 0,
+    race = "other",
+    fused = 0,
+    sight = 1250,
+    nsight = 1250,
+    Builds = "",
+    upgrades = "",
+})
+
+--- #英雄酒馆演示 tavern
+hslk_unit({
+    _parent = "ntav",
+    _type = "system",
+    EditorSuffix = "#h-lua",
+    Name = "H_LUA_HERO_TAVERN_TOKEN",
+    abilList = "Avul,Asud," .. H_LUA_ABILITY_SELECT_HERO,
+    Sellunits = "",
+    pathTex = "",
+    collision = "",
+    modelScale = 0.80,
+    scale = 2.80,
+    uberSplat = "",
+    teamColor = 12,
+})
+
+--- #英雄死亡标志
+hslk_unit({
+    _parent = "nban",
+    _type = "system",
+    Name = "H_LUA_HERO_DEATH_TOKEN",
+    tilesets = "*",
+    special = 1,
+    hostilePal = 0,
+    abilList = "Avul,Alnv,Aloc",
+    upgrade = "",
+    collision = 0.00,
+    unitSound = 0.00,
+    modelScale = 0.75,
+    scale = 0.75,
+    file = "war3mapImported\\eff_ClockRune.mdl",
+    red = 255,
+    blue = 255,
+    green = 255,
+    maxPitch = 0.00,
+    maxRoll = 0.00,
+    impactZ = 0.00,
+    unitShadow = "",
+    Art = "",
+    movetp = "fly",
+    spd = 0,
+    turnRate = 3.00,
+    moveFloor = 25.00,
+    weapsOn = 0,
+    race = "other",
+    fused = 0,
+    sight = 250,
+    nsight = 250,
+    Builds = "",
+    upgrades = "",
+})
+
+--- #JAPI_DELAY
+hslk_ability({
+    _parent = "Aamk",
+    _type = "system",
+    EditorSuffix = "#h-lua",
+    Name = "H_LUA_JAPI_DELAY",
+    Art = "",
+    hero = 0,
+    race = "other",
+    item = 1,
+    levels = 1,
+    DataA = { 0 },
+    DataB = { 0 },
+    DataC = { 0 },
+    DataD = { 1 },
+})
+
+--- #瞬逝物（地上自动捡拾物）
+local fleeting = {
+    { Name = "GOLD", _n = "金币", file = "Objects\\InventoryItems\\PotofGold\\PotofGold.mdl", modelScale = 1.00, moveHeight = -30 },
+    { Name = "LUMBER", _n = "木材", file = "Objects\\InventoryItems\\BundleofLumber\\BundleofLumber.mdl", modelScale = 1.00, moveHeight = -30 },
+    { Name = "BOOK_YELLOW", _n = "黄色书", file = "Objects\\InventoryItems\\tomeBrown\\tomeBrown.mdl", modelScale = 1.00, moveHeight = -20 },
+    { Name = "BOOK_GREEN", _n = "绿色书", file = "Objects\\InventoryItems\\tomeGreen\\tomeGreen.mdl", modelScale = 1.00, moveHeight = -20 },
+    { Name = "BOOK_PURPLE", _n = "紫色书", file = "Objects\\InventoryItems\\tome\\tome.mdl", modelScale = 1.00, moveHeight = -20 },
+    { Name = "BOOK_BLUE", _n = "蓝色书", file = "Objects\\InventoryItems\\tomeBlue\\tomeBlue.mdl", modelScale = 1.00, moveHeight = -20 },
+    { Name = "BOOK_RED", _n = "红色书", file = "Objects\\InventoryItems\\tomeRed\\tomeRed.mdl", modelScale = 1.00, moveHeight = -20 },
+    { Name = "RUNE", _n = "神符", file = "Objects\\InventoryItems\\runicobject\\runicobject.mdl", modelScale = 0.80, moveHeight = -10 },
+    { Name = "RELIEF", _n = "浮雕", file = "Objects\\InventoryItems\\Glyph\\Glyph.mdl", modelScale = 0.60, moveHeight = 0 },
+    { Name = "EGG", _n = "蛋", file = "Objects\\InventoryItems\\ThunderLizardEgg\\ThunderLizardEgg.mdl", modelScale = 1.30, moveHeight = 20 },
+    { Name = "FRAGMENT", _n = "碎片", file = "Objects\\InventoryItems\\CrystalShard\\CrystalShard.mdl", modelScale = 1.00, moveHeight = -20 },
+    { Name = "QUESTION", _n = "问号", file = "Objects\\InventoryItems\\QuestionMark\\QuestionMark.mdl", modelScale = 0.60, moveHeight = 0 },
+    { Name = "GRASS", _n = "荧光草", file = "Objects\\InventoryItems\\Shimmerweed\\Shimmerweed.mdl", modelScale = 0.80, moveHeight = 0 },
+    { Name = "DOTA2_GOLD", _n = "Dota2赏金符", file = "war3mapImported\\item_Dota2.Runes.Bounty.mdl", modelScale = 0.80, moveHeight = -10 },
+    { Name = "DOTA2_DAMAGE", _n = "Dota2伤害符", file = "war3mapImported\\item_Dota2.Runes.DoubleDamage.mdl", modelScale = 0.80, moveHeight = -10 },
+    { Name = "DOTA2_CURE", _n = "Dota2恢复符", file = "war3mapImported\\item_Dota2.Runes.Regeneration.mdl", modelScale = 0.80, moveHeight = -10 },
+    { Name = "DOTA2_SPEED", _n = "Dota2极速符", file = "war3mapImported\\item_Dota2.Runes.Haste.mdl", modelScale = 0.80, moveHeight = -10 },
+    { Name = "DOTA2_VISION", _n = "Dota2幻象符", file = "war3mapImported\\item_Dota2.Runes.Illusion.mdl", modelScale = 0.80, moveHeight = -10 },
+    { Name = "DOTA2_INVISIBLE", _n = "Dota2隐身符", file = "war3mapImported\\item_Dota2.Runes.Invisibility.mdl", modelScale = 0.80, moveHeight = -10 }
+}
+for _, v in ipairs(fleeting) do
+    hslk_unit({
+        _parent = "ogru",
+        _type = "system",
+        EditorSuffix = "#h-lua",
+        Name = "H_LUA_ITEM_FLEETING_" .. v.Name,
+        special = 1,
+        abilList = "Avul,Aloc",
+        upgrade = "",
+        collision = 0.00,
+        modelScale = v.modelScale,
+        file = v.file,
+        unitShadow = "",
+        Art = "",
+        movetp = "",
+        moveHeight = v.moveHeight,
+        spd = 0,
+        turnRate = 0.1,
+        weapsOn = 0,
+        race = "other",
+        fused = 0,
+        sight = 0,
+        nsight = 0,
+    })
+end
+
+--- #摇摆树 token
+hslk_unit({
+    _parent = "ogru",
+    _type = "system",
+    EditorSuffix = "#h-lua",
+    Name = "H_LUA_ENV_TREE",
+    special = 1,
+    abilList = "Avul,Aloc",
+    upgrade = "",
+    file = "war3mapImported\\deco_NewBirch.mdl",
+    unitShadow = "ShadowFlyer",
+    collision = 0,
+    Art = "ReplaceableTextures\\WorldEditUI\\Doodad-Destructible.blp",
+    movetp = "",
+    moveHeight = 0,
+    spd = 0,
+    turnRate = 0,
+    moveFloor = 0,
+    weapsOn = 0,
+    race = "other",
+    fused = 0,
+    sight = 0,
+    nsight = 0,
+    Builds = "",
+    upgrades = "",
+})
+
 ----- #随机环境装饰物
 --local unitModel = {
 --    { Name = "fire", file = "Doodads\\Cinematic\\FirePillarMedium\\FirePillarMedium.mdl" }, -- 火焰
@@ -486,6 +497,7 @@ end
 --for _, v in ipairs(unitModel) do
 --    hslk_unit({
 --        _parent = "nban",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Name = "H_LUA_ENV_" .. string.upper(v.Name),
 --        tilesets = 1,
@@ -525,6 +537,7 @@ end
 --    -------------------------------------------------------
 --    local tmp = {
 --        _parent = "Aamk",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Art = "",
 --        hero = 0,
@@ -587,6 +600,7 @@ end
 --    -------------------------------------------------------
 --    tmp = {
 --        _parent = "AItg",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Art = "",
 --        levels = 10,
@@ -607,6 +621,7 @@ end
 --    -- #攻击力白+
 --    hslk_item({
 --        _parent = "manh",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Name = "H_LUA_A_ACK_IT_W_ADD_" .. val,
 --        Tip = "",
@@ -619,6 +634,7 @@ end
 --        cooldownID = "",
 --        abilList = hslk_ability({
 --            _parent = "AIaa",
+--            _type = "system",
 --            EditorSuffix = "#h-lua",
 --            Name = "H_LUA_A_ACK_W_ADD_" .. val,
 --            Art = "",
@@ -631,6 +647,7 @@ end
 --    -- #攻击力白-
 --    hslk_item({
 --        _parent = "manh",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Name = "H_LUA_A_ACK_IT_W_SUB_" .. val,
 --        Tip = "",
@@ -643,6 +660,7 @@ end
 --        cooldownID = "",
 --        abilList = hslk_ability({
 --            _parent = "AIaa",
+--            _type = "system",
 --            EditorSuffix = "#h-lua",
 --            Name = "H_LUA_A_ACK_W_SUB_" .. val,
 --            Art = "",
@@ -655,6 +673,7 @@ end
 --    -------------------------------------------------------
 --    tmp = {
 --        _parent = "AIsx",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Art = "",
 --        levels = 10,
@@ -674,6 +693,7 @@ end
 --    -------------------------------------------------------
 --    tmp = {
 --        _parent = "AId1",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Art = "",
 --        levels = 10,
@@ -694,6 +714,7 @@ end
 --    -- #生命+
 --    hslk_ability({
 --        _parent = "AIlf",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Name = "H_LUA_A_LIFE_ADD_" .. val,
 --        Art = "",
@@ -704,6 +725,7 @@ end
 --    -- #生命-
 --    hslk_ability({
 --        _parent = "AIlf",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Name = "H_LUA_A_LIFE_SUB_" .. val,
 --        Art = "",
@@ -714,6 +736,7 @@ end
 --    -- #魔法+
 --    hslk_ability({
 --        _parent = "AImv",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Name = "H_LUA_A_MANA_ADD_" .. val,
 --        Art = "",
@@ -724,6 +747,7 @@ end
 --    -- #魔法-
 --    hslk_ability({
 --        _parent = "AImv",
+--        _type = "system",
 --        EditorSuffix = "#h-lua",
 --        Name = "H_LUA_A_MANA_SUB_" .. val,
 --        Art = "",
@@ -736,6 +760,7 @@ end
 ----- #回避(伤害)+
 --hslk_ability({
 --    _parent = "AIlf",
+--    _type = "system",
 --    EditorSuffix = "#h-lua",
 --    Name = "H_LUA_A_AVOID_ADD",
 --    Art = "",
@@ -745,6 +770,7 @@ end
 ----- #回避(伤害)-
 --hslk_ability({
 --    _parent = "AIlf",
+--    _type = "system",
 --    EditorSuffix = "#h-lua",
 --    Name = "H_LUA_A_AVOID_SUB",
 --    Art = "",
@@ -761,6 +787,7 @@ end
 --        -- #视野+
 --        hslk_ability({
 --            _parent = "AIsi",
+--            _type = "system",
 --            EditorSuffix = "#h-lua",
 --            Name = "H_LUA_A_SIGHT_ADD_" .. v,
 --            Art = "",
@@ -770,6 +797,7 @@ end
 --        -- #视野-
 --        hslk_ability({
 --            _parent = "AIsi",
+--            _type = "system",
 --            EditorSuffix = "#h-lua",
 --            Name = "H_LUA_A_SIGHT_SUB_" .. v,
 --            Art = "",
