@@ -1,4 +1,62 @@
 --- F6 物编
+--- 固定配置项
+local F6_CONF = {
+    autoShadow = false, -- 是否自动启用影子物品
+    courierSkill = {
+        -- 信使技能-名称、热键、图标位置、冷却
+        blink = {
+            Ubertip = "闪烁到任何地方", Art = "ReplaceableTextures\\CommandButtons\\BTNBlink.blp",
+            Hotkey = 'Q', Buttonpos1 = 0, Buttonpos2 = 2, Cool1 = 10
+        },
+        rangePickUp = {
+            Ubertip = "将附近地上的物品拾取到身上", Art = "ReplaceableTextures\\CommandButtons\\BTNPickUpItem.blp",
+            Hotkey = 'W', Buttonpos1 = 1, Buttonpos2 = 2, Cool1 = 5
+        },
+        separate = {
+            Ubertip = "将合成或重叠的物品拆分成零件", Art = "ReplaceableTextures\\CommandButtons\\BTNRepair.blp",
+            Hotkey = 'E', Buttonpos1 = 2, Buttonpos2 = 2, Cool1 = 5
+        },
+        deliver = {
+            Ubertip = "将所有物品依照顺序传送给英雄，当你的英雄没有空余物品位置，物品会返回给信使", Art = "ReplaceableTextures\\CommandButtons\\BTNLoadPeon.blp",
+            Hotkey = 'R', Buttonpos1 = 3, Buttonpos2 = 2, Cool1 = 5
+        },
+    },
+    unitSight = 1400, -- 一般单位白天视野默认值
+    unitNSight = 800, -- 一般单位黑夜视野默认值
+    heroSight = 1800, -- 英雄单位白天视野默认值
+    heroNSight = 800, -- 英雄单位黑夜视野默认值
+    shopSight = 1200, -- 商店单位白天视野默认值
+    shopNSight = 1200, -- 商店单位黑夜视野默认值
+    -- 描述文本颜色,可配置 hcolor 里拥有的颜色函数，也可以配置 hex 6位颜色码
+    color = {
+        hotKey = "ffcc00", -- 热键
+        itemActive = "fae470", -- 物品主动
+        itemPassive = "6ab2f6", -- 物品被动
+        itemCoolDown = "ccffff", -- 物品冷却时间
+        itemAttr = "b0f26e", -- 物品属性
+        itemOverlie = "ff59ff", -- 物品叠加
+        itemWeight = "ee82ee", -- 物品重量
+        itemRemarks = "969696", -- 物品备注
+        itemFragment = hcolor.orange, -- 物品零部件
+        itemProfit = "ffd88c", -- 物品合成品
+        abilityDesc = "fae470", -- 技能描述
+        abilityCoolDown = "ccffff", -- 技能冷却时间
+        abilityAttr = "b0f26e", -- 技能属性
+        ringArea = "99ccff", -- 光环范围
+        ringTarget = "99ccff", -- 光环作用目标
+        ringDesc = hcolor.white, -- 光环描述
+        heroWeapon = "ff3939", -- 英雄攻击武器类型
+        heroAttack = "ff8080", -- 英雄基础攻击
+        heroRange = "99ccff", -- 英雄攻击范围
+        heroPrimary = "ffff00", -- 英雄主属性
+        heroSecondary = "ffffcc", -- 英雄主属性
+        heroMove = "ccffcc", -- 英雄移动
+    },
+}
+F6_CONF_SET = function(conf)
+    F6_CONF = conf
+end
+
 local F6_IDX = 0
 local F6_NAME = function(name)
     F6_IDX = F6_IDX + 1
@@ -242,32 +300,32 @@ F6S.a = {
     ubertip = {
         attr = function(v)
             if (v._attr ~= nil) then
-                F6S.txt(v, "Ubertip", hcolor.mixed(F6S.a.attr(v._attr, "|n"), SLK_CONF.color.abilityAttr))
+                F6S.txt(v, "Ubertip", hcolor.mixed(F6S.a.attr(v._attr, "|n"), F6_CONF.color.abilityAttr))
             end
         end,
         ring = function(v)
             local d = {}
             if (v._ring.radius ~= nil) then
-                table.insert(d, hcolor.mixed("光环范围：" .. v._ring.radius, SLK_CONF.color.ringArea))
+                table.insert(d, hcolor.mixed("光环范围：" .. v._ring.radius, F6_CONF.color.ringArea))
             end
             if (type(v._ring.target) == 'table' and #v._ring.target > 0) then
                 local labels = {}
                 for _, t in ipairs(v._ring.target) do
                     table.insert(labels, CONST_TARGET_LABEL[t])
                 end
-                table.insert(d, hcolor.mixed("光环目标：" .. string.implode(',', labels), SLK_CONF.color.ringTarget))
+                table.insert(d, hcolor.mixed("光环目标：" .. string.implode(',', labels), F6_CONF.color.ringTarget))
                 labels = nil
             end
             if (v._ring.attr ~= nil) then
-                table.insert(d, hcolor.mixed("光环效果：|n" .. F6S.a.attr(v._ring.attr, "|n", ' - '), SLK_CONF.color.ringTarget))
+                table.insert(d, hcolor.mixed("光环效果：|n" .. F6S.a.attr(v._ring.attr, "|n", ' - '), F6_CONF.color.ringTarget))
             end
             if (v._attr ~= nil) then
-                table.insert(d, hcolor.mixed("独占效果：", SLK_CONF.color.abilityAttr))
-                table.insert(d, hcolor.mixed(F6S.a.attr(v._attr, "|n", ' - '), SLK_CONF.color.abilityAttr))
+                table.insert(d, hcolor.mixed("独占效果：", F6_CONF.color.abilityAttr))
+                table.insert(d, hcolor.mixed(F6S.a.attr(v._attr, "|n", ' - '), F6_CONF.color.abilityAttr))
                 table.insert(d, "|n")
             end
             if (v._desc ~= nil and v._desc ~= "") then
-                table.insert(d, hcolor.mixed(v._desc, SLK_CONF.color.ringDesc))
+                table.insert(d, hcolor.mixed(v._desc, F6_CONF.color.ringDesc))
             end
             return string.implode("|n", d)
         end
@@ -316,62 +374,62 @@ F6S.i = {
     ubertip = {
         _active = function(v)
             if (v._active ~= nil) then
-                F6S.txt(v, "Ubertip", hcolor.mixed("主动：" .. v._active, SLK_CONF.color.itemActive))
+                F6S.txt(v, "Ubertip", hcolor.mixed("主动：" .. v._active, F6_CONF.color.itemActive))
                 if (v._cooldown ~= nil and v._cooldown > 0) then
-                    F6S.txt(v, "Ubertip", hcolor.mixed("冷却：" .. v._cooldown .. "秒", SLK_CONF.color.itemCoolDown))
+                    F6S.txt(v, "Ubertip", hcolor.mixed("冷却：" .. v._cooldown .. "秒", F6_CONF.color.itemCoolDown))
                 end
             end
         end,
         _passive = function(v)
             if (v._passive ~= nil) then
-                F6S.txt(v, "Ubertip", hcolor.mixed("被动：" .. v._passive, SLK_CONF.color.itemPassive))
+                F6S.txt(v, "Ubertip", hcolor.mixed("被动：" .. v._passive, F6_CONF.color.itemPassive))
             end
         end,
         _ring = function(v)
             if (v._ring ~= nil) then
                 if (v._ring.attr ~= nil and v._ring.radius ~= nil and (type(v._ring.target) == 'table' and #v._ring.target > 0)) then
                     local txt = "光环：[" .. v._ring.radius .. "px|n"
-                    F6S.txt(v, "Ubertip", hcolor.mixed(txt .. F6S.a.attr(v._ring.attr, "|n", ' - '), SLK_CONF.color.ringTarget))
+                    F6S.txt(v, "Ubertip", hcolor.mixed(txt .. F6S.a.attr(v._ring.attr, "|n", ' - '), F6_CONF.color.ringTarget))
                 end
             end
         end,
         _attr = function(v)
             if (v._attr ~= nil) then
-                F6S.txt(v, "Ubertip", hcolor.mixed(F6S.a.attr(v._attr, "|n"), SLK_CONF.color.itemAttr))
+                F6S.txt(v, "Ubertip", hcolor.mixed(F6S.a.attr(v._attr, "|n"), F6_CONF.color.itemAttr))
             end
         end,
         _attr_txt = function(v)
             if (v._attr_txt ~= nil) then
-                F6S.txt(v, "Ubertip", hcolor.mixed(F6S.a.attr(v._attr_txt, "|n"), SLK_CONF.color.itemAttr))
+                F6S.txt(v, "Ubertip", hcolor.mixed(F6S.a.attr(v._attr_txt, "|n"), F6_CONF.color.itemAttr))
             end
         end,
         _fragment = function(v)
             if (F6V_I_SYNTHESIS_TMP.fragment[v.Name] ~= nil and #F6V_I_SYNTHESIS_TMP.fragment[v.Name] > 0) then
                 local txt = "可以合成：" .. string.implode('、', F6V_I_SYNTHESIS_TMP.fragment[v.Name])
-                F6S.txt(v, "Ubertip", hcolor.mixed(txt, SLK_CONF.color.itemFragment))
+                F6S.txt(v, "Ubertip", hcolor.mixed(txt, F6_CONF.color.itemFragment))
             end
         end,
         _profit = function(v)
             if (F6V_I_SYNTHESIS_TMP.profit[v.Name] ~= nil) then
                 local txt = "需要零件：" .. F6V_I_SYNTHESIS_TMP.profit[v.Name]
-                F6S.txt(v, "Ubertip", hcolor.mixed(txt, SLK_CONF.color.itemProfit))
+                F6S.txt(v, "Ubertip", hcolor.mixed(txt, F6_CONF.color.itemProfit))
             end
         end,
         _overlie = function(v)
             if (v._overlie ~= nil and v._overlie > 0) then
                 local o = tostring(math.floor(v._overlie))
-                F6S.txt(v, "Ubertip", hcolor.mixed("叠加：" .. o, SLK_CONF.color.itemOverlie))
+                F6S.txt(v, "Ubertip", hcolor.mixed("叠加：" .. o, F6_CONF.color.itemOverlie))
             end
         end,
         _weight = function(v)
             if (v._weight ~= nil) then
                 local w = tostring(math.round(v._weight))
-                F6S.txt(v, "Ubertip", hcolor.mixed("重量：" .. w .. "Kg", SLK_CONF.color.itemWeight))
+                F6S.txt(v, "Ubertip", hcolor.mixed("重量：" .. w .. "Kg", F6_CONF.color.itemWeight))
             end
         end,
         _remarks = function(v)
             if (v._remarks ~= nil and v._remarks ~= "") then
-                F6S.txt(v, "Ubertip", hcolor.mixed(v._remarks, SLK_CONF.color.itemRemarks))
+                F6S.txt(v, "Ubertip", hcolor.mixed(v._remarks, F6_CONF.color.itemRemarks))
             end
         end,
     },
@@ -446,7 +504,7 @@ F6V_A = function(_v)
     if (_v.Hotkey ~= nil) then
         _v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos1 or 0
         _v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos2 or 0
-        _v.Tip = _v.Tip or (_v.Name .. "[" .. hcolor.mixed(_v.Hotkey, SLK_CONF.color.hotKey) .. "]")
+        _v.Tip = _v.Tip or (_v.Name .. "[" .. hcolor.mixed(_v.Hotkey, F6_CONF.color.hotKey) .. "]")
         _v.Name = _v.Name .. _v.Hotkey
     else
         _v.Tip = _v.Tip or (_v.Name)
@@ -510,6 +568,22 @@ F6V_I_CD = function(_v)
         _v._cooldown = 0
     end
     if (_v._cooldown == 0) then
+        if (H_LUA_ABILITY_CD0 == nil) then
+            H_LUA_ABILITY_CD0 = hslk_ability({
+                _parent = "AIgo",
+                _type = "system",
+                Name = "H_LUA_ABILITY_ICD0",
+                Tip = "H_LUA_ABILITY_ICD0",
+                Ubertip = "H_LUA_ABILITY_ICD0",
+                Effectsound = "",
+                Art = "",
+                TargetArt = "",
+                Targetattach = "",
+                CasterArt = "",
+                DataA = { 0 },
+                Cool = { 0 },
+            })._id
+        end
         return H_LUA_ABILITY_CD0
     end
     local adTips = "H_LUA_ICD_" .. _v.Name
@@ -641,7 +715,7 @@ F6V_I = function(_v)
     end
     -- 处理 _shadow
     if (type(_v._shadow) ~= 'boolean') then
-        _v._shadow = (SLK_CONF.autoShadow == true and _v.powerup == 0)
+        _v._shadow = (F6_CONF.autoShadow == true and _v.powerup == 0)
     end
     -- 处理 _ring光环
     if (_v._ring ~= nil) then
@@ -698,7 +772,7 @@ F6V_I = function(_v)
     if (_v.Hotkey ~= nil) then
         _v.Buttonpos_1 = CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos1 or 0
         _v.Buttonpos_2 = CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos2 or 0
-        _v.Tip = "获得" .. _v.Name .. "(" .. hcolor.mixed(_v.Hotkey, SLK_CONF.color.hotKey) .. ")"
+        _v.Tip = "获得" .. _v.Name .. "(" .. hcolor.mixed(_v.Hotkey, F6_CONF.color.hotKey) .. ")"
     else
         _v.Buttonpos_1 = _v.Buttonpos_1 or 0
         _v.Buttonpos_2 = _v.Buttonpos_2 or 0

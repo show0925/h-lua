@@ -1,3 +1,4 @@
+require 'cliConsole'
 require 'cliSetter'
 require 'cliSlk'
 require 'cliSystem'
@@ -13,4 +14,8 @@ if (cj ~= nil) then
             main()
         end
     end)
+else
+    if (type(main) == "function") then
+        main()
+    end
 end

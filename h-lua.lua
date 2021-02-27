@@ -25,31 +25,17 @@ require "const.slk"
 require "const.abilityTarget"
 
 -- 加载foundation
--- 加载debug
-require "foundation.debug"
--- 加载json
 require "foundation.json"
--- 加载md5
 require "foundation.md5"
--- 加载cache
 require "foundation.cache"
--- 加载cmd
 require "foundation.cmd"
--- 加载math
 require "foundation.math"
--- 加载string
 require "foundation.string"
--- 加载table
 require "foundation.table"
--- 加载color
 require "foundation.color"
--- 加载h-lua的F9
 require "foundation.cmd"
--- 加载echo
 require "foundation.echo"
--- 加载Mapping
 require "foundation.Mapping"
--- 加载hSlk
 require "foundation.slk"
 
 -- 加载Dzapi库

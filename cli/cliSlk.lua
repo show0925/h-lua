@@ -123,12 +123,15 @@ hslk_init = function()
             end
         end
     end
+    HL_ID_INIT()
 end
 
 local hslk_cli_set = function(_v)
     _v._id = HSLK_CLI_H_IDS[HSLK_CLI_H_IDI]
     HSLK_CLI_DATA[_v._id] = _v
     HSLK_CLI_H_IDI = HSLK_CLI_H_IDI + 1
+    print(_v)
+    return _v
 end
 
 hslk_ability = function(_v)

@@ -1,57 +1,8 @@
---- 默认配置项
-SLK_CONF = {
-    autoShadow = false, -- 是否自动启用影子物品
-    courierSkill = {
-        -- 信使技能-名称、热键、图标位置、冷却
-        blink = {
-            Ubertip = "闪烁到任何地方", Art = "ReplaceableTextures\\CommandButtons\\BTNBlink.blp",
-            Hotkey = 'Q', Buttonpos1 = 0, Buttonpos2 = 2, Cool1 = 10
-        },
-        rangePickUp = {
-            Ubertip = "将附近地上的物品拾取到身上", Art = "ReplaceableTextures\\CommandButtons\\BTNPickUpItem.blp",
-            Hotkey = 'W', Buttonpos1 = 1, Buttonpos2 = 2, Cool1 = 5
-        },
-        separate = {
-            Ubertip = "将合成或重叠的物品拆分成零件", Art = "ReplaceableTextures\\CommandButtons\\BTNRepair.blp",
-            Hotkey = 'E', Buttonpos1 = 2, Buttonpos2 = 2, Cool1 = 5
-        },
-        deliver = {
-            Ubertip = "将所有物品依照顺序传送给英雄，当你的英雄没有空余物品位置，物品会返回给信使", Art = "ReplaceableTextures\\CommandButtons\\BTNLoadPeon.blp",
-            Hotkey = 'R', Buttonpos1 = 3, Buttonpos2 = 2, Cool1 = 5
-        },
-    },
-    unitSight = 1400, -- 一般单位白天视野默认值
-    unitNSight = 800, -- 一般单位黑夜视野默认值
-    heroSight = 1800, -- 英雄单位白天视野默认值
-    heroNSight = 800, -- 英雄单位黑夜视野默认值
-    shopSight = 1200, -- 商店单位白天视野默认值
-    shopNSight = 1200, -- 商店单位黑夜视野默认值
-    -- 描述文本颜色,可配置 hcolor 里拥有的颜色函数，也可以配置 hex 6位颜色码
-    color = {
-        hotKey = "ffcc00", -- 热键
-        itemActive = "fae470", -- 物品主动
-        itemPassive = "6ab2f6", -- 物品被动
-        itemCoolDown = "ccffff", -- 物品冷却时间
-        itemAttr = "b0f26e", -- 物品属性
-        itemOverlie = "ff59ff", -- 物品叠加
-        itemWeight = "ee82ee", -- 物品重量
-        itemRemarks = "969696", -- 物品备注
-        itemFragment = hcolor.orange, -- 物品零部件
-        itemProfit = "ffd88c", -- 物品合成品
-        abilityDesc = "fae470", -- 技能描述
-        abilityCoolDown = "ccffff", -- 技能冷却时间
-        abilityAttr = "b0f26e", -- 技能属性
-        ringArea = "99ccff", -- 光环范围
-        ringTarget = "99ccff", -- 光环作用目标
-        ringDesc = hcolor.white, -- 光环描述
-        heroWeapon = "ff3939", -- 英雄攻击武器类型
-        heroAttack = "ff8080", -- 英雄基础攻击
-        heroRange = "99ccff", -- 英雄攻击范围
-        heroPrimary = "ffff00", -- 英雄主属性
-        heroSecondary = "ffffcc", -- 英雄主属性
-        heroMove = "ccffcc", -- 英雄移动
-    },
-}
+--- 设定配置
+---@param conf table 参考 F6_CONF
+hslk_conf = function(conf)
+    F6_CONF_SET(conf)
+end
 
 ---@param _v{checkDep,Requires,Requiresamount,Effectsound,Effectsoundlooped,EditorSuffix,Name,Untip,Unubertip,Tip,Ubertip,Researchtip,Researchubertip,Unorder,Orderon,Order,Orderoff,Unhotkey,Hotkey,Researchhotkey,UnButtonpos1,UnButtonpos2,Buttonpos1,Buttonpos2,Researchbuttonpos1,Researchbuttonpos2,Unart,Researchart,Art,SpecialArt,Specialattach,Missileart,Missilespeed,Missilearc,MissileHoming,LightningEffect,EffectArt,TargetArt,Targetattachcount,Targetattach,Targetattach1,Targetattach2,Targetattach3,Targetattach4,Targetattach5,Areaeffectart,Animnames,CasterArt,Casterattachcount,Casterattach,Casterattach1,hero,item,race,levels,reqLevel,priority,BuffID1,EfctID1,Tip1,Ubertip1,targs1,DataA1,DataB1,DataC1,DataD1,DataE1,DataF1,Cast1,Cool1,Dur1,HeroDur1,Cost1,Rng1,Area1,_id,_class,_type,_parent,_desc,_attr,_attr_txt,_ring}
 hslk_ability = function(_v)
