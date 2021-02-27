@@ -492,6 +492,26 @@ F6V_I_SYNTHESIS = function(formula)
     return formulas
 end
 
+local F6_RING = function(_v)
+    if (_v._ring ~= nil) then
+        _v._ring.effect = _v._ring.effect or nil
+        _v._ring.effectTarget = _v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
+        _v._ring.attach = _v._ring.attach or "origin"
+        _v._ring.attachTarget = _v._ring.attachTarget or "origin"
+        _v._ring.radius = _v._ring.radius or 600
+        -- target请参考物编的目标允许
+        local target
+        if (type(_v._ring.target) == 'table' and #_v._ring.target > 0) then
+            target = _v._ring.target
+        elseif (type(_v._ring.target) == 'string' and string.len(_v._ring.target) > 0) then
+            target = string.explode(',', _v._ring.target)
+        else
+            target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
+        end
+        _v._ring.target = target
+    end
+end
+
 F6V_A = function(_v)
     _v._class = "ability"
     _v._type = "common"
@@ -528,23 +548,7 @@ F6V_A_R = function(_v)
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名空光环")
     end
-    if (_v._ring ~= nil) then
-        _v._ring.effect = _v._ring.effect or nil
-        _v._ring.effectTarget = _v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
-        _v._ring.attach = _v._ring.attach or "origin"
-        _v._ring.attachTarget = _v._ring.attachTarget or "origin"
-        _v._ring.radius = _v._ring.radius or 600
-        -- target请参考物编的目标允许
-        local target
-        if (type(_v._ring.target) == 'table' and #_v._ring.target > 0) then
-            target = _v._ring.target
-        elseif (type(_v._ring.target) == 'string' and string.len(_v._ring.target) > 0) then
-            target = string.explode(',', _v._ring.target)
-        else
-            target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
-        end
-        _v._ring.target = target
-    end
+    F6_RING(_v)
     return F6V_A(_v)
 end
 
@@ -561,9 +565,6 @@ F6V_U = function(_v)
 end
 
 F6V_I_CD = function(_v)
-    if (_v._cooldown == nil) then
-        return "AIat"
-    end
     if (_v._cooldown < 0) then
         _v._cooldown = 0
     end
@@ -677,16 +678,10 @@ end
 F6V_I = function(_v)
     _v._class = "item"
     _v._type = "common"
-    local cd = F6V_I_CD(_v)
-    if (cd ~= "AIat") then
+    if (_v._cooldown ~= nil) then
+        local cd = F6V_I_CD(_v)
         _v.abilList = cd
         _v.usable = 1
-        if (_v.perishable == nil) then
-            _v.perishable = 1
-        end
-        if (_v.powerup == nil) then
-            _v.powerup = 0
-        end
         if (_v.powerup == 0) then
             _v.class = "Charged"
         else
@@ -695,11 +690,6 @@ F6V_I = function(_v)
         if (cd == H_LUA_ABILITY_CD0) then
             _v.ignoreCD = 1
         end
-    else
-        if (_v.perishable == nil) then
-            _v.perishable = 0
-        end
-        _v.class = "Permanent"
     end
     if (_v._parent == nil) then
         if (_v.class == "Charged") then
@@ -718,22 +708,8 @@ F6V_I = function(_v)
         _v._shadow = (F6_CONF.autoShadow == true and _v.powerup == 0)
     end
     -- 处理 _ring光环
-    if (_v._ring ~= nil) then
-        _v._ring.effectTarget = _v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
-        _v._ring.attach = _v._ring.attach or "origin"
-        _v._ring.attachTarget = _v._ring.attachTarget or "origin"
-        _v._ring.radius = _v._ring.radius or 600
-        -- target请参考物编的目标允许
-        local target
-        if (type(_v._ring.target) == 'table' and #_v._ring.target > 0) then
-            target = _v._ring.target
-        elseif (type(_v._ring.target) == 'string' and string.len(_v._ring.target) > 0) then
-            target = string.explode(',', _v._ring.target)
-        else
-            target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
-        end
-        _v._ring.target = target
-    end
+    F6_RING(_v)
+    -- 处理文本
     F6S.i.description._active(_v)
     F6S.i.description._passive(_v)
     F6S.i.description._attr(_v)

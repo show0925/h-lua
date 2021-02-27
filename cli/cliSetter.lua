@@ -39,6 +39,26 @@ F6V_I_SYNTHESIS = function(formula)
     return formulas
 end
 
+local F6_RING = function(_v)
+    if (_v._ring ~= nil) then
+        _v._ring.effect = _v._ring.effect or nil
+        _v._ring.effectTarget = _v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
+        _v._ring.attach = _v._ring.attach or "origin"
+        _v._ring.attachTarget = _v._ring.attachTarget or "origin"
+        _v._ring.radius = _v._ring.radius or 600
+        -- target请参考物编的目标允许
+        local target
+        if (type(_v._ring.target) == 'table' and #_v._ring.target > 0) then
+            target = _v._ring.target
+        elseif (type(_v._ring.target) == 'string' and string.len(_v._ring.target) > 0) then
+            target = string.explode(',', _v._ring.target)
+        else
+            target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
+        end
+        _v._ring.target = target
+    end
+end
+
 F6V_A = function(_v)
     _v._class = "ability"
     _v._type = "common"
@@ -57,23 +77,7 @@ end
 F6V_A_R = function(_v)
     _v._parent = "Aamk"
     _v._type = "ring"
-    if (_v._ring ~= nil) then
-        _v._ring.effect = _v._ring.effect or nil
-        _v._ring.effectTarget = _v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
-        _v._ring.attach = _v._ring.attach or "origin"
-        _v._ring.attachTarget = _v._ring.attachTarget or "origin"
-        _v._ring.radius = _v._ring.radius or 600
-        -- target请参考物编的目标允许
-        local target
-        if (type(_v._ring.target) == 'table' and #_v._ring.target > 0) then
-            target = _v._ring.target
-        elseif (type(_v._ring.target) == 'string' and string.len(_v._ring.target) > 0) then
-            target = string.explode(',', _v._ring.target)
-        else
-            target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
-        end
-        _v._ring.target = target
-    end
+    F6_RING(_v)
     return F6V_A(_v)
 end
 
@@ -110,24 +114,9 @@ F6V_I = function(_v)
         _v._shadow = (F6_CONF.autoShadow == true and _v.powerup == 0)
     end
     -- 处理 _ring光环
-    if (_v._ring ~= nil) then
-        _v._ring.effectTarget = _v._ring.effectTarget or "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl"
-        _v._ring.attach = _v._ring.attach or "origin"
-        _v._ring.attachTarget = _v._ring.attachTarget or "origin"
-        _v._ring.radius = _v._ring.radius or 600
-        -- target请参考物编的目标允许
-        local target
-        if (type(_v._ring.target) == 'table' and #_v._ring.target > 0) then
-            target = _v._ring.target
-        elseif (type(_v._ring.target) == 'string' and string.len(_v._ring.target) > 0) then
-            target = string.explode(',', _v._ring.target)
-        else
-            target = { 'air', 'ground', 'friend', 'self', 'vuln', 'invu' }
-        end
-        _v._ring.target = target
-    end
+    F6_RING(_v)
     if (_v._overlie == nil or _v._overlie < (_v.uses or 1)) then
-        _v._overlie = _v.uses
+        _v._overlie = _v.uses or 1
     end
     return _v
 end

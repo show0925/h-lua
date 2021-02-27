@@ -44,7 +44,7 @@ hslk_item_synthesis = function(formula)
     F6V_I_SYNTHESIS(formula)
 end
 
----@param _v{abiList,Requires,Requiresamount,Name,Description,Tip,Ubertip,Hotkey,Art,scale,file,Buttonpos1,Buttonpos2,selSize,colorR,colorG,colorB,armor,Level,oldLevel,class,goldcost,lumbercost,HP,stockStart,stockRegen,stockMax,prio,morph,drop,powerup,sellable,pawnable,droppable,pickRandom,uses,perishable,usable,_id,_class,_type,_parent,_overlie,_weight,_active,_passive,_attr,_attr_txt,_ring,_remarks,_cooldown,_cooldownTarget,_shadow}
+---@param _v{abiList,Requires,Requiresamount,Name,Description,Tip,Ubertip,Hotkey,Art,scale,file,Buttonpos1,Buttonpos2,selSize,colorR,colorG,colorB,armor,Level,oldLevel,class,goldcost,lumbercost,HP,stockStart,stockRegen,stockMax,prio,cooldownID,ignoreCD,morph,drop,powerup,sellable,pawnable,droppable,pickRandom,uses,perishable,usable,_id,_class,_type,_parent,_overlie,_weight,_active,_passive,_attr,_attr_txt,_ring,_remarks,_cooldown,_cooldownTarget,_shadow}
 hslk_item = function(_v)
     _v = F6V_I(_v)
     _v._id = SLK_ID(_v._class, _v._id)
