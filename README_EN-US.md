@@ -1,10 +1,10 @@
 # H-Lua
 
-[![image](https://img.shields.io/badge/English-EN_US-blue.svg)](https://github.com/hunzsig-warcraft3/h-lua/blob/main/README_EN-US.md)
+[![image](https://img.shields.io/badge/english-EN_US-blue.svg)](https://github.com/hunzsig-warcraft3/h-lua/blob/main/README_EN-US.md)
 ![image](https://img.shields.io/badge/license-MIT-blue.svg)
-[![image](https://img.shields.io/badge/Doc-document-blue.svg)](http://wenku.hunzsig.org/?_=_1_5)
-[![image](https://img.shields.io/badge/Author-hunzsig-red.svg)](https://www.hunzsig.com)
-![image](https://img.shields.io/badge/Email-mzyhaohaoren@qq.com-green.svg)
+[![image](https://img.shields.io/badge/doc-document-blue.svg)](http://wenku.hunzsig.org/?_=_1_5)
+[![image](https://img.shields.io/badge/author-hunzsig-red.svg)](https://www.hunzsig.com)
+![image](https://img.shields.io/badge/email-mzyhaohaoren@qq.com-green.svg)
 
 [![image](https://img.shields.io/badge/demo-HelloWorld-orange.svg)](https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld)
 [![image](https://img.shields.io/badge/demo-MysteriousLand-orange.svg)](https://github.com/hunzsig-warcraft3/w3x-mysterious-land)
