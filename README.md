@@ -9,8 +9,8 @@
 [![image](https://img.shields.io/badge/demo-你好世界-orange.svg)](https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld)
 [![image](https://img.shields.io/badge/demo-秘地探奇-orange.svg)](https://github.com/hunzsig-warcraft3/w3x-mysterious-land)
 
-[![image](https://img.shields.io/badge/test-DZAPI-lightgrey.svg)](https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld)
-[![image](https://img.shields.io/badge/test-崩溃压力-lightgrey.svg)](https://github.com/hunzsig-warcraft3/w3x-mysterious-land)
+[![image](https://img.shields.io/badge/test-DZAPI-lightgrey.svg)](https://github.com/hunzsig-warcraft3/w3x-test-dzapi)
+[![image](https://img.shields.io/badge/test-崩溃压力-lightgrey.svg)](https://github.com/hunzsig-warcraft3/w3x-test-breakdown)
 
 > 本套代码免费提供给了解lua的作者试用，如果不了解lua语言请使用T来制作地图或自行学习，此处不提供教学，本教程以YDWE为例
 
