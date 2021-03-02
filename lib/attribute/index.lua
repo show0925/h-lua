@@ -59,7 +59,7 @@ end
 --- @private
 hattribute.init = function(whichUnit)
     local uid = hunit.getId(whichUnit)
-    if (uid == nil) then
+    if (uid == nil or his.deleted(whichUnit)) then
         return false
     end
     -- init

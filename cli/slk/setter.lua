@@ -569,23 +569,8 @@ F6V_I_CD = function(_v)
         _v._cooldown = 0
     end
     if (_v._cooldown == 0) then
-        if (H_LUA_ABILITY_CD0 == nil) then
-            H_LUA_ABILITY_CD0 = hslk_ability({
-                _parent = "AIgo",
-                _type = "system",
-                Name = "H_LUA_ABILITY_ICD0",
-                Tip = "H_LUA_ABILITY_ICD0",
-                Ubertip = "H_LUA_ABILITY_ICD0",
-                Effectsound = "",
-                Art = "",
-                TargetArt = "",
-                Targetattach = "",
-                CasterArt = "",
-                DataA = { 0 },
-                Cool = { 0 },
-            })._id
-        end
-        return H_LUA_ABILITY_CD0
+        _v.ignoreCD = 1
+        return "AIat"
     end
     local adTips = "H_LUA_ICD_" .. _v.Name
     local cdID
@@ -686,9 +671,6 @@ F6V_I = function(_v)
             _v.class = "Charged"
         else
             _v.class = "PowerUp"
-        end
-        if (cd == H_LUA_ABILITY_CD0) then
-            _v.ignoreCD = 1
         end
     end
     if (_v._parent == nil) then

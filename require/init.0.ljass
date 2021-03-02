@@ -1,8 +1,0 @@
-?>
-
-globals
-    hashtable hash_hslk = InitHashtable()
-    hashtable hash_hslk_helper = InitHashtable()
-endglobals
-
-<?

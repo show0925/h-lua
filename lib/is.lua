@@ -100,8 +100,7 @@ end
 ---@param whichUnit userdata
 ---@return boolean
 his.deleted = function(whichUnit)
-    print(cj.GetUnitId(nil))
-    return cj.GetUnitId(whichUnit) == 0
+    return cj.GetUnitTypeId(whichUnit) == 0 or (his.dead(whichUnit) and false == hcache.exist(whichUnit))
 end
 
 --- 是否无敌

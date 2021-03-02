@@ -90,6 +90,39 @@ F6V_U = function(_v)
     return _v
 end
 
+F6V_I_CD = function(_v)
+    if (_v._cooldown < 0) then
+        _v._cooldown = 0
+    end
+    if (_v._cooldown == 0) then
+        return "AIat"
+    end
+    local cdID
+    local ad = {}
+    if (_v._cooldownTarget == CONST_ABILITY_TARGET.location.value) then
+        -- 对点（模版：照明弹）
+        ad._parent = "Afla"
+        local av = hslk_ability(ad)
+        cdID = av._id
+    elseif (_v.cooldownTarget == CONST_ABILITY_TARGET.range.value) then
+        -- 对点范围（模版：暴风雪）
+        ad._parent = "ACbz"
+        local av = hslk_ability(ad)
+        cdID = av._id
+    elseif (_v._cooldownTarget == CONST_ABILITY_TARGET.unit.value) then
+        -- 对单位（模版：霹雳闪电）
+        ad._parent = "ACfb"
+        local av = hslk_ability(ad)
+        cdID = av._id
+    else
+        -- 立刻（模版：金箱子）
+        ad._parent = "AIgo"
+        local av = hslk_ability(ad)
+        cdID = av._id
+    end
+    return cdID
+end
+
 F6V_I_SHADOW = function(_v)
     _v._parent = "gold"
     _v._class = "item"
@@ -100,6 +133,9 @@ end
 F6V_I = function(_v)
     _v._class = "item"
     _v._type = "common"
+    if (_v._cooldown ~= nil) then
+        F6V_I_CD(_v)
+    end
     if (_v._parent == nil) then
         if (_v.class == "Charged") then
             _v._parent = "hlst"

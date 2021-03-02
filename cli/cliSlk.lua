@@ -70,14 +70,14 @@ hslk_init = function()
                 table.insert(HSLK_TYPE_IDS[HSLK_I2V[id]._type], id)
             end
             -- 处理N2V
-            if (HSLK_I2V[id].Name ~= nil) then
-                local n = HSLK_I2V[id].Name
+            local n = HSLK_I2V[id].Name
+            if (n ~= nil) then
                 if (HSLK_N2V[n] == nil) then
                     HSLK_N2I[n] = {}
                     HSLK_N2V[n] = {}
                 end
-                table.insert(HSLK_N2I, id)
-                table.insert(HSLK_N2V, HSLK_I2V[id])
+                table.insert(HSLK_N2I[n], id)
+                table.insert(HSLK_N2V[n], HSLK_I2V[id])
             end
         end
     end
@@ -130,7 +130,6 @@ local hslk_cli_set = function(_v)
     _v._id = HSLK_CLI_H_IDS[HSLK_CLI_H_IDI]
     HSLK_CLI_DATA[_v._id] = _v
     HSLK_CLI_H_IDI = HSLK_CLI_H_IDI + 1
-    print(_v)
     return _v
 end
 
