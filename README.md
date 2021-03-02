@@ -1,11 +1,18 @@
- * [github地址](https://github.com/hunzsig-warcraft3/h-lua)
- * [开源地图：HelloWorld](https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld)
- * [开源地图：秘地探奇](https://github.com/hunzsig-warcraft3/w3x-mysterious-land)
- * [功能测试：DZAPI](https://github.com/hunzsig-warcraft3/w3x-test-dzapi)
- * [功能测试：崩溃压力](https://github.com/hunzsig-warcraft3/w3x-test-breakdown)
- * [技术文档](http://wenku.hunzsig.org/?_=_1_5)
- * Author：hunzsig
- * QQ：325338043
+# H-Lua
+
+[![image](https://img.shields.io/badge/English-EN_US-blue.svg)](https://github.com/hunzsig-warcraft3/h-lua/blob/main/README_EN-US.md)
+![image](https://img.shields.io/badge/license-MIT-blue.svg)
+[![image](https://img.shields.io/badge/Doc-技术文档-blue.svg)](http://wenku.hunzsig.org/?_=_1_5)
+[![image](https://img.shields.io/badge/Author-hunzsig-red.svg)](https://www.hunzsig.com)
+[![image](https://img.shields.io/badge/QQ-325338043-green.svg)](https://qm.qq.com/cgi-bin/qm/qr?k=NYlOpKUo9vEUQ3gN_UBvRUci9avq0tqB&jump_from=webapi)
+
+[![image](https://img.shields.io/badge/demo-HelloWorld-orange.svg)](https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld)
+[![image](https://img.shields.io/badge/demo-秘地探奇-orange.svg)](https://github.com/hunzsig-warcraft3/w3x-mysterious-land)
+
+[![image](https://img.shields.io/badge/test-DZAPI-lightgrey.svg)](https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld)
+[![image](https://img.shields.io/badge/test-崩溃压力-lightgrey.svg)](https://github.com/hunzsig-warcraft3/w3x-mysterious-land)
+
+> 本套代码免费提供给了解lua的作者试用，如果不了解lua语言请使用T来制作地图或自行学习，此处不提供教学，本教程以YDWE为例
 
 ## 使用优势？
 h-lua拥有优秀的demo，在开源的同时引导您学习的更多
@@ -99,8 +106,6 @@ h-lua拥有优秀的demo，在开源的同时引导您学习的更多
     └── resource - 资源数据(不需要在意的)
 ```
 
-> 本套代码免费提供给了解lua的作者试用，如果不了解lua语言请使用T来制作地图或自行学习，此处不提供教学，本教程以YDWE为例
-
 #### 开启DEBUG：
 ```
 --在引用库之前，配置HLUA_DEBUG等于true
@@ -111,7 +116,7 @@ require "h-lua"
 
 #### 注意：
 ```
-h-lua库开源，不定时更新，可访问 http://wenku.hunzsig.org 查看最新文档
+h-lua库开源，不定时更新，提供思路与帮助
 h-lua库仅提供一些功能函数协助做图作者更加轻松制作地图
-h-lua库不保证完全正确且无bug，如有需要，请自行修改源码进行游戏制作，这里不过是提供思路与帮助
+h-lua库不保证完全正确且无bug，如有需要，请自行修改源码进行游戏制作
 ```

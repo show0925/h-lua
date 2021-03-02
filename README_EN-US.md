@@ -1,12 +1,18 @@
- * [Github](https://github.com/hunzsig-warcraft3/h-lua)
- * [Demo1:HelloWorld](https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld)
- * [Demo2:MysteriousLand](https://github.com/hunzsig-warcraft3/w3x-mysterious-land)
- * [Test1: DZAPI](https://github.com/hunzsig-warcraft3/w3x-test-dzapi)
- * [Test2: Crash](https://github.com/hunzsig-warcraft3/w3x-test-breakdown)
- * [Quick start(zh-cn)](http://wenku.hunzsig.org/?_=_1_5)
- * Author: hunzsig
- * QQ Group Number: 325338043(China)
+# H-Lua
 
+[![image](https://img.shields.io/badge/English-EN_US-blue.svg)](https://github.com/hunzsig-warcraft3/h-lua/blob/main/README_EN-US.md)
+![image](https://img.shields.io/badge/license-MIT-blue.svg)
+[![image](https://img.shields.io/badge/Doc-document-blue.svg)](http://wenku.hunzsig.org/?_=_1_5)
+[![image](https://img.shields.io/badge/Author-hunzsig-red.svg)](https://www.hunzsig.com)
+![image](https://img.shields.io/badge/Email-mzyhaohaoren@qq.com-green.svg)
+
+[![image](https://img.shields.io/badge/demo-HelloWorld-orange.svg)](https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld)
+[![image](https://img.shields.io/badge/demo-MysteriousLand-orange.svg)](https://github.com/hunzsig-warcraft3/w3x-mysterious-land)
+
+[![image](https://img.shields.io/badge/test-DZAPI-lightgrey.svg)](https://github.com/hunzsig-warcraft3/w3x-h-lua-helloworld)
+[![image](https://img.shields.io/badge/test-Crash-lightgrey.svg)](https://github.com/hunzsig-warcraft3/w3x-mysterious-land)
+
+> This set of codes is free for trial by authors who understand Lua. If you do n’t know Lua language, please use T to make maps or learn by yourself. Teaching is not provided here. This tutorial uses YDWE as an example
 
 ## Introduction
 h-lua has an excellent demo, which guides you to learn more while being open source.
@@ -101,8 +107,6 @@ Timers, environments, shots, units, enemies, music, weather, masks, missions, an
     └── resource - [INVALID]
 ```
 
-> This set of codes is free for trial by authors who understand Lua. If you do n’t know Lua language, please use T to make maps or learn by yourself. Teaching is not provided here. This tutorial uses YDWE as an example
-
 #### Quick start：
 use [h-lua-cli](https://github.com/hunzsig-warcraft3/h-lua-cli)
 
@@ -121,5 +125,4 @@ require "h-lua"
 The h-lua library is open source, updated from time to time, you can visit http://wenku.hunzsig.org to view the latest documents
 The h-lua library only provides some functional functions to help map authors make maps easier
 The h-lua library is not guaranteed to be completely correct and bug-free. If necessary, please modify the source code for game production. Here is just to provide ideas and help.
-Because h-lua uses slk, it will automatically help you generate all the object compilations needed by the framework when saving, so there is no need to build the object compilations by yourself.
 ```
