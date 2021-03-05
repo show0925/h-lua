@@ -7,12 +7,7 @@ hskill.getAttribute = function(abilityId)
     if (type(abilityId) == "number") then
         abilityId = string.id2char(abilityId)
     end
-    local as = hslk.i2v(abilityId)
-    if (as ~= nil) then
-        return as._attr
-    else
-        return nil
-    end
+    return hslk.i2v(abilityId, "_attr")
 end
 
 --- 附加单位获得技能后的属性

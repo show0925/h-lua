@@ -1,7 +1,6 @@
 ---@class hattributeSetter 属性配置法
 hattributeSetter = {
-    DEFAULT_SKILL_ITEM_SLOT = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认认定这个技能为物品栏
-    SMART = {
+    smart = {
         attack_space = "attack_space_origin",
         attack = "attack_green",
         defend = "defend_green",
@@ -103,9 +102,9 @@ hattributeSetter.relyAttackWhite = function(u, itemId, qty)
     if (his.alive(u) == true) then
         local i = 1
         local it
-        local hasSlot = (cj.GetUnitAbilityLevel(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT) >= 1)
+        local hasSlot = (cj.GetUnitAbilityLevel(u, HL_ID.ability_item_slot) >= 1)
         if (hasSlot == false) then
-            cj.UnitAddAbility(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT)
+            cj.UnitAddAbility(u, HL_ID.ability_item_slot)
         end
         while (i <= qty) do
             it = cj.CreateItem(itemId, 0, 0)
@@ -116,7 +115,7 @@ hattributeSetter.relyAttackWhite = function(u, itemId, qty)
             i = i + 1
         end
         if (hasSlot == false) then
-            cj.UnitRemoveAbility(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT)
+            cj.UnitRemoveAbility(u, HL_ID.ability_item_slot)
         end
     else
         local per = 3.00
@@ -129,9 +128,9 @@ hattributeSetter.relyAttackWhite = function(u, itemId, qty)
                 htime.delTimer(t)
                 local i = 1
                 local it
-                local hasSlot = (cj.GetUnitAbilityLevel(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT) >= 1)
+                local hasSlot = (cj.GetUnitAbilityLevel(u, HL_ID.ability_item_slot) >= 1)
                 if (hasSlot == false) then
-                    cj.UnitAddAbility(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT)
+                    cj.UnitAddAbility(u, HL_ID.ability_item_slot)
                 end
                 while (i <= qty) do
                     it = cj.CreateItem(itemId, 0, 0)
@@ -141,7 +140,7 @@ hattributeSetter.relyAttackWhite = function(u, itemId, qty)
                     i = i + 1
                 end
                 if (hasSlot == false) then
-                    cj.UnitRemoveAbility(u, hattributeSetter.DEFAULT_SKILL_ITEM_SLOT)
+                    cj.UnitRemoveAbility(u, HL_ID.ability_item_slot)
                 end
             end
         end)
@@ -408,11 +407,11 @@ hattributeSetter.setUnitThree = function(whichUnit, futureVal, attr, diff)
             futureVal = 99999999
         end
         for _, grad in ipairs(HL_ID.ablis_gradient) do
-            local ab = hslk.attr[attr].add[grad]
+            local ab = HL_ID[attr].add[grad]
             if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
                 cj.SetUnitAbilityLevel(whichUnit, ab, 1)
             end
-            ab = hslk.attr[attr].sub[grad]
+            ab = HL_ID[attr].sub[grad]
             if (cj.GetUnitAbilityLevel(whichUnit, ab) > 1) then
                 cj.SetUnitAbilityLevel(whichUnit, ab, 1)
             end
@@ -424,15 +423,15 @@ hattributeSetter.setUnitThree = function(whichUnit, futureVal, attr, diff)
                 local level = math.floor(tempVal / max)
                 tempVal = math.floor(tempVal - level * max)
                 if (futureVal > 0) then
-                    if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max]) < 1) then
-                        cj.UnitAddAbility(whichUnit, hslk.attr[attr].add[max])
+                    if (cj.GetUnitAbilityLevel(whichUnit, HL_ID[attr].add[max]) < 1) then
+                        cj.UnitAddAbility(whichUnit, HL_ID[attr].add[max])
                     end
-                    cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].add[max], level + 1)
+                    cj.SetUnitAbilityLevel(whichUnit, HL_ID[attr].add[max], level + 1)
                 else
-                    if (cj.GetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max]) < 1) then
-                        cj.UnitAddAbility(whichUnit, hslk.attr[attr].sub[max])
+                    if (cj.GetUnitAbilityLevel(whichUnit, HL_ID[attr].sub[max]) < 1) then
+                        cj.UnitAddAbility(whichUnit, HL_ID[attr].sub[max])
                     end
-                    cj.SetUnitAbilityLevel(whichUnit, hslk.attr[attr].sub[max], level + 1)
+                    cj.SetUnitAbilityLevel(whichUnit, HL_ID[attr].sub[max], level + 1)
                 end
                 max = math.floor(max / 10)
             end

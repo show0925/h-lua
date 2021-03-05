@@ -108,12 +108,18 @@ htime.timerInKernel = function(time, yourFunc, isInterval)
                     if (v.running == true) then
                         v.remain = v.remain - space
                         if (v.remain <= 0) then
-                            v.yourFunc(string.implode("_", { space, k }))
-                            if (v.isInterval == true) then
-                                v.remain = v.set
+                            local status, sErr = xpcall(v.yourFunc, debug.traceback, string.implode("_", { space, k }))
+                            if (status == true) then
+                                if (v.isInterval == true) then
+                                    v.remain = v.set
+                                else
+                                    --修改标志保留数据，可复用
+                                    v.running = false
+                                end
                             else
-                                --修改标志保留数据，可复用亦可复盘
+                                --执行出错时直接停跑，打印错误
                                 v.running = false
+                                print(sErr)
                             end
                         end
                     end

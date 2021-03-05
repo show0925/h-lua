@@ -4,7 +4,7 @@ henemy = {
     conf = {
         --[[{
             name 敌人队伍的名称，默认敌军
-            color 敌人队伍的颜色 参考CONST_PLAYER_COLOR
+            color 敌人队伍的颜色 参考 PLAYER_COLOR_BLACK
             playerIndexes 归于此敌人的玩家索引 1-12
             isShareSight 是否与玩家共享视野
         }]]
@@ -18,13 +18,13 @@ henemy = {
 --- 配置敌人
 --- 此方法只能设置一次，不能多次设置覆盖，多次设置代表多个敌军势力
 ---@param name string 敌人势力队伍的名称，默认敌军No
----@param color string 敌人势力队伍的颜色,参考CONST_PLAYER_COLOR
+---@param color any 敌人势力队伍的颜色,参考 PLAYER_COLOR_BLACK
 ---@param playerIndexes table 归于此敌人的玩家索引 1-12，如{1,2,3}
 ---@param isShareSight boolean 是否与玩家共享视野
 ---@return number 返回队伍序号，从1开始累加
 henemy.set = function(name, color, playerIndexes, isShareSight)
     name = name or ("enemy-" .. (1 + #henemy.conf))
-    color = color or CONST_PLAYER_COLOR.BLACK
+    color = color or PLAYER_COLOR_BLACK
     playerIndexes = playerIndexes or {}
     if (type(isShareSight) ~= "boolean") then
         isShareSight = false

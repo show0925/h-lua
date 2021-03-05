@@ -18,7 +18,7 @@ hhero = {
 ---@param whichHero userdata
 ---@return string UNK|STR|AGI|INT
 hhero.getPrimary = function(whichHero)
-    local primary = hslk.i2v(hunit.getId(whichHero), "Primary") or "UNK"
+    local primary = hslk.i2v(hunit.getId(whichHero), "slk", "Primary") or "UNK"
     return string.upper(primary)
 end
 
@@ -171,7 +171,7 @@ end
 hhero.buildSelector = function(options)
     --[[
         options = {
-            heroes = {"H001","H002"}, -- (可选)供选的单位ID数组，默认是全局的 hslk.unit_type_ids.hero
+            heroes = {"H001","H002"}, -- (可选)供选的单位ID数组，默认是全局的 hslk.typeIds({ "hero", "hero_custom" })
             during = -1, -- 选择持续时间，默认无限（特殊情况哦）;如果有持续时间但是小于30，会被设置为30秒，超过这段时间未选择的玩家会被剔除出游戏
             type = string, "tavern" | "click"
             buildX = 0, -- 构建点X
@@ -186,7 +186,7 @@ hhero.buildSelector = function(options)
     ]]
     local heroIds = options.heroes
     if (heroIds == nil or #heroIds <= 0) then
-        heroIds = hslk.typeIds({ "hero", "courier_hero", "hero_custom" })
+        heroIds = hslk.typeIds({ "hero", "hero_custom" })
     end
     if (#heroIds <= 0) then
         return

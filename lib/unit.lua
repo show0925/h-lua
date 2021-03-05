@@ -5,7 +5,7 @@ hunit = {}
 ---@param uOrId userdata|string|number
 ---@return string
 hunit.getAvatar = function(uOrId)
-    return hslk.i2v(hunit.getId(uOrId), "Art") or ""
+    return hslk.i2v(hunit.getId(uOrId), "slk", "Art") or ""
 end
 
 --- 获取单位的攻击浮动
@@ -13,7 +13,7 @@ end
 ---@param uOrId userdata|string|number
 ---@return number
 hunit.getAttackSides = function(uOrId)
-    local s = hslk.i2v(hunit.getId(uOrId))
+    local s = hslk.i2v(hunit.getId(uOrId), "slk")
     if (s == nil) then
         return 0
     end
@@ -273,7 +273,7 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
     if (uid == nil) then
         return
     end
-    local uSlk = hslk.i2v(uid)
+    local uSlk = hslk.i2v(uid, "slk")
     local rgba = hcache.get(whichUnit, CONST_CACHE.UNIT_RGBA)
     if (rgba == nil) then
         rgba = { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0 }
@@ -399,7 +399,7 @@ hunit.embed = function(u, options)
         end)
     end
     -- hslk处理
-    if (his.courier(u, true)) then
+    if (his.courier(u)) then
         hcourier.embed(u)
     end
     -- 物品系统
@@ -661,15 +661,12 @@ end
 
 --- 设置单位颜色,color可设置玩家索引[1-16],应用其对应的颜色
 ---@param u userdata
----@param color any 阵营颜色
+---@param color any 阵营颜色，整数或参考 PLAYER_COLOR_BLACK
 hunit.setColor = function(u, color)
-    if (type(color) == "string") then
-        color = string.upper(color)
-        if (CONST_PLAYER_COLOR[color] ~= nil) then
-            cj.SetUnitColor(u, CONST_PLAYER_COLOR[color])
-        end
-    else
+    if (type(color) == "number") then
         cj.SetUnitColor(u, cj.ConvertPlayerColor(color - 1))
+    elseif (color ~= nil) then
+        cj.SetUnitColor(u, color)
     end
 end
 

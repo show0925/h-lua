@@ -1,32 +1,25 @@
 --- F6 物编
 --- 固定配置项
 local F6_CONF = {
-    autoShadow = false, -- 是否自动启用影子物品
     courierSkill = {
         -- 信使技能-名称、热键、图标位置、冷却
         blink = {
             Ubertip = "闪烁到任何地方", Art = "ReplaceableTextures\\CommandButtons\\BTNBlink.blp",
-            Hotkey = 'Q', Buttonpos1 = 0, Buttonpos2 = 2, Cool1 = 10
+            Hotkey = 'Q', Buttonpos_1 = 0, Buttonpos_2 = 2, Cool1 = 10
         },
         rangePickUp = {
             Ubertip = "将附近地上的物品拾取到身上", Art = "ReplaceableTextures\\CommandButtons\\BTNPickUpItem.blp",
-            Hotkey = 'W', Buttonpos1 = 1, Buttonpos2 = 2, Cool1 = 5
+            Hotkey = 'W', Buttonpos_1 = 1, Buttonpos_2 = 2, Cool1 = 5
         },
         separate = {
             Ubertip = "将合成或重叠的物品拆分成零件", Art = "ReplaceableTextures\\CommandButtons\\BTNRepair.blp",
-            Hotkey = 'E', Buttonpos1 = 2, Buttonpos2 = 2, Cool1 = 5
+            Hotkey = 'E', Buttonpos_1 = 2, Buttonpos_2 = 2, Cool1 = 5
         },
         deliver = {
             Ubertip = "将所有物品依照顺序传送给英雄，当你的英雄没有空余物品位置，物品会返回给信使", Art = "ReplaceableTextures\\CommandButtons\\BTNLoadPeon.blp",
-            Hotkey = 'R', Buttonpos1 = 3, Buttonpos2 = 2, Cool1 = 5
+            Hotkey = 'R', Buttonpos_1 = 3, Buttonpos_2 = 2, Cool1 = 5
         },
     },
-    unitSight = 1400, -- 一般单位白天视野默认值
-    unitNSight = 800, -- 一般单位黑夜视野默认值
-    heroSight = 1800, -- 英雄单位白天视野默认值
-    heroNSight = 800, -- 英雄单位黑夜视野默认值
-    shopSight = 1200, -- 商店单位白天视野默认值
-    shopNSight = 1200, -- 商店单位黑夜视野默认值
     -- 描述文本颜色,可配置 hcolor 里拥有的颜色函数，也可以配置 hex 6位颜色码
     color = {
         hotKey = "ffcc00", -- 热键
@@ -441,7 +434,8 @@ F6S.u = {}
 
 ------@private
 F6V_I_SYNTHESIS = function(formula)
-    local formulas = {}
+    F6V_I_SYNTHESIS_TMP.fragment = {}
+    F6V_I_SYNTHESIS_TMP.profit = {}
     for _, v in ipairs(formula) do
         local profit = ''
         local fragment = {}
@@ -460,7 +454,7 @@ F6V_I_SYNTHESIS = function(formula)
                     table.insert(fragment, { vv, 1 })
                 else
                     local temp = string.explode('x', vv)
-                    temp[2] = math.floor(temp[2])
+                    temp[2] = math.floor(tonumber(temp[2]))
                     table.insert(fragment, temp)
                 end
             end
@@ -486,10 +480,7 @@ F6V_I_SYNTHESIS = function(formula)
             end
         end
         F6V_I_SYNTHESIS_TMP.profit[profit[1]] = string.implode('+', fmStr)
-        --
-        table.insert(formulas, { _profit = profit, _fragment = fragment })
     end
-    return formulas
 end
 
 local F6_RING = function(_v)
@@ -512,44 +503,73 @@ local F6_RING = function(_v)
     end
 end
 
+local F6_HERO = function(_v)
+    _v.Primary = _v.Primary or "STR"
+    _v.weapTp1 = _v.weapTp1 or "normal"
+    _v.cool1 = _v.cool1 or 2
+    _v.dmgplus1 = _v.dmgplus1 or 10
+    _v.rangeN1 = _v.rangeN1 or 100
+    _v.STR = _v.STR or 10
+    _v.AGI = _v.AGI or 10
+    _v.INT = _v.INT or 10
+    _v.STRplus = _v.STRplus or 1
+    _v.AGIplus = _v.AGIplus or 1
+    _v.INTplus = _v.INTplus or 1
+    _v.spd = _v.spd or 300
+    local Ubertip
+    if (_v.Ubertip == nil or _v.Ubertip == "") then
+        Ubertip = ""
+    else
+        Ubertip = _v.Ubertip .. "|n"
+    end
+    Ubertip = Ubertip .. hcolor.mixed("攻击类型：" .. CONST_WEAPON_TYPE[_v.weapTp1].label .. "(" .. _v.cool1 .. "秒/击)", F6_CONF.color.heroWeapon)
+    Ubertip = Ubertip .. "|n" .. hcolor.mixed("基础攻击：" .. _v.dmgplus1, F6_CONF.color.heroAttack)
+    Ubertip = Ubertip .. "|n" .. hcolor.mixed("攻击范围：" .. _v.rangeN1, F6_CONF.color.heroRange)
+    if (_v.Primary == "STR") then
+        Ubertip = Ubertip .. "|n" .. hcolor.mixed("力量：" .. _v.STR .. "(+" .. _v.STRplus .. ")", F6_CONF.color.heroPrimary)
+    else
+        Ubertip = Ubertip .. "|n" .. hcolor.mixed("力量：" .. _v.STR .. "(+" .. _v.STRplus .. ")", F6_CONF.color.heroSecondary)
+    end
+    if (_v.Primary == "AGI") then
+        Ubertip = Ubertip .. "|n" .. hcolor.mixed("敏捷：" .. _v.AGI .. "(+" .. _v.AGIplus .. ")", F6_CONF.color.heroPrimary)
+    else
+        Ubertip = Ubertip .. "|n" .. hcolor.mixed("敏捷：" .. _v.AGI .. "(+" .. _v.AGIplus .. ")", F6_CONF.color.heroSecondary)
+    end
+    if (_v.Primary == "INT") then
+        Ubertip = Ubertip .. "|n" .. hcolor.mixed("智力：" .. _v.INT .. "(+" .. _v.INTplus .. ")", F6_CONF.color.heroPrimary)
+    else
+        Ubertip = Ubertip .. "|n" .. hcolor.mixed("智力：" .. _v.INT .. "(+" .. _v.INTplus .. ")", F6_CONF.color.heroSecondary)
+    end
+    Ubertip = Ubertip .. "|n" .. hcolor.mixed("移动：" .. _v.spd .. " " .. CONST_MOVE_TYPE[_v.movetp].label, F6_CONF.color.heroMove)
+    _v.Ubertip = Ubertip
+end
+
 F6V_A = function(_v)
     _v._class = "ability"
-    _v._type = "common"
+    _v._type = _v._type or "common"
     if (_v._parent == nil) then
         _v._parent = "ANcl"
     end
     if (_v.Name == nil) then
-        _v.Name = F6_NAME("未命名技能")
+        if (_v._type == "empty") then
+            _v.Name = F6_NAME("未命名空被动")
+        elseif (_v._type == "ring") then
+            _v.Name = F6_NAME("未命名空光环")
+        else
+            _v.Name = F6_NAME("未命名技能")
+        end
     end
     if (_v.Hotkey ~= nil) then
-        _v.Buttonpos1 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos1 or 0
-        _v.Buttonpos2 = CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos2 or 0
+        _v.Buttonpos_1 = _v.Buttonpos_1 or CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos_1 or 0
+        _v.Buttonpos_2 = _v.Buttonpos_2 or CONST_HOTKEY_ABILITY_KV[_v.Hotkey].Buttonpos_2 or 0
         _v.Tip = _v.Tip or (_v.Name .. "[" .. hcolor.mixed(_v.Hotkey, F6_CONF.color.hotKey) .. "]")
-        _v.Name = _v.Name .. _v.Hotkey
     else
         _v.Tip = _v.Tip or (_v.Name)
     end
+    -- 处理 _ring光环
+    F6_RING(_v)
     F6S.a.ubertip.attr(_v)
     return _v
-end
-
-F6V_A_E = function(_v)
-    _v._parent = "Aamk"
-    _v._type = "empty"
-    if (_v.Name == nil) then
-        _v.Name = F6_NAME("未命名空被动")
-    end
-    return F6V_A(_v)
-end
-
-F6V_A_R = function(_v)
-    _v._parent = "Aamk"
-    _v._type = "ring"
-    if (_v.Name == nil) then
-        _v.Name = F6_NAME("未命名空光环")
-    end
-    F6_RING(_v)
-    return F6V_A(_v)
 end
 
 F6V_U = function(_v)
@@ -559,9 +579,184 @@ F6V_U = function(_v)
         _v._parent = "hpea"
     end
     if (_v.Name == nil) then
-        _v.Name = F6_NAME("未命名单位")
+        if (_v._type == "hero") then
+            _v.Name = F6_NAME("未命名英雄")
+            -- 处理英雄数据
+            F6_HERO(_v)
+        elseif (_v._type == "ring") then
+            _v.Name = F6_NAME("未命名空光环")
+        else
+            _v.Name = F6_NAME("未命名单位")
+        end
+    end
+    if (_v.Hotkey ~= nil) then
+        _v.Buttonpos_1 = _v.Buttonpos_1 or CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos_1 or 0
+        _v.Buttonpos_2 = _v.Buttonpos_2 or CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos_2 or 0
+        _v.Tip = "选择：" .. _v.Name .. "(" .. hcolor.mixed(_v.Hotkey, F6_CONF.color.hotKey) .. ")"
+    else
+        _v.Buttonpos_1 = _v.Buttonpos_1 or 0
+        _v.Buttonpos_2 = _v.Buttonpos_2 or 0
+        _v.Tip = "选择：" .. _v.Name
+    end
+    local targs1 = _v.targs1 or "vulnerable,ground,ward,structure,organic,mechanical,debris,air" --攻击目标
+    if (_v.weapTp1 ~= "normal") then
+        _v.weapType1 = "" --攻击声音
+        _v.Missileart = _v.Missileart -- 箭矢模型
+        _v.Missilespeed = _v.Missilespeed or 900 -- 箭矢速度
+        _v.Missilearc = _v.Missilearc or 0.10
+    end
+    if (_v.weapTp1 == "normal") then
+        _v.weapType1 = _v.weapType1 or "" --攻击声音
+        _v.Missileart = ""
+        _v.Missilespeed = 0
+        _v.Missilearc = 0
+    elseif (_v.weapTp1 == "msplash" or _v.weapTp1 == "artillery") then
+        --溅射/炮火
+        _v.Farea1 = _v.Farea1 or 1
+        _v.Qfact1 = _v.Qfact1 or 0.05
+        _v.Qarea1 = _v.Qarea1 or 500
+        _v.Hfact1 = _v.Hfact1 or 0.15
+        _v.Harea1 = _v.Harea1 or 350
+        _v.splashTargs1 = targs1 .. ",enemies"
+    elseif (_v.weapTp1 == "mbounce") then
+        --弹射
+        _v.Farea1 = _v.Farea1 or 450
+        _v.targCount1 = _v.targCount1 or 4
+        _v.damageLoss1 = _v.damageLoss1 or 0.3
+        _v.splashTargs1 = targs1 .. ",enemies"
+    elseif (_v.weapTp1 == "mline") then
+        --穿透
+        _v.spillRadius = _v.spillRadius or 200
+        _v.spillDist1 = _v.spillDist1 or 450
+        _v.damageLoss1 = _v.damageLoss1 or 0.3
+        _v.splashTargs1 = targs1 .. ",enemies"
+    elseif (_v.weapTp1 == "aline") then
+        --炮火穿透
+        _v.Farea1 = _v.Farea1 or 1
+        _v.Qfact1 = _v.Qfact1 or 0.05
+        _v.Qarea1 = _v.Qarea1 or 500
+        _v.Hfact1 = _v.Hfact1 or 0.15
+        _v.Harea1 = _v.Harea1 or 350
+        _v.spillRadius = _v.spillRadius or 200
+        _v.spillDist1 = _v.spillDist1 or 450
+        _v.damageLoss1 = _v.damageLoss1 or 0.3
+        _v.splashTargs1 = targs1 .. ",enemies"
+    end
+    if (_v.Propernames ~= nil) then
+        _v.nameCount = #string.explode(',', _v.Propernames)
     end
     return _v
+end
+
+local courier_skill_ids
+F6V_COURIER_SKILL = function()
+    if (courier_skill_ids == nil) then
+        courier_skill_ids = { "AInv", "Avul" }
+        local Name = "信使-闪烁"
+        local tmp = {
+            _parent = "AEbl",
+            _type = "courier",
+            Name = Name,
+            Tip = Name .. "(" .. hcolor.mixed(F6_CONF.courierSkill.blink.Hotkey, F6_CONF.color.hotKey) .. ")",
+            Hotkey = F6_CONF.courierSkill.blink.Hotkey,
+            Ubertip = F6_CONF.courierSkill.blink.Ubertip,
+            Buttonpos_1 = F6_CONF.courierSkill.blink.Buttonpos_1,
+            Buttonpos_2 = F6_CONF.courierSkill.blink.Buttonpos_2,
+            hero = 0,
+            levels = 1,
+            Art = F6_CONF.courierSkill.blink.Art,
+            SpecialArt = "Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl",
+            Areaeffectart = "Abilities\\Spells\\NightElf\\Blink\\BlinkTarget.mdl",
+            race = "other",
+            DataA = { 99999 },
+            DataB = { 0 },
+            Cool = { F6_CONF.courierSkill.blink.Cool1 },
+            Cost = { 0 },
+        }
+        table.insert(courier_skill_ids, hslk_ability(tmp)._id)
+        Name = "信使-拾取"
+        tmp = {
+            _parent = "ANcl",
+            _type = "courier",
+            Name = Name,
+            Tip = Name .. "(" .. hcolor.mixed(F6_CONF.courierSkill.rangePickUp.Hotkey, F6_CONF.color.hotKey) .. ")",
+            Order = "manaburn",
+            Hotkey = F6_CONF.courierSkill.rangePickUp.Hotkey,
+            Ubertip = F6_CONF.courierSkill.rangePickUp.Ubertip,
+            Buttonpos_1 = F6_CONF.courierSkill.rangePickUp.Buttonpos_1,
+            Buttonpos_2 = F6_CONF.courierSkill.rangePickUp.Buttonpos_2,
+            hero = 0,
+            levels = 1,
+            Art = F6_CONF.courierSkill.rangePickUp.Art,
+            CasterArt = "",
+            EffectArt = "",
+            TargetArt = "",
+            race = "other",
+            DataA = { 0 },
+            DataB = { 0 },
+            DataC = { 1 },
+            DataD = { 0.01 },
+            DataF = { "manaburn" },
+            Cool = { F6_CONF.courierSkill.rangePickUp.Cool1 },
+            Cost = { 0 },
+        }
+        table.insert(courier_skill_ids, hslk_ability(tmp)._id)
+        Name = "信使-拆分物品"
+        tmp = {
+            _parent = "ANtm",
+            _type = "courier",
+            Name = Name,
+            Tip = Name .. "(" .. hcolor.mixed(F6_CONF.courierSkill.separate.Hotkey, F6_CONF.color.hotKey) .. ")",
+            Ubertip = F6_CONF.courierSkill.separate.Ubertip,
+            Art = F6_CONF.courierSkill.separate.Art,
+            Hotkey = F6_CONF.courierSkill.separate.Hotkey,
+            Buttonpos_1 = F6_CONF.courierSkill.separate.Buttonpos_1,
+            Buttonpos_2 = F6_CONF.courierSkill.separate.Buttonpos_2,
+            Missileart = "",
+            Missilespeed = 99999,
+            Missilearc = 0.00,
+            Animnames = "",
+            hero = 0,
+            race = "other",
+            DataD = { 0 },
+            DataA = { 0 },
+            BuffID = { "" },
+            Cool = { F6_CONF.courierSkill.separate.Cool1 },
+            targs = { "item,nonhero" },
+            Cost = { 0 },
+            Rng = { 200.00 },
+        }
+        table.insert(courier_skill_ids, hslk_ability(tmp)._id)
+        Name = "信使-传递"
+        tmp = {
+            _parent = "ANcl",
+            _type = "courier",
+            Name = Name,
+            Tip = Name .. Name .. "(" .. hcolor.mixed(F6_CONF.courierSkill.deliver.Hotkey, F6_CONF.color.hotKey) .. ")",
+            Order = "polymorph",
+            Hotkey = F6_CONF.courierSkill.deliver.Hotkey,
+            Ubertip = F6_CONF.courierSkill.deliver.Ubertip,
+            Buttonpos_1 = F6_CONF.courierSkill.deliver.Buttonpos_1,
+            Buttonpos_2 = F6_CONF.courierSkill.deliver.Buttonpos_2,
+            hero = 0,
+            levels = 1,
+            Art = F6_CONF.courierSkill.deliver.Art,
+            CasterArt = "",
+            EffectArt = "",
+            TargetArt = "",
+            race = "other",
+            DataA = { 0 },
+            DataB = { 0 },
+            DataC = { 1 },
+            DataD = { 0.01 },
+            DataF = { "polymorph" },
+            Cool = { F6_CONF.courierSkill.deliver.Cool1 },
+            Cost = { 0 },
+        }
+        table.insert(courier_skill_ids, hslk_ability(tmp)._id)
+        courier_skill_ids = string.implode(",", courier_skill_ids)
+    end
+    return courier_skill_ids
 end
 
 F6V_I_CD = function(_v)
@@ -587,8 +782,8 @@ F6V_I_CD = function(_v)
         item = 1,
         Requires = "",
         Hotkey = "",
-        Buttonpos1 = 0,
-        Buttonpos2 = 0,
+        Buttonpos_1 = 0,
+        Buttonpos_2 = 0,
         race = "other",
         Cast = { _v._cast or 0 },
         Cost = { _v._cost or 0 },
@@ -666,6 +861,7 @@ F6V_I = function(_v)
     if (_v._cooldown ~= nil) then
         local cd = F6V_I_CD(_v)
         _v.abilList = cd
+        _v.cooldownID = cd
         _v.usable = 1
         if (_v.powerup == 0) then
             _v.class = "Charged"
@@ -685,9 +881,16 @@ F6V_I = function(_v)
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名物品")
     end
+    if (_v.file == nil) then
+        if (_v.class == "PowerUp") then
+            _v.file = "Objects\\InventoryItems\\tomeRed\\tomeRed.mdl"
+        else
+            _v.file = "Objects\\InventoryItems\\TreasureChest\\treasurechest.mdl"
+        end
+    end
     -- 处理 _shadow
     if (type(_v._shadow) ~= 'boolean') then
-        _v._shadow = (F6_CONF.autoShadow == true and _v.powerup == 0)
+        _v._shadow = false
     end
     -- 处理 _ring光环
     F6_RING(_v)
@@ -728,13 +931,22 @@ F6V_I = function(_v)
         _v.oldLevel = _v.Level
     end
     if (_v.Hotkey ~= nil) then
-        _v.Buttonpos_1 = CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos1 or 0
-        _v.Buttonpos_2 = CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos2 or 0
+        _v.Buttonpos_1 = _v.Buttonpos_1 or CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos_1 or 0
+        _v.Buttonpos_2 = _v.Buttonpos_2 or CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos_2 or 0
         _v.Tip = "获得" .. _v.Name .. "(" .. hcolor.mixed(_v.Hotkey, F6_CONF.color.hotKey) .. ")"
     else
         _v.Buttonpos_1 = _v.Buttonpos_1 or 0
         _v.Buttonpos_2 = _v.Buttonpos_2 or 0
         _v.Tip = "获得" .. _v.Name
+    end
+    return _v
+end
+
+F6V_B = function(_v)
+    _v._class = "buff"
+    _v._type = "common"
+    if (_v.Name == nil) then
+        _v.Name = F6_NAME("未命名魔法效果")
     end
     return _v
 end

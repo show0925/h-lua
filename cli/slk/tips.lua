@@ -273,7 +273,8 @@ TIPS = {
     Rng = "施法距离",
     Area = "施法范围",
     --
-    _id = "物编ID",
+    _id = "自动生成的物编ID",
+    _id_force = "物编ID",
     _class = "hslk数据类别",
     _type = "hslk数据形式",
     _parent = "模版物编ID",

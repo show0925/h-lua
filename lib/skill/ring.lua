@@ -29,7 +29,7 @@ hring.insert = function(whichUnit, id)
     end
     if (his.deleted(whichUnit) == false) then
         table.insert(hring.ACTIVE_RING, { status = 2, unit = whichUnit, id = id, group = {} })
-        local rs = hslk.i2v(id)
+        local rs = hslk.i2v(id, "_ring") or {}
         if (rs.effect) then
             if (hring.ACTIVE_EFFECT[id] == nil) then
                 hring.ACTIVE_EFFECT[id] = {}
@@ -67,7 +67,7 @@ hring.insert = function(whichUnit, id)
                 --
                 local g = {}
                 local ringId = ring.id
-                local rs = hslk.i2v(ringId)
+                local rs = hslk.i2v(ringId, "_ring") or {}
                 if (status == 2 and rs ~= nil) then
                     if (rs.effectTarget and hring.ACTIVE_EFFECT_TARGET[ringId] == nil) then
                         hring.ACTIVE_EFFECT_TARGET[ringId] = {}

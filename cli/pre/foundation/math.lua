@@ -1,8 +1,19 @@
+math_random = math.random
+math_pi = 3.14159265358979323846
+math_rad2deg = 180 / math_pi
+math_deg2rad = math_pi / 180
+
 --- 随机数
 ---@param n number
 ---@param m number
 ---@return number
 math.random = function(n, m)
+    if (cj == nil) then
+        if (m < n) then
+            return math_random(m, n)
+        end
+        return math_random(n, m)
+    end
     local func = cj.GetRandomReal
     if (n == nil or m == nil) then
         -- 0.00 ~ 1.00
@@ -31,17 +42,17 @@ end
 ---@param angle number
 ---@return table
 math.polarProjection = function(x, y, dist, angle)
-    local tx = x + dist * math.cos(angle * bj_DEGTORAD)
-    local ty = y + dist * math.sin(angle * bj_DEGTORAD)
-    if (tx < HG_RECT.PLAYABLE.MIN_X) then
-        tx = HG_RECT.PLAYABLE.MIN_X
-    elseif (tx > HG_RECT.PLAYABLE.MAX_X) then
-        tx = HG_RECT.PLAYABLE.MAX_X
+    local tx = x + dist * math.cos(angle * math_deg2rad)
+    local ty = y + dist * math.sin(angle * math_deg2rad)
+    if (tx < hrect.getMinX(hrect.playable())) then
+        tx = hrect.getMinX(hrect.playable())
+    elseif (tx > hrect.getMaxX(hrect.playable())) then
+        tx = hrect.getMaxX(hrect.playable())
     end
-    if (ty < HG_RECT.PLAYABLE.MIN_Y) then
-        ty = HG_RECT.PLAYABLE.MIN_Y
-    elseif (ty > HG_RECT.PLAYABLE.MAX_Y) then
-        ty = HG_RECT.PLAYABLE.MAX_Y
+    if (ty < hrect.getMinY(hrect.playable())) then
+        ty = hrect.getMinY(hrect.playable())
+    elseif (ty > hrect.getMaxY(hrect.playable())) then
+        ty = hrect.getMaxY(hrect.playable())
     end
     return { x = tx, y = ty }
 end
@@ -99,7 +110,7 @@ end
 ---@param y2 number
 ---@return number
 math.getDegBetweenXY = function(x1, y1, x2, y2)
-    return bj_RADTODEG * cj.Atan2(y2 - y1, x2 - x1)
+    return math_rad2deg * math.atan(y2 - y1, x2 - x1)
 end
 
 --- 获取两个单位间角度，如果其中一个单位为空 返回0
@@ -122,7 +133,7 @@ end
 math.getDistanceBetweenXY = function(x1, y1, x2, y2)
     local dx = x2 - x1
     local dy = y2 - y1
-    return cj.SquareRoot(dx * dx + dy * dy)
+    return math.sqrt(dx * dx + dy * dy)
 end
 
 --- 获取两个单位距离
@@ -145,7 +156,7 @@ math.getMaxDistanceInRect = function(w, h, deg)
         return
     end
     local distance = 0
-    local lockDegA = (180 * cj.Atan(h / w)) / bj_PI
+    local lockDegA = (180 * math.atan(h / w)) / math_pi
     local lockDegB = 90 - lockDegA
     if (deg == 0 or deg == 180 or deg == -180) then
         -- 横
@@ -155,28 +166,28 @@ math.getMaxDistanceInRect = function(w, h, deg)
         distance = h
     elseif (deg > 0 and deg <= lockDegA) then
         -- 第1三角区间
-        distance = w / 2 / math.cos(deg * bj_DEGTORAD)
+        distance = w / 2 / math.cos(deg * math_deg2rad)
     elseif (deg > lockDegA and deg < 90) then
         -- 第2三角区间
-        distance = h / 2 / math.cos(90 - deg * bj_DEGTORAD)
+        distance = h / 2 / math.cos(90 - deg * math_deg2rad)
     elseif (deg > 90 and deg <= 90 + lockDegB) then
         -- 第3三角区间
-        distance = h / 2 / math.cos((deg - 90) * bj_DEGTORAD)
+        distance = h / 2 / math.cos((deg - 90) * math_deg2rad)
     elseif (deg > 90 + lockDegB and deg < 180) then
         -- 第4三角区间
-        distance = w / 2 / math.cos((180 - deg) * bj_DEGTORAD)
+        distance = w / 2 / math.cos((180 - deg) * math_deg2rad)
     elseif (deg < 0 and deg >= -lockDegA) then
         -- 第5三角区间
-        distance = w / 2 / math.cos(deg * bj_DEGTORAD)
+        distance = w / 2 / math.cos(deg * math_deg2rad)
     elseif (deg < lockDegA and deg > -90) then
         -- 第6三角区间
-        distance = h / 2 / math.cos((90 + deg) * bj_DEGTORAD)
+        distance = h / 2 / math.cos((90 + deg) * math_deg2rad)
     elseif (deg < -90 and deg >= -90 - lockDegB) then
         -- 第7三角区间
-        distance = h / 2 / math.cos((-deg - 90) * bj_DEGTORAD)
+        distance = h / 2 / math.cos((-deg - 90) * math_deg2rad)
     elseif (deg < -90 - lockDegB and deg > -180) then
         -- 第8三角区间
-        distance = w / 2 / math.cos((180 + deg) * bj_DEGTORAD)
+        distance = w / 2 / math.cos((180 + deg) * math_deg2rad)
     end
     return distance
 end

@@ -66,9 +66,9 @@ end
 hsound.voice2Rect = function(s, whichRect, during)
     if (s ~= nil) then
         during = during or 0
-        local width = cj.GetRectMaxX(whichRect) - cj.GetRectMinX(whichRect)
-        local height = cj.GetRectMaxY(whichRect) - cj.GetRectMinY(whichRect)
-        cj.SetSoundPosition(s, cj.GetRectCenterX(whichRect), cj.GetRectCenterY(whichRect), 0)
+        local width = hrect.getWidth(whichRect)
+        local height = hrect.getHeight(whichRect)
+        cj.SetSoundPosition(s, hrect.getX(whichRect), hrect.getY(whichRect), 0)
         cj.RegisterStackedSound(s, true, width, height)
         if (during > 0) then
             htime.setTimeout(during, function(curTimer)

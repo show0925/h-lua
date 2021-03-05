@@ -1,38 +1,60 @@
---- 默认常用地图定义
-HG_RECT = {
-    WORLD = {
-        RECT = cj.GetWorldBounds()
-    },
-    CAMERA = {
-        RECT = cj.Rect(
-            cj.GetCameraBoundMinX(), cj.GetCameraBoundMinY(),
-            cj.GetCameraBoundMaxX(), cj.GetCameraBoundMaxY()
-        )
-    },
-    PLAYABLE = {
-        RECT = cj.Rect(
+---@class hrect
+hrect = {
+    _world = nil,
+    _camera = nil,
+    _playable = nil,
+}
+
+---@private
+hrect.alloc = function(r, name)
+    if (hcache.exist(r) == false) then
+        hcache.alloc(r)
+        hcache.set(r, CONST_CACHE.RECT_NAME, name)
+        hcache.set(r, CONST_CACHE.RECT_WIDTH, cj.GetRectMaxX(r) - cj.GetRectMinX(r))
+        hcache.set(r, CONST_CACHE.RECT_HEIGHT, cj.GetRectMaxY(r) - cj.GetRectMinY(r))
+        hcache.set(r, CONST_CACHE.RECT_X, cj.GetRectCenterX(r))
+        hcache.set(r, CONST_CACHE.RECT_Y, cj.GetRectCenterY(r))
+        hcache.set(r, CONST_CACHE.RECT_X_MIN, cj.GetRectMinX(r))
+        hcache.set(r, CONST_CACHE.RECT_Y_MIN, cj.GetRectMinY(r))
+        hcache.set(r, CONST_CACHE.RECT_X_MAX, cj.GetRectMaxX(r))
+        hcache.set(r, CONST_CACHE.RECT_Y_MAX, cj.GetRectMaxY(r))
+    end
+end
+
+--- 获取地图世界区域
+---@return userdata
+hrect.world = function()
+    if (hrect._world == nil) then
+        hrect._world = cj.GetWorldBounds()
+        hrect.alloc(hrect._world)
+    end
+    return hrect._world
+end
+
+--- 获取地图镜头区域
+---@return userdata
+hrect.camera = function()
+    if (hrect._camera == nil) then
+        hrect._camera = cj.Rect(cj.GetCameraBoundMinX(), cj.GetCameraBoundMinY(), cj.GetCameraBoundMaxX(), cj.GetCameraBoundMaxY())
+        hrect.alloc(hrect._camera)
+    end
+    return hrect._camera
+end
+
+--- 获取地图可玩区域
+---@return userdata
+hrect.playable = function()
+    if (hrect._playable == nil) then
+        hrect._playable = cj.Rect(
             cj.GetCameraBoundMinX() - cj.GetCameraMargin(CAMERA_MARGIN_LEFT),
             cj.GetCameraBoundMinY() - cj.GetCameraMargin(CAMERA_MARGIN_BOTTOM),
             cj.GetCameraBoundMaxX() + cj.GetCameraMargin(CAMERA_MARGIN_RIGHT),
             cj.GetCameraBoundMaxY() + cj.GetCameraMargin(CAMERA_MARGIN_TOP)
-        ),
-    }
-}
-HG_RECT.WORLD.MIN_X = cj.GetRectMinX(HG_RECT.WORLD.RECT)
-HG_RECT.WORLD.MIN_Y = cj.GetRectMinX(HG_RECT.WORLD.RECT)
-HG_RECT.WORLD.MAX_X = cj.GetRectMinX(HG_RECT.WORLD.RECT)
-HG_RECT.WORLD.MAX_Y = cj.GetRectMinX(HG_RECT.WORLD.RECT)
-HG_RECT.CAMERA.MIN_X = cj.GetRectMinX(HG_RECT.CAMERA.RECT)
-HG_RECT.CAMERA.MIN_Y = cj.GetRectMinX(HG_RECT.CAMERA.RECT)
-HG_RECT.CAMERA.MAX_X = cj.GetRectMinX(HG_RECT.CAMERA.RECT)
-HG_RECT.CAMERA.MAX_Y = cj.GetRectMinX(HG_RECT.CAMERA.RECT)
-HG_RECT.PLAYABLE.MIN_X = cj.GetRectMinX(HG_RECT.PLAYABLE.RECT)
-HG_RECT.PLAYABLE.MIN_Y = cj.GetRectMinX(HG_RECT.PLAYABLE.RECT)
-HG_RECT.PLAYABLE.MAX_X = cj.GetRectMinX(HG_RECT.PLAYABLE.RECT)
-HG_RECT.PLAYABLE.MAX_Y = cj.GetRectMinX(HG_RECT.PLAYABLE.RECT)
-
----@class hrect
-hrect = {}
+        )
+        hrect.alloc(hrect._playable)
+    end
+    return hrect._playable
+end
 
 --- 创建一个设定中心（x,y）创建一个长w宽h的矩形区域
 ---@param x number
@@ -42,21 +64,12 @@ hrect = {}
 ---@param name string
 ---@return userdata
 hrect.create = function(x, y, w, h, name)
-    local startX = x - (w * 0.5)
-    local startY = y - (h * 0.5)
-    local endX = x + (w * 0.5)
-    local endY = y + (h * 0.5)
-    local r = cj.Rect(startX, startY, endX, endY)
-    hcache.alloc(r)
-    hcache.set(r, CONST_CACHE.RECT_NAME, name)
-    hcache.set(r, CONST_CACHE.RECT_WIDTH, w)
-    hcache.set(r, CONST_CACHE.RECT_HEIGHT, h)
-    hcache.set(r, CONST_CACHE.RECT_X, x)
-    hcache.set(r, CONST_CACHE.RECT_Y, y)
-    hcache.set(r, CONST_CACHE.RECT_X_START, startX)
-    hcache.set(r, CONST_CACHE.RECT_Y_START, startY)
-    hcache.set(r, CONST_CACHE.RECT_X_END, endX)
-    hcache.set(r, CONST_CACHE.RECT_Y_END, endY)
+    local minX = x - (w * 0.5)
+    local minY = y - (h * 0.5)
+    local maxX = x + (w * 0.5)
+    local maxY = y + (h * 0.5)
+    local r = cj.Rect(minX, minY, maxX, maxY)
+    hrect.alloc(r, name or "")
     return r
 end
 
@@ -64,6 +77,7 @@ end
 ---@param whichRect userdata
 ---@return string
 hrect.getName = function(whichRect)
+    hrect.alloc(whichRect)
     return hcache.get(whichRect, CONST_CACHE.RECT_NAME, '')
 end
 
@@ -71,6 +85,7 @@ end
 ---@param whichRect userdata
 ---@return number
 hrect.getX = function(whichRect)
+    hrect.alloc(whichRect)
     return hcache.get(whichRect, CONST_CACHE.RECT_X, 0)
 end
 
@@ -78,6 +93,7 @@ end
 ---@param whichRect userdata
 ---@return number
 hrect.getY = function(whichRect)
+    hrect.alloc(whichRect)
     return hcache.get(whichRect, CONST_CACHE.RECT_Y, 0)
 end
 
@@ -85,6 +101,7 @@ end
 ---@param whichRect userdata
 ---@return number
 hrect.getWidth = function(whichRect)
+    hrect.alloc(whichRect)
     return hcache.get(whichRect, CONST_CACHE.RECT_WIDTH, 0)
 end
 
@@ -92,35 +109,40 @@ end
 ---@param whichRect userdata
 ---@return number
 hrect.getHeight = function(whichRect)
+    hrect.alloc(whichRect)
     return hcache.get(whichRect, CONST_CACHE.RECT_HEIGHT, 0)
 end
 
 --- 获取区域的起点坐标x(左下角)
 ---@param whichRect userdata
 ---@return number
-hrect.getStartX = function(whichRect)
-    return hcache.get(whichRect, CONST_CACHE.RECT_X_START, 0)
+hrect.getMinX = function(whichRect)
+    hrect.alloc(whichRect)
+    return hcache.get(whichRect, CONST_CACHE.RECT_X_MIN, 0)
 end
 
 --- 获取区域的起点坐标y(左下角)
 ---@param whichRect userdata
 ---@return number
-hrect.getStartY = function(whichRect)
-    return hcache.get(whichRect, CONST_CACHE.RECT_Y_START, 0)
+hrect.getMinY = function(whichRect)
+    hrect.alloc(whichRect)
+    return hcache.get(whichRect, CONST_CACHE.RECT_Y_MIN, 0)
 end
 
 --- 获取区域的结束坐标x(右上角)
 ---@param whichRect userdata
 ---@return number
-hrect.getEndX = function(whichRect)
-    return hcache.get(whichRect, CONST_CACHE.RECT_X_END, 0)
+hrect.getMaxX = function(whichRect)
+    hrect.alloc(whichRect)
+    return hcache.get(whichRect, CONST_CACHE.RECT_X_MAX, 0)
 end
 
 --- 获取区域的结束坐标y(右上角)
 ---@param whichRect userdata
 ---@return number
-hrect.getEndY = function(whichRect)
-    return hcache.get(whichRect, CONST_CACHE.RECT_Y_END, 0)
+hrect.getMaxY = function(whichRect)
+    hrect.alloc(whichRect)
+    return hcache.get(whichRect, CONST_CACHE.RECT_Y_MAX, 0)
 end
 
 --- 删除区域

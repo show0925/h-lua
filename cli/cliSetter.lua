@@ -1,7 +1,29 @@
---- 固定配置项
-local F6_CONF = {
-    autoShadow = false, -- 是否自动启用影子物品
-}
+string_explode = function(delimeter, str)
+    local res = {}
+    local start, start_pos, end_pos = 1, 1, 1
+    while true do
+        start_pos, end_pos = string.find(str, delimeter, start, true)
+        if not start_pos then
+            break
+        end
+        table.insert(res, string.sub(str, start, start_pos - 1))
+        start = end_pos + 1
+    end
+    table.insert(res, string.sub(str, start))
+    return res
+end
+
+string_strpos = function(str, pattern)
+    if (str == nil or pattern == nil) then
+        return false
+    end
+    local s = string.find(str, pattern, 0)
+    if (type(s) == "number") then
+        return s
+    else
+        return false
+    end
+end
 
 ---@private
 F6V_I_SYNTHESIS = function(formula)
@@ -10,31 +32,31 @@ F6V_I_SYNTHESIS = function(formula)
         local profit = ''
         local fragment = {}
         if (type(v) == 'string') then
-            local f1 = string.explode('=', v)
-            if (string.strpos(f1[1], 'x') == false) then
+            local f1 = string_explode('=', v)
+            if (string_strpos(f1[1], 'x') == false) then
                 profit = { f1[1], 1 }
             else
-                local temp = string.explode('x', f1[1])
+                local temp = string_explode('x', f1[1])
                 temp[2] = math.floor(temp[2])
                 profit = temp
             end
-            local f2 = string.explode('+', f1[2])
+            local f2 = string_explode('+', f1[2])
             for _, vv in ipairs(f2) do
-                if (string.strpos(vv, 'x') == false) then
+                if (string_strpos(vv, 'x') == false) then
                     table.insert(fragment, { vv, 1 })
                 else
-                    local temp = string.explode('x', vv)
+                    local temp = string_explode('x', vv)
                     temp[2] = math.floor(temp[2])
                     table.insert(fragment, temp)
                 end
             end
         elseif (type(v) == 'table') then
             profit = v[1]
-            for vi = 2, table.len(v), 1 do
+            for vi = 2, #v, 1 do
                 table.insert(fragment, v[vi])
             end
         end
-        table.insert(formulas, { _profit = profit, _fragment = fragment })
+        table.insert(formulas, { profit = profit, fragment = fragment })
     end
     return formulas
 end
@@ -61,33 +83,34 @@ end
 
 F6V_A = function(_v)
     _v._class = "ability"
-    _v._type = "common"
+    _v._type = _v._type or "common"
     if (_v._parent == nil) then
         _v._parent = "ANcl"
     end
-    return _v
-end
-
-F6V_A_E = function(_v)
-    _v._parent = "Aamk"
-    _v._type = "empty"
-    return F6V_A(_v)
-end
-
-F6V_A_R = function(_v)
-    _v._parent = "Aamk"
-    _v._type = "ring"
+    -- 处理 _ring光环
     F6_RING(_v)
-    return F6V_A(_v)
+    return _v
 end
 
 F6V_U = function(_v)
     _v._class = "unit"
-    _v._type = "common"
+    _v._type = _v._type or "common"
     if (_v._parent == nil) then
         _v._parent = "hpea"
     end
     return _v
+end
+
+local courier_skill_ids
+F6V_COURIER_SKILL = function()
+    if (courier_skill_ids == nil) then
+        courier_skill_ids = {}
+        hslk_ability({ _parent = "AEbl", _type = "courier" })
+        hslk_ability({ _parent = "ANcl", _type = "courier" })
+        hslk_ability({ _parent = "ANtm", _type = "courier" })
+        hslk_ability({ _parent = "ANcl", _type = "courier" })
+    end
+    return courier_skill_ids
 end
 
 F6V_I_CD = function(_v)
@@ -132,7 +155,7 @@ end
 
 F6V_I = function(_v)
     _v._class = "item"
-    _v._type = "common"
+    _v._type = _v._type or "common"
     if (_v._cooldown ~= nil) then
         F6V_I_CD(_v)
     end
@@ -145,10 +168,6 @@ F6V_I = function(_v)
             _v._parent = "rat9"
         end
     end
-    -- 处理 _shadow
-    if (type(_v._shadow) ~= 'boolean') then
-        _v._shadow = (F6_CONF.autoShadow == true and _v.powerup == 0)
-    end
     -- 处理 _ring光环
     F6_RING(_v)
     if (_v._overlie == nil or _v._overlie < (_v.uses or 1)) then
@@ -157,8 +176,14 @@ F6V_I = function(_v)
     return _v
 end
 
+F6V_B = function(_v)
+    _v._class = "buff"
+    _v._type = _v._type or "common"
+    return _v
+end
+
 F6V_UP = function(_v)
     _v._class = "upgrade"
-    _v._type = "common"
+    _v._type = _v._type or "common"
     return _v
 end

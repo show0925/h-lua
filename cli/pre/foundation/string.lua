@@ -64,20 +64,6 @@ string.mb_len = function(inputStr)
     return width
 end
 
---- 生成MD5
----@param t any
----@param string
-string.md5 = function(t)
-    if (type(t) == "string") then
-        return md5.sumhexa(t)
-    elseif (type(t) == "table") then
-        table.sort(t)
-        return md5.sumhexa(json.stringify(t))
-    end
-    print_err("MD5 fail!")
-    return
-end
-
 --- 根据值获取一个key
 ---@param t string
 ---@return string

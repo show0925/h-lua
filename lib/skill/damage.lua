@@ -56,13 +56,11 @@ hskill.damage = function(options)
     local targetUnitAttr = hattribute.get(targetUnit)
     local sourceUnitAttr = {}
     if (targetUnitAttr == nil) then
-        print("targetUnit unregister")
         return
     end
     if (sourceUnit ~= nil) then
         sourceUnitAttr = hattribute.get(sourceUnit)
         if (sourceUnitAttr == nil) then
-            print("sourceUnit unregister")
             return
         end
     end

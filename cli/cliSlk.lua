@@ -25,35 +25,25 @@ hslk_init = function()
     if (#hslk_cli_ids > 0) then
         for _, id in ipairs(hslk_cli_ids) do
             HSLK_I2V[id] = HSLK_CLI_DATA[id] or {}
-            HSLK_I2V[id]._id = id
             HSLK_I2V[id]._type = HSLK_I2V[id]._type or "slk"
             if (jass_slk.item[id] ~= nil) then
                 HSLK_I2V[id]._class = HSLK_I2V[id]._class or "item"
-                for _, slkKey in ipairs(CONST_SLK.item) do
-                    if (jass_slk.item[id][slkKey] ~= nil) then
-                        HSLK_I2V[id][slkKey] = jass_slk.item[id][slkKey]
-                    end
-                end
-                if (HSLK_I2V[id].cooldownID) then
-                    HSLK_ICD[HSLK_I2V[id].cooldownID] = HSLK_I2V[id]._id
+                HSLK_I2V[id].slk = jass_slk.item[id]
+                if (HSLK_I2V[id].slk.cooldownID) then
+                    HSLK_ICD[HSLK_I2V[id].slk.cooldownID] = HSLK_I2V[id]._id
                 end
             elseif (jass_slk.unit[id] ~= nil) then
                 HSLK_I2V[id]._class = HSLK_I2V[id]._class or "unit"
-                for _, slkKey in ipairs(CONST_SLK.unit) do
-                    if (jass_slk.unit[id][slkKey] ~= nil) then
-                        HSLK_I2V[id][slkKey] = jass_slk.unit[id][slkKey]
-                    end
-                end
+                HSLK_I2V[id].slk = jass_slk.unit[id]
             elseif (jass_slk.ability[id] ~= nil) then
                 HSLK_I2V[id]._class = HSLK_I2V[id]._class or "ability"
-                for _, slkKey in ipairs(CONST_SLK.ability) do
-                    if (jass_slk.ability[id][slkKey] ~= nil) then
-                        HSLK_I2V[id][slkKey] = jass_slk.ability[id][slkKey]
-                    end
-                end
-            elseif (jass_slk.technology[id] ~= nil) then
-                HSLK_I2V[id] = jass_slk.technology[id]
-                HSLK_I2V[id]._class = HSLK_I2V[id]._class or "technology"
+                HSLK_I2V[id].slk = jass_slk.ability[id]
+            elseif (jass_slk.buff[id] ~= nil) then
+                HSLK_I2V[id]._class = HSLK_I2V[id]._class or "buff"
+                HSLK_I2V[id].slk = jass_slk.buff[id]
+            elseif (jass_slk.upgrade[id] ~= nil) then
+                HSLK_I2V[id]._class = HSLK_I2V[id]._class or "upgrade"
+                HSLK_I2V[id].slk = jass_slk.upgrade[id]
             end
             -- 处理_class
             if (HSLK_I2V[id]._class) then
@@ -70,14 +60,16 @@ hslk_init = function()
                 table.insert(HSLK_TYPE_IDS[HSLK_I2V[id]._type], id)
             end
             -- 处理N2V
-            local n = HSLK_I2V[id].Name
-            if (n ~= nil) then
-                if (HSLK_N2V[n] == nil) then
-                    HSLK_N2I[n] = {}
-                    HSLK_N2V[n] = {}
+            if (HSLK_I2V[id].slk) then
+                local n = HSLK_I2V[id].slk.Name
+                if (n ~= nil) then
+                    if (HSLK_N2V[n] == nil) then
+                        HSLK_N2I[n] = {}
+                        HSLK_N2V[n] = {}
+                    end
+                    table.insert(HSLK_N2I[n], id)
+                    table.insert(HSLK_N2V[n], HSLK_I2V[id])
                 end
-                table.insert(HSLK_N2I[n], id)
-                table.insert(HSLK_N2V[n], HSLK_I2V[id])
             end
         end
     end
@@ -87,14 +79,14 @@ hslk_init = function()
             -- 数据格式化
             -- 碎片名称转ID
             local jsonFragment = {}
-            for k, v in ipairs(data._fragment) do
-                data._fragment[k][2] = math.floor(v[2])
+            for k, v in ipairs(data.fragment) do
+                data.fragment[k][2] = math.floor(v[2])
                 local fragmentId = HSLK_N2V[v[1]][1]._id or nil
                 if (fragmentId ~= nil) then
                     table.insert(jsonFragment, { fragmentId, v[2] })
                 end
             end
-            local profitId = HSLK_N2V[data._profit[1]][1]._id or nil
+            local profitId = HSLK_N2V[data.profit[1]][1]._id or nil
             if (profitId == nil) then
                 return
             end
@@ -102,7 +94,7 @@ hslk_init = function()
                 HSLK_SYNTHESIS.profit[profitId] = {}
             end
             table.insert(HSLK_SYNTHESIS.profit[profitId], {
-                qty = data._profit[2],
+                qty = data.profit[2],
                 fragment = jsonFragment,
             })
             local profitIndex = #HSLK_SYNTHESIS.profit[profitId]
@@ -133,20 +125,40 @@ local hslk_cli_set = function(_v)
     return _v
 end
 
+hslk_conf = function(conf)
+end
+
 hslk_ability = function(_v)
     return hslk_cli_set(F6V_A(_v))
 end
 
 hslk_ability_empty = function(_v)
-    return hslk_cli_set(F6V_A_E(_v))
+    _v._parent = "Aamk"
+    _v._type = "empty"
+    return hslk_cli_set(F6V_A(_v))
 end
 
 hslk_ability_ring = function(_v)
-    return hslk_cli_set(F6V_A_R(_v))
+    _v._parent = "Aamk"
+    _v._type = "ring"
+    return hslk_cli_set(F6V_A(_v))
 end
 
 hslk_unit = function(_v)
-    hslk_cli_set(F6V_U(_v))
+    return hslk_cli_set(F6V_U(_v))
+end
+
+hslk_hero = function(_v)
+    _v._parent = "Hpal"
+    _v._type = "hero"
+    return hslk_cli_set(F6V_U(_v))
+end
+
+hslk_courier = function(_v)
+    _v._parent = "ogru"
+    _v._type = "courier"
+    F6V_COURIER_SKILL()
+    return hslk_cli_set(F6V_U(_v))
 end
 
 hslk_item_synthesis = function(formula)
@@ -155,17 +167,23 @@ end
 
 hslk_item = function(_v)
     _v = F6V_I(_v)
+    local res
     if (type(_v._shadow) == "boolean" and true == _v._shadow) then
-        local _vs = F6V_I_SHADOW(_v)
+        local _vs = F6V_I_SHADOW(table.clone(_v))
         _v._shadow_id = HSLK_CLI_H_IDS[HSLK_CLI_H_IDI + 1]
         _vs._shadow_id = HSLK_CLI_H_IDS[HSLK_CLI_H_IDI]
-        hslk_cli_set(_v)
+        res = hslk_cli_set(_v)
         hslk_cli_set(_vs)
     else
-        hslk_cli_set(_v)
+        res = hslk_cli_set(_v)
     end
+    return res
 end
 
-hslk_upgrade = function(formula)
-    hslk_cli_synthesis = F6V_UP(formula)
+hslk_buff = function(_v)
+    return hslk_cli_set(F6V_B(_v))
+end
+
+hslk_upgrade = function(_v)
+    return hslk_cli_set(F6V_UP(_v))
 end

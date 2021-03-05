@@ -225,7 +225,7 @@ hitem.getName = function(itOrId)
     if (type(itOrId) == "userdata") then
         n = cj.GetItemName(itOrId)
     elseif (type(itOrId) == "string" or type(itOrId) == "number") then
-        n = hslk.i2v(itOrId, "Name")
+        n = hslk.i2v(itOrId, "slk", "Name")
     end
     return n
 end
@@ -235,11 +235,11 @@ end
 ---@return boolean
 hitem.isShadowFront = function(itOrId)
     local id = hitem.getId(itOrId)
-    local is = hslk.i2v(id)
-    if (is == nil) then
+    local iv = hslk.i2v(id)
+    if (iv == nil) then
         return false
     end
-    return (is._shadow_id ~= nil and is._type == "common")
+    return (iv._shadow_id ~= nil and iv._type == "common")
 end
 
 --- 判断一个物品是否影子物品的暗面物品
@@ -247,11 +247,11 @@ end
 ---@return boolean
 hitem.isShadowBack = function(itOrId)
     local id = hitem.getId(itOrId)
-    local is = hslk.i2v(id)
-    if (is == nil) then
+    local iv = hslk.i2v(id)
+    if (iv == nil) then
         return false
     end
-    return (is._shadow_id ~= nil and is._type == "shadow")
+    return (iv._shadow_id ~= nil and iv._type == "shadow")
 end
 
 --- 获取一个物品的影子ID
@@ -259,77 +259,77 @@ end
 ---@return string
 hitem.shadowID = function(itOrId)
     local id = hitem.getId(itOrId)
-    local is = hslk.i2v(id)
-    if (is == nil) then
+    local iv = hslk.i2v(id)
+    if (iv == nil) then
         print_err("hitem.shadowID")
     end
-    if (is._shadow_id == nil) then
+    if (iv._shadow_id == nil) then
         print_err("hitem.shadowID not shadow item")
     end
-    return is._shadow_id
+    return iv._shadow_id
 end
 
 -- 获取物品的图标路径
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getArt = function(itOrId)
-    return hslk.i2v(hitem.getId(itOrId), "Art")
+    return hslk.i2v(hitem.getId(itOrId), "slk", "Art")
 end
 
 --- 获取物品的模型路径
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getFile = function(itOrId)
-    return hslk.i2v(hitem.getId(itOrId), "file")
+    return hslk.i2v(hitem.getId(itOrId), "slk", "file")
 end
 
 --- 获取物品的分类
 ---@param itOrId userdata|string|number
 ---@return string
 hitem.getClass = function(itOrId)
-    return hslk.i2v(hitem.getId(itOrId), "class")
+    return hslk.i2v(hitem.getId(itOrId), "slk", "class")
 end
 
 --- 获取物品所需的金币
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getGoldCost = function(itOrId)
-    return math.floor(hslk.i2v(hitem.getId(itOrId), "goldcost") or 0)
+    return math.floor(hslk.i2v(hitem.getId(itOrId), "slk", "goldcost") or 0)
 end
 
 --- 获取物品所需的木头
 ---@param itOrId userdata|string|number
 ---@return number
 hitem.getLumberCost = function(itOrId)
-    return math.floor(hslk.i2v(hitem.getId(itOrId), "lumbercost") or 0)
+    return math.floor(hslk.i2v(hitem.getId(itOrId), "slk", "lumbercost") or 0)
 end
 
 --- 获取物品是否可以使用
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsUsable = function(itOrId)
-    return "1" == hslk.i2v(hitem.getId(itOrId), "usable")
+    return "1" == hslk.i2v(hitem.getId(itOrId), "slk", "usable")
 end
 
 --- 获取物品是否自动使用
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsPowerUp = function(itOrId)
-    return "1" == hslk.i2v(hitem.getId(itOrId), "powerup")
+    return "1" == hslk.i2v(hitem.getId(itOrId), "slk", "powerup")
 end
 
 --- 获取物品是否使用后自动消失
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsPerishable = function(itOrId)
-    return "1" == hslk.i2v(hitem.getId(itOrId), "perishable")
+    return "1" == hslk.i2v(hitem.getId(itOrId), "slk", "perishable")
 end
 
 --- 获取物品是否可卖
 ---@param itOrId userdata|string|number
 ---@return boolean
 hitem.getIsSellAble = function(itOrId)
-    return "1" == hslk.i2v(hitem.getId(itOrId), "sellable")
+    return "1" == hslk.i2v(hitem.getId(itOrId), "slk", "sellable")
 end
 
 --- 获取物品的最大叠加数(默认是1个,本框架以使用次数作为数量使用)
@@ -344,15 +344,15 @@ end
 ---@return number
 hitem.getWeight = function(itOrId, charges)
     local id = hitem.getId(itOrId)
-    local is = hslk.get(id)
-    if (is ~= nil) then
+    local iv = hslk.i2v(id)
+    if (iv ~= nil) then
         if (charges == nil and type(itOrId) == "userdata") then
             -- 如果没有传次数，并且传入的是物品对象，会直接获取物品的次数，请注意
             charges = hitem.getCharges(itOrId)
         else
             charges = 1
         end
-        return (is._weight or 0) * charges
+        return (iv._weight or 0) * charges
     else
         return 0
     end

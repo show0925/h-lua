@@ -19,7 +19,7 @@ hshop = {
                 hskill.add(whichShop, license)
             end
             local shopId = hunit.getId(whichShop)
-            local s = hslk.i2v(shopId)
+            local s = hslk.i2v(shopId, "slk")
             if (license == hshop.license.item) then
                 if (s and s.Sellitems ~= nil and s.Sellitems ~= "") then
                     print_mb("[!警告!]物编的[出售物品]会永久强占商店出售位，请清理空位供店铺使用！")

@@ -127,34 +127,19 @@ his.hero = function(whichUnit)
     if (uid == nil) then
         return false
     end
-    local us = hslk.i2v(uid)
-    if (us == nil) then
-        return false
-    end
-    return us._type == "hero" or us._type == "courier_hero" or cj.IsUnitType(whichUnit, UNIT_TYPE_HERO)
+    return "hero" == (hslk.i2v(uid, "_type") or "common") or cj.IsUnitType(whichUnit, UNIT_TYPE_HERO)
 end
 
---- 是否信使(工人)
---- UNIT_TYPE_PEON是对应物编的单位类别工人
---- courier和courier_hero是对应hslk._type，是本框架固有用法
+--- 是否框架默认信使
+--- courier是对应 hslk._type，是本框架固有用法
 ---@param whichUnit userdata
----@param checkAutoSkill boolean 是否同时检查自动技能的判定
 ---@return boolean
-his.courier = function(whichUnit, checkAutoSkill)
-    checkAutoSkill = checkAutoSkill or false
+his.courier = function(whichUnit)
     local uid = hunit.getId(whichUnit)
     if (uid == nil) then
         return false
     end
-    local us = hslk.i2v(uid)
-    if (us == nil) then
-        return false
-    end
-    local res = us._type == "courier" or us._type == "courier_hero" or cj.IsUnitType(whichUnit, UNIT_TYPE_PEON)
-    if (res and checkAutoSkill) then
-        res = (res and us._auto_skill == true)
-    end
-    return res
+    return "courier" == (hslk.i2v(uid, "_type") or "common")
 end
 
 --- 是否建筑
@@ -382,7 +367,7 @@ end
 
 --- 是否在区域内
 his.inRect = function(whichRect, x, y)
-    return (x < cj.GetRectMaxX(whichRect) and x > cj.GetRectMinX(whichRect) and y < cj.GetRectMaxY(whichRect) and y > cj.GetRectMinY(whichRect))
+    return (x < hrect.getMaxX(whichRect) and x > hrect.getMinX(whichRect) and y < hrect.getMaxY(whichRect) and y > hrect.getMinY(whichRect))
 end
 
 --- 是否超出区域边界
@@ -392,10 +377,10 @@ end
 ---@return boolean
 his.borderRect = function(whichRect, x, y)
     local flag = false
-    if (x >= cj.GetRectMaxX(whichRect) or x <= cj.GetRectMinX(whichRect)) then
+    if (x >= hrect.getMaxX(whichRect) or x <= hrect.getMinX(whichRect)) then
         flag = true
     end
-    if (y >= cj.GetRectMaxY(whichRect) or y <= cj.GetRectMinY(whichRect)) then
+    if (y >= hrect.getMaxY(whichRect) or y <= hrect.getMinY(whichRect)) then
         return true
     end
     return flag
@@ -406,7 +391,7 @@ end
 ---@param y number
 ---@return boolean
 his.borderMap = function(x, y)
-    return his.borderRect(HG_RECT.PLAYABLE.RECT, x, y)
+    return his.borderRect(hrect.playable(), x, y)
 end
 
 --- 是否超出镜头边界
@@ -414,7 +399,7 @@ end
 ---@param y number
 ---@return boolean
 his.borderCamera = function(x, y)
-    return his.borderRect(HG_RECT.CAMERA.RECT, x, y)
+    return his.borderRect(hrect.camera(), x, y)
 end
 
 --- 物品是否已被销毁

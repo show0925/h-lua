@@ -33,8 +33,6 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     ├── foundation
     │   ├── blizzard_b.lua - Blizzard B global variables
     │   ├── blizzard_c.lua - Blizzard C global variables
-    │   ├── blizzard_bj.lua - [INVALID]
-    │   ├── blizzard_def.lua - [INVALID]
     │   ├── cache.lua
     │   ├── cmd.lua - h-lua Default Commands
     │   ├── color.lua - Color for text

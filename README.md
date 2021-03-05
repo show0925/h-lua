@@ -33,8 +33,6 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     ├── foundation - 基础文件
     │   ├── blizzard_b.lua - 暴雪B全局变量
     │   ├── blizzard_c.lua - 暴雪C全局变量
-    │   ├── blizzard_bj.lua - 暴雪部分BJ函数，实际无用，非要用bj就自行拓展编写载入
-    │   ├── blizzard_def.lua - 实际无用，参考用途
     │   ├── cache.lua - 缓存
     │   ├── cmd.lua - 框架自带命令管理
     │   ├── color.lua - 颜色

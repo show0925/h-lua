@@ -63,7 +63,7 @@ hattribute.init = function(whichUnit)
         return false
     end
     -- init
-    local uSlk = hslk.i2v(uid)
+    local uSlk = hslk.i2v(uid, "slk")
     local attribute = {
         primary = uSlk.Primary or "STR",
         life = cj.GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE),
@@ -177,8 +177,8 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
         return
     end
     -- 机智转接 smart link~
-    if (hattributeSetter.SMART[attr] ~= nil) then
-        attr = hattributeSetter.SMART[attr]
+    if (hattributeSetter.smart[attr] ~= nil) then
+        attr = hattributeSetter.smart[attr]
     end
     local buffKey
     if (valType == "number") then

@@ -66,10 +66,10 @@ henv.build = function(whichRect, typeStr, isInvulnerable, isDestroyRect, ground,
     rectUnits = {}
     -- 清理装饰物
     henv.clearDestructable(whichRect)
-    local rectStartX = hrect.getStartX(whichRect)
-    local rectStartY = hrect.getStartY(whichRect)
-    local rectEndX = hrect.getEndX(whichRect)
-    local rectEndY = hrect.getEndY(whichRect)
+    local rectMinX = hrect.getMinX(whichRect)
+    local rectMinY = hrect.getMinY(whichRect)
+    local rectMaxX = hrect.getMaxX(whichRect)
+    local rectMaxY = hrect.getMaxY(whichRect)
     local indexX = 0
     local indexY = 0
     local doodads = {}
@@ -80,8 +80,8 @@ henv.build = function(whichRect, typeStr, isInvulnerable, isDestroyRect, ground,
     end
     local randomM = 2
     htime.setInterval(0.01, function(t)
-        local x = rectStartX + indexX * 80
-        local y = rectStartY + indexY * 80
+        local x = rectMinX + indexX * 80
+        local y = rectMinY + indexY * 80
         local buildType = math.random(1, randomM)
         if (indexX == -1 or indexY == -1) then
             htime.delTimer(t)
@@ -94,11 +94,11 @@ henv.build = function(whichRect, typeStr, isInvulnerable, isDestroyRect, ground,
         if (randomM > 180) then
             randomM = 2
         end
-        if (x > rectEndX) then
+        if (x > rectMaxX) then
             indexY = 1 + indexY
             indexX = -1
         end
-        if (y > rectEndY) then
+        if (y > rectMaxY) then
             indexY = -1
         end
         indexX = 1 + indexX

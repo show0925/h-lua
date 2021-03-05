@@ -1,3 +1,40 @@
+print_r = function(t)
+    local print_r_cache = {}
+    local function sub_print_r(tt, indent)
+        if (print_r_cache[tostring(tt)]) then
+            print(indent .. "*" .. tostring(tt))
+        else
+            print_r_cache[tostring(tt)] = true
+            if (type(tt) == "table") then
+                for pos, val in pairs(tt) do
+                    if (type(pos) == "userdata") then
+                        pos = "userdata"
+                    end
+                    if (type(val) == "table") then
+                        print(indent .. "[" .. pos .. "](" .. table.len(val) .. ") => " .. tostring(tt) .. " {")
+                        sub_print_r(val, indent .. string.rep(" ", string.len(pos) + 8))
+                        print(indent .. string.rep(" ", string.len(pos) + 6) .. "}")
+                    elseif (type(val) == "string") then
+                        print(indent .. "[" .. pos .. '] => <string>"' .. val .. '"')
+                    else
+                        print(indent .. "[" .. pos .. "] => " .. "<" .. type(val) .. ">" .. tostring(val))
+                    end
+                end
+            else
+                print(indent .. "<" .. type(tt) .. ">" .. tostring(tt))
+            end
+        end
+    end
+    if (type(t) == "table") then
+        print(tostring(t) .. "(" .. table.len(t) .. ") {")
+        sub_print_r(t, "  ")
+        print("}")
+    else
+        sub_print_r(t, "  ")
+    end
+    print()
+end
+
 SLK_GO = {}
 SLK_ID_ALREADY = {}
 
@@ -21,19 +58,28 @@ local idPrefix = {
     ability = "K",
     item = "I",
     unit = "V",
+    buff = "B",
     upgrade = "U",
 }
 
 local idLimit = 46655 -- zzz
 
 SLK_ID_COUNT = {}
-SLK_ID = function(class, setId)
+SLK_ID = function(_v)
+    local _parent = _v._parent
+    local _class = _v._class
+    local _id_force = _v._id_force
     -- 如果自定义的ID可用，返回设定的ID
-    if (setId ~= nil and string.len(setId) == 4 and false == SLK_ID_ALREADY[setId]) then
-        SLK_ID_ALREADY[setId] = true
-        return setId
+    if (_id_force ~= nil and string.len(_id_force) == 4 and true ~= SLK_ID_ALREADY[_id_force]) then
+        local b = string.byte(_id_force, 1, 1)
+        if (b >= 48 and b <= 57) then
+            print("ID FORCE:<" .. _id_force .. "> The first character should not be a number!")
+        else
+            SLK_ID_ALREADY[_id_force] = true
+            return _id_force
+        end
     end
-    local prefix = idPrefix[class]
+    local prefix = idPrefix[_class]
     if (prefix == nil) then
         prefix = "X"
     end
@@ -57,6 +103,12 @@ SLK_ID = function(class, setId)
         if true ~= SLK_ID_ALREADY[sid] then
             SLK_ID_ALREADY[sid] = true
             break
+        end
+    end
+    if (_class == "unit") then
+        local p1st = string.sub(_parent, 1, 1)
+        if (string.lower(p1st) == p1st) then
+            sid = string.lower(sid)
         end
     end
     return sid

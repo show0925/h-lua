@@ -1019,7 +1019,7 @@ hevent.onMapDestructableDestroy = function(callFunc)
     cj.TriggerAddCondition(tgr, cj.Condition(function()
         callFunc({ triggerDestructable = cj.GetTriggerDestructable() })
     end))
-    cj.EnumDestructablesInRect(HG_RECT.PLAYABLE.RECT, nil, function()
+    cj.EnumDestructablesInRect(hrect.playable(), nil, function()
         cj.TriggerRegisterDeathEvent(tgr, cj.GetEnumDestructable())
     end)
 end

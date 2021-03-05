@@ -5,17 +5,33 @@ hslk = {}
 --- 原生的slk数值键值是根据地图编辑器作为标准的，所以大小写也是与之一致
 --- 原生的slk不会全部获取，只获取部分有用的key，具体可查看 CONST_SLK
 ---@param id string|number
----@param anyKey string 可选，直接获取该key的值
+---@vararg string 可选，直接获取该key的值
 ---@return table|nil
-hslk.i2v = function(id, anyKey)
+hslk.i2v = function(id, ...)
+    if (id == nil) then
+        return
+    end
     if (type(id) == "number") then
         id = string.id2char(id)
     end
     if (HSLK_I2V[id] == nil) then
         return
     end
-    if (anyKey ~= nil) then
-        return HSLK_I2V[id][anyKey]
+    local n = select("#", ...)
+    if (n > 0) then
+        local val = HSLK_I2V[id]
+        for i = 1, n, 1 do
+            local k = select(i, ...)
+            if (val[k] ~= nil) then
+                val = val[k]
+            else
+                val = nil
+            end
+            if (val == nil) then
+                break
+            end
+        end
+        return val
     end
     return HSLK_I2V[id]
 end
