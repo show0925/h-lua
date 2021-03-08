@@ -538,7 +538,7 @@ hevent_default_actions = {
                         {
                             triggerUnit = triggerUnit,
                             triggerSkill = abilityId,
-                            triggerItemId = id,
+                            triggerItemId = itemId,
                         }
                     )
                 else
@@ -562,7 +562,7 @@ hevent_default_actions = {
                             {
                                 triggerUnit = triggerUnit,
                                 triggerSkill = abilityId,
-                                triggerItemId = id,
+                                triggerItemId = itemId,
                             }
                         )
                     end)
