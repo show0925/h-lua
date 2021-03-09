@@ -397,10 +397,12 @@ hunit.embed = function(u, options)
             cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_POINT_ORDER)
             cj.TriggerRegisterUnitEvent(tgr, u, EVENT_UNIT_ISSUED_TARGET_ORDER)
         end)
-    end
-    -- hslk处理
-    if (his.courier(u)) then
-        hcourier.embed(u)
+        hevent.onSkillEffect(u, function(evtData)
+            local ahSlk = hslk.i2v(evtData.triggerSkill)
+            if (type(ahSlk._onSkillEffect) == "function") then
+                ahSlk._onSkillEffect(evtData)
+            end
+        end)
     end
     -- 物品系统
     if (his.hasSlot(u)) then

@@ -105,10 +105,162 @@ local courier_skill_ids
 F6V_COURIER_SKILL = function()
     if (courier_skill_ids == nil) then
         courier_skill_ids = {}
-        hslk_ability({ _parent = "AEbl", _type = "courier" })
-        hslk_ability({ _parent = "ANcl", _type = "courier" })
-        hslk_ability({ _parent = "ANtm", _type = "courier" })
-        hslk_ability({ _parent = "ANcl", _type = "courier" })
+        hslk_ability({
+            _parent = "AEbl",
+            _type = "courier",
+            _onSkillEffect = _onSkillEffect(function(evtData)
+                hevent.triggerEvent(evtData.triggerUnit, CONST_EVENT.courierBlink, evtData)
+            end)
+        })
+        hslk_ability({
+            _parent = "ANcl",
+            _type = "courier",
+            _onSkillEffect = _onSkillEffect(function(evtData)
+                local radius = 400 --半径
+                hitem.pickRound(evtData.triggerUnit, hunit.x(evtData.triggerUnit), hunit.y(evtData.triggerUnit), radius)
+                hevent.triggerEvent(evtData.triggerUnit, CONST_EVENT.courierRangePickUp, {
+                    triggerUnit = evtData.triggerUnit,
+                    triggerSkill = evtData.triggerSkill,
+                    radius = radius
+                })
+            end)
+        })
+        hslk_ability({
+            _parent = "ANtm",
+            _type = "courier",
+            _onSkillEffect = _onSkillEffect(function(evtData)
+                local it = evtData.targetItem
+                local triggerUnit = evtData.triggerUnit
+                local p = hunit.getOwner(triggerUnit)
+                if (it == nil) then
+                    echo("物品不存在", p)
+                    return
+                end
+                if (hitem.isRobber(it, triggerUnit)) then
+                    echo("物品不属于你", p)
+                    return
+                end
+                local itemId = hitem.getId(it)
+                if (hitem.isShadowBack(itemId)) then
+                    itemId = hitem.shadowID(itemId)
+                end
+                local charges = hitem.getCharges(it)
+                local formulas = HSLK_SYNTHESIS.profit[itemId]
+                local allowFormulaIndex = {}
+                if (formulas ~= nil) then
+                    for fi, f in ipairs(formulas) do
+                        if (charges >= f.qty) then
+                            table.insert(allowFormulaIndex, fi)
+                        end
+                    end
+                end
+                local buttons = {}
+                if (charges > 1) then
+                    table.insert(buttons, { value = 0, label = hcolor.gold(hitem.getName(it) .. "x" .. charges) })
+                end
+                if (#allowFormulaIndex > 0) then
+                    for ai, a in ipairs(allowFormulaIndex) do
+                        local txt = {}
+                        for _, frag in ipairs(formulas[a].fragment) do
+                            table.insert(txt, hitem.getName(it) .. 'x' .. frag[2] * charges)
+                        end
+                        table.insert(buttons, { value = ai, label = hcolor.gold(string.implode('+', txt)) })
+                    end
+                end
+                if (#buttons < 1) then
+                    echo("物品无法拆分", p)
+                    return
+                end
+                if (#buttons == 1) then
+                    local err
+                    local btnValue = buttons[1].value
+                    if (btnValue == 0) then
+                        err = hitem.separate(it, 'single', 0, triggerUnit)
+                    else
+                        err = hitem.separate(it, 'formula', btnValue, triggerUnit)
+                    end
+                    if (err ~= nil) then
+                        echo(err, p)
+                        return
+                    end
+                    hevent.triggerEvent(triggerUnit, CONST_EVENT.courierSeparate, {
+                        triggerUnit = triggerUnit,
+                        triggerSkill = evtData.triggerSkill,
+                        triggerItemId = itemId,
+                    })
+                else
+                    hdialog.create(p, { title = "拆分成", buttons = buttons }, function(btnValue)
+                        local err
+                        if (btnValue == 0) then
+                            err = hitem.separate(it, 'single', 0, triggerUnit)
+                        else
+                            err = hitem.separate(it, 'formula', btnValue, triggerUnit)
+                        end
+                        if (err ~= nil) then
+                            echo(err, p)
+                            return
+                        end
+                        hevent.triggerEvent(triggerUnit, CONST_EVENT.courierSeparate, {
+                            triggerUnit = triggerUnit,
+                            triggerSkill = evtData.triggerSkill,
+                            triggerItemId = itemId,
+                        })
+                    end)
+                end
+            end)
+        })
+        hslk_ability({
+            _parent = "ANcl",
+            _type = "courier",
+            _onSkillEffect = _onSkillEffect(function(evtData)
+                local triggerUnit = evtData.triggerUnit
+                local p = hunit.getOwner(triggerUnit)
+                local pIndex = hplayer.index(p)
+                if (hhero.player_heroes[pIndex] == nil or #hhero.player_heroes[pIndex] <= 0) then
+                    echo("你没有英雄", p)
+                    return
+                end
+                local items = {}
+                hitem.forEach(triggerUnit, function(slotItem)
+                    table.insert(items, slotItem)
+                end)
+                if (#items <= 0) then
+                    echo("没有物品可传递", p)
+                    return
+                end
+                if (#hhero.player_heroes[pIndex] == 1) then
+                    local hero = hhero.player_heroes[pIndex][1] or nil
+                    if (hero == nil or false == his.alive(hero) or true == his.deleted(hero)) then
+                        echo("英雄不存在", p)
+                        return
+                    end
+                    hitem.synthesis(hero, items)
+                    hevent.triggerEvent(triggerUnit, CONST_EVENT.courierDeliver, {
+                        triggerUnit = triggerUnit,
+                        triggerSkill = evtData.triggerSkill,
+                        targetUnit = hero,
+                    })
+                else
+                    local buttons = {}
+                    for hi, h in ipairs(hhero.player_heroes[pIndex]) do
+                        table.insert(buttons, { value = hi, label = hunit.getName(h) })
+                    end
+                    hdialog.create(p, { title = "给谁?", buttons = buttons }, function(btnValue)
+                        local hero = hhero.player_heroes[pIndex][btnValue] or nil
+                        if (hero == nil or false == his.alive(hero) or true == his.deleted(hero)) then
+                            echo("英雄不存在", p)
+                            return
+                        end
+                        hitem.synthesis(hero, items)
+                        hevent.triggerEvent(triggerUnit, CONST_EVENT.courierDeliver, {
+                            triggerUnit = triggerUnit,
+                            triggerSkill = evtData.triggerSkill,
+                            targetUnit = hero,
+                        })
+                    end)
+                end
+            end)
+        })
     end
     return courier_skill_ids
 end

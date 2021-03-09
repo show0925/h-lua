@@ -189,6 +189,7 @@ hevent_default_actions = {
                     triggerUnit = cj.GetTriggerUnit(),
                     triggerSkill = cj.GetSpellAbilityId(),
                     targetUnit = cj.GetSpellTargetUnit(),
+                    targetItem = cj.GetSpellTargetItem(),
                     targetLoc = cj.GetSpellTargetLoc()
                 }
             )
@@ -291,6 +292,9 @@ hevent_default_actions = {
                     end
                 end)
             end
+        end),
+        spellEffect = cj.Condition(function()
+
         end),
         order = cj.Condition(function()
             --[[
@@ -442,188 +446,6 @@ hevent_default_actions = {
                 int_white = "=" .. cj.GetHeroInt(u, false),
             })
         end)
-    },
-    courier = {
-        defaultSkills = cj.Condition(function()
-            local abilityId = cj.GetSpellAbilityId()
-            if (abilityId == nil) then
-                return
-            end
-            abilityId = string.id2char(abilityId)
-            local abilityName = hslk.i2v(abilityId, "slk", "Name")
-            if (abilityName == nil) then
-                return
-            end
-            local triggerUnit = cj.GetTriggerUnit()
-            local p = hunit.getOwner(triggerUnit)
-            if (abilityName == "信使-闪烁") then
-                hevent.triggerEvent(
-                    triggerUnit,
-                    CONST_EVENT.courierBlink,
-                    {
-                        triggerUnit = triggerUnit,
-                        triggerSkill = abilityId,
-                        targetLoc = cj.GetSpellTargetLoc()
-                    }
-                )
-            elseif (abilityName == "信使-拾取") then
-                local radius = 400 --半径
-                hitem.pickRound(triggerUnit, hunit.x(triggerUnit), hunit.y(triggerUnit), radius)
-                hevent.triggerEvent(
-                    triggerUnit,
-                    CONST_EVENT.courierRangePickUp,
-                    {
-                        triggerUnit = triggerUnit,
-                        triggerSkill = abilityId,
-                        radius = radius
-                    }
-                )
-            elseif (abilityName == "信使-拆分物品") then
-                local it = cj.GetSpellTargetItem()
-                if (it == nil) then
-                    echo("物品不存在", p)
-                    return
-                end
-                if (hitem.isRobber(it, triggerUnit)) then
-                    echo("物品不属于你", p)
-                    return
-                end
-                local itemId = hitem.getId(it)
-                if (hitem.isShadowBack(itemId)) then
-                    itemId = hitem.shadowID(itemId)
-                end
-                local charges = hitem.getCharges(it)
-                local formulas = HSLK_SYNTHESIS.profit[itemId]
-                local allowFormulaIndex = {}
-                if (formulas ~= nil) then
-                    for fi, f in ipairs(formulas) do
-                        if (charges >= f.qty) then
-                            table.insert(allowFormulaIndex, fi)
-                        end
-                    end
-                end
-                local buttons = {}
-                if (charges > 1) then
-                    table.insert(buttons, { value = 0, label = hcolor.gold(hitem.getName(it) .. "x" .. charges) })
-                end
-                if (#allowFormulaIndex > 0) then
-                    for ai, a in ipairs(allowFormulaIndex) do
-                        local txt = {}
-                        for _, frag in ipairs(formulas[a].fragment) do
-                            table.insert(txt, hitem.getName(it) .. 'x' .. frag[2] * charges)
-                        end
-                        table.insert(buttons, { value = ai, label = hcolor.gold(string.implode('+', txt)) })
-                    end
-                end
-                if (#buttons < 1) then
-                    echo("物品无法拆分", p)
-                    return
-                end
-                if (#buttons == 1) then
-                    local err
-                    local btnValue = buttons[1].value
-                    if (btnValue == 0) then
-                        err = hitem.separate(it, 'single', 0, triggerUnit)
-                    else
-                        err = hitem.separate(it, 'formula', btnValue, triggerUnit)
-                    end
-                    if (err ~= nil) then
-                        echo(err, p)
-                        return
-                    end
-                    hevent.triggerEvent(
-                        triggerUnit,
-                        CONST_EVENT.courierSeparate,
-                        {
-                            triggerUnit = triggerUnit,
-                            triggerSkill = abilityId,
-                            triggerItemId = id,
-                        }
-                    )
-                else
-                    hdialog.create(p, {
-                        title = "拆分成",
-                        buttons = buttons,
-                    }, function(btnValue)
-                        local err
-                        if (btnValue == 0) then
-                            err = hitem.separate(it, 'single', 0, triggerUnit)
-                        else
-                            err = hitem.separate(it, 'formula', btnValue, triggerUnit)
-                        end
-                        if (err ~= nil) then
-                            echo(err, p)
-                            return
-                        end
-                        hevent.triggerEvent(
-                            triggerUnit,
-                            CONST_EVENT.courierSeparate,
-                            {
-                                triggerUnit = triggerUnit,
-                                triggerSkill = abilityId,
-                                triggerItemId = id,
-                            }
-                        )
-                    end)
-                end
-            elseif (abilityName == "信使-传递") then
-                local pIndex = hplayer.index(p)
-                if (hhero.player_heroes[pIndex] == nil or #hhero.player_heroes[pIndex] <= 0) then
-                    echo("你没有英雄", p)
-                    return
-                end
-                local items = {}
-                hitem.forEach(triggerUnit, function(slotItem)
-                    table.insert(items, slotItem)
-                end)
-                if (#items <= 0) then
-                    echo("没有物品可传递", p)
-                    return
-                end
-                if (#hhero.player_heroes[pIndex] == 1) then
-                    local hero = hhero.player_heroes[pIndex][1] or nil
-                    if (hero == nil or false == his.alive(hero) or true == his.deleted(hero)) then
-                        echo("英雄不存在", p)
-                        return
-                    end
-                    hitem.synthesis(hero, items)
-                    hevent.triggerEvent(
-                        triggerUnit,
-                        CONST_EVENT.courierDeliver,
-                        {
-                            triggerUnit = triggerUnit,
-                            triggerSkill = abilityId,
-                            targetUnit = hero,
-                        }
-                    )
-                else
-                    local buttons = {}
-                    for hi, h in ipairs(hhero.player_heroes[pIndex]) do
-                        table.insert(buttons, { value = hi, label = hunit.getName(h) })
-                    end
-                    hdialog.create(p, {
-                        title = "要给谁",
-                        buttons = buttons,
-                    }, function(btnValue)
-                        local hero = hhero.player_heroes[pIndex][btnValue] or nil
-                        if (hero == nil or false == his.alive(hero) or true == his.deleted(hero)) then
-                            echo("英雄不存在", p)
-                            return
-                        end
-                        hitem.synthesis(hero, items)
-                        hevent.triggerEvent(
-                            triggerUnit,
-                            CONST_EVENT.courierDeliver,
-                            {
-                                triggerUnit = triggerUnit,
-                                triggerSkill = abilityId,
-                                targetUnit = hero,
-                            }
-                        )
-                    end)
-                end
-            end
-        end),
     },
     dialog = {
         click = cj.Condition(function()
@@ -836,9 +658,11 @@ hevent_default_actions = {
             local itId = hitem.getId(it)
             local perishable = hitem.getIsPerishable(itId)
             --检测是否有匹配使用
-            local triggerData = hcache.get(u, CONST_CACHE.ITEM_USED .. itId, {})
+            local triggerData = hcache.get(u, CONST_CACHE.ITEM_USED .. itId)
+            if (triggerData ~= nil) then
+                hitem.used(u, it, triggerData)
+            end
             hcache.set(u, CONST_CACHE.ITEM_USED .. itId, nil)
-            hitem.used(u, it, triggerData)
             --检测是否使用后自动消失，如果不是，次数补回1
             if (perishable == false) then
                 hitem.setCharges(it, hitem.getCharges(it) + 1)
@@ -862,7 +686,7 @@ hevent_default_actions = {
             hcache.set(u, CONST_CACHE.ITEM_USED .. itId, {
                 triggerSkill = skillId,
                 targetUnit = cj.GetSpellTargetUnit(),
-                targetLoc = cj.GetSpellTargetLoc()
+                targetLoc = cj.GetSpellTargetLoc(),
             })
         end),
         sell = cj.Condition(function()

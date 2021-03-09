@@ -271,7 +271,7 @@ hevent.onSkillStop = function(whichUnit, callFunc)
 end
 
 --- 发动技能效果
----@alias onSkillEffect fun(evtData: {triggerUnit:"施放单位",triggerSkill:"施放技能ID字符串",targetUnit:"获取目标单位",targetX:"获取施放目标点X",targetY:"获取施放目标点Y",targetZ:"获取施放目标点Z"}):void
+---@alias onSkillEffect fun(evtData: {triggerUnit:"施放单位",triggerSkill:"施放技能ID字符串",targetUnit:"获取目标单位",targetItem:"获取目标物品",targetX:"获取施放目标点X",targetY:"获取施放目标点Y",targetZ:"获取施放目标点Z"}):void
 ---@param whichUnit userdata
 ---@param callFunc onSkillEffect | "function(evtData) end"
 ---@return any

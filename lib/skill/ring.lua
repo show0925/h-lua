@@ -218,16 +218,7 @@ hring.insert = function(whichUnit, id)
                     end)
                 end
                 if (#g > 0) then
-                    local matchAction
-                    if (#hmatcher.RING_MATCHER > 0) then
-                        local name = rs.Name or -1
-                        for _, m in ipairs(hmatcher.RING_MATCHER) do
-                            local s, e = string.find(name, m[1])
-                            if (s ~= nil and e ~= nil) then
-                                matchAction = m[2]
-                            end
-                        end
-                    end
+                    local _onRing = hslk.i2v(ringId, "_onRing")
                     hgroup.forEach(g, function(enumUnit)
                         -- slk配置的RING属性
                         if (type(rs.attr) == 'table' and false == hgroup.includes(ring.group, enumUnit)) then
@@ -243,9 +234,9 @@ hring.insert = function(whichUnit, id)
                                 end
                             end
                         end
-                        -- 检测是否有自定义的matcher，用于给玩家自定义额外的操作
-                        if (matchAction ~= nil and type(matchAction) == 'function') then
-                            matchAction({
+                        -- 检测是否有自定义的光环周期执行，用于给玩家自定义额外的操作
+                        if (_onRing ~= nil and type(_onRing) == "function") then
+                            _onRing({
                                 triggerUnit = u,
                                 enumUnit = enumUnit,
                             })

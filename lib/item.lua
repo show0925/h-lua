@@ -119,7 +119,6 @@ end
 ---@param whichItem userdata
 ---@param triggerData table
 hitem.used = function(whichUnit, whichItem, triggerData)
-    local isTrigger = false
     triggerData = triggerData or {}
     triggerData.triggerUnit = whichUnit
     triggerData.triggerItem = whichItem
@@ -130,36 +129,12 @@ hitem.used = function(whichUnit, whichItem, triggerData)
         cj.RemoveLocation(triggerData.targetLoc)
         triggerData.targetLoc = nil
     end
-    if (#hmatcher.ITEM_MATCHER > 0) then
-        local itemName = cj.GetItemName(whichItem)
-        for _, m in ipairs(hmatcher.ITEM_MATCHER) do
-            local s, e = string.find(itemName, m[1])
-            if (s ~= nil and e ~= nil) then
-                local isPowerUp = hitem.getIsPowerUp(whichItem)
-                local isPerishable = hitem.getIsPerishable(whichItem)
-                local useCharged = 1
-                if (isPowerUp == true and isPerishable == true) then
-                    useCharged = hitem.getCharges(whichItem)
-                end
-                for _ = 1, useCharged, 1 do
-                    m[2](triggerData)
-                    hevent.triggerEvent(
-                        whichUnit,
-                        CONST_EVENT.itemUsed,
-                        triggerData
-                    )
-                    isTrigger = true
-                end
-            end
-        end
+    local itId = hitem.getId(whichItem)
+    local _onItemUsed = hslk.i2v(itId, "_onItemUsed")
+    if (_onItemUsed ~= nil and type(_onItemUsed) == "function") then
+        _onItemUsed(triggerData)
     end
-    if (isTrigger == false) then
-        hevent.triggerEvent(
-            whichUnit,
-            CONST_EVENT.itemUsed,
-            triggerData
-        )
-    end
+    hevent.triggerEvent(whichUnit, CONST_EVENT.itemUsed, triggerData)
 end
 
 --- 删除物品，可延时

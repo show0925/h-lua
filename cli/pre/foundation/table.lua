@@ -130,13 +130,7 @@ table.obj2arr = function(obj, keyMap)
     local arr = {}
     for _, a in ipairs(keyMap) do
         if (obj[a] ~= nil) then
-            table.insert(
-                arr,
-                {
-                    key = a,
-                    value = obj[a]
-                }
-            )
+            table.insert(arr, { key = a, value = obj[a] })
         end
     end
     return arr
