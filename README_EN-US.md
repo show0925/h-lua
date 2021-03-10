@@ -29,28 +29,25 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
 ## Project structure：
 ```
     ├── cli - for SDK
-    ├── const
-    ├── foundation
-    │   ├── blizzard_b.lua - Blizzard B global variables
-    │   ├── blizzard_c.lua - Blizzard C global variables
-    │   ├── cache.lua
-    │   ├── cmd.lua - h-lua Default Commands
-    │   ├── color.lua - Color for text
-    │   ├── debug.lua
-    │   ├── echo.lua - Game screen printing
-    │   ├── json.lua
-    │   ├── Mapping.lua
-    │   ├── math.lua
-    │   ├── md5.lua
-    │   ├── slk.lua
-    │   ├── string.lua
-    │   └── table.lua
-    ├── lib
+    │   ├── pre - Preset data
+    │   │    ├── const - Static value configuration
+    │   │    └── foundation
+    │   │        ├── color.lua
+    │   │        ├── json.lua
+    │   │        ├── Mapping.lua
+    │   │        ├── math.lua
+    │   │        ├── string.lua
+    │   │        └── table.lua
+    │   └── slk
+    │   └── war3mapJ - jass for map
+    └── lib
     │   ├── skill
     │   ├── attrbute - Universal Property System
+    │   ├── cache.lua
     │   ├── award.lua
     │   ├── buff.lua
     │   ├── camera.lua
+    │   ├── cmd.lua
     │   ├── courier.lua
     │   ├── dialog.lua
     │   ├── dzapi.lua - Dzapi
@@ -59,8 +56,11 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     │   ├── enemy.lua - Used to set enemy players, automatically assign units
     │   ├── env.lua
     │   ├── event.lua
+    │   ├── eventDefaultActions.lua
     │   ├── group.lua - Unit Group
     │   ├── hero.lua
+    │   ├── id.lua
+    │   ├── initialization.lua - init scripts
     │   ├── is.lua
     │   ├── item.lua
     │   ├── itemPool.lua
@@ -68,7 +68,6 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     │   ├── itemPool.lua
     │   ├── leaderBoard.lua
     │   ├── lightning.lua
-    │   ├── matcher.lua
     │   ├── monitor.lua
     │   ├── multiBoard.lua
     │   ├── player.lua
@@ -80,6 +79,9 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     │   ├── texture.lua
     │   ├── time.lua
     │   ├── unit.lua
-    │   └── weather.lua 
+    │   └── weather.lua
+    ├── blizzard_b.lua - Blizzard B global variables
+    ├── blizzard_c.lua - Blizzard C global variables
+    ├── echo.lua - Game message global function
     └── h-lua.lua - Enter
 ```

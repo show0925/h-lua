@@ -29,29 +29,25 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
 ## 框架结构如下：
 ```
     ├── cli - 用于sdk的文件
-    ├── const - 静态值配置
-    ├── foundation - 基础文件
-    │   ├── blizzard_b.lua - 暴雪B全局变量
-    │   ├── blizzard_c.lua - 暴雪C全局变量
-    │   ├── cache.lua - 缓存
-    │   ├── cmd.lua - 框架自带命令管理
-    │   ├── color.lua - 颜色
-    │   ├── debug.lua - 调试
-    │   ├── echo.lua - 游戏荧幕打印
-    │   ├── json.lua - json库
-    │   ├── Mapping.lua - 值对库
-    │   ├── math.lua - 计算库
-    │   ├── md5.lua - MD5
-    │   ├── slk.lua - slk模块，物编数据
-    │   ├── string.lua - 字符串库
-    │   └── table.lua - 表库
+    │   ├── pre - 预设数据
+    │   │    ├── const - 静态值配置
+    │   │    └── foundation - 基础文件
+    │   │        ├── color.lua - 颜色
+    │   │        ├── json.lua - json库
+    │   │        ├── Mapping.lua - 值对库
+    │   │        ├── math.lua - 计算库
+    │   │        ├── string.lua - 字符串库
+    │   │        └── table.lua - 表库
+    │   └── slk - slk配置
+    │   └── war3mapJ - jass
     └── lib
     │   ├── attrbute - 基础/拓展/伤害特效/自然/单位关联，万能属性系统，自由、强大
-    │   ├── skill - 技能包
+    │   ├── skill - 技能库
+    │   ├── cache.lua - 缓存
     │   ├── award.lua - 奖励模块，用于控制玩家的黄金木头经验
     │   ├── buff.lua - buff模块，可控状态管理
     │   ├── camera.lua - 镜头模块，用于控制玩家镜头
-    │   ├── courier.lua - 默认的信使模块
+    │   ├── cmd.lua - 框架自带命令管理
     │   ├── dialog.lua - 对话框模块，用于显示对话框
     │   ├── dzapi.lua - Dzapi
     │   ├── effect.lua - 特效模块
@@ -59,27 +55,32 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     │   ├── enemy.lua - 敌人模块，用于设定敌人玩家，自动分配单位
     │   ├── env.lua - 环境模块，可随机为区域生成装饰物及地表纹理
     │   ├── event.lua - 事件模块，自定义事件，包括物品合成分拆/暴击，精确攻击捕捉等
+    │   ├── eventDefaultActions.lua - 框架默认事件函数
     │   ├── group.lua - 单位组
     │   ├── hero.lua - 英雄/选英雄模块，包含点击/酒馆选择，repick/random功能等
     │   ├── id.lua - h-lua id配置
+    │   ├── initialization.lua - 初始化脚本
     │   ├── is.lua - 判断模块 * 常用
     │   ├── item.lua - 物品模块，与属性系统无缝结合，合成/分拆等功能
     │   ├── itemPool.lua - 物品池
     │   ├── japi.lua - JAPI
     │   ├── leaderBoard.lua 排行榜模块，用于简易构建排行榜
     │   ├── lightning.lua - 闪电链
-    │   ├── matcher.lua - 匹配器
     │   ├── monitor.lua - 监听器
     │   ├── multiBoard.lua - 多面板
     │   ├── player.lua - 玩家
     │   ├── quest.lua - 任务
     │   ├── rect.lua - 区域
     │   ├── shop.lua - 商店模块
+    │   ├── slk.lua - slk模块
     │   ├── sound.lua - 声音模块
     │   ├── textTag.lua - 漂浮字
     │   ├── texture.lua - 遮罩、贴图
     │   ├── time.lua - 时间/计时器 * 常用
     │   ├── unit.lua - 单位
     │   └── weather.lua - 天气
+    ├── blizzard_b.lua - 暴雪B全局变量
+    ├── blizzard_c.lua - 暴雪C全局变量
+    ├── echo.lua - 游戏消息全局函数
     └── h-lua.lua - 入口文件，sdk无需加载此文件（会自动加载）
 ```
