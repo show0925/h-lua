@@ -291,10 +291,30 @@ hevent_default_actions = {
                         hunit.del(u, 0)
                     end
                 end)
+            else
+                -- 如果是英雄，检测属性重生秒数
+                local rebornSec = hattribute.get(u, "reborn") or -999
+                if (rebornSec >= 0) then
+                    local x = hunit.x(u)
+                    local y = hunit.y(u)
+                    if (rebornSec > 0) then
+                        hunit.create({
+                            register = false,
+                            whichPlayer = hunit.getOwner(u),
+                            unitId = HL_ID.hero_death_token,
+                            x = x,
+                            y = y,
+                            opacity = 0.6,
+                            qty = 1,
+                            isShadow = true,
+                            isInvulnerable = true,
+                            during = rebornSec,
+                            timeScale = 10 / rebornSec,
+                        })
+                    end
+                    hhero.reborn(u, rebornSec, 1, x, y, false)
+                end
             end
-        end),
-        spellEffect = cj.Condition(function()
-
         end),
         order = cj.Condition(function()
             --[[

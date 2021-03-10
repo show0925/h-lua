@@ -50,7 +50,11 @@ end
 ---@param u userdata
 ---@param val number
 hunit.addCurLife = function(u, val)
-    hunit.setCurLife(u, hunit.getCurLife(u) + val)
+    local cure = 1 + 0.01 * (hattribute.get(u, "cure") or 0)
+    val = math.floor(val * cure)
+    if (val > 0) then
+        hunit.setCurLife(u, hunit.getCurLife(u) + val)
+    end
 end
 --- 减少单位的当前生命
 ---@param u userdata
@@ -81,7 +85,11 @@ end
 ---@param u userdata
 ---@param val number
 hunit.addCurMana = function(u, val)
-    hunit.setCurMana(u, hunit.getCurMana(u) + val)
+    local cure = 1 + 0.01 * (hattribute.get(u, "cure") or 0)
+    val = math.floor(val * cure)
+    if (val > 0) then
+        hunit.setCurMana(u, hunit.getCurMana(u) + val)
+    end
 end
 --- 减少单位的当前魔法
 ---@param u userdata
@@ -423,6 +431,14 @@ hunit.embed = function(u, options)
             int_white = "=" .. cj.GetHeroInt(u, false),
         })
     end
+    -- 属性 attr
+    local _attr = hslk.i2v(id, "_attr")
+    if (_attr ~= nil and type(_attr) == "table") then
+        hattribute.set(u, 0, _attr)
+    end
+    if (options.attr ~= nil and type(options.attr) == "table") then
+        hattribute.set(u, 0, options.attr)
+    end
 end
 
 --- 创建单位/单位组
@@ -437,10 +453,9 @@ hunit.create = function(options)
             unitId = nil, --类型id,如 H001
             x = nil, --创建坐标X，可选
             y = nil, --创建坐标Y，可选
-            loc = nil, --创建点，可选
             height = 高度，0，可选
-            timeScale = 动作时间比例，1~，可选
-            modelScale = 模型缩放比例，1~，可选
+            timeScale = 动作时间比例，0.0~N.N，可选
+            modelScale = 模型缩放比例，0.0~N.N，可选
             red = 红色，0～255，可选
             green = 绿色，0～255，可选
             blue = 蓝色，0～255，可选
@@ -451,11 +466,9 @@ hunit.create = function(options)
             facing = nil, --面向角度，可选
             facingX = nil, --面向X，可选
             facingY = nil, --面向Y，可选
-            facingLoc = nil, --面向点，可选
             facingUnit = nil, --面向单位，可选
             attackX = nil, --攻击X，可选
             attackY = nil, --攻击Y，可选
-            attackLoc = nil, --攻击点，可选
             attackUnit = nil, --攻击单位，可选
             isOpenSlot = false, --是否开启物品栏(自动注册)可选
             isOpenPunish = false, --是否开启硬直系统，可选
@@ -482,7 +495,7 @@ hunit.create = function(options)
         print_err("create unit fail -qty")
         return
     end
-    if (options.x == nil and options.y == nil and options.loc == nil) then
+    if (options.x == nil or options.y == nil) then
         print_err("create unit fail -place")
         return
     end
@@ -495,22 +508,13 @@ hunit.create = function(options)
     end
     local u
     local facing
-    local x
-    local y
     local g
-    if (options.x ~= nil and options.y ~= nil) then
-        x = options.x
-        y = options.y
-    elseif (options.loc ~= nil) then
-        x = cj.GetLocationX(options.loc)
-        y = cj.GetLocationY(options.loc)
-    end
+    local x = options.x
+    local y = options.y
     if (options.facing ~= nil) then
         facing = options.facing
     elseif (options.facingX ~= nil and options.facingY ~= nil) then
         facing = math.getDegBetweenXY(x, y, options.facingX, options.facingY)
-    elseif (options.facingLoc ~= nil) then
-        facing = math.getDegBetweenXY(x, y, cj.GetLocationX(options.facingLoc), cj.GetLocationY(options.facingLoc))
     elseif (options.facingUnit ~= nil) then
         facing = math.getDegBetweenXY(x, y, hunit.x(options.facingUnit), hunit.y(options.facingUnit))
     else
@@ -522,8 +526,6 @@ hunit.create = function(options)
     for _ = 1, options.qty, 1 do
         if (options.x ~= nil and options.y ~= nil) then
             u = cj.CreateUnit(options.whichPlayer, options.unitId, options.x, options.y, facing)
-        elseif (options.loc ~= nil) then
-            u = cj.CreateUnitAtLoc(options.whichPlayer, options.unitId, options.loc, facing)
         end
         -- 高度
         if (options.height ~= nil and options.height ~= 0) then
@@ -531,12 +533,12 @@ hunit.create = function(options)
             hunit.setCanFly(u)
             cj.SetUnitFlyHeight(u, options.height, 10000)
         end
-        -- 动作时间比例 %
+        -- 动作时间比例
         if (options.timeScale ~= nil and options.timeScale > 0) then
-            options.timeScale = math.round(options.timeScale * 0.01)
+            options.timeScale = math.round(options.timeScale)
             cj.SetUnitTimeScale(u, options.timeScale)
         end
-        -- 模型缩放比例 %
+        -- 模型缩放比例
         if (options.modelScale ~= nil and options.modelScale > 0) then
             options.modelScale = math.round(options.modelScale)
             cj.SetUnitScale(u, options.modelScale, options.modelScale, options.modelScale)
@@ -547,8 +549,6 @@ hunit.create = function(options)
         end
         if (options.attackX ~= nil and options.attackY ~= nil) then
             cj.IssuePointOrder(u, "attack", options.attackX, options.attackY)
-        elseif (options.attackLoc ~= nil) then
-            cj.IssuePointOrderLoc(u, "attack", options.attackLoc)
         elseif (options.attackUnit ~= nil) then
             cj.IssueTargetOrder(u, "attack", options.attackUnit)
         end
@@ -599,10 +599,6 @@ hunit.create = function(options)
         -- 持续时间 delete
         if (options.during ~= nil and options.during >= 0) then
             hunit.del(u, options.during)
-        end
-        -- attr
-        if (options.attr ~= nil and type(options.attr) == "table") then
-            hattribute.set(u, 0, options.attr)
         end
     end
     if (g ~= nil) then

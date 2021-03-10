@@ -100,6 +100,7 @@ hattribute.init = function(whichUnit)
         damage_decrease = 0.0,
         damage_rebound = 0.0,
         cure = 0.0,
+        reborn = -999,
         knocking_odds = 0.0,
         knocking_extent = 0.0,
         knocking_oppose = 0.0,

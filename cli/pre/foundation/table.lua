@@ -29,7 +29,7 @@ end
 ---@return table
 table.clone = function(org)
     local function copy(org1, res)
-        if (cj == nil) then
+        if (cj == nil and #org1 == 0) then
             for k, v in pairs(org1) do
                 if type(v) ~= "table" then
                     res[k] = v
@@ -65,7 +65,7 @@ table.merge = function(...)
         return {}
     end
     for _, tn in ipairs(tables) do
-        if (cj == nil) then
+        if (cj == nil and #tn == 0) then
             if (type(tn) == "table") then
                 for k, v in pairs(tn) do
                     tempTable[k] = v

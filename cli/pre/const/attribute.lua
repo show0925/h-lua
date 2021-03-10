@@ -31,19 +31,20 @@ CONST_ATTR = {
     aim = "命中",
     punish = "僵直",
     punish_current = "当前僵直",
-    hemophagia = "吸血",
-    hemophagia_skill = "技能吸血",
-    invincible = "无敌",
+    hemophagia = "吸血", --(%)
+    hemophagia_skill = "技能吸血", --(%)
+    invincible = "无敌", --(%)
     weight = "负重",
     weight_current = "当前负重",
-    damage_extent = "伤害增幅",
+    damage_extent = "伤害增幅", --(%)
     damage_reduction = "减伤", --(固定)
     damage_decrease = "减伤", --(%)
-    damage_rebound = "反弹伤害",
+    damage_rebound = "反弹伤害", --(%)
     damage_rebound_oppose = "反伤抵抗",
-    cure = "治疗",
+    cure = "治疗", --(%)
+    reborn = "复活时间",
     knocking_odds = "暴击几率",
-    knocking_extent = "暴击增伤",
+    knocking_extent = "暴击增伤", --(%)
     knocking_oppose = "暴击抵抗",
     hemophagia_oppose = "吸血抵抗",
     hemophagia_skill_oppose = "技能吸血抵抗",
@@ -112,6 +113,7 @@ for _, v in ipairs(CONST_ENCHANT) do
 end
 
 local otherKeys = {
+    "reborn",
     "attack_speed",
     "attack_space",
     "attack_space_origin",

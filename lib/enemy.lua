@@ -96,8 +96,8 @@ end
         y = nil, --创建坐标Y，可选
         loc = nil, --创建点，可选
         height = 高度，0，可选
-        timeScale = 动作时间比例，1~，可选
-        modelScale = 模型缩放比例，1~，可选
+        timeScale = 动作时间比例，0.0~N.N，可选
+        modelScale = 模型缩放比例，0.0~N.N，可选
         red = 红色，0～255，可选
         green = 绿色，0～255，可选
         blue = 蓝色，0～255，可选
@@ -108,11 +108,9 @@ end
         facing = nil, --面向角度，可选
         facingX = nil, --面向X，可选
         facingY = nil, --面向Y，可选
-        facingLoc = nil, --面向点，可选
         facingUnit = nil, --面向单位，可选
         attackX = nil, --攻击X，可选
         attackY = nil, --攻击Y，可选
-        attackLoc = nil, --攻击点，可选
         attackUnit = nil, --攻击单位，可选
         isOpenPunish = false, --是否开启硬直系统，可选
         isShadow = false, --是否影子，可选

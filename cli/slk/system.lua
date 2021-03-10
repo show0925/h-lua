@@ -216,7 +216,7 @@ hslk_unit({
     tilesets = "*",
     special = 1,
     hostilePal = 0,
-    abilList = "Avul,Alnv,Aloc",
+    abilList = "Avul,Aloc",
     upgrade = "",
     collision = 0.00,
     unitSound = 0.00,

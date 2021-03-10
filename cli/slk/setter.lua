@@ -132,7 +132,7 @@ F6S.a = {
             local k = arr.key
             local v = arr.value
             -- 附加单位
-            if (k == "attack_space") then
+            if (k == "attack_space" or k == "reborn") then
                 v = v .. "秒"
             end
             if (table.includes({ "life_back", "mana_back" }, k)) then
@@ -418,7 +418,7 @@ F6S.i = {
         _ring = function(v)
             if (v._ring ~= nil) then
                 if (v._ring.attr ~= nil and v._ring.radius ~= nil and (type(v._ring.target) == 'table' and #v._ring.target > 0)) then
-                    local txt = "光环：[" .. v._ring.radius .. "px|n"
+                    local txt = "光环：[" .. v._ring.radius .. "px]|n"
                     F6S.txt(v, "Ubertip", hcolor.mixed(txt .. F6S.a.attr(v._ring.attr, "|n", ' - '), F6_CONF.color.ringTarget))
                 end
             end
