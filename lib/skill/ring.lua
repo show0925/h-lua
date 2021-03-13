@@ -22,21 +22,26 @@ end
 ---@private
 ---@param whichUnit userdata
 ---@param id number|string
-hring.insert = function(whichUnit, id)
+---@param level number
+hring.insert = function(whichUnit, id, level)
     id = hring.check(id)
     if (id == false) then
         return
     end
+    level = level or 1
     if (his.deleted(whichUnit) == false) then
-        table.insert(hring.ACTIVE_RING, { status = 2, unit = whichUnit, id = id, group = {} })
-        local rs = hslk.i2v(id, "_ring") or {}
-        if (rs.effect) then
+        table.insert(hring.ACTIVE_RING, { status = 2, unit = whichUnit, id = id, group = {}, level = level })
+        local _ring = hslk.i2v(id, "_ring") or {}
+        if (#_ring > 0) then
+            _ring = _ring[level]
+        end
+        if (_ring.effect) then
             if (hring.ACTIVE_EFFECT[id] == nil) then
                 hring.ACTIVE_EFFECT[id] = {}
             end
             if (hring.ACTIVE_EFFECT[id][whichUnit] == nil) then
                 hring.ACTIVE_EFFECT[id][whichUnit] = {
-                    effect = heffect.bindUnit(rs.effect, whichUnit, rs.attach or 'origin', -1),
+                    effect = heffect.bindUnit(_ring.effect, whichUnit, _ring.attach or 'origin', -1),
                     count = 1,
                 }
             else
@@ -55,25 +60,29 @@ hring.insert = function(whichUnit, id)
                 hring.ACTIVE_EFFECT_TARGET = {}
                 return
             end
-            for k, ring in ipairs(hring.ACTIVE_RING) do
-                local u = ring.unit
-                local status = ring.status
+            for k, actRing in ipairs(hring.ACTIVE_RING) do
+                local u = actRing.unit
+                local status = actRing.status
+                local lv = actRing.level
                 if (his.deleted(u) == true) then
                     status = -1
-                    ring.status = -1
+                    actRing.status = -1
                 elseif (his.dead(u) == true) then
                     status = 1
                 end
                 --
                 local g = {}
-                local ringId = ring.id
-                local rs = hslk.i2v(ringId, "_ring") or {}
-                if (status == 2 and rs ~= nil) then
-                    if (rs.effectTarget and hring.ACTIVE_EFFECT_TARGET[ringId] == nil) then
+                local ringId = actRing.id
+                local _ring = hslk.i2v(ringId, "_ring") or {}
+                if (#_ring > 0) then
+                    _ring = _ring[lv]
+                end
+                if (status == 2 and _ring ~= nil) then
+                    if (_ring.effectTarget and hring.ACTIVE_EFFECT_TARGET[ringId] == nil) then
                         hring.ACTIVE_EFFECT_TARGET[ringId] = {}
                     end
-                    local radius = math.floor(rs.radius or 0)
-                    local target = rs.target or {}
+                    local radius = math.floor(_ring.radius or 0)
+                    local target = _ring.target or {}
                     if (radius > 0) then
                         local selector = {
                             air = false, --空中
@@ -203,10 +212,10 @@ hring.insert = function(whichUnit, id)
                     end
                 end
                 -- slk配置的RING属性
-                if (type(rs.attr) == 'table') then
-                    hgroup.forEach(ring.group, function(enumUnit)
+                if (type(_ring.attr) == 'table') then
+                    hgroup.forEach(actRing.group, function(enumUnit)
                         if (hgroup.includes(g, enumUnit) == false) then
-                            hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, false, enumUnit, rs.attr, 1)
+                            hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, false, enumUnit, _ring.attr, 1)
                             if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] ~= nil) then
                                 hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count = hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count - 1
                                 if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count == 0) then
@@ -221,13 +230,13 @@ hring.insert = function(whichUnit, id)
                     local _onRing = hslk.i2v(ringId, "_onRing")
                     hgroup.forEach(g, function(enumUnit)
                         -- slk配置的RING属性
-                        if (type(rs.attr) == 'table' and false == hgroup.includes(ring.group, enumUnit)) then
-                            hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, true, enumUnit, rs.attr, 1)
-                            if (rs.effectTarget) then
+                        if (type(_ring.attr) == 'table' and false == hgroup.includes(actRing.group, enumUnit)) then
+                            hattribute.caleAttribute(CONST_DAMAGE_SRC.skill, true, enumUnit, _ring.attr, 1)
+                            if (_ring.effectTarget) then
                                 if (hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] == nil) then
                                     hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit] = {
                                         count = 1,
-                                        effect = heffect.bindUnit(rs.effectTarget, enumUnit, rs.attachTarget or 'origin', -1)
+                                        effect = heffect.bindUnit(_ring.effectTarget, enumUnit, _ring.attachTarget or 'origin', -1)
                                     }
                                 else
                                     hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count = hring.ACTIVE_EFFECT_TARGET[ringId][enumUnit].count + 1
@@ -244,7 +253,7 @@ hring.insert = function(whichUnit, id)
                     end)
                 end
                 if (status ~= -1) then
-                    ring.group = g
+                    actRing.group = g
                 else
                     if (hring.ACTIVE_EFFECT[ringId] ~= nil and hring.ACTIVE_EFFECT[ringId][u] ~= nil) then
                         hring.ACTIVE_EFFECT[ringId][u].count = hring.ACTIVE_EFFECT[ringId][u].count - 1

@@ -133,10 +133,10 @@ hskill.invisible = function(whichUnit, during, transition, effect)
     if (transition > 0) then
         htime.setTimeout(transition, function(t)
             htime.delTimer(t)
-            hskill.add(whichUnit, HL_ID.ability_invisible, during)
+            hskill.add(whichUnit, HL_ID.ability_invisible, 1, during)
         end)
     else
-        hskill.add(whichUnit, HL_ID.ability_invisible, during)
+        hskill.add(whichUnit, HL_ID.ability_invisible, 1, during)
     end
 end
 

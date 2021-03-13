@@ -107,16 +107,6 @@ hhero.setBornXY = function(x, y)
     hhero.bornY = y
 end
 
---- 设置一组ID，这组ID会拥有英雄判定
---- 当设置[一般单位]为[英雄]时，框架自动屏蔽[力量|敏捷|智力]等不属于一般单位的属性，以避免引起崩溃报错
---- 设定后 his.hero 方法会认为ID对应的单位类型为英雄，同时属性系统也会认定它为英雄
----@param ids table <number, string>
-hhero.setHeroIds = function(ids)
-    if (type(ids) == "table" and #ids > 0) then
-        HSLK_TYPE_IDS["hero_custom"] = ids
-    end
-end
-
 --- 在某XY坐标复活英雄,只有英雄能被复活,只有调用此方法会触发复活事件
 ---@param whichHero userdata
 ---@param delay number
@@ -286,14 +276,12 @@ hhero.buildSelector = function(options)
                 else
                     x = buildX + currentRowQty * buildDistanceX
                 end
-                tavern = hunit.create(
-                    {
-                        whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
-                        unitId = options.tavernId or HL_ID.hero_tavern_token,
-                        x = x,
-                        y = y,
-                    }
-                )
+                tavern = hunit.create({
+                    whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
+                    unitId = options.tavernId or HL_ID.hero_tavern_token,
+                    x = x,
+                    y = y,
+                })
                 table.insert(hhero.selectorClearPool, tavern)
                 cj.SetUnitTypeSlots(tavern, tavernUnitQty)
                 if (type(options.onUnitSell) == "function") then
@@ -313,14 +301,12 @@ hhero.buildSelector = function(options)
                             return
                         end
                         cj.RemoveUnitFromStock(tavern, soldUid)
-                        local whichHero = hunit.create(
-                            {
-                                whichPlayer = p,
-                                unitId = soldUid,
-                                x = hhero.bornX,
-                                y = hhero.bornY,
-                            }
-                        )
+                        local whichHero = hunit.create({
+                            whichPlayer = p,
+                            unitId = soldUid,
+                            x = hhero.bornX,
+                            y = hhero.bornY,
+                        })
                         table.insert(hhero.player_heroes[pIndex], whichHero)
                         table.delete(hhero.selectorPool, string.id2char(soldUid))
                         local tips = "您选择了 |cffffff80" .. cj.GetUnitName(whichHero) .. "|r"

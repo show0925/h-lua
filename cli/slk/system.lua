@@ -234,7 +234,7 @@ hslk_unit({
     movetp = "fly",
     spd = 0,
     turnRate = 3.00,
-    moveFloor = 25.00,
+    moveFloor = -25,
     weapsOn = 0,
     race = "other",
     fused = 0,

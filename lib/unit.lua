@@ -416,7 +416,7 @@ hunit.embed = function(u, options)
     if (his.hasSlot(u)) then
         hitem.embed(u)
     elseif (options.isOpenSlot == true) then
-        hskill.add(u, HL_ID.ability_item_slot, 0)
+        hskill.add(u, HL_ID.ability_item_slot, 1)
         hitem.embed(u)
     end
     -- 如果是英雄，注册事件和计算初次属性

@@ -1,6 +1,4 @@
 hdzapi = {
-    enable = (cg.HLUA_DZAPI_FLAG == true),
-    tips_showed = false,
     commandHashCache = {},
     mallItemCheater = {},
     tallocStatus = {
@@ -18,7 +16,7 @@ hdzapi = {
     talloc = function()
         local index = -1
         local i = hdzapi.tallocStatus.index + 1
-        if (i > cg.Hlua_DzAPI_Tgr_count) then
+        if (i > cg.H_G_DZAPI_TGR_QTY) then
             i = 1
         end
         if (hdzapi.tallocStatus.queue[i] == nil) then
@@ -30,7 +28,7 @@ hdzapi = {
         if (hdzapi.tallocStatus.queue[i].status == false) then
             index = i
         else
-            for j = 1, cg.Hlua_DzAPI_Tgr_count do
+            for j = 1, cg.H_G_DZAPI_TGR_QTY do
                 if (hdzapi.tallocStatus.queue[j].status == false) then
                     index = j
                     break
@@ -43,17 +41,10 @@ hdzapi = {
         end
         hdzapi.tallocStatus.queue[index].status = true
         hdzapi.tallocStatus.queue[index].result = nil
-        return cg['Hlua_DzAPI_Tgr_' .. index], index
+        return cg['H_G_DZAPI_TGR_' .. index], index
     end,
     ---@private
     exec = function(command, ...)
-        if (hdzapi.enable ~= true) then
-            if (hdzapi.tips_showed == false) then
-                print("Copy ./plugin/dzapi.v2.jass For Dzapi.lua")
-                hdzapi.tips_showed = true
-            end
-            return
-        end
         local whichPlayer = select("1", ...)
         local key = select("2", ...)
         local data = select("3", ...)
@@ -62,18 +53,18 @@ hdzapi = {
         end
         local tgr, tIndex = hdzapi.talloc()
         local tid = cj.GetHandleId(tgr)
-        cj.SaveStr(cg.hash_hlua_dzapi, tid, cg.HLDK_COMMAND, command)
+        cj.SaveStr(cg.H_HT_DZAPI, tid, cg.H_G_KEY_COMMAND, command)
         if (whichPlayer ~= nil) then
-            cj.SavePlayerHandle(cg.hash_hlua_dzapi, tid, cg.HLDK_PLAYER, whichPlayer)
+            cj.SavePlayerHandle(cg.H_HT_DZAPI, tid, cg.H_G_KEY_PLAYER, whichPlayer)
         end
         if (key ~= nil) then
-            cj.SaveStr(cg.hash_hlua_dzapi, tid, cg.HLDK_KEY, key)
+            cj.SaveStr(cg.H_HT_DZAPI, tid, cg.H_G_KEY_KEY, key)
         end
         if (data ~= nil) then
-            cj.SaveStr(cg.hash_hlua_dzapi, tid, cg.HLDK_DATA, data)
+            cj.SaveStr(cg.H_HT_DZAPI, tid, cg.H_G_KEY_DATA, data)
         end
         cj.TriggerExecute(tgr)
-        local res = cj.LoadStr(cg.hash_hlua_dzapi, tid, cg.HLDK_RESULT)
+        local res = cj.LoadStr(cg.H_HT_DZAPI, tid, cg.H_G_KEY_RESULT)
         hdzapi.tallocStatus.queue[tIndex].status = false
         hdzapi.tallocStatus.queue[tIndex].command = command
         hdzapi.tallocStatus.queue[tIndex].result = res
@@ -139,6 +130,21 @@ end
 
 -- 服务器存档
 hdzapi.server = {}
+
+--- 获取服务器开始时间
+---@return number
+hdzapi.server.timestamp = function()
+    if (cg.H_G_SST == -1) then
+        cj.ExecuteFunc("H_FUNC_SST")
+    end
+    return cg.H_G_SST + htime.count
+end
+
+--- 获取服务器时间分析
+---@return table {Y:"年",m:"月",d:"日",H:"时",i:"分",s:"秒",w:"周[0-6]",W:"周[日-六]"}
+hdzapi.server.time = function()
+    return math.date(hdzapi.server.timestamp())
+end
 
 --- 读取服务器存档是否成功，没有开通或这服务器崩了返回false
 ---@param whichPlayer userdata

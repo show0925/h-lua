@@ -1,57 +1,61 @@
 
-function HluaCli_DZapi_callback takes nothing returns nothing
+function H_FUNC_SST takes nothing returns nothing
+    set H_G_SST = DzAPI_Map_GetGameStartTime()
+endfunction
+
+function H_CALL_DZAPI takes nothing returns nothing
     local trigger tgr= GetTriggeringTrigger()
     local integer tid= GetHandleId(tgr)
-    local string command= LoadStr(hash_hlua_dzapi, tid, HLDK_COMMAND)
+    local string command= LoadStr(H_HT_DZAPI, tid, H_G_KEY_COMMAND)
     local player p= null
     local string ky= null
     local string data= null
     if ( command == "IsRedVIP" ) then
-        set p=LoadPlayerHandle(hash_hlua_dzapi, tid, HLDK_PLAYER)
+        set p=LoadPlayerHandle(H_HT_DZAPI, tid, H_G_KEY_PLAYER)
         if ( DzAPI_Map_IsRedVIP(p) ) then
-            call SaveStr(hash_hlua_dzapi, tid, HLDK_RESULT, "1")
+            call SaveStr(H_HT_DZAPI, tid, H_G_KEY_RESULT, "1")
         else
-            call SaveStr(hash_hlua_dzapi, tid, HLDK_RESULT, "0")
+            call SaveStr(H_HT_DZAPI, tid, H_G_KEY_RESULT, "0")
         endif
     elseif ( command == "IsBlueVIP" ) then
-        set p=LoadPlayerHandle(hash_hlua_dzapi, tid, HLDK_PLAYER)
+        set p=LoadPlayerHandle(H_HT_DZAPI, tid, H_G_KEY_PLAYER)
         if ( DzAPI_Map_IsBlueVIP(p) ) then
-            call SaveStr(hash_hlua_dzapi, tid, HLDK_RESULT, "1")
+            call SaveStr(H_HT_DZAPI, tid, H_G_KEY_RESULT, "1")
         else
-            call SaveStr(hash_hlua_dzapi, tid, HLDK_RESULT, "0")
+            call SaveStr(H_HT_DZAPI, tid, H_G_KEY_RESULT, "0")
         endif
     elseif ( command == "GetPlayerServerValueSuccess" ) then
-        set p=LoadPlayerHandle(hash_hlua_dzapi, tid, HLDK_PLAYER)
+        set p=LoadPlayerHandle(H_HT_DZAPI, tid, H_G_KEY_PLAYER)
         if ( DzAPI_Map_GetServerValueErrorCode(p) == 0 ) then
-            call SaveStr(hash_hlua_dzapi, tid, HLDK_RESULT, "1")
+            call SaveStr(H_HT_DZAPI, tid, H_G_KEY_RESULT, "1")
         else
-            call SaveStr(hash_hlua_dzapi, tid, HLDK_RESULT, "0")
+            call SaveStr(H_HT_DZAPI, tid, H_G_KEY_RESULT, "0")
         endif
     elseif ( command == "GetMapLevel" ) then
-        set p=LoadPlayerHandle(hash_hlua_dzapi, tid, HLDK_PLAYER)
-        call SaveStr(hash_hlua_dzapi, tid, HLDK_RESULT, I2S(DzAPI_Map_GetMapLevel(p)))
+        set p=LoadPlayerHandle(H_HT_DZAPI, tid, H_G_KEY_PLAYER)
+        call SaveStr(H_HT_DZAPI, tid, H_G_KEY_RESULT, I2S(DzAPI_Map_GetMapLevel(p)))
     elseif ( command == "HasMallItem" ) then
-        set p=LoadPlayerHandle(hash_hlua_dzapi, tid, HLDK_PLAYER)
-        set ky=LoadStr(hash_hlua_dzapi, tid, HLDK_KEY)
+        set p=LoadPlayerHandle(H_HT_DZAPI, tid, H_G_KEY_PLAYER)
+        set ky=LoadStr(H_HT_DZAPI, tid, H_G_KEY_KEY)
         if ( DzAPI_Map_HasMallItem(p, ky) ) then
-            call SaveStr(hash_hlua_dzapi, tid, HLDK_RESULT, "1")
+            call SaveStr(H_HT_DZAPI, tid, H_G_KEY_RESULT, "1")
         else
-            call SaveStr(hash_hlua_dzapi, tid, HLDK_RESULT, "0")
+            call SaveStr(H_HT_DZAPI, tid, H_G_KEY_RESULT, "0")
         endif
     elseif ( command == "Stat_SetStat" ) then
-        set p=LoadPlayerHandle(hash_hlua_dzapi, tid, HLDK_PLAYER)
-        set ky=LoadStr(hash_hlua_dzapi, tid, HLDK_KEY)
-        set data=LoadStr(hash_hlua_dzapi, tid, HLDK_DATA)
+        set p=LoadPlayerHandle(H_HT_DZAPI, tid, H_G_KEY_PLAYER)
+        set ky=LoadStr(H_HT_DZAPI, tid, H_G_KEY_KEY)
+        set data=LoadStr(H_HT_DZAPI, tid, H_G_KEY_DATA)
         call DzAPI_Map_Stat_SetStat(p, ky, data)
     elseif ( command == "SaveServerValue" ) then
-        set p=LoadPlayerHandle(hash_hlua_dzapi, tid, HLDK_PLAYER)
-        set ky=LoadStr(hash_hlua_dzapi, tid, HLDK_KEY)
-        set data=LoadStr(hash_hlua_dzapi, tid, HLDK_DATA)
+        set p=LoadPlayerHandle(H_HT_DZAPI, tid, H_G_KEY_PLAYER)
+        set ky=LoadStr(H_HT_DZAPI, tid, H_G_KEY_KEY)
+        set data=LoadStr(H_HT_DZAPI, tid, H_G_KEY_DATA)
         call DzAPI_Map_SaveServerValue(p, ky, data)
     elseif ( command == "GetServerValue" ) then
-        set p=LoadPlayerHandle(hash_hlua_dzapi, tid, HLDK_PLAYER)
-        set ky=LoadStr(hash_hlua_dzapi, tid, HLDK_KEY)
-        call SaveStr(hash_hlua_dzapi, tid, HLDK_RESULT, DzAPI_Map_GetServerValue(p, ky))
+        set p=LoadPlayerHandle(H_HT_DZAPI, tid, H_G_KEY_PLAYER)
+        set ky=LoadStr(H_HT_DZAPI, tid, H_G_KEY_KEY)
+        call SaveStr(H_HT_DZAPI, tid, H_G_KEY_RESULT, DzAPI_Map_GetServerValue(p, ky))
     endif
     set tgr=null
     set command=null
@@ -60,49 +64,51 @@ function HluaCli_DZapi_callback takes nothing returns nothing
     set data=null
 endfunction
 
-function HluaCli_DZapi takes nothing returns nothing
-    set Hlua_DzAPI_Tgr_1=CreateTrigger()
-    set Hlua_DzAPI_Tgr_2=CreateTrigger()
-    set Hlua_DzAPI_Tgr_3=CreateTrigger()
-    set Hlua_DzAPI_Tgr_4=CreateTrigger()
-    set Hlua_DzAPI_Tgr_5=CreateTrigger()
-    set Hlua_DzAPI_Tgr_6=CreateTrigger()
-    set Hlua_DzAPI_Tgr_7=CreateTrigger()
-    set Hlua_DzAPI_Tgr_8=CreateTrigger()
-    set Hlua_DzAPI_Tgr_9=CreateTrigger()
-    set Hlua_DzAPI_Tgr_10 = CreateTrigger()
-    set Hlua_DzAPI_Tgr_11 = CreateTrigger()
-    set Hlua_DzAPI_Tgr_12 = CreateTrigger()
-    set Hlua_DzAPI_Tgr_13 = CreateTrigger()
-    set Hlua_DzAPI_Tgr_14 = CreateTrigger()
-    set Hlua_DzAPI_Tgr_15 = CreateTrigger()
-    set Hlua_DzAPI_Tgr_16 = CreateTrigger()
-    set Hlua_DzAPI_Tgr_17 = CreateTrigger()
-    set Hlua_DzAPI_Tgr_18 = CreateTrigger()
-    set Hlua_DzAPI_Tgr_19 = CreateTrigger()
-    set Hlua_DzAPI_Tgr_20 = CreateTrigger()
-    call TriggerAddAction(Hlua_DzAPI_Tgr_1, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_2, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_3, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_4, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_5, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_6, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_7, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_8, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_9, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_10, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_11, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_12, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_13, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_14, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_15, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_16, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_17, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_18, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_19, function HluaCli_DZapi_callback)
-    call TriggerAddAction(Hlua_DzAPI_Tgr_20, function HluaCli_DZapi_callback)
+function H_FUNC_DZAPI takes nothing returns nothing
+    set H_G_DZAPI_TGR_1=CreateTrigger()
+    set H_G_DZAPI_TGR_2=CreateTrigger()
+    set H_G_DZAPI_TGR_3=CreateTrigger()
+    set H_G_DZAPI_TGR_4=CreateTrigger()
+    set H_G_DZAPI_TGR_5=CreateTrigger()
+    set H_G_DZAPI_TGR_6=CreateTrigger()
+    set H_G_DZAPI_TGR_7=CreateTrigger()
+    set H_G_DZAPI_TGR_8=CreateTrigger()
+    set H_G_DZAPI_TGR_9=CreateTrigger()
+    set H_G_DZAPI_TGR_10 = CreateTrigger()
+    set H_G_DZAPI_TGR_11 = CreateTrigger()
+    set H_G_DZAPI_TGR_12 = CreateTrigger()
+    set H_G_DZAPI_TGR_13 = CreateTrigger()
+    set H_G_DZAPI_TGR_14 = CreateTrigger()
+    set H_G_DZAPI_TGR_15 = CreateTrigger()
+    set H_G_DZAPI_TGR_16 = CreateTrigger()
+    set H_G_DZAPI_TGR_17 = CreateTrigger()
+    set H_G_DZAPI_TGR_18 = CreateTrigger()
+    set H_G_DZAPI_TGR_19 = CreateTrigger()
+    set H_G_DZAPI_TGR_20 = CreateTrigger()
+    call TriggerAddAction(H_G_DZAPI_TGR_1, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_2, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_3, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_4, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_5, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_6, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_7, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_8, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_9, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_10, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_11, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_12, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_13, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_14, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_15, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_16, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_17, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_18, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_19, function H_CALL_DZAPI)
+    call TriggerAddAction(H_G_DZAPI_TGR_20, function H_CALL_DZAPI)
 endfunction
 
-function HluaCli_Cli takes nothing returns nothing
+function H_EXEC takes nothing returns nothing
+    call H_DZUI()
+    call H_FUNC_DZAPI()
     call Cheat("exec-lua:\"cli\"")
 endfunction

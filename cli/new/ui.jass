@@ -1,0 +1,4 @@
+
+function H_UI takes nothing returns nothing
+    call DzEnableWideScreen(true)
+endfunction

@@ -1,31 +1,35 @@
 
 //H-lua struct globals:
-hashtable hash_hlua_dzapi=InitHashtable()
+hashtable H_HT_DZAPI=InitHashtable()
 
-boolean HLUA_DZAPI_FLAG=true
-integer Hlua_DzAPI_Tgr_count=20
-trigger Hlua_DzAPI_Tgr_1
-trigger Hlua_DzAPI_Tgr_2
-trigger Hlua_DzAPI_Tgr_3
-trigger Hlua_DzAPI_Tgr_4
-trigger Hlua_DzAPI_Tgr_5
-trigger Hlua_DzAPI_Tgr_6
-trigger Hlua_DzAPI_Tgr_7
-trigger Hlua_DzAPI_Tgr_8
-trigger Hlua_DzAPI_Tgr_9
-trigger Hlua_DzAPI_Tgr_10
-trigger Hlua_DzAPI_Tgr_11
-trigger Hlua_DzAPI_Tgr_12
-trigger Hlua_DzAPI_Tgr_13
-trigger Hlua_DzAPI_Tgr_14
-trigger Hlua_DzAPI_Tgr_15
-trigger Hlua_DzAPI_Tgr_16
-trigger Hlua_DzAPI_Tgr_17
-trigger Hlua_DzAPI_Tgr_18
-trigger Hlua_DzAPI_Tgr_19
-trigger Hlua_DzAPI_Tgr_20
-integer HLDK_COMMAND= 101
-integer HLDK_PLAYER= 102
-integer HLDK_KEY= 103
-integer HLDK_DATA= 104
-integer HLDK_RESULT= 120
+integer H_G_KEY_COMMAND= 101
+integer H_G_KEY_PLAYER= 102
+integer H_G_KEY_KEY= 103
+integer H_G_KEY_DATA= 104
+integer H_G_KEY_RESULT= 120
+
+integer H_G_SST = -1
+
+integer H_G_DZAPI_TGR_QTY=20
+trigger H_G_DZAPI_TGR_1
+trigger H_G_DZAPI_TGR_2
+trigger H_G_DZAPI_TGR_3
+trigger H_G_DZAPI_TGR_4
+trigger H_G_DZAPI_TGR_5
+trigger H_G_DZAPI_TGR_6
+trigger H_G_DZAPI_TGR_7
+trigger H_G_DZAPI_TGR_8
+trigger H_G_DZAPI_TGR_9
+trigger H_G_DZAPI_TGR_10
+trigger H_G_DZAPI_TGR_11
+trigger H_G_DZAPI_TGR_12
+trigger H_G_DZAPI_TGR_13
+trigger H_G_DZAPI_TGR_14
+trigger H_G_DZAPI_TGR_15
+trigger H_G_DZAPI_TGR_16
+trigger H_G_DZAPI_TGR_17
+trigger H_G_DZAPI_TGR_18
+trigger H_G_DZAPI_TGR_19
+trigger H_G_DZAPI_TGR_20
+
+

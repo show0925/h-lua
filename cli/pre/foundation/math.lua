@@ -71,18 +71,24 @@ end
 
 --- 数字格式化
 ---@param value number
+---@param n number 小数最大截断位，默认2位
 ---@return string
-math.numberFormat = function(value)
+math.numberFormat = function(value, n)
+    n = math.floor(n or 2)
+    if (n < 1) then
+        n = 2
+    end
+    print("n", n, value)
     if (value > 10000 * 100000000) then
-        return string.format("%.2f", value / 10000 * 100000000) .. "T"
+        return string.format("%." .. n .. "f", value / (10000 * 100000000)) .. "T"
     elseif (value > 10 * 100000000) then
-        return string.format("%.2f", value / 10 * 100000000) .. "B"
+        return string.format("%." .. n .. "f", value / (10 * 100000000)) .. "B"
     elseif (value > 100 * 10000) then
-        return string.format("%.2f", value / 100 * 10000) .. "M"
+        return string.format("%." .. n .. "f", value / (100 * 10000)) .. "M"
     elseif (value > 1000) then
-        return string.format("%.2f", value / 1000) .. "K"
+        return string.format("%." .. n .. "f", value / 1000) .. "K"
     else
-        return string.format("%.2f", value)
+        return string.format("%." .. n .. "f", value)
     end
 end
 
@@ -91,11 +97,11 @@ end
 ---@return string
 math.integerFormat = function(value)
     if (value > 10000 * 100000000) then
-        return math.floor(value / 10000 * 100000000) .. "T"
+        return math.floor(value / (10000 * 100000000)) .. "T"
     elseif (value > 10 * 100000000) then
-        return math.floor(value / 10 * 100000000) .. "B"
+        return math.floor(value / (10 * 100000000)) .. "B"
     elseif (value > 100 * 10000) then
-        return math.floor(value / 100 * 10000) .. "M"
+        return math.floor(value / (100 * 10000)) .. "M"
     elseif (value > 1000) then
         return math.floor(value / 1000) .. "K"
     else
@@ -190,4 +196,23 @@ math.getMaxDistanceInRect = function(w, h, deg)
         distance = w / 2 / math.cos((180 + deg) * math_deg2rad)
     end
     return distance
+end
+
+--- 时间戳转日期对象
+---@param timestamp number Unix时间戳
+---@return table {Y:"年",m:"月",d:"日",H:"时",i:"分",s:"秒",w:"周[0-6]",W:"周[日-六]"}
+math.date = function(timestamp)
+    local d = os.date("%Y|%m|%d|%H|%M|%S|%w", timestamp)
+    d = string.explode("|", d)
+    local W = { "日", "一", "二", "三", "四", "五", "六" }
+    return {
+        Y = d[1],
+        m = d[2],
+        d = d[3],
+        H = d[4],
+        i = d[5],
+        s = d[6],
+        w = d[7],
+        W = W[d[7]],
+    }
 end

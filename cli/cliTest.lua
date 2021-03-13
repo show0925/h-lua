@@ -1,30 +1,21 @@
---- 默认debug关闭的，需要请在加载h-lua前设置 HLUA_DEBUG = true
-isDebugging = function()
-    local status = true
-    return status == HLUA_DEBUG
-end
-
 --- 自启动调试
-if (isDebugging()) then
-    ydRuntime = require "jass.runtime"
-    ydRuntime.console = true
-    ydRuntime.sleep = false
-    ydRuntime.debugger = 4279
-    ydRuntime.error_handle = function(msg)
-        print("========lua-err========")
-        print(tostring(msg))
-        print_stack()
-        print("=========================")
-    end
-    ydDebug = require "jass.debug"
-    ydConsole = require "jass.console"
+DEBUGGING = true
+ydRuntime = require "jass.runtime"
+ydRuntime.console = true
+ydRuntime.sleep = false
+ydRuntime.debugger = 4279
+ydRuntime.error_handle = function(msg)
+    print("========lua-err========")
+    print(tostring(msg))
+    print_stack()
+    print("=========================")
 end
+ydDebug = require "jass.debug"
+ydConsole = require "jass.console"
 
 local hPrint = print
 print = function(...)
-    if (isDebugging()) then
-        hPrint(...)
-    end
+    hPrint(...)
 end
 
 ---
@@ -35,9 +26,6 @@ end
 --- print rem("a","b") =1
 --- print rem("a","c") =3
 rem = function(key1, key2)
-    if (isDebugging() == false) then
-        return
-    end
     if (type(key1) ~= "string") then
         return
     end
@@ -56,9 +44,6 @@ end
 
 --- 打印栈
 print_stack = function(...)
-    if (isDebugging() == false) then
-        return
-    end
     local out = { "[TRACE]" }
     local n = select("#", ...)
     for i = 1, n, 1 do
@@ -68,22 +53,15 @@ print_stack = function(...)
     out[#out + 1] = "\n"
     out[#out + 1] = debug.traceback("", 2)
     print(table.concat(out, " "))
-    -- print(debug.traceback("Stack trace"))
 end
 
 --- 打印utf8->ansi编码,此方法可以打印出中文
 print_mb = function(...)
-    if (isDebugging() == false) then
-        return
-    end
     ydConsole.write(...)
 end
 
 --- 错误调试
 print_err = function(val)
-    if (isDebugging() == false) then
-        return
-    end
     print("========h-lua-err========")
     if (type(val) == "table") then
         print_mbr(val)
@@ -97,9 +75,6 @@ end
 --- 打印对象table
 ---@param showDetail boolean
 print_r = function(t, printMethod, showDetail)
-    if (isDebugging() == false) then
-        return
-    end
     local print_r_cache = {}
     printMethod = printMethod or print
     if (showDetail == nil) then

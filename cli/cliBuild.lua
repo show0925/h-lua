@@ -1,7 +1,4 @@
---- build 关闭debug
-isDebugging = function()
-    return false
-end
+DEBUGGING = false
 print = function(...)
 end
 rem = function(key1, key2)

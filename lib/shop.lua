@@ -16,7 +16,7 @@ hshop = {
             end
             hcache.set(whichShop, CONST_CACHE.SHOP_GRANTED, true)
             if (hskill.has(whichShop, license) == false) then
-                hskill.add(whichShop, license)
+                hskill.add(whichShop, license, 1)
             end
             local shopId = hunit.getId(whichShop)
             local s = hslk.i2v(shopId, "slk")

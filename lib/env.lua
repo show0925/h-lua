@@ -22,10 +22,10 @@ henv = {
 }
 
 --- 设置迷雾状态
----@param enable boolean 战争迷雾
+---@param enableFog boolean 战争迷雾
 ---@param enableMark boolean 黑色阴影
-henv.setFogStatus = function(enable, enableMark)
-    cj.FogEnable(enable)
+henv.setFogStatus = function(enableFog, enableMark)
+    cj.FogEnable(enableFog)
     cj.FogMaskEnable(enableMark)
 end
 
