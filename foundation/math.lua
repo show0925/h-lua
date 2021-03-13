@@ -62,18 +62,24 @@ end
 
 --- 数字格式化
 ---@param value number
+---@param n number 小数最大截断位，默认2位
 ---@return string
-math.numberFormat = function(value)
+math.numberFormat = function(value, n)
+    n = math.floor(n or 2)
+    if (n < 1) then
+        n = 2
+    end
+    print("n", n, value)
     if (value > 10000 * 100000000) then
-        return string.format("%.2f", value / 10000 * 100000000) .. "T"
+        return string.format("%." .. n .. "f", value / (10000 * 100000000)) .. "T"
     elseif (value > 10 * 100000000) then
-        return string.format("%.2f", value / 10 * 100000000) .. "B"
+        return string.format("%." .. n .. "f", value / (10 * 100000000)) .. "B"
     elseif (value > 100 * 10000) then
-        return string.format("%.2f", value / 100 * 10000) .. "M"
+        return string.format("%." .. n .. "f", value / (100 * 10000)) .. "M"
     elseif (value > 1000) then
-        return string.format("%.2f", value / 1000) .. "K"
+        return string.format("%." .. n .. "f", value / 1000) .. "K"
     else
-        return string.format("%.2f", value)
+        return string.format("%." .. n .. "f", value)
     end
 end
 
@@ -82,11 +88,11 @@ end
 ---@return string
 math.integerFormat = function(value)
     if (value > 10000 * 100000000) then
-        return math.floor(value / 10000 * 100000000) .. "T"
+        return math.floor(value / (10000 * 100000000)) .. "T"
     elseif (value > 10 * 100000000) then
-        return math.floor(value / 10 * 100000000) .. "B"
+        return math.floor(value / (10 * 100000000)) .. "B"
     elseif (value > 100 * 10000) then
-        return math.floor(value / 100 * 10000) .. "M"
+        return math.floor(value / (100 * 10000)) .. "M"
     elseif (value > 1000) then
         return math.floor(value / 1000) .. "K"
     else
