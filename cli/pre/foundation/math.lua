@@ -78,7 +78,6 @@ math.numberFormat = function(value, n)
     if (n < 1) then
         n = 2
     end
-    print("n", n, value)
     if (value > 10000 * 100000000) then
         return string.format("%." .. n .. "f", value / (10000 * 100000000)) .. "T"
     elseif (value > 10 * 100000000) then

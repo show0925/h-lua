@@ -40,7 +40,8 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     │   │        └── table.lua - 表库
     │   └── slk - slk配置
     │   └── war3mapJ - jass
-    └── lib
+    ├── docs 一些文档
+    ├── lib
     │   ├── attrbute - 基础/拓展/伤害特效/自然/单位关联，万能属性系统，自由、强大
     │   ├── skill - 技能库
     │   ├── cache.lua - 缓存

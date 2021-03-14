@@ -40,7 +40,8 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     │   │        └── table.lua
     │   └── slk
     │   └── war3mapJ - jass for map
-    └── lib
+    ├── docs
+    ├── lib
     │   ├── skill
     │   ├── attrbute - Universal Property System
     │   ├── cache.lua
