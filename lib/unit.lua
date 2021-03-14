@@ -33,8 +33,8 @@ end
 --- 获取单位的攻击浮动
 --- 这是根据slk计算的浮动攻击，每次获取到的值可能不一样
 ---@param uOrId userdata|string|number
----@return number
-hunit.getAttackSides = function(uOrId)
+---@return table
+hunit.getAttackSides1 = function(uOrId)
     local s = hunit.getSlk(uOrId)
     if (s == nil) then
         return 0
@@ -46,7 +46,11 @@ hunit.getAttackSides = function(uOrId)
     if (sides1 < 1) then
         sides1 = 1
     end
-    return dice1 * math.random(1, sides1)
+    return {
+        min = dice1 * 1,
+        max = dice1 * sides1,
+        rand = dice1 * math.random(1, sides1),
+    }
 end
 
 --- 获取单位的最大生命值

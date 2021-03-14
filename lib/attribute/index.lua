@@ -10,7 +10,7 @@ hattribute = {
         },
     },
     THREE_BUFF = {
-        -- 每一点三围对属性的影响，默认会写一些，可以通过 hattr.setThreeBuff 方法来改变系统构成
+        -- 每一点三围对属性的影响，默认会写一些，可以通过 hattribute.setThreeBuff 方法来改变系统构成
         -- 需要注意的是三围只能影响common内的大部分参数，natural及effect是无效的
         primary = 1, -- 每点主属性提升1点白字攻击（默认例子，这是模拟原生平衡性常数，需要设置平衡性常数为0）
         str = {
@@ -171,7 +171,7 @@ end
 --- @return nil|string buffKey
 hattribute.setHandle = function(whichUnit, attr, opr, val, during)
     local valType = type(val)
-    local params = hattr.get(whichUnit)
+    local params = hattribute.get(whichUnit)
     if (params == nil) then
         return
     end
@@ -214,7 +214,7 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
         end
         if (diff ~= 0) then
             local currentVal = params[attr]
-            local futureVal = params[attr] + diff
+            local futureVal = currentVal + diff
             if (during > 0) then
                 local groupKey = 'attr.' .. attr .. '+'
                 if (diff < 0) then
@@ -499,7 +499,10 @@ hattribute.get = function(whichUnit, attr)
         end
         attribute = hcache.get(whichUnit, CONST_CACHE.ATTR)
     end
-    attribute.attack = hunit.getAttackSides(whichUnit) + (attribute.attack_white or 0) + (attribute.attack_green or 0)
+    local sides1 = hunit.getAttackSides1(whichUnit)
+    local atk = (attribute.attack_white or 0) + (attribute.attack_green or 0)
+    attribute.attack = sides1.rand + atk
+    attribute.attack_sides = { sides1.min + atk, sides1.max + atk }
     attribute.defend = math.floor((attribute.defend_white or 0) + (attribute.defend_green or 0))
     attribute.attack_space = math.round(math.max(0, attribute.attack_space_origin) / (1 + math.min(math.max(attribute.attack_speed, -80), 400) * 0.01))
     attribute.str = (attribute.str_white or 0) + (attribute.str_green or 0)
@@ -568,7 +571,7 @@ hattribute.caleAttribute = function(damageSrc, isAdd, whichUnit, attr, times)
             diff[k] = tempDiff
         end
     end
-    hattr.set(whichUnit, 0, diff)
+    hattribute.set(whichUnit, 0, diff)
     if (#diffPlayer > 0) then
         local p = hunit.getOwner(whichUnit)
         for _, dp in ipairs(diffPlayer) do

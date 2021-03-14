@@ -93,38 +93,40 @@ henchant.append = function(options)
     local newEnchant = {}
     local newEnchants = {}
     for _, e in ipairs(enchants) do
-        local hasReaction = false -- 判断反应结果
-        if (henchant.ENV_REACTION[e] ~= nil) then
-            for _, con in ipairs(CONST_ENCHANT) do
-                -- 判断所有种类的附魔，如果之前有附魔过
-                local appendKey = 'e_' .. con.value .. '_append'
-                local level = hattribute.get(targetUnit, appendKey)
-                if (level > 0) then
-                    if (henchant.ENV_REACTION[e][con.value] ~= nil) then
-                        -- 如果有反应式，先消除旧附魔元素
-                        hbuff.delete(targetUnit, 'attr.' .. appendKey .. '+')
-                        -- 反应
-                        henchant.ENV_REACTION[e][con.value]({
-                            type = { e, con.value },
-                            level = level,
-                            sourceUnit = sourceUnit,
-                            targetUnit = targetUnit,
-                        })
-                        hasReaction = true
+        if (e ~= "common") then
+            local hasReaction = false -- 判断反应结果
+            if (henchant.ENV_REACTION[e] ~= nil) then
+                for _, con in ipairs(CONST_ENCHANT) do
+                    -- 判断所有种类的附魔，如果之前有附魔过
+                    local appendKey = 'e_' .. con.value .. '_append'
+                    local level = hattribute.get(targetUnit, appendKey)
+                    if (level > 0) then
+                        if (henchant.ENV_REACTION[e][con.value] ~= nil) then
+                            -- 如果有反应式，先消除旧附魔元素
+                            hbuff.delete(targetUnit, 'attr.' .. appendKey .. '+')
+                            -- 反应
+                            henchant.ENV_REACTION[e][con.value]({
+                                type = { e, con.value },
+                                level = level,
+                                sourceUnit = sourceUnit,
+                                targetUnit = targetUnit,
+                            })
+                            hasReaction = true
+                        end
                     end
                 end
             end
-        end
-        -- 如果有对应的反应，那么删除增添的附魔和身上的附魔状态
-        -- 如果没有反应，那么增加1对应的身上附魔
-        if (hasReaction == true) then
-            -- 这里不需要删除新附魔，什么都不做就行了，消失了
-        else
-            if (newEnchant[e] == nil) then
-                newEnchant[e] = 0
-                table.insert(newEnchants, e)
+            -- 如果有对应的反应，那么删除增添的附魔和身上的附魔状态
+            -- 如果没有反应，那么增加1对应的身上附魔
+            if (hasReaction == true) then
+                -- 这里不需要删除新附魔，什么都不做就行了，消失了
+            else
+                if (newEnchant[e] == nil) then
+                    newEnchant[e] = 0
+                    table.insert(newEnchants, e)
+                end
+                newEnchant[e] = newEnchant[e] + 1
             end
-            newEnchant[e] = newEnchant[e] + 1
         end
     end
     for _, e in ipairs(newEnchants) do

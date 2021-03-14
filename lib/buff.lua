@@ -8,7 +8,8 @@ hbuff = {
 
 ---@private
 hbuff.uniqueKey = function()
-    return hbuff.UNIQUE_KEY + 1
+    hbuff.UNIQUE_KEY = hbuff.UNIQUE_KEY + 1
+    return hbuff.UNIQUE_KEY
 end
 
 --- 创建一个buff概念物
