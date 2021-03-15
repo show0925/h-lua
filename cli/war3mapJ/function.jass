@@ -108,7 +108,6 @@ function H_FUNC_DZAPI takes nothing returns nothing
 endfunction
 
 function H_EXEC takes nothing returns nothing
-    call H_DZUI()
     call H_FUNC_DZAPI()
     call Cheat("exec-lua:\"cli\"")
 endfunction
