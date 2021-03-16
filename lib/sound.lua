@@ -3,18 +3,24 @@ hsound = {
     BREAK_DELAY = 3
 }
 
---- 创建音效
+--- 创建音效(播放音效前都要创建的)
 ---@param path string 音频文件路径
----@param channel number 频道
----@param volume number 音量
----@param pitch number 音高
-hsound.create = function(path, channel, volume, pitch)
+---@param duration number 音频时长（单位：毫秒）
+---@param channel number 频道(可选)
+---@param volume number 音量[0-127](可选)
+---@param pitch number 音高[0.10~2.00](可选)
+---@return userdata|nil
+hsound.voiceCreate = function(path, duration, channel, volume, pitch)
+    if (duration == nil) then
+        return
+    end
     local voice
     if (path ~= nil) then
         channel = channel or 0
         volume = volume or 127
         pitch = pitch or 1.0
-        voice = cj.CreateSound(path, false, false, false, 10, 10, "")
+        voice = cj.CreateSound(path, false, true, true, 10, 10, "")
+        cj.SetSoundDuration(voice, duration)
         cj.SetSoundChannel(voice, channel)
         cj.SetSoundVolume(voice, volume)
         cj.SetSoundPitch(voice, pitch)
@@ -66,9 +72,9 @@ end
 hsound.voice2Rect = function(s, whichRect, during)
     if (s ~= nil) then
         during = during or 0
-        local width = cj.GetRectMaxX(whichRect) - cj.GetRectMinX(whichRect)
-        local height = cj.GetRectMaxY(whichRect) - cj.GetRectMinY(whichRect)
-        cj.SetSoundPosition(s, cj.GetRectCenterX(whichRect), cj.GetRectCenterY(whichRect), 0)
+        local width = hrect.getWidth(whichRect)
+        local height = hrect.getHeight(whichRect)
+        cj.SetSoundPosition(s, hrect.getX(whichRect), hrect.getY(whichRect), 0)
         cj.RegisterStackedSound(s, true, width, height)
         if (during > 0) then
             htime.setTimeout(during, function(curTimer)
@@ -105,33 +111,31 @@ end
 hsound.bgm = function(musicFileName, whichPlayer)
     if (musicFileName ~= nil and string.len(musicFileName) > 0) then
         if (whichPlayer ~= nil) then
-            local bgmCurrent = hcache.get(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, nil)
             local bgmDelayTimer = hcache.get(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
-            if (bgmCurrent == musicFileName) then
-                return
-            end
-            if (bgmDelayTimer ~= nil) then
-                htime.delTimer(bgmDelayTimer)
-                hcache.set(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
-            end
-            hsound.bgmStop(whichPlayer)
-            hcache.set(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, musicFileName)
-            hcache.set(
-                whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER,
-                htime.setTimeout(hsound.BREAK_DELAY, function(t)
-                    htime.delTimer(t)
+            if (musicFileName ~= hcache.get(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, nil)) then
+                if (bgmDelayTimer ~= nil) then
+                    htime.delTimer(bgmDelayTimer)
                     hcache.set(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
-                    if (cj.GetLocalPlayer() == whichPlayer) then
-                        cj.PlayMusic(bgmCurrent)
-                    end
-                end)
-            )
+                end
+                hsound.bgmStop(whichPlayer)
+                hcache.set(whichPlayer, CONST_CACHE.PLAYER_BGM_CURRENT, musicFileName)
+                hcache.set(
+                    whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER,
+                    htime.setTimeout(hsound.BREAK_DELAY, function(t)
+                        htime.delTimer(t)
+                        hcache.set(whichPlayer, CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
+                        print(cj.GetLocalPlayer(), whichPlayer)
+                        if (cj.GetLocalPlayer() == whichPlayer) then
+                            cj.PlayMusic(musicFileName)
+                        end
+                    end)
+                )
+            end
         else
             hsound.bgmStop()
             for i = 1, bj_MAX_PLAYERS, 1 do
-                local bgmCurrent = hcache.get(hplayer.players[i], CONST_CACHE.PLAYER_BGM_CURRENT, nil)
                 local bgmDelayTimer = hcache.get(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
-                if (bgmCurrent ~= musicFileName) then
+                if (musicFileName ~= hcache.get(hplayer.players[i], CONST_CACHE.PLAYER_BGM_CURRENT, nil)) then
                     if (bgmDelayTimer ~= nil) then
                         htime.delTimer(bgmDelayTimer)
                         hcache.set(hplayer.players[i], CONST_CACHE.PLAYER_BGM_DELAY_TIMER, nil)
