@@ -83,29 +83,6 @@ slkHelper.itemUbertip = function(v)
 end
 
 --- 创建一件物品的冷却技能
----@private
-slkHelper.itemCooldown0ID = nil
-slkHelper.itemCooldownID0 = function()
-    if (slkHelper.itemCooldown0ID == nil) then
-        local oobTips = "ITEMS_DEFCD_ID_#0"
-        local oob = slk.ability.AIgo:new("items_default_cooldown_#0")
-        oob.Effectsound = ""
-        oob.Name = oobTips
-        oob.Tip = oobTips
-        oob.Ubertip = oobTips
-        oob.Art = ""
-        oob.TargetArt = ""
-        oob.Targetattach = ""
-        oob.DataA1 = 0
-        oob.Art = ""
-        oob.CasterArt = ""
-        oob.Cool = 0
-        slkHelper.itemCooldown0ID = oob:get_id()
-    end
-    return slkHelper.itemCooldown0ID
-end
-
---- 创建一件物品的冷却技能
 --- 使用的模版仅仅是模版，并不会有默认的特效和效果
 ---@private
 slkHelper.itemCooldownID = function(v)
@@ -114,9 +91,6 @@ slkHelper.itemCooldownID = function(v)
     end
     if (v.cooldown < 0) then
         v.cooldown = 0
-    end
-    if (v.cooldown == 0) then
-        return slkHelper.itemCooldownID0()
     end
     local oobTips = "ITEMS_DEFCD_ID_" .. v.Name
     local oob
