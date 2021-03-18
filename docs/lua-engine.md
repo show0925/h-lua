@@ -54,23 +54,9 @@ jass.globals库可以让你访问到jass内的全局变量。
 > 你可以使用此库访问预设在大地图的对象。
 
 ```lua
-	local g = require 'jass.globals'
-	g.udg_code = function() --将一个jass中定义的code变量赋值为一个lua函数
-		print(jass.udg_strings[2]) --获取jass中定义的string数组
-	end
+	local cg = require 'jass.globals'
+    print(cg.udg_i) --获取jass中定义的i整数
 ```
-	
-你可以通过这个方式来实现和jass脚本之间的数据交互  
-
-注意，你无法通过这个方式来访问jass中的自定义函数。也就是说，你无法带着参数来调用对方的函数，但通过code变量可以不带参数的来调用  
-
-在上面的例子中,你可以在jass中执行:
-	
-```
-	call TimerStart(CreateTimer(), 1, true, udg_code)
-```
-	
-这个计时器将在每次到期时正确的回调你在lua中定义的函数
 
 ## jass.japi
 jass.japi库当前已经注册的所有japi函数。（不包含dz函数）  

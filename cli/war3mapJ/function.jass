@@ -85,7 +85,7 @@ function hdzui_loadToc takes nothing returns nothing
 endfunction
 
 function hdzui_frameCreate takes nothing returns nothing
-    set hdzui_frame_creator = DzCreateFrame("txt_dps", hdzui_frame_creator_parent, 0)
+    set hdzui_frame_creator = DzCreateFrame(hdzui_frame_creator_name, hdzui_frame_creator_parent, 0)
     call DzFrameClearAllPoints(hdzui_frame_creator)
     call DzFrameShow(hdzui_frame_creator, false)
 endfunction
@@ -116,12 +116,18 @@ function hdzui_frameDisable takes nothing returns nothing
     call DzFrameSetEnable(hdzui_frame_id, false)
 endfunction
 
+function hdzui_frameIsEnable takes nothing returns nothing
+    set hdzui_frame_enable = DzFrameGetEnable(hdzui_frame_id)
+endfunction
+
 function hdzui_frameShow takes nothing returns nothing
     if(hdzui_frame_player <= 0)then
         call DzFrameShow(hdzui_frame_id, true)
         return
     endif
-    call DzFrameShow(hdzui_frame_id, GetLocalPlayer() == Player(hdzui_frame_player-1))
+    if(GetLocalPlayer() == Player(hdzui_frame_player-1))then
+        call DzFrameShow(hdzui_frame_id, true)
+    endif
 endfunction
 
 function hdzui_frameHide takes nothing returns nothing
@@ -136,6 +142,12 @@ endfunction
 
 function hdzui_frameSetText takes nothing returns nothing
     call DzFrameSetText(hdzui_frame_id, hdzui_frame_txt)
+endfunction
+
+function hdzui_onMouse takes nothing returns nothing
+    if(GetLocalPlayer() == Player(hdzui_frame_player-1))then
+        call DzFrameSetScript(hdzui_frame_id, hdzui_frame_order, hdzui_frame_vj, false)
+    endif
 endfunction
 
 // exec

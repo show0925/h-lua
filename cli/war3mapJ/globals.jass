@@ -18,11 +18,9 @@ string hdzapi_rouletteValue = ""
 // H-lua DzUI:
 integer hdzui_frame_gameUI = 0
 string hdzui_loadTocFile = ""
-
 integer hdzui_frame_creator = 0
 string hdzui_frame_creator_name = ""
 integer hdzui_frame_creator_parent = 0
-
 integer hdzui_frame_relation = 0
 integer hdzui_frame_align = 0
 integer hdzui_frame_alignRelation = 0
@@ -32,5 +30,8 @@ real hdzui_frame_width = 0
 real hdzui_frame_height = 0
 integer hdzui_frame_id = 0
 boolean hdzui_frame_cage = false
+boolean hdzui_frame_enable = false
 integer hdzui_frame_player = 0
+integer hdzui_frame_order = 0
+string hdzui_frame_vj = ""
 string hdzui_frame_txt = ""

@@ -20,7 +20,7 @@ end
 
 --- 获取游戏UI(一个整数)
 ---@return number
-hdzui.getGameUI = function()
+hdzui.gameUI = function()
     return cg.hdzui_frame_gameUI
 end
 
@@ -33,7 +33,7 @@ hdzui.frame = function(fdfName, parent)
         return
     end
     cg.hdzui_frame_creator_name = fdfName
-    cg.hdzui_frame_creator_parent = parent or hdzui.getGameUI()
+    cg.hdzui_frame_creator_parent = parent or hdzui.gameUI()
     cj.ExecuteFunc("hdzui_frameCreate")
     return cg.hdzui_frame_creator
 end
@@ -47,7 +47,7 @@ end
 ---@param y number 锚点Y
 hdzui.framePoint = function(frameId, relation, align, alignRelation, x, y)
     cg.hdzui_frame_id = frameId
-    cg.hdzui_frame_relation = relation or hdzui.getGameUI()
+    cg.hdzui_frame_relation = relation or hdzui.gameUI()
     cg.hdzui_frame_align = align or CONST_DZUI_ALIGN.CENTER
     cg.hdzui_frame_alignRelation = alignRelation or CONST_DZUI_ALIGN.CENTER
     cg.hdzui_frame_x = x or 0
@@ -102,6 +102,14 @@ hdzui.frameDisable = function(frameId)
     cj.ExecuteFunc("hdzui_frameDisable")
 end
 
+--- frame是否启用
+---@param frameId number
+hdzui.frameIsEnable = function(frameId)
+    cg.hdzui_frame_id = frameId
+    cj.ExecuteFunc("hdzui_frameIsEnable")
+    return cg.hdzui_frame_enable or false
+end
+
 --- 显示frame
 ---@param frameId number
 ---@param playerIndex userdata 只给某位玩家(索引)
@@ -127,4 +135,21 @@ hdzui.frameSetText = function(frameId, txt)
     cg.hdzui_frame_id = frameId
     cg.hdzui_frame_txt = tostring(txt)
     cj.ExecuteFunc("hdzui_frameSetText")
+end
+
+--- 注册鼠标事件
+---@param frameId number
+---@param event string | "'click'" | "'double_click'" | "'release'" | "'enter'" | "'leave'" | "'scroll'"
+---@param playerIndex number 玩家索引
+---@param vjFunctionName string VJ函数名，可读取项目下的 vj/function.jass的函数
+hdzui.onMouse = function(frameId, event, playerIndex, vjFunctionName)
+    local order = CONST_DZUI_MOUSE_ORDER[string.upper(event)]
+    if (order == nil) then
+        return
+    end
+    cg.hdzui_frame_id = frameId
+    cg.hdzui_frame_player = playerIndex
+    cg.hdzui_frame_order = order
+    cg.hdzui_frame_vj = vjFunctionName
+    cj.ExecuteFunc("hdzui_onMouse")
 end
