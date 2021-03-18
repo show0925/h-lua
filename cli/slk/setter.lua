@@ -616,20 +616,21 @@ end
 
 F6V_U = function(_v)
     _v._class = "unit"
-    _v._type = "common"
+    _v._type = _v._type or "common"
     if (_v._parent == nil) then
-        _v._parent = "hpea"
+        _v._parent = "nban"
     end
     if (_v.Name == nil) then
         if (_v._type == "hero") then
             _v.Name = F6_NAME("未命名英雄")
-            -- 处理英雄数据
-            F6_HERO(_v)
         elseif (_v._type == "ring") then
             _v.Name = F6_NAME("未命名空光环")
         else
             _v.Name = F6_NAME("未命名单位")
         end
+    end
+    if (_v._type == "hero") then
+        F6_HERO(_v)
     end
     if (_v.Hotkey ~= nil) then
         _v.Buttonpos_1 = _v.Buttonpos_1 or CONST_HOTKEY_FULL_KV[_v.Hotkey].Buttonpos_1 or 0
@@ -640,49 +641,101 @@ F6V_U = function(_v)
         _v.Buttonpos_2 = _v.Buttonpos_2 or 0
         _v.Tip = "选择：" .. _v.Name
     end
+    _v.goldcost = _v.goldcost or 0
+    _v.lumbercost = _v.lumbercost or 0
+    _v.fmade = _v.fmade or 0
+    _v.fused = _v.fused or 0
     local targs1 = _v.targs1 or "vulnerable,ground,ward,structure,organic,mechanical,debris,air" --攻击目标
-    if (_v.weapTp1 ~= "normal") then
-        _v.weapType1 = "" --攻击声音
-        _v.Missileart = _v.Missileart -- 箭矢模型
-        _v.Missilespeed = _v.Missilespeed or 900 -- 箭矢速度
-        _v.Missilearc = _v.Missilearc or 0.10
+    if (_v.weapTp1 ~= nil) then
+        if (_v.weapTp1 ~= "normal") then
+            _v.weapType1 = "" --攻击声音
+            _v.Missileart_1 = _v.Missileart_1 -- 箭矢模型
+            _v.Missilespeed_1 = _v.Missilespeed_1 or 900 -- 箭矢速度
+            _v.Missilearc_1 = _v.Missilearc_1 or 0.10
+        end
+        if (_v.weapTp1 == "normal") then
+            _v.weapType1 = _v.weapType1 or "" --攻击声音
+            _v.Missileart_1 = ""
+            _v.Missilespeed_1 = 0
+            _v.Missilearc_1 = 0
+        elseif (_v.weapTp1 == "msplash" or _v.weapTp1 == "artillery") then
+            --溅射/炮火
+            _v.Farea1 = _v.Farea1 or 1
+            _v.Qfact1 = _v.Qfact1 or 0.05
+            _v.Qarea1 = _v.Qarea1 or 500
+            _v.Hfact1 = _v.Hfact1 or 0.15
+            _v.Harea1 = _v.Harea1 or 350
+            _v.splashTargs1 = targs1 .. ",enemies"
+        elseif (_v.weapTp1 == "mbounce") then
+            --弹射
+            _v.Farea1 = _v.Farea1 or 450
+            _v.targCount1 = _v.targCount1 or 4
+            _v.damageLoss1 = _v.damageLoss1 or 0.3
+            _v.splashTargs1 = targs1 .. ",enemies"
+        elseif (_v.weapTp1 == "mline") then
+            --穿透
+            _v.spillRadius1 = _v.spillRadius1 or 300
+            _v.spillDist1 = _v.spillDist1 or 450
+            _v.damageLoss1 = _v.damageLoss1 or 0.3
+            _v.splashTargs1 = targs1 .. ",enemies"
+        elseif (_v.weapTp1 == "aline") then
+            --炮火穿透
+            _v.Farea1 = _v.Farea1 or 1
+            _v.Qfact1 = _v.Qfact1 or 0.05
+            _v.Qarea1 = _v.Qarea1 or 500
+            _v.Hfact1 = _v.Hfact1 or 0.15
+            _v.Harea1 = _v.Harea1 or 350
+            _v.spillRadius1 = _v.spillRadius1 or 300
+            _v.spillDist1 = _v.spillDist1 or 450
+            _v.damageLoss1 = _v.damageLoss1 or 0.3
+            _v.splashTargs1 = targs1 .. ",enemies"
+        end
     end
-    if (_v.weapTp1 == "normal") then
-        _v.weapType1 = _v.weapType1 or "" --攻击声音
-        _v.Missileart = ""
-        _v.Missilespeed = 0
-        _v.Missilearc = 0
-    elseif (_v.weapTp1 == "msplash" or _v.weapTp1 == "artillery") then
-        --溅射/炮火
-        _v.Farea1 = _v.Farea1 or 1
-        _v.Qfact1 = _v.Qfact1 or 0.05
-        _v.Qarea1 = _v.Qarea1 or 500
-        _v.Hfact1 = _v.Hfact1 or 0.15
-        _v.Harea1 = _v.Harea1 or 350
-        _v.splashTargs1 = targs1 .. ",enemies"
-    elseif (_v.weapTp1 == "mbounce") then
-        --弹射
-        _v.Farea1 = _v.Farea1 or 450
-        _v.targCount1 = _v.targCount1 or 4
-        _v.damageLoss1 = _v.damageLoss1 or 0.3
-        _v.splashTargs1 = targs1 .. ",enemies"
-    elseif (_v.weapTp1 == "mline") then
-        --穿透
-        _v.spillRadius = _v.spillRadius or 200
-        _v.spillDist1 = _v.spillDist1 or 450
-        _v.damageLoss1 = _v.damageLoss1 or 0.3
-        _v.splashTargs1 = targs1 .. ",enemies"
-    elseif (_v.weapTp1 == "aline") then
-        --炮火穿透
-        _v.Farea1 = _v.Farea1 or 1
-        _v.Qfact1 = _v.Qfact1 or 0.05
-        _v.Qarea1 = _v.Qarea1 or 500
-        _v.Hfact1 = _v.Hfact1 or 0.15
-        _v.Harea1 = _v.Harea1 or 350
-        _v.spillRadius = _v.spillRadius or 200
-        _v.spillDist1 = _v.spillDist1 or 450
-        _v.damageLoss1 = _v.damageLoss1 or 0.3
-        _v.splashTargs1 = targs1 .. ",enemies"
+    local targs2 = _v.targs2 or "vulnerable,ground,ward,structure,organic,mechanical,debris,air" --攻击目标
+    if (_v.weapTp2 ~= nil) then
+        if (_v.weapTp2 ~= "normal") then
+            _v.weapType2 = "" --攻击声音
+            _v.Missileart_2 = _v.Missileart_2 -- 箭矢模型
+            _v.Missilespeed_2 = _v.Missilespeed_2 or 900 -- 箭矢速度
+            _v.Missilearc_2 = _v.Missilearc_2 or 0.10
+        end
+        if (_v.weapTp2 == "normal") then
+            _v.weapType2 = _v.weapType2 or "" --攻击声音
+            _v.Missileart_2 = ""
+            _v.Missilespeed_2 = 0
+            _v.Missilearc_2 = 0
+        elseif (_v.weapTp2 == "msplash" or _v.weapTp2 == "artillery") then
+            --溅射/炮火
+            _v.Farea2 = _v.Farea2 or 1
+            _v.Qfact2 = _v.Qfact2 or 0.05
+            _v.Qarea2 = _v.Qarea2 or 500
+            _v.Hfact2 = _v.Hfact2 or 0.15
+            _v.Harea2 = _v.Harea2 or 350
+            _v.splashTargs2 = targs2 .. ",enemies"
+        elseif (_v.weapTp2 == "mbounce") then
+            --弹射
+            _v.Farea2 = _v.Farea2 or 450
+            _v.targCount2 = _v.targCount2 or 4
+            _v.damageLoss2 = _v.damageLoss2 or 0.3
+            _v.splashTargs2 = targs2 .. ",enemies"
+        elseif (_v.weapTp2 == "mline") then
+            --穿透
+            _v.spillRadius2 = _v.spillRadius2 or 300
+            _v.spillDist2 = _v.spillDist2 or 450
+            _v.damageLoss2 = _v.damageLoss2 or 0.3
+            _v.splashTargs2 = targs2 .. ",enemies"
+        elseif (_v.weapTp2 == "aline") then
+            --炮火穿透
+            _v.Farea2 = _v.Farea2 or 1
+            _v.Qfact2 = _v.Qfact2 or 0.05
+            _v.Qarea2 = _v.Qarea2 or 500
+            _v.Hfact2 = _v.Hfact2 or 0.15
+            _v.Harea2 = _v.Harea2 or 350
+            _v.spillRadius2 = _v.spillRadius2 or 300
+            _v.spillDist2 = _v.spillDist2 or 450
+            _v.damageLoss2 = _v.damageLoss2 or 0.3
+            _v.splashTargs2 = targs2 .. ",enemies"
+        end
     end
     if (_v.Propernames ~= nil) then
         _v.nameCount = #string.explode(',', _v.Propernames)
@@ -804,10 +857,6 @@ F6V_I_CD = function(_v)
     if (_v._cooldown < 0) then
         _v._cooldown = 0
     end
-    if (_v._cooldown == 0) then
-        _v.ignoreCD = 1
-        return "AIat"
-    end
     local adTips = "H_LUA_ICD_" .. _v.Name
     local cdID
     local ad = {
@@ -899,16 +948,16 @@ end
 
 F6V_I = function(_v)
     _v._class = "item"
-    _v._type = "common"
+    _v._type = _v._type or "common"
     if (_v._cooldown ~= nil) then
         local cd = F6V_I_CD(_v)
         _v.abilList = cd
         _v.cooldownID = cd
         _v.usable = 1
-        if (_v.powerup == 0) then
-            _v.class = "Charged"
-        else
+        if (_v.powerup == 1) then
             _v.class = "PowerUp"
+        elseif (_v.perishable == 1) then
+            _v.class = "Charged"
         end
     end
     if (_v._parent == nil) then
@@ -981,7 +1030,7 @@ end
 
 F6V_B = function(_v)
     _v._class = "buff"
-    _v._type = "common"
+    _v._type = _v._type or "common"
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名魔法效果")
     end
@@ -990,7 +1039,7 @@ end
 
 F6V_UP = function(_v)
     _v._class = "upgrade"
-    _v._type = "common"
+    _v._type = _v._type or "common"
     if (_v.Name == nil) then
         _v.Name = F6_NAME("未命名科技")
     end

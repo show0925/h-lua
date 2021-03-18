@@ -1,35 +1,36 @@
 
-//H-lua struct globals:
-hashtable H_HT_DZAPI=InitHashtable()
+// H-lua DzApi:
+boolean hdzapi_isRPGLobby = false
+boolean hdzapi_isRPGLadder = false
+integer hdzapi_serverTimestamp = 0
+boolean array hdzapi_isRedVip
+boolean array hdzapi_isBlueVip
+boolean array hdzapi_isServerAlready
+integer array hdzapi_mapLevel
+string hdzapi_mallItemKey = ""
+boolean array hdzapi_hasMallItem
+string hdzapi_serverDataKey = ""
+string array hdzapi_serverData
+integer hdzapi_roulettePlayer = 0
+string hdzapi_rouletteKey = ""
+string hdzapi_rouletteValue = ""
 
-integer H_G_KEY_COMMAND= 101
-integer H_G_KEY_PLAYER= 102
-integer H_G_KEY_KEY= 103
-integer H_G_KEY_DATA= 104
-integer H_G_KEY_RESULT= 120
+// H-lua DzUI:
+integer hdzui_frame_gameUI = 0
+string hdzui_loadTocFile = ""
 
-integer H_G_SST = -1
+integer hdzui_frame_creator = 0
+string hdzui_frame_creator_name = ""
+integer hdzui_frame_creator_parent = 0
 
-integer H_G_DZAPI_TGR_QTY=20
-trigger H_G_DZAPI_TGR_1
-trigger H_G_DZAPI_TGR_2
-trigger H_G_DZAPI_TGR_3
-trigger H_G_DZAPI_TGR_4
-trigger H_G_DZAPI_TGR_5
-trigger H_G_DZAPI_TGR_6
-trigger H_G_DZAPI_TGR_7
-trigger H_G_DZAPI_TGR_8
-trigger H_G_DZAPI_TGR_9
-trigger H_G_DZAPI_TGR_10
-trigger H_G_DZAPI_TGR_11
-trigger H_G_DZAPI_TGR_12
-trigger H_G_DZAPI_TGR_13
-trigger H_G_DZAPI_TGR_14
-trigger H_G_DZAPI_TGR_15
-trigger H_G_DZAPI_TGR_16
-trigger H_G_DZAPI_TGR_17
-trigger H_G_DZAPI_TGR_18
-trigger H_G_DZAPI_TGR_19
-trigger H_G_DZAPI_TGR_20
-
-
+integer hdzui_frame_relation = 0
+integer hdzui_frame_align = 0
+integer hdzui_frame_alignRelation = 0
+real hdzui_frame_x = 0
+real hdzui_frame_y = 0
+real hdzui_frame_width = 0
+real hdzui_frame_height = 0
+integer hdzui_frame_id = 0
+boolean hdzui_frame_cage = false
+integer hdzui_frame_player = 0
+string hdzui_frame_txt = ""

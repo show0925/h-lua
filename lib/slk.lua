@@ -95,17 +95,17 @@ hslk.classIds = function(class)
 end
 
 --- 根据 hslk._type 获取ID集
----@param type table | {'hero'} 输入多个类型自动合并ID
+---@param t table | {'hero'} 输入多个类型自动合并ID
 ---@return table
-hslk.typeIds = function(type)
-    if (type(type) == "string") then
-        type = { type }
+hslk.typeIds = function(t)
+    if (type(t) == "string") then
+        t = { t }
     end
-    if (type(type) ~= "table") then
+    if (type(t) ~= "table") then
         return {}
     end
     local ids = {}
-    for _, c in ipairs(type) do
+    for _, c in ipairs(t) do
         if (HSLK_TYPE_IDS[c] ~= nil) then
             for _, id in ipairs(HSLK_TYPE_IDS[c]) do
                 table.insert(ids, id)

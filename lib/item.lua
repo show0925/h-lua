@@ -904,7 +904,7 @@ end
 --- 是以单位模拟的物品，进入范围瞬间消失并生效
 --- 可以增加玩家的反馈刺激感
 --- [type]金币,木材,黄色书,绿色书,紫色书,蓝色书,红色书,神符,浮雕,蛋",碎片,问号,荧光草Dota2赏金符,Dota2伤害符,Dota2恢复符,Dota2极速符,Dota2幻象符,Dota2隐身符
----@param fleetingType number hitem.FLEETING_IDS[n]
+---@param fleetingType number HL_ID.item_fleeting[n]
 ---@param x number 坐标X
 ---@param y number 坐标Y
 ---@param during number 持续时间（可选，默认30秒）

@@ -1,107 +1,41 @@
+---@class hdzapi DzApi
 hdzapi = {
-    commandHashCache = {},
-    mallItemCheater = {},
-    tallocStatus = {
-        index = 0,
-        queue = {},
-    },
-    ---@private
-    commandHash = function(command)
-        if (hdzapi.commandHashCache[command] == nil) then
-            hdzapi.commandHashCache[command] = cj.StringHash(command)
-        end
-        return hdzapi.commandHashCache[command]
-    end,
-    ---@private
-    talloc = function()
-        local index = -1
-        local i = hdzapi.tallocStatus.index + 1
-        if (i > cg.H_G_DZAPI_TGR_QTY) then
-            i = 1
-        end
-        if (hdzapi.tallocStatus.queue[i] == nil) then
-            hdzapi.tallocStatus.queue[i] = {
-                status = false,
-                result = nil
-            }
-        end
-        if (hdzapi.tallocStatus.queue[i].status == false) then
-            index = i
-        else
-            for j = 1, cg.H_G_DZAPI_TGR_QTY do
-                if (hdzapi.tallocStatus.queue[j].status == false) then
-                    index = j
-                    break
-                end
-            end
-        end
-        if (index == -1) then
-            print_err("Need more DZapi trigger")
-            return
-        end
-        hdzapi.tallocStatus.queue[index].status = true
-        hdzapi.tallocStatus.queue[index].result = nil
-        return cg['H_G_DZAPI_TGR_' .. index], index
-    end,
-    ---@private
-    exec = function(command, ...)
-        local whichPlayer = select("1", ...)
-        local key = select("2", ...)
-        local data = select("3", ...)
-        if (whichPlayer ~= nil and his.playing(whichPlayer) == false) then
-            return
-        end
-        local tgr, tIndex = hdzapi.talloc()
-        local tid = cj.GetHandleId(tgr)
-        cj.SaveStr(cg.H_HT_DZAPI, tid, cg.H_G_KEY_COMMAND, command)
-        if (whichPlayer ~= nil) then
-            cj.SavePlayerHandle(cg.H_HT_DZAPI, tid, cg.H_G_KEY_PLAYER, whichPlayer)
-        end
-        if (key ~= nil) then
-            cj.SaveStr(cg.H_HT_DZAPI, tid, cg.H_G_KEY_KEY, key)
-        end
-        if (data ~= nil) then
-            cj.SaveStr(cg.H_HT_DZAPI, tid, cg.H_G_KEY_DATA, data)
-        end
-        cj.TriggerExecute(tgr)
-        local res = cj.LoadStr(cg.H_HT_DZAPI, tid, cg.H_G_KEY_RESULT)
-        hdzapi.tallocStatus.queue[tIndex].status = false
-        hdzapi.tallocStatus.queue[tIndex].command = command
-        hdzapi.tallocStatus.queue[tIndex].result = res
-        if (type(res) == "string") then
-            return res
-        end
-    end
+    _hasMallItem = {},
+    _serverData = {},
+    _roulette = nil,
 }
+
+--- 地图是否来自RPG大厅
+---@return boolean
+hdzapi.isRPGLobby = function()
+    return cg.hdzapi_isRPGLobby or false
+end
+
+--- 地图是否在RPG天梯
+---@return boolean
+hdzapi.isRPGLadder = function()
+    return cg.hdzapi_isRPGLadder or false
+end
 
 --- 是否红V
 ---@param whichPlayer userdata
 ---@return boolean
-hdzapi.isVipRed = function(whichPlayer)
-    return hdzapi.exec("IsRedVIP", whichPlayer) == "1"
+hdzapi.isRedVip = function(whichPlayer)
+    return cg.hdzapi_isRedVip[hplayer.index(whichPlayer)] or false
 end
 
 --- 是否蓝V
 ---@param whichPlayer userdata
 ---@return boolean
-hdzapi.isVipBlue = function(whichPlayer)
-    return hdzapi.exec("IsBlueVIP", whichPlayer) == "1"
+hdzapi.isBlueVip = function(whichPlayer)
+    return cg.hdzapi_isBlueVip[hplayer.index(whichPlayer)] or false
 end
 
 --- 获取地图等级
 ---@param whichPlayer userdata
 ---@return number
-hdzapi.mapLv = function(whichPlayer)
-    local lv = hdzapi.exec("GetMapLevel", whichPlayer)
-    if (lv == nil or lv == "") then
-        lv = 1
-    else
-        lv = math.floor(lv)
-    end
-    if (lv < 1) then
-        lv = 1
-    end
-    return lv
+hdzapi.mapLevel = function(whichPlayer)
+    return math.max(1, cg.hdzapi_mapLevel[hplayer.index(whichPlayer)])
 end
 
 --- 是否有商城道具,由于官方设置的key必须大写，所以这里自动转换
@@ -112,160 +46,115 @@ hdzapi.hasMallItem = function(whichPlayer, key)
     if (whichPlayer == nil or key == nil) then
         return false
     end
-    if (hdzapi.mallItemCheater[whichPlayer] == true) then
-        return true
-    end
     key = string.upper(key)
-    return hdzapi.exec("HasMallItem", whichPlayer, key) == "1"
+    if (hdzapi._hasMallItem[key] == nil) then
+        cg.hdzapi_mallItemKey = key
+        cj.ExecuteFunc("hdzapi_mallItem")
+        hdzapi._hasMallItem[key] = {}
+        for i = 1, bj_MAX_PLAYERS, 1 do
+            hdzapi._hasMallItem[key][i] = cg.hdzapi_hasMallItem[i]
+        end
+    end
+    return hdzapi._hasMallItem[key][hplayer.index(whichPlayer)]
 end
 
---- 设置一个玩家为特殊商城人员，可以获得所有的道具
+--- 获取服务器当前时间戳
+--- * 此方法在本地不能准确获取当前时间
+---@return number
+hdzapi.timestamp = function()
+    return cg.hdzapi_serverTimestamp + htime.count
+end
+
+--- 获取服务器当前时间对象
+--- * 此方法在本地不能准确获取当前时间，将从UNIX元秒开始(1970年)
+---@return table {Y:"年",m:"月",d:"日",H:"时",i:"分",s:"秒",w:"周[0-6]",W:"周[日-六]"}
+hdzapi.date = function()
+    return math.date(hdzapi.timestamp())
+end
+
+--- 获取服务器数据
 ---@param whichPlayer userdata
-hdzapi.setMallItemCheater = function(whichPlayer)
-    if (whichPlayer == nil) then
+---@param key string
+---@return string
+hdzapi.loadServer = function(whichPlayer, key)
+    if (whichPlayer == nil or key == nil) then
         return
     end
-    hdzapi.mallItemCheater[whichPlayer] = true
-end
-
--- 服务器存档
-hdzapi.server = {}
-
---- 获取服务器开始时间
----@return number
-hdzapi.server.timestamp = function()
-    if (cg.H_G_SST == -1) then
-        cj.ExecuteFunc("H_FUNC_SST")
+    if (hdzapi._serverData[key] == nil) then
+        cg.hdzapi_serverDataKey = key
+        cj.ExecuteFunc("hdzapi_loadServer")
+        hdzapi._serverData[key] = {}
+        for i = 1, bj_MAX_PLAYERS, 1 do
+            hdzapi._serverData[key][i] = cg.hdzapi_serverData[i]
+        end
     end
-    return cg.H_G_SST + htime.count
+    return hdzapi._serverData[key][hplayer.index(whichPlayer)]
+end
+hdzapi.loadServerBool = function(whichPlayer, key)
+    return "1" == hdzapi.loadServer(whichPlayer, key)
+end
+hdzapi.loadServerNumber = function(whichPlayer, key)
+    return tonumber(hdzapi.loadServer(whichPlayer, key) or 0)
+end
+hdzapi.loadServerInteger = function(whichPlayer, key)
+    return math.floor(hdzapi.loadServerNumber(whichPlayer, key))
 end
 
---- 获取服务器时间分析
----@return table {Y:"年",m:"月",d:"日",H:"时",i:"分",s:"秒",w:"周[0-6]",W:"周[日-六]"}
-hdzapi.server.time = function()
-    return math.date(hdzapi.server.timestamp())
+---@private
+--- * 此方法自带有延迟策略，以减少服务器压力，而服务器实际上也不是实时存储，在本地只是模拟
+hdzapi.roulette = function(func, whichPlayer, key, value)
+    if (func == nil or whichPlayer == nil or key == nil or value == nil) then
+        return
+    end
+    if (type(value) == "boolean") then
+        if (value) then
+            value = "1"
+        else
+            value = "0"
+        end
+    elseif (type(value) == "number") then
+        value = tostring(value)
+    end
+    if (type(hdzapi._roulette) == "table") then
+        table.insert(hdzapi._roulette, { func, hplayer.index(whichPlayer), key, value })
+        return
+    end
+    hdzapi._roulette = {}
+    table.insert(hdzapi._roulette, { func, hplayer.index(whichPlayer), key, value })
+    htime.setInterval(2, function(curTimer)
+        if (#hdzapi._roulette <= 0) then
+            htime.delTimer(curTimer)
+            hdzapi._roulette = nil
+            return
+        end
+        local obj = hdzapi._roulette[1]
+        cg.hdzapi_roulettePlayer = obj[2]
+        cg.hdzapi_rouletteKey = obj[3]
+        cg.hdzapi_rouletteValue = obj[4]
+        cj.ExecuteFunc(obj[1])
+        table.remove(hdzapi._roulette, 1)
+    end)
 end
 
---- 读取服务器存档是否成功，没有开通或这服务器崩了返回false
+--- 设置服务器数据
 ---@param whichPlayer userdata
----@return boolean
-hdzapi.server.ready = function(whichPlayer)
-    return hdzapi.exec("GetPlayerServerValueSuccess", whichPlayer) == "1"
+---@param key string
+---@param value string|number
+hdzapi.saveServer = function(whichPlayer, key, value)
+    hdzapi.roulette("hdzapi_saveServer", whichPlayer, key, value)
+end
+
+--- 清空服务器数据
+---@param whichPlayer userdata
+---@param key string
+hdzapi.clearServer = function(whichPlayer, key)
+    hdzapi.roulette("hdzapi_saveServer", whichPlayer, key, "")
 end
 
 --- 设置房间数据
 ---@param whichPlayer userdata
 ---@param key string
----@param text string
-hdzapi.setRoomStat = function(whichPlayer, key, text)
-    if (hdzapi.server.ready(whichPlayer) == true) then
-        hdzapi.exec("Stat_SetStat", whichPlayer, tostring(key), tostring(text))
-    end
+---@param value string
+hdzapi.setRoomStat = function(whichPlayer, key, value)
+    hdzapi.roulette("hdzapi_setRoomStat", whichPlayer, key, value)
 end
-
----@private
-hdzapi.server.save = function(whichPlayer, key, data)
-    if (data == nil) then
-        return
-    end
-    if (hdzapi.server.ready(whichPlayer) == true) then
-        hdzapi.exec("SaveServerValue", whichPlayer, key, tostring(data))
-    end
-end
-
----@private
-hdzapi.server.load = function(whichPlayer, key)
-    if (hdzapi.server.ready(whichPlayer) == true) then
-        return hdzapi.exec("GetServerValue", whichPlayer, key)
-    end
-end
-
---- 清理服务器存档数据
----@param whichPlayer userdata
----@param key string
-hdzapi.server.clear = {
-    int = function(whichPlayer, key)
-        hdzapi.server.save(whichPlayer, "I" .. key, "")
-    end,
-    real = function(whichPlayer, key)
-        hdzapi.server.save(whichPlayer, "R" .. key, "")
-    end,
-    bool = function(whichPlayer, key)
-        hdzapi.server.save(whichPlayer, "B" .. key, "")
-    end,
-    str = function(whichPlayer, key)
-        hdzapi.server.save(whichPlayer, "S" .. key, "")
-    end,
-    unit = function(whichPlayer, key)
-        hdzapi.server.save(whichPlayer, "S" .. key, "")
-    end,
-    item = function(whichPlayer, key)
-        hdzapi.server.save(whichPlayer, "S" .. key, "")
-    end
-}
-
---- 封装的服务器存档 get / set
-hdzapi.server.set = {
-    int = function(whichPlayer, key, data)
-        hdzapi.server.save(whichPlayer, "I" .. key, data or 0)
-    end,
-    real = function(whichPlayer, key, data)
-        hdzapi.server.save(whichPlayer, "R" .. key, data or 0)
-    end,
-    bool = function(whichPlayer, key, data)
-        local b = "0"
-        if (data == true) then
-            b = "1"
-        end
-        hdzapi.server.save(whichPlayer, "B" .. key, b)
-    end,
-    str = function(whichPlayer, key, data)
-        hdzapi.server.save(whichPlayer, "S" .. key, data)
-    end,
-    unit = function(whichPlayer, key, data)
-        hdzapi.server.save(whichPlayer, "S" .. key, hunit.getId(data))
-    end,
-    item = function(whichPlayer, key, data)
-        hdzapi.server.save(whichPlayer, "S" .. key, hitem.getId(data))
-    end
-}
-hdzapi.server.get = {
-    int = function(whichPlayer, key)
-        local val = hdzapi.server.load(whichPlayer, "I" .. key) or 0
-        if (val == "") then
-            val = 0
-        end
-        return math.floor(val)
-    end,
-    real = function(whichPlayer, key)
-        local val = hdzapi.server.load(whichPlayer, "R" .. key) or 0
-        if (val == "") then
-            val = 0
-        end
-        return math.round(val)
-    end,
-    bool = function(whichPlayer, key)
-        local b = hdzapi.server.load(whichPlayer, "B" .. key)
-        if (b == "1") then
-            return true
-        end
-        return false
-    end,
-    str = function(whichPlayer, key)
-        return hdzapi.server.load(whichPlayer, "S" .. key) or ""
-    end,
-    unit = function(whichPlayer, key)
-        local id = hdzapi.server.load(whichPlayer, "S" .. key) or ""
-        if (string.len(id) > 0) then
-            return string.char2id(id)
-        end
-        return nil
-    end,
-    item = function(whichPlayer, key)
-        local id = hdzapi.server.load(whichPlayer, "S" .. key) or ""
-        if (string.len(id) > 0) then
-            return string.char2id(id)
-        end
-        return nil
-    end
-}

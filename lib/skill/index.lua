@@ -14,6 +14,9 @@ end
 ---@protected
 hskill.addProperty = function(whichUnit, abilityId, level)
     local attr = hskill.getAttribute(abilityId)
+    if (attr == nil) then
+        return
+    end
     if (#attr > 0) then
         level = level or 1
         attr = attr[level]
@@ -25,6 +28,9 @@ end
 ---@protected
 hskill.subProperty = function(whichUnit, abilityId, level)
     local attr = hskill.getAttribute(abilityId)
+    if (attr == nil) then
+        return
+    end
     if (#attr > 0) then
         level = level or 1
         attr = attr[level]
@@ -43,6 +49,7 @@ hskill.add = function(whichUnit, abilityId, level, during)
     if (type(abilityId) == "string") then
         id = string.char2id(id)
     end
+    level = level or 1
     if (during == nil or during <= 0) then
         cj.UnitAddAbility(whichUnit, id)
         cj.UnitMakeAbilityPermanent(whichUnit, true, id)

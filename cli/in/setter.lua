@@ -1,30 +1,3 @@
-string_explode = function(delimeter, str)
-    local res = {}
-    local start, start_pos, end_pos = 1, 1, 1
-    while true do
-        start_pos, end_pos = string.find(str, delimeter, start, true)
-        if not start_pos then
-            break
-        end
-        table.insert(res, string.sub(str, start, start_pos - 1))
-        start = end_pos + 1
-    end
-    table.insert(res, string.sub(str, start))
-    return res
-end
-
-string_strpos = function(str, pattern)
-    if (str == nil or pattern == nil) then
-        return false
-    end
-    local s = string.find(str, pattern, 0)
-    if (type(s) == "number") then
-        return s
-    else
-        return false
-    end
-end
-
 ---@private
 F6V_I_SYNTHESIS = function(formula)
     local formulas = {}
@@ -32,20 +5,20 @@ F6V_I_SYNTHESIS = function(formula)
         local profit = ''
         local fragment = {}
         if (type(v) == 'string') then
-            local f1 = string_explode('=', v)
-            if (string_strpos(f1[1], 'x') == false) then
+            local f1 = string.explode('=', v)
+            if (string.strpos(f1[1], 'x') == false) then
                 profit = { f1[1], 1 }
             else
-                local temp = string_explode('x', f1[1])
+                local temp = string.explode('x', f1[1])
                 temp[2] = math.floor(temp[2])
                 profit = temp
             end
-            local f2 = string_explode('+', f1[2])
+            local f2 = string.explode('+', f1[2])
             for _, vv in ipairs(f2) do
-                if (string_strpos(vv, 'x') == false) then
+                if (string.strpos(vv, 'x') == false) then
                     table.insert(fragment, { vv, 1 })
                 else
-                    local temp = string_explode('x', vv)
+                    local temp = string.explode('x', vv)
                     temp[2] = math.floor(temp[2])
                     table.insert(fragment, temp)
                 end
@@ -268,9 +241,6 @@ end
 F6V_I_CD = function(_v)
     if (_v._cooldown < 0) then
         _v._cooldown = 0
-    end
-    if (_v._cooldown == 0) then
-        return "AIat"
     end
     local cdID
     local ad = {}
