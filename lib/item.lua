@@ -765,7 +765,7 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
     end
     if (separateType == "single") then
         for _ = 1, charges, 1 do
-            hitem.create({ itemId = id, charges = 1, x = x, y = y })
+            hitem.create({ id = id, charges = 1, x = x, y = y })
         end
     elseif (separateType == "formula") then
         if (hitem.isShadowBack(id)) then
@@ -783,7 +783,7 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
                 local flagId = frag[1]
                 if (#profit.fragment == 1) then
                     for _ = 1, frag[2], 1 do
-                        hitem.create({ itemId = flagId, charges = 1, x = x, y = y })
+                        hitem.create({ id = flagId, charges = 1, x = x, y = y })
                     end
                 else
                     local qty = frag[2]
@@ -792,15 +792,15 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
                         local overlie = hs._overlie or 1
                         while (qty > 0) do
                             if (overlie >= qty) then
-                                hitem.create({ itemId = flagId, charges = qty, x = x, y = y })
+                                hitem.create({ id = flagId, charges = qty, x = x, y = y })
                                 qty = 0
                             else
                                 qty = qty - overlie
-                                hitem.create({ itemId = flagId, charges = overlie, x = x, y = y })
+                                hitem.create({ id = flagId, charges = overlie, x = x, y = y })
                             end
                         end
                     else
-                        hitem.create({ itemId = flagId, charges = qty, x = x, y = y })
+                        hitem.create({ id = flagId, charges = qty, x = x, y = y })
                     end
                 end
             end
@@ -814,19 +814,19 @@ hitem.separate = function(whichItem, separateType, formulaIndex, whichUnit)
     hitem.del(whichItem, 0)
 end
 
---[[
-    创建物品
-    options = {
-        itemId = "I001", --物品ID
-        charges = 1, --物品可使用次数（可选，默认为1）
-        whichUnit = nil, --哪个单位（可选）
-        x = nil, --哪个坐标X（可选）
-        y = nil, --哪个坐标Y（可选）
-        during = -1, --持续时间（可选，小于0无限制，如果有whichUnit，此项无效）
-    }
-]]
+--- 创建物品
+-- options = {
+--     id = "I001", --物品ID
+--     charges = 1, --物品可使用次数（可选，默认为1）
+--     whichUnit = nil, --哪个单位（可选）
+--     x = nil, --哪个坐标X（可选）
+--     y = nil, --哪个坐标Y（可选）
+--     during = -1, --持续时间（可选，小于0无限制，如果有whichUnit，此项无效）
+-- }
+---@param options {id,charges,whichUnit,x,y,during}
+---@return userdata
 hitem.create = function(options)
-    if (options.itemId == nil) then
+    if (options.id == nil) then
         print_err("hitem create -it-id")
         return
     end
@@ -840,7 +840,7 @@ hitem.create = function(options)
     local during = options.during or -1
     -- 优先级 坐标 > 单位
     local x, y
-    local itemId = options.itemId
+    local id = options.id
     if (options.x ~= nil and options.y ~= nil) then
         x = options.x
         y = options.y
@@ -851,18 +851,18 @@ hitem.create = function(options)
         print_err("hitem create -position")
         return
     end
-    if (type(itemId) == "string") then
-        itemId = string.char2id(itemId)
+    if (type(id) == "string") then
+        id = string.char2id(id)
     end
     local it
     -- 如果不是创建给单位，又或者单位已经不存在了，直接返回
     if (options.whichUnit == nil or his.deleted(options.whichUnit) or his.dead(options.whichUnit)) then
         -- 如果是shadow物品的明面物品，转成暗面物品再创建
-        if (hitem.isShadowFront(itemId)) then
-            itemId = string.char2id(hitem.shadowID(itemId))
+        if (hitem.isShadowFront(id)) then
+            id = string.char2id(hitem.shadowID(id))
         end
         -- 掉在地上
-        it = cj.CreateItem(itemId, x, y)
+        it = cj.CreateItem(id, x, y)
         cj.SetItemCharges(it, charges)
         hitemPool.insert(CONST_CACHE.ITEM_POOL_PICK, it)
         if (options.whichUnit ~= nil and during > 0) then
@@ -873,8 +873,8 @@ hitem.create = function(options)
         end
     else
         -- 单位流程
-        it = cj.CreateItem(itemId, x, y)
-        if (hitem.getIsPowerUp(itemId)) then
+        it = cj.CreateItem(id, x, y)
+        if (hitem.getIsPowerUp(id)) then
             -- 如果是powerUp类型，直接给予单位，后续流程交予[hevent_default_actions.item.pickup]事件
             -- 因为shadow物品的暗面物品一定是powerup，所以无需额外处理
             cj.SetItemCharges(it, charges)
@@ -883,12 +883,12 @@ hitem.create = function(options)
             -- 没有满格,单位直接获得，后续流程交予[hevent_default_actions.item.pickup]事件
             cj.SetItemCharges(it, charges)
             cj.UnitAddItem(options.whichUnit, it)
-        elseif (hitem.isShadowFront(itemId)) then
+        elseif (hitem.isShadowFront(id)) then
             -- 满格了，如果是shadow的明面物品；转shadow再给与单位，后续流程交予[hevent_default_actions.item.pickup]事件
-            itemId = string.char2id(hitem.shadowID(itemId))
+            id = string.char2id(hitem.shadowID(id))
             hitem.del(it)
             -- 掉在地上
-            it = cj.CreateItem(itemId, x, y)
+            it = cj.CreateItem(id, x, y)
             cj.SetItemCharges(it, charges)
             hitemPool.insert(CONST_CACHE.ITEM_POOL_PICK, it)
         else
@@ -925,7 +925,7 @@ hitem.fleeting = function(fleetingType, x, y, during, yourFunc)
     local it = hunit.create({
         register = false,
         whichPlayer = hplayer.player_passive,
-        unitId = fleetingType,
+        id = fleetingType,
         x = x,
         y = y,
         during = during,
@@ -948,7 +948,7 @@ hitem.give = function(origin, target)
         local it = cj.UnitItemInSlot(origin, i)
         if (it ~= nil) then
             hitem.create({
-                itemId = hitem.getId(it),
+                id = hitem.getId(it),
                 charges = hitem.getCharges(it),
                 whichUnit = target
             })
@@ -978,7 +978,7 @@ hitem.copy = function(origin, target)
         local it = cj.UnitItemInSlot(origin, i)
         if (it ~= nil) then
             hitem.create({
-                itemId = hitem.getId(it),
+                id = hitem.getId(it),
                 charges = hitem.getCharges(it),
                 whichUnit = target,
             })

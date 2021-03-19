@@ -301,7 +301,7 @@ hevent_default_actions = {
                         hunit.create({
                             register = false,
                             whichPlayer = hunit.getOwner(u),
-                            unitId = HL_ID.hero_death_token,
+                            id = HL_ID.hero_death_token,
                             x = x,
                             y = y,
                             opacity = 0.6,
@@ -609,7 +609,7 @@ hevent_default_actions = {
                             hitem.del(it, 0)
                             -- 影子物品替换
                             it = hitem.create({
-                                itemId = hitem.shadowID(itId),
+                                id = hitem.shadowID(itId),
                                 x = x,
                                 y = y,
                                 charges = charges,

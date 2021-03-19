@@ -91,7 +91,7 @@ end
     @return 最后创建单位/单位组
     {
         teamNo = 1, -- 敌军队伍序号，默认1
-        unitId = nil, --类型id,如 H001
+        id = nil, --类型id,如 H001
         x = nil, --创建坐标X，可选
         y = nil, --创建坐标Y，可选
         loc = nil, --创建点，可选

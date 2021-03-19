@@ -112,7 +112,7 @@ hcmd._cds["-random"] = {
             if (type(one) == "string") then
                 u = hunit.create({
                     whichPlayer = p,
-                    unitId = one,
+                    id = one,
                     x = hhero.bornX,
                     y = hhero.bornY
                 })
@@ -174,7 +174,7 @@ hcmd._cds["-repick"] = {
             else
                 local new = hunit.create({
                     whichPlayer = hplayer.player_passive,
-                    unitId = cj.GetUnitTypeId(u),
+                    id = cj.GetUnitTypeId(u),
                     x = heroSelector[1],
                     y = heroSelector[2],
                     isInvulnerable = true,

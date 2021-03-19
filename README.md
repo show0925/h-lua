@@ -20,7 +20,7 @@
 ```
 
 ## V2版本
-新版本必须结合sdk项目使用，sdk为核心，自动嵌合h-lua
+新版本必须结合sdk项目才能运行，sdk为主，h-lua为辅
 > 详情请看 [h-lua-sdk](https://github.com/hunzsig-warcraft3/h-lua-sdk)
 ```
 git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
@@ -28,19 +28,16 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
 
 ## 框架结构如下：
 ```
-    ├── cli - 用于sdk的文件
-    │   ├── pre - 预设数据
-    │   │    ├── const - 静态值配置
-    │   │    └── foundation - 基础文件
-    │   │        ├── color.lua - 颜色
-    │   │        ├── json.lua - json库
-    │   │        ├── Mapping.lua - 值对库
-    │   │        ├── math.lua - 计算库
-    │   │        ├── string.lua - 字符串库
-    │   │        └── table.lua - 表库
-    │   └── slk - slk配置
-    │   └── war3mapJ - jass
+    ├── console - lua运行时的调试
+    │── const - 静态值配置
     ├── docs 一些文档
+    │── foundation - 基础文件
+    │   ├── color.lua - 颜色
+    │   ├── json.lua - json库
+    │   ├── Mapping.lua - 值对库
+    │   ├── math.lua - 计算库
+    │   ├── string.lua - 字符串库
+    │   └── table.lua - 表库
     ├── lib
     │   ├── attrbute - 基础/拓展/伤害特效/自然/单位关联，万能属性系统，自由、强大
     │   ├── skill - 技能库
@@ -81,6 +78,7 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     │   ├── time.lua - 时间/计时器 * 常用
     │   ├── unit.lua - 单位
     │   └── weather.lua - 天气
+    ├── slk - hslk 构建法
     ├── blizzard_b.lua - 暴雪B全局变量
     ├── blizzard_c.lua - 暴雪C全局变量
     ├── echo.lua - 游戏消息全局函数

@@ -206,16 +206,14 @@ hhero.buildSelector = function(options)
             else
                 x = buildX + currentRowQty * buildDistanceX
             end
-            local whichHero = hunit.create(
-                {
-                    whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
-                    unitId = heroId,
-                    x = x,
-                    y = y,
-                    isInvulnerable = true,
-                    isPause = true
-                }
-            )
+            local whichHero = hunit.create({
+                whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
+                id = heroId,
+                x = x,
+                y = y,
+                isInvulnerable = true,
+                isPause = true
+            })
             hcache.set(whichHero, CONST_CACHE.HERO_SELECTOR, { x, y })
             table.insert(hhero.selectorClearPool, whichHero)
             table.insert(hhero.selectorPool, whichHero)
@@ -278,7 +276,7 @@ hhero.buildSelector = function(options)
                 end
                 tavern = hunit.create({
                     whichPlayer = cj.Player(PLAYER_NEUTRAL_PASSIVE),
-                    unitId = options.tavernId or HL_ID.hero_tavern_token,
+                    id = options.tavernId or HL_ID.hero_tavern_token,
                     x = x,
                     y = y,
                 })
@@ -303,7 +301,7 @@ hhero.buildSelector = function(options)
                         cj.RemoveUnitFromStock(tavern, soldUid)
                         local whichHero = hunit.create({
                             whichPlayer = p,
-                            unitId = soldUid,
+                            id = soldUid,
                             x = hhero.bornX,
                             y = hhero.bornY,
                         })
@@ -342,7 +340,7 @@ hhero.buildSelector = function(options)
             local whichHero = hunit.create(
                 {
                     whichPlayer = p,
-                    unitId = HL_ID.hero_view_token,
+                    id = HL_ID.hero_view_token,
                     x = buildX + buildRowQty * buildDistanceX * 0.5,
                     y = buildY - math.floor(#heroIds / buildRowQty) * buildDistanceY * 0.5,
                     isInvulnerable = true,

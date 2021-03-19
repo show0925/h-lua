@@ -28,19 +28,16 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
 
 ## Project structure：
 ```
-    ├── cli - for SDK
-    │   ├── pre - Preset data
-    │   │    ├── const - Static value configuration
-    │   │    └── foundation
-    │   │        ├── color.lua
-    │   │        ├── json.lua
-    │   │        ├── Mapping.lua
-    │   │        ├── math.lua
-    │   │        ├── string.lua
-    │   │        └── table.lua
-    │   └── slk
-    │   └── war3mapJ - jass for map
-    ├── docs
+    ├── console - runtime debug
+    │── const - Static value configuration
+    ├── docs - some documents
+    │── foundation
+    │   ├── color.lua
+    │   ├── json.lua
+    │   ├── Mapping.lua
+    │   ├── math.lua
+    │   ├── string.lua
+    │   └── table.lua
     ├── lib
     │   ├── skill
     │   ├── attrbute - Universal Property System
@@ -82,6 +79,7 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     │   ├── time.lua
     │   ├── unit.lua
     │   └── weather.lua
+    ├── slk - hslk builder
     ├── blizzard_b.lua - Blizzard B global variables
     ├── blizzard_c.lua - Blizzard C global variables
     ├── echo.lua - Game message global function
