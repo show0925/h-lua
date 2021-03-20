@@ -1,5 +1,5 @@
 ---@class dzui DzUI
-hdzui = {}
+hdzui = { _t = 0 }
 
 --- 启用宽屏
 hdzui.wideScreen = function()
@@ -27,14 +27,37 @@ end
 --- 新建一个frame
 ---@param fdfName string frame名称
 ---@param parent number 父节点ID(def:GameUI)
+---@param id number ID(def:0)
 ---@return number|nil
-hdzui.frame = function(fdfName, parent)
+hdzui.frame = function(fdfName, parent, id)
     if (fdfName == nil) then
         return
     end
     cg.hdzui_frame_creator_name = fdfName
     cg.hdzui_frame_creator_parent = parent or hdzui.gameUI()
+    cg.hdzui_frame_creator_id = id or 0
     cj.ExecuteFunc("hdzui_frameCreate")
+    return cg.hdzui_frame_creator
+end
+
+--- tag方式新建一个frame
+---@param fdfType string frame类型 TEXT | BACKDROP等
+---@param fdfName string frame名称
+---@param parent number 父节点ID(def:GameUI)
+---@param id number ID(def:0)
+---@param tag string 自定义tag名称(def:_t)
+---@return number|nil
+hdzui.frameTag = function(fdfType, fdfName, parent, id, tag)
+    if (fdfType == nil or fdfName == nil) then
+        return
+    end
+    hdzui._t = hdzui._t + 1
+    cg.hdzui_frame_creator_type = fdfType
+    cg.hdzui_frame_creator_tag = tag or tostring(hdzui._t)
+    cg.hdzui_frame_creator_parent = parent or hdzui.gameUI()
+    cg.hdzui_frame_creator_name = fdfName
+    cg.hdzui_frame_creator_id = id or 0
+    cj.ExecuteFunc("hdzui_frameCreateTag")
     return cg.hdzui_frame_creator
 end
 
@@ -77,6 +100,15 @@ hdzui.frameSize = function(frameId, width, height)
     cg.hdzui_frame_width = width or 0.1
     cg.hdzui_frame_height = height or 0.1
     cj.ExecuteFunc("hdzui_frameSize")
+end
+
+--- 设置frame贴图
+---@param frameId number
+---@param blp string 贴图路径
+hdzui.frameTexture = function(frameId, blp)
+    cg.hdzui_frame_id = frameId
+    cg.hdzui_frame_texture = blp or ""
+    cj.ExecuteFunc("hdzui_frameTexture")
 end
 
 --- 锁定鼠标在frame内

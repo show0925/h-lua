@@ -381,7 +381,7 @@ hunit.embed = function(u, options)
     -- 记入group选择器（不在框架系统内的单位，也不会被group选择到）
     hgroup.addUnit(hgroup.GLOBAL, u)
     -- 记入realtime
-    local id = options.unitId
+    local id = options.id
     if (type(id) == "number") then
         id = string.id2char(id)
     end
