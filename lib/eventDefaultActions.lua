@@ -106,6 +106,63 @@ hevent_default_actions = {
             })
         end),
     },
+    hero = {
+        levelUp = cj.Condition(function()
+            local u = cj.GetTriggerUnit()
+            local diffLv = cj.GetHeroLevel(u) - hhero.getPrevLevel(u)
+            if (diffLv < 1) then
+                return
+            end
+            hhero.setPrevLevel(u, cj.GetHeroLevel(u))
+            -- @触发升级事件
+            hevent.triggerEvent(u, CONST_EVENT.levelUp, {
+                triggerUnit = u,
+                value = diffLv
+            })
+            -- 重读部分属性（因为有些属性在物编可升级提升）
+            hattribute.set(u, 0, {
+                str_white = "=" .. cj.GetHeroStr(u, false),
+                agi_white = "=" .. cj.GetHeroAgi(u, false),
+                int_white = "=" .. cj.GetHeroInt(u, false),
+            })
+        end),
+        reborn = function(u, rebornSec)
+            local x = hunit.x(u)
+            local y = hunit.y(u)
+            if (rebornSec > 0) then
+                local p = hunit.getOwner(u)
+                htexture.mark(htexture.DEFAULT_MARKS.DREAM, rebornSec, p, 255, 0, 0)
+                local ghost = hunit.create({
+                    register = false,
+                    whichPlayer = hplayer.player_passive,
+                    id = hunit.getId(u),
+                    x = x,
+                    y = y,
+                    facing = 270,
+                    height = 40,
+                    modelScale = 0.9,
+                    opacity = 0.6,
+                    isShadow = true,
+                    isInvulnerable = true,
+                    during = rebornSec,
+                })
+                hunit.setColor(ghost, hplayer.index(p))
+                hunit.create({
+                    register = false,
+                    whichPlayer = p,
+                    id = HL_ID.hero_death_token,
+                    x = x,
+                    y = y,
+                    opacity = 0.8,
+                    isShadow = true,
+                    isInvulnerable = true,
+                    during = rebornSec,
+                    timeScale = 10 / rebornSec,
+                })
+            end
+            hhero.reborn(u, rebornSec, 1, x, y, true)
+        end,
+    },
     unit = {
         attackDetect = cj.Condition(function()
             hevent.triggerEvent(
@@ -295,24 +352,7 @@ hevent_default_actions = {
                 -- 如果是英雄，检测属性重生秒数
                 local rebornSec = hattribute.get(u, "reborn") or -999
                 if (rebornSec >= 0) then
-                    local x = hunit.x(u)
-                    local y = hunit.y(u)
-                    if (rebornSec > 0) then
-                        hunit.create({
-                            register = false,
-                            whichPlayer = hunit.getOwner(u),
-                            id = HL_ID.hero_death_token,
-                            x = x,
-                            y = y,
-                            opacity = 0.6,
-                            qty = 1,
-                            isShadow = true,
-                            isInvulnerable = true,
-                            during = rebornSec,
-                            timeScale = 10 / rebornSec,
-                        })
-                    end
-                    hhero.reborn(u, rebornSec, 1, x, y, true)
+                    hevent_default_actions.hero.reborn(u, rebornSec)
                 end
             end
         end),
@@ -445,27 +485,6 @@ hevent_default_actions = {
                 }
             )
         end),
-    },
-    hero = {
-        levelUp = cj.Condition(function()
-            local u = cj.GetTriggerUnit()
-            local diffLv = cj.GetHeroLevel(u) - hhero.getPrevLevel(u)
-            if (diffLv < 1) then
-                return
-            end
-            hhero.setPrevLevel(u, cj.GetHeroLevel(u))
-            -- @触发升级事件
-            hevent.triggerEvent(u, CONST_EVENT.levelUp, {
-                triggerUnit = u,
-                value = diffLv
-            })
-            -- 重读部分属性（因为有些属性在物编可升级提升）
-            hattribute.set(u, 0, {
-                str_white = "=" .. cj.GetHeroStr(u, false),
-                agi_white = "=" .. cj.GetHeroAgi(u, false),
-                int_white = "=" .. cj.GetHeroInt(u, false),
-            })
-        end)
     },
     dialog = {
         click = cj.Condition(function()

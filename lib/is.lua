@@ -216,7 +216,7 @@ end
 ---@param whichUnit userdata
 ---@return boolean
 his.locust = function(whichUnit)
-    return cj.GetUnitAbilityLevel(whichUnit, string.char2id("Aloc")) > 0
+    return cj.GetUnitAbilityLevel(whichUnit, HL_ID.ability_locust) > 0
 end
 
 --- 是否被眩晕

@@ -288,16 +288,16 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
     local uSlk = hslk.i2v(uid, "slk")
     local rgba = hcache.get(whichUnit, CONST_CACHE.UNIT_RGBA)
     if (rgba == nil) then
-        rgba = { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0 }
+        rgba = { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1 }
         hcache.set(whichUnit, CONST_CACHE.UNIT_RGBA, rgba)
     end
-    red = math.max(0, math.min(255, red or rgba[1]))
-    green = math.max(0, math.min(255, green or rgba[2]))
-    blue = math.max(0, math.min(255, blue or rgba[3]))
-    opacity = math.max(0, math.min(1, opacity or rgba[4]))
+    red = math.floor(math.max(0, math.min(255, red or rgba[1])))
+    green = math.floor(math.max(0, math.min(255, green or rgba[2])))
+    blue = math.floor(math.max(0, math.min(255, blue or rgba[3])))
+    opacity = math.floor(255 * math.max(0, math.min(1, opacity or rgba[4])))
     return hbuff.create(during, whichUnit, CONST_CACHE.BUFF_RGBA,
         function()
-            cj.SetUnitVertexColor(whichUnit, red, green, blue, 255 * opacity)
+            cj.SetUnitVertexColor(whichUnit, red, green, blue, opacity)
             hcache.set(whichUnit, CONST_CACHE.UNIT_RGBA, { red, green, blue, opacity })
         end,
         function()
@@ -535,6 +535,13 @@ hunit.create = function(options)
             hunit.setCanFly(u)
             cj.SetUnitFlyHeight(u, options.height, 10000)
         end
+        -- RBGA
+        if (options.red ~= nil or options.green ~= nil or options.blue ~= nil or options.opacity ~= nil) then
+            local red = math.floor(options.red or hslk.i2v(options.id, "slk", "red") or 255)
+            local green = math.floor(options.green or hslk.i2v(options.id, "slk", "green") or 255)
+            local blue = math.floor(options.blue or hslk.i2v(options.id, "slk", "blue") or 255)
+            cj.SetUnitVertexColor(u, red, green, blue, math.floor(255 * options.opacity))
+        end
         -- 动作时间比例
         if (options.timeScale ~= nil and options.timeScale > 0) then
             options.timeScale = math.round(options.timeScale)
@@ -544,10 +551,6 @@ hunit.create = function(options)
         if (options.modelScale ~= nil and options.modelScale > 0) then
             options.modelScale = math.round(options.modelScale)
             cj.SetUnitScale(u, options.modelScale, options.modelScale, options.modelScale)
-        end
-        -- RBGA
-        if (options.red ~= nil or options.green ~= nil or options.blue ~= nil or options.opacity ~= nil) then
-            hunit.setRGBA(u, options.red, options.green, options.blue, options.opacity)
         end
         if (options.attackX ~= nil and options.attackY ~= nil) then
             cj.IssuePointOrder(u, "attack", options.attackX, options.attackY)
@@ -559,7 +562,7 @@ hunit.create = function(options)
         end
         --是否可选
         if (options.isUnSelectable ~= nil and options.isUnSelectable == true) then
-            cj.UnitAddAbility(u, string.char2id("Aloc"))
+            cj.UnitAddAbility(u, HL_ID.ability_locust)
         end
         --是否暂停
         if (options.isPause ~= nil and options.isPause == true) then
@@ -567,7 +570,7 @@ hunit.create = function(options)
         end
         --是否无敌
         if (options.isInvulnerable ~= nil and options.isInvulnerable == true) then
-            hunit.setInvulnerable(u, true)
+            cj.UnitAddAbility(u, HL_ID.ability_invulnerable)
         end
         --开启硬直，执行硬直计算
         if (options.isOpenPunish ~= nil and options.isOpenPunish == true) then
@@ -575,9 +578,9 @@ hunit.create = function(options)
         end
         --影子，无敌蝗虫暂停,且不注册系统
         if (options.isShadow ~= nil and options.isShadow == true) then
-            cj.UnitAddAbility(u, "Aloc")
             cj.PauseUnit(u, true)
-            hunit.setInvulnerable(u, true)
+            cj.UnitAddAbility(u, HL_ID.ability_locust)
+            cj.UnitAddAbility(u, HL_ID.ability_invulnerable)
             options.register = false
         end
         --是否与所有玩家共享视野
@@ -659,9 +662,9 @@ hunit.setUserData = function(u, val, during)
     end
 end
 
---- 设置单位颜色,color可设置玩家索引[1-16],应用其对应的颜色
+--- 设置单位颜色,color可设置玩家索引[1-16],应用其对应的颜色 或 参考 PLAYER_COLOR_BLACK
 ---@param u userdata
----@param color any 阵营颜色，整数或参考 PLAYER_COLOR_BLACK
+---@param color any 阵营颜色
 hunit.setColor = function(u, color)
     if (type(color) == "number") then
         cj.SetUnitColor(u, cj.ConvertPlayerColor(color - 1))

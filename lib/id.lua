@@ -6,6 +6,7 @@ HL_ID_INIT = function()
         unit_token_leap = string.char2id(hslk.n2i("H_LUA_UNIT_TOKEN_LEAP")), --leap的token模式，需导入模型：https://github.com/hunzsig-warcraft3/assets-models/blob/master/interface/interface_token.mdx
         ability_invulnerable = string.char2id("Avul"), -- 默认无敌技能
         ability_item_slot = string.char2id("AInv"), -- 默认物品栏技能（英雄6格那个）默认全部认定这个技能为物品栏，如有需要自行更改
+        ability_locust = string.char2id("Aloc"), -- 蝗虫技能
         ability_break = {}, --眩晕[0.05~0.5]
         ability_swim_un_limit = string.char2id(hslk.n2i("H_LUA_ABILITY_SWIM_UN_LIMIT")),
         ability_invisible = string.char2id(hslk.n2i("H_LUA_ABILITY_INVISIBLE")),
