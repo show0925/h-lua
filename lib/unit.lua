@@ -298,16 +298,16 @@ hunit.setRGBA = function(whichUnit, red, green, blue, opacity, during)
     local uSlk = hunit.getSlk(whichUnit)
     local rgba = hcache.get(whichUnit, CONST_CACHE.UNIT_RGBA)
     if (rgba == nil) then
-        rgba = { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1.0 }
+        rgba = { math.floor(uSlk.red), math.floor(uSlk.green), math.floor(uSlk.blue), 1 }
         hcache.set(whichUnit, CONST_CACHE.UNIT_RGBA, rgba)
     end
-    red = math.max(0, math.min(255, red or rgba[1]))
-    green = math.max(0, math.min(255, green or rgba[2]))
-    blue = math.max(0, math.min(255, blue or rgba[3]))
-    opacity = math.max(0, math.min(1, opacity or rgba[4]))
+    red = math.floor(math.max(0, math.min(255, red or rgba[1])))
+    green = math.floor(math.max(0, math.min(255, green or rgba[2])))
+    blue = math.floor(math.max(0, math.min(255, blue or rgba[3])))
+    opacity = math.floor(255 * math.max(0, math.min(1, opacity or rgba[4])))
     return hbuff.create(during, whichUnit, CONST_CACHE.BUFF_RGBA,
         function()
-            cj.SetUnitVertexColor(whichUnit, red, green, blue, 255 * opacity)
+            cj.SetUnitVertexColor(whichUnit, red, green, blue, opacity)
             hcache.set(whichUnit, CONST_CACHE.UNIT_RGBA, { red, green, blue, opacity })
         end,
         function()
@@ -568,7 +568,11 @@ hunit.create = function(options)
         end
         -- RBGA
         if (options.red ~= nil or options.green ~= nil or options.blue ~= nil or options.opacity ~= nil) then
-            hunit.setRGBA(u, options.red, options.green, options.blue, options.opacity)
+            local uSlk = hunit.getSlk(options.unitId) or {}
+            local red = math.floor(options.red or uSlk.red or 255)
+            local green = math.floor(options.green or uSlk.green or 255)
+            local blue = math.floor(options.blue or uSlk.blue or 255)
+            cj.SetUnitVertexColor(u, red, green, blue, math.floor(255 * options.opacity))
         end
         if (options.attackX ~= nil and options.attackY ~= nil) then
             cj.IssuePointOrder(u, "attack", options.attackX, options.attackY)
@@ -598,7 +602,7 @@ hunit.create = function(options)
         end
         --影子，无敌蝗虫暂停,且不注册系统
         if (options.isShadow ~= nil and options.isShadow == true) then
-            cj.UnitAddAbility(u, "Aloc")
+            cj.UnitAddAbility(u, string.char2id("Aloc"))
             cj.PauseUnit(u, true)
             hunit.setInvulnerable(u, true)
             options.register = false
