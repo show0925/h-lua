@@ -82,5 +82,5 @@ git clone https://github.com/hunzsig-warcraft3/h-lua-sdk.git
     ├── blizzard_b.lua - 暴雪B全局变量
     ├── blizzard_c.lua - 暴雪C全局变量
     ├── echo.lua - 游戏消息全局函数
-    └── h-lua.lua - 入口文件，sdk无需加载此文件（会自动加载）
+    └── h-lua.lua - 入口文件
 ```
