@@ -5,7 +5,7 @@ local _damageTtg = function(targetUnit, damage, fix, rgb)
     local during = 1.0
     local x = hunit.x(targetUnit) - 0.05 - _damageTtgQty * 0.013
     local y = hunit.y(targetUnit)
-    htextTag.model({ msg = fix .. math.floor(damage), x = x, y = y, red = rgb[1], green = rgb[2], blue = rgb[3] })
+    htextTag.model({ msg = fix .. math.floor(damage), x = x, y = y, red = rgb[1], green = rgb[2], blue = rgb[3], speed = CONST_MODEL_TTG_SPD_DMG })
     htime.setTimeout(during, function(t)
         htime.delTimer(t)
         _damageTtgQty = _damageTtgQty - 1
@@ -65,7 +65,7 @@ hskill.damage = function(options)
     local damageSrc = options.damageSrc
     local damageType = options.damageType
     -- 攻击者的攻击里各种类型的占比
-    if (damageType == nil) then
+    if (damageType == nil or #damageType <= 0) then
         if (damageSrc == CONST_DAMAGE_SRC.attack and sourceUnit ~= nil) then
             damageType = {}
             for _, con in ipairs(CONST_ENCHANT) do
@@ -123,6 +123,7 @@ hskill.damage = function(options)
     -- 计算单位是否无敌（无敌属性为百分比计算，被动触发抵挡一次）
     if (his.invincible(targetUnit) == true or math.random(1, 100) < targetUnitAttr.invincible) then
         if (table.includes(breakArmorType, CONST_BREAK_ARMOR_TYPE.invincible.value) == false) then
+            htextTag.model({ msg = "无敌", whichUnit = targetUnit, red = 255, green = 215, blue = 0 })
             return
         end
     end
@@ -552,7 +553,7 @@ hskill.damage = function(options)
                 if (ldr > 0.01) then
                     hevent.setLastDamageUnit(sourceUnit, targetUnit)
                     hunit.subCurLife(sourceUnit, ldr)
-                    htextTag.model({ msg = "反伤 -" .. ldr, whichUnit = targetUnit, red = 248, green = 170, blue = 235 })
+                    htextTag.model({ msg = "反伤 -" .. ldr, whichUnit = sourceUnit, red = 248, green = 170, blue = 235 })
                     -- @触发反伤事件
                     hevent.triggerEvent(
                         targetUnit,
