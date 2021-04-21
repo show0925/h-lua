@@ -9,21 +9,17 @@ hattribute = {
             "str_white", "agi_white", "int_white", "str_green", "agi_green", "int_green", "punish"
         },
     },
-    THREE_BUFF = {
-        -- 每一点三围对属性的影响，默认会写一些，可以通过 hattribute.setThreeBuff 方法来改变系统构成
+    ---@private
+    RELATION = {
+        -- 每一点属性对另一个属性的影响
         -- 需要注意的是三围只能影响common内的大部分参数，natural及effect是无效的
-        primary = 1, -- 每点主属性提升1点白字攻击（默认例子，这是模拟原生平衡性常数，需要设置平衡性常数为0）
+        primary = 0, -- 每点主属性提升0点攻击
+        -- 三围属性加成
         str = {
-            life = 19, -- 每点力量提升10生命（默认例子）
-            life_back = 0.05 -- 每点力量提升0.05生命恢复（默认例子）
+            life = 0, -- 每点力量提升0生命（比如）
         },
-        agi = {
-            defend_green = 0.01 -- 每点敏捷提升0.01护甲（默认例子）
-        },
-        int = {
-            mana = 6, -- 每点智力提升6魔法（默认例子）
-            mana_back = 0.05 -- 每点力量提升0.05生命恢复（默认例子）
-        }
+        agi = {},
+        int = {},
     },
     CURE_FLOOR = 0.05, --生命魔法恢复绝对值小于此值时无效
 }
@@ -48,11 +44,12 @@ hattribute.isValType = function(field, valType)
     return false
 end
 
---- 设置三围的影响
----@param buff table
-hattribute.setThreeBuff = function(buff)
-    if (type(buff) == "table") then
-        hattribute.THREE_BUFF = buff
+--- 设置属性对应的其他属性的影响
+--- 例如1点力量+10生命
+---@param relation table
+hattribute.setRelation = function(relation)
+    if (type(relation) == "table") then
+        hattribute.RELATION = relation
     end
 end
 
@@ -232,6 +229,8 @@ hattribute.setHandle = function(whichUnit, attr, opr, val, during)
             else
                 params[attr] = futureVal
             end
+            -- 关联属性
+            hattributeSetter.relation(whichUnit, attr, diff)
             if (attr == "life") then
                 -- 最大生命值[JAPI+]
                 hattributeSetter.setUnitMaxLife(whichUnit, currentVal, futureVal, diff)
@@ -484,17 +483,19 @@ end
 --- 通用get
 ---@param whichUnit userdata
 ---@param attr string
+---@param default any 默认值，默认为0
 ---@return any
-hattribute.get = function(whichUnit, attr)
+hattribute.get = function(whichUnit, attr, default)
+    default = default or 0
     if (whichUnit == nil) then
-        return nil
+        return default
     end
     local attribute = hcache.get(whichUnit, CONST_CACHE.ATTR, nil)
     if (attribute == nil) then
-        return nil
+        return default
     elseif (attribute == -1) then
         if (hattribute.init(whichUnit) == false) then
-            return nil
+            return default
         end
         attribute = hcache.get(whichUnit, CONST_CACHE.ATTR)
     end
@@ -510,9 +511,9 @@ hattribute.get = function(whichUnit, attr)
     attribute.sight_day = hunit.getSight(whichUnit) + (attribute.sight or 0)
     attribute.sight_night = hunit.getNSight(whichUnit) + (attribute.sight or 0)
     if (attr == nil) then
-        return attribute
+        return attribute or {}
     end
-    return attribute[attr]
+    return attribute[attr] or default
 end
 
 --- 计算单位的属性浮动影响
