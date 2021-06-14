@@ -1,8 +1,10 @@
---- 全局漂浮字默认速率
-CONST_MODEL_TTG_SPD = 1.0
---- 全局伤害系统漂浮字默认速率
-CONST_MODEL_TTG_SPD_DMG = 1.0
-
+--- 全局漂浮字惯用速率
+CONST_MODEL_TTG_SPD = {
+    default = 1.0, -- 默认
+    ignores = 1.2, -- 无视
+    knocking = 1.4, -- 暴击
+    enchant = 1.6, -- 附魔
+}
 --- 模型贴图型特效
 CONST_MODEL_TTG = {
     ["k"] = { mdl = "hLua\\ttg\\l_K.mdl", bit = 2 },
